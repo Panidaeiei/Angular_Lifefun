@@ -1,1 +1,60 @@
-<p>register works!</p>
+<div style="margin-top: 50px;">
+    <span class="itim-regular" style="font-size: 1.5cm; margin-left: 42cm;">สมัครสมาชิก</span>
+</div>
+<div style="display: flex; flex-direction: row; height: 100vh;">
+    <div style="display: flex; flex-direction: column; width: 50%;"></div>
+    <div
+        style="display: flex; align-items: center; flex-direction: column; width: 50%; margin-top: 30px; margin-right: 30px;">
+        <!-- อัปโหลดรูปภาพ -->
+        <label for="file-upload" style="cursor: pointer;">
+            <img [src]="previewImage" alt="Profile Picture" class="profile-image" />
+        </label>
+        <input type="file" id="file-upload" accept="image/*" (change)="onFileSelected($event)" hidden />
+
+        <form (ngSubmit)="register()" style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+            <div style="display: flex; flex-direction: column; align-items: flex-start; margin-top: 30px;">
+                <label class="itim-regular" style="font-size: 30px; margin-bottom: 10px;">อีเมล (E-mail)</label>
+                <div class="input-container">
+                    <input type="email" placeholder="กรอกอีเมล" [(ngModel)]="userData.email" name="email" required />
+                </div>
+            </div>
+            <div style="display: flex; flex-direction: row;">
+                <div style="display: flex; flex-direction: column; align-items: flex-start; margin-top: 30px;">
+                    <label class="itim-regular" style="font-size: 30px; margin-bottom: 10px;">ชื่อผู้ใช้ (Username)</label>
+                    <div class="input-container2">
+                        <input type="text" placeholder="กรอกชื่อผู้ใช้" [(ngModel)]="userData.username" name="username" required />
+                    </div>
+                </div>
+                <div
+                    style="display: flex; flex-direction: column; align-items: flex-start; margin-top: 30px; margin-left: 30px;">
+                    <label class="itim-regular" style="font-size: 30px; margin-bottom: 10px;">รหัสผ่าน (Password)</label>
+                    <div class="input-container2">
+                        <input type="password" placeholder="กรอกรหัสผ่าน" [(ngModel)]="userData.password" name="password" required />
+                    </div>
+                </div>
+            </div>
+            <div style="display: flex; flex-direction: row;">
+                <div style="display: flex; flex-direction: column; align-items: flex-start; margin-top: 30px;">
+                    <label class="itim-regular" style="font-size: 30px; margin-bottom: 10px;">เบอร์โทรศัพท์ (Phone)</label>
+                    <div class="input-container2">
+                        <input type="text" placeholder="กรอกเบอร์โทรศัพท์" [(ngModel)]="userData.phone" name="phone" required />
+                    </div>
+                </div>
+                <div
+                    style="display: flex; flex-direction: column; align-items: flex-start; margin-top: 30px; margin-left: 30px;">
+                    <label class="itim-regular" style="font-size: 30px; margin-bottom: 10px;">ยืนยันรหัสผ่าน (Confirm Password)</label>
+                    <div class="input-container2">
+                        <input type="password" placeholder="ยืนยันรหัสผ่าน" [(ngModel)]="confirmPassword" name="confirmPassword" required />
+                    </div>
+                </div>
+            </div>
+            <div style="display: flex; flex-direction: row; margin-top: 30px;">
+                <span class="itim-regular" style="font-size: 20px;">มีบัญชีอยู่แล้วใช่หรือไม่?</span>
+                <a href="/login" class="itim-regular" style="color: rgb(189, 35, 35); font-size: 20px; margin-left: 10px;">เข้าสู่ระบบ</a>
+              </div>
+            <button class="styled-button" type="submit" style="margin-top: 30px;">
+                <span class="itim-regular">สมัครสมาชิก</span>
+            </button>
+        </form>
+    </div>
+</div>

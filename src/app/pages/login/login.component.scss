@@ -1,0 +1,83 @@
+@import url('https://fonts.googleapis.com/css2?family=Itim&display=swap');
+
+:host, html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+  }
+  
+  :host {
+    display: block;
+    position: fixed; /* ทำให้แบ็กกราวด์ครอบคลุมเต็มหน้าจอ */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('../../../assets/images/background.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  //font
+  .itim-regular {
+    font-family: "Itim", serif;
+    font-weight: 400;
+    font-style: normal;
+  }
+
+   //font
+   .itim-regular2 {
+    font-family: "Itim", serif;
+    font-weight: 500;
+    font-style: normal;
+  }
+  
+  img {
+    position: relative;
+    z-index: 1;
+  }
+
+    /* สไตล์ input */
+    .input-container input {
+      width: 500px;
+      height: 50px;
+      padding: 15px;
+      margin-top: 5px;
+      border: none;
+      border-radius: 50px; /* มุมโค้งมน */
+      background-color: #fff8dc; /* สีครีม */
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* เงาเบาๆ */
+      font-size: 18px;
+    }
+
+    /* เพิ่มสไตล์เมื่อ focus */
+    .input-container input:focus {
+      outline: none;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .styled-button {
+      margin-left: 20%;
+      margin-top: 25%;
+      background-color: #fff8dc; /* สีครีม */
+      color: black;
+      font-size: 20px;
+      font-weight: bold;
+      padding: 15px 60px;
+      border: none;
+      border-radius: 50px; /* มุมโค้งมน */
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* เงาเบาๆ */
+      cursor: pointer;
+      transition: all 0.3s ease; /* เพิ่มการเปลี่ยนแปลงเมื่อ hover */
+    }
+
+    .styled-button:hover {
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* เพิ่มเงาเมื่อ hover */
+      transform: scale(1.05); /* ขยายเล็กน้อยเมื่อ hover */
+    }
+
+ 
+    
+  
