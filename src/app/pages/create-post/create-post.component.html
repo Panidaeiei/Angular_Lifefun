@@ -1,1 +1,232 @@
-<p>create-post works!</p>
+<div class="background-div"
+    style="background-color: rgb(249,241,239); width: 100vw; height: 100vh; overflow: hidden; overflow-y: scroll;">
+    <mat-toolbar
+        style="background-color: rgb(233, 135, 135); height: 90px; display: flex; align-items: center; justify-content: space-between; padding: 10px 40px;">
+        <a [routerLink]="['/HomepageUser']" [queryParams]="{ id: userId }">
+            <img src="https://shorturl.asia/2pOd3" alt="Home Icon" width="80px">
+        </a>
+
+        <div style="width: 300px;"></div>
+
+        <div style="display: flex; flex-grow: 1; justify-content: center;">
+            <div style="display: flex; align-items: center; gap: 60px;">
+                <div style="cursor: pointer;">
+                    <a
+                        style="all: unset; display: flex; flex-direction: column; align-items: center;">
+                        <i class="fa-solid fa-house"
+                            style="font-size: 40px; color: black;"></i>
+                        <span class="itim-regular">หน้าหลัก</span>
+                    </a>
+                </div>
+
+                <div style="cursor: pointer;">
+                    <a
+                        style="all: unset; display: flex; flex-direction: column; align-items: center;">
+                        <i class="fa-solid fa-magnifying-glass"
+                            style="font-size: 40px; color: black;"></i>
+                        <span class="itim-regular">ติดตาม</span>
+                    </a>
+                </div>
+
+                <div style="cursor: pointer;">
+                    <a
+                        style="all: unset; background-color: white; border-radius: 50%; width: 60px; height: 60px; display: flex; justify-content: center; align-items: center;">
+                        <i class="fa-solid fa-add"
+                            style="font-size: 30px; color: black;"></i>
+                    </a>
+                </div>
+
+                <div style="cursor: pointer;">
+                    <a
+                        style="all: unset; display: flex; flex-direction: column; align-items: center;">
+                        <i class="fa-solid fa-bell"
+                            style="font-size: 40px; color: black;"></i>
+                        <span class="itim-regular">แจ้งเตือน</span>
+                    </a>
+                </div>
+
+                <div style="cursor: pointer;">
+                    <a
+                        style="all: unset; display: flex; flex-direction: column; align-items: center;">
+                        <i class="fa-solid fa-user"
+                            style="font-size: 40px; color: black;"></i>
+                        <span class="itim-regular">โปรไฟล์</span>
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+        <div style="position: relative; display: flex; align-items: center;">
+            <div style="position: relative; margin-right: 40px;">
+                <i class="fa-solid fa-magnifying-glass"
+                    style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #9ca3af; font-size: 16px;"></i>
+                <input type="text"
+                    placeholder="ค้นหา..."
+                    [(ngModel)]="searchText"
+                    style="width: 200px; padding: 12px 35px; border: 1px solid #e2e8f0; border-radius: 9999px; font-size: 16px; background-color: #f3f4f6; transition: all 0.2s;">
+                <i *ngIf="searchText"
+                    (click)="searchText = ''"
+                    class="fa-solid fa-xmark"
+                    style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: #9ca3af; cursor: pointer; font-size: 16px;"></i>
+            </div>
+
+            <div style="cursor: pointer;">
+                <a
+                    style="all: unset; display: flex; flex-direction: column; align-items: center;">
+                    <i class="fa-solid fa-bars"
+                        style="font-size: 40px; color: black;"></i>
+                    <span class="itim-regular">หมวดหมู่</span>
+                </a>
+            </div>
+        </div>
+    </mat-toolbar>
+
+    <div
+        style="background-color: rgb(249,241,239); width: 100vw; height: 90.5vh;">
+
+        <div style="padding: 50px 30rem;">
+            <mat-card appearance="raised">
+                <mat-card-header
+                    style="display: flex; flex-direction: column; background-color: #faddd9;">
+
+                    <div
+                        style="display: flex; align-items: center; justify-content: space-between;">
+                        <div></div>
+                        <span
+                            style="font-size: 20px; color: black; font-weight: bold; text-align: center;">สร้างโพสต์ใหม่</span>
+                        <i class="fa-solid fa-xmark"
+                            style="color: #9ca3af; cursor: pointer; font-size: 16px; background-color: white; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;"></i>
+                    </div>
+
+                    <div
+                        style="display: flex; align-items: center; gap: 20px; margin-top: 10px; margin-bottom: 20px;">
+                        <img src="https://shorturl.asia/2pOd3" alt="Home Icon"
+                            width="80px" style="margin-left: 20px;">
+                        <div
+                            style="display: flex; flex-direction: column; margin-left: 5px; margin-right: 5px;">
+                            <span
+                                style="font-size: 20px; font-weight: bold;">นิสา</span>
+                            <div
+                                style="display: flex; gap: 20px; align-items: center; margin-top: 10px;">
+                                <mat-chip
+                                    style="background-color: white; cursor: pointer; border-radius: 20px; box-shadow: none;">เพิ่มลิงค์ตำแหน่งสถานที่</mat-chip>
+                                <mat-chip [matMenuTriggerFor]="menu"
+                                    style="background-color: white; border-radius: 20px; box-shadow: none;">เลือกหมวดหมู่</mat-chip>
+                                <mat-menu #menu="matMenu"
+                                    style="background-color: white; border-radius: 8px; box-shadow: none; border: 1px solid white;">
+                                    <button mat-menu-item
+                                        style="background-color: white; color: black; box-shadow: none; border: none;">Item
+                                        1</button>
+                                    <button mat-menu-item
+                                        style="background-color: white; color: black; box-shadow: none; border: none;">Item
+                                        2</button>
+                                </mat-menu>
+                            </div>
+                        </div>
+                    </div>
+                </mat-card-header>
+
+                <mat-card-content
+                    style="background-color: white; padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px;">
+                    <h3
+                        style="color: #4a90e2; margin: 0; font-weight: 500;">อัปโหลดไฟล์</h3>
+
+                    <div
+                        style="display: flex; flex-direction: row; align-items: center; gap: 20px;">
+                        <div
+                            style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
+                            <button
+                                style="background-color: #4a90e2; color: white; padding: 10px 20px; border: none; border-radius: 50px; font-size: 16px; cursor: pointer; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); transition: all 0.3s;"
+                                onfocus="this.style.outline='none'"
+                                onmouseover="this.style.boxShadow='0 6px 12px rgba(0, 0, 0, 0.2)';"
+                                onmouseout="this.style.boxShadow='0 4px 6px rgba(0, 0, 0, 0.1)';"
+                                (click)="triggerFileInput('images')">
+                                เลือกรูปภาพ (สูงสุด 5 ไฟล์)
+                            </button>
+                            <input
+                                id="file-images"
+                                type="file"
+                                hidden
+                                accept="image/*"
+                                multiple
+                                (change)="onImagesSelected($event)" />
+                        </div>
+
+                        <div
+                            style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
+                            <button
+                                style="background-color: #4a90e2; color: white; padding: 10px 20px; border: none; border-radius: 50px; font-size: 16px; cursor: pointer; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); transition: all 0.3s;"
+                                onfocus="this.style.outline='none'"
+                                onmouseover="this.style.boxShadow='0 6px 12px rgba(0, 0, 0, 0.2)';"
+                                onmouseout="this.style.boxShadow='0 4px 6px rgba(0, 0, 0, 0.1)';"
+                                (click)="triggerFileInput('video')">
+                                เลือกวิดีโอ (1 ไฟล์)
+                            </button>
+                            <input
+                                id="file-video"
+                                type="file"
+                                hidden
+                                accept="video/*"
+                                (change)="onVideoSelected($event)" />
+                        </div>
+                    </div>
+
+                    <div *ngIf="selectedImages.length > 0"
+                        style="margin-top: 20px; width: 100%; display: flex; flex-wrap: wrap; gap: 15px; justify-content: center;">
+                        <div *ngFor="let image of selectedImages"
+                            style="position: relative; display: flex; flex-direction: column; align-items: center;">
+                            <img [src]="image.url" alt="Selected Image"
+                                style="width: 100px; height: 100px; object-fit: cover; border: 2px solid #4a90e2; border-radius: 8px; cursor: pointer;"
+                                (click)="openImage(image)" />
+
+                            <button (click)="removeImage(image)"
+                                style="position: absolute; top: -10px; right: -10px; background: red; color: white; border: none; border-radius: 50%; width: 20px; height: 20px; cursor: pointer;">×</button>
+                        </div>
+                    </div>
+
+                    <div *ngIf="fullscreenImage"
+                        style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); display: flex; align-items: center; justify-content: center; z-index: 1000;">
+                        <img [src]="fullscreenImage.url" alt="Fullscreen Image"
+                            style="max-width: 90%; max-height: 90%; border: 5px solid white; border-radius: 5px;" />
+                        <i class="fa-solid fa-xmark" (click)="closeImage()"
+                            style="position: absolute;top: 20px; right: 20px; color: white; cursor: pointer; font-size: 16px; background-color: red; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;"></i>
+                    </div>
+
+                    <div *ngIf="selectedVideo"
+                        style="margin-top: 20px; display: flex; flex-direction: column; align-items: center; gap: 10px;">
+                        <video controls [src]="selectedVideo.url"
+                            style="width: 300px; border: 2px solid #4a90e2; border-radius: 8px; cursor: pointer;"
+                            (click)="openVideo(selectedVideo)"></video>
+                        <button (click)="removeVideo()"
+                            style="background-color: red; color: white; padding: 5px 10px; border: none; border-radius: 4px; cursor: pointer; font-size: 14px;">ลบวิดีโอ</button>
+                    </div>
+
+                    <div *ngIf="fullscreenVideo"
+                        style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); display: flex; align-items: center; justify-content: center; z-index: 1000;">
+                        <video controls autoplay [src]="fullscreenVideo.url"
+                            style="max-width: 90%; max-height: 90%; border: 5px solid white; border-radius: 10px;"></video>
+                        <i class="fa-solid fa-xmark" (click)="closeVideo()"
+                            style="position: absolute;top: 20px; right: 20px; color: white; cursor: pointer; font-size: 16px; background-color: red; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;"></i>
+                    </div>
+                </mat-card-content>
+
+                <mat-card-footer
+                    style="background-color: #faddd9; display: flex; flex-direction: column; ">
+                    <textarea
+                        style=" border: 1px solid #e2e8f0; background-color: transparent; border-radius: 8px; font-size: 16px; padding: 10px; resize: none; transition: all 0.2s;"
+                        placeholder="เขียนเรื่องราว..."></textarea>
+                </mat-card-footer>
+
+                <mat-card-footer
+                    style="background-color: #f2aea3; padding: 10px; height: 50px; display: flex; justify-content: center; align-items: center; cursor: pointer; border-radius: 8px;">
+                    <span
+                        style="font-size: 20px; font-weight: bold; color: white;">โพสต์</span>
+                </mat-card-footer>
+
+            </mat-card>
+
+        </div>
+
+    </div>
+</div>
