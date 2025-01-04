@@ -7,27 +7,23 @@ body {
     padding: 0;
     width: 100%;
     height: 100%;
+    background-color: rgb(249, 241, 239); /* สีพื้นหลัง */
+    box-sizing: border-box; /* คำนวณขนาดไม่เกินขอบ */
+    overflow-x: hidden; /* ปิดการเลื่อนแนวนอน */
 }
 
 :host {
     display: block;
-    position: absolute;
-    /* ใช้ absolute เพื่อให้พื้นหลังยึดตามขนาดของ body */
-    top: 0;
-    left: 0;
-    width: 100%;
-    min-height: 100%;
-    /* ปรับเพื่อให้รองรับการเลื่อน */
-    background-color: rgb(230, 200, 211);
-    /* สีพื้นหลัง */
+    min-height: 100vh; /* ครอบคลุมความสูงเต็มหน้าจอ */
+    background-color: rgb(249, 241, 239); /* สีพื้นหลัง */
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
 }
 
 body {
-    overflow: auto;
-    /* เปิดใช้งานการเลื่อน */
+    overflow-y: auto; /* เปิดใช้งานการเลื่อนแนวตั้ง */
+    background-color: rgb(249, 241, 239); /* สีพื้นหลังเหมือนกัน */
 }
 
 //font
