@@ -1,0 +1,103 @@
+@import url('https://fonts.googleapis.com/css2?family=Itim&display=swap');
+
+:host,
+html,
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgb(249, 241, 239); /* สีพื้นหลัง */
+    box-sizing: border-box; /* คำนวณขนาดไม่เกินขอบ */
+    overflow-x: hidden; /* ปิดการเลื่อนแนวนอน */
+}
+
+:host {
+    display: block;
+    min-height: 100vh; /* ครอบคลุมความสูงเต็มหน้าจอ */
+    background-color: rgb(249, 241, 239); /* สีพื้นหลัง */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+body {
+    overflow-y: auto; /* เปิดใช้งานการเลื่อนแนวตั้ง */
+    background-color: rgb(249, 241, 239); /* สีพื้นหลังเหมือนกัน */
+}
+
+
+//font
+.itim-regular {
+    margin-top: 5px;
+    font-family: "Itim", serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.search-container {
+    display: flex;
+    align-items: center;
+    background-color: rgb(230, 200, 211);
+    /* สีพื้นหลังของช่องค้นหา */
+    border-radius: 30px;
+    /* ขอบมน */
+    padding: 10px 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    height: 30px;
+    width: 220px;
+    /* ความกว้างของช่องค้นหา */
+}
+
+.search-container i {
+    font-size: 16px;
+    color: black;
+    /* สีไอคอน */
+    margin-right: 10px;
+    /* ระยะห่างระหว่างไอคอนกับช่อง */
+}
+
+.search-input {
+    border: none;
+    outline: none;
+    /* ซ่อนขอบตอนคลิก */
+    font-size: 16px;
+    width: 100%;
+    background: transparent;
+    /* พื้นหลังโปร่งใส */
+}
+
+.menu-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    position: relative;
+  }
+  
+  .menu-item.active {
+    color: #ff0000; /* สีเมื่อ active */
+  }
+  
+
+.menu-item span {
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+.menu-item.active i,
+.menu-item.active span {
+    color: #000000; /* เปลี่ยนสีเมื่อ active */
+}
+
+.menu-item.active::after {
+    content: '';
+    position: absolute;
+    bottom: -12px;
+    left: 50%; /* เริ่มที่กึ่งกลางของเมนู */
+    transform: translateX(-50%); /* ดันกลับมาครึ่งหนึ่งของความกว้าง */
+    height: 4px;
+    background-color: #000000; /* สีขีดล่าง */
+    width: 70px; /* ความกว้างของขีด */
+}
+
