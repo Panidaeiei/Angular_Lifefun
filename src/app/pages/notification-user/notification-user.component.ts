@@ -5,15 +5,15 @@ import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatCardModule } from '@angular/material/card';
-import {MatButtonModule} from '@angular/material/button';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
-  selector: 'app-home-follow',
-  imports: [MatToolbarModule,RouterModule,CommonModule,MatTabsModule,MatButtonModule,MatCardModule ],
-  templateUrl: './home-follow.component.html',
-  styleUrl: './home-follow.component.scss'
+  selector: 'app-notification-user',
+  imports: [MatToolbarModule, RouterModule, CommonModule, MatTabsModule, MatCardModule, MatButtonModule],
+  templateUrl: './notification-user.component.html',
+  styleUrls: ['./notification-user.component.scss'] // Corrected property name and path
 })
-export class HomeFollowComponent {
+export class NotificationUserComponent {
   userId: string = '';
   isLiked: boolean = false;
   isDrawerOpen: boolean = false; // เริ่มต้น Drawer ปิด
@@ -28,7 +28,6 @@ export class HomeFollowComponent {
         console.log('User ID:', this.userId);
       } else {
         console.error('User ID not found in query parameters.');
-
       }
     });
   }

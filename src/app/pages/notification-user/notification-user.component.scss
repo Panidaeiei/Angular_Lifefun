@@ -26,6 +26,52 @@ body {
     background-color: rgb(249, 241, 239); /* สีพื้นหลังเหมือนกัน */
 }
 
+/* สไตล์พื้นฐานของ Drawer */
+.drawer {
+    position: fixed;
+    top: 0;
+    right: -300px; /* ซ่อน Drawer ทางขวา */
+    width: 300px;
+    height: 100%;
+    background-color: white;
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
+    transition: right 0.3s ease; /* เพิ่ม Transition */
+    z-index: 1000;
+  }
+  
+  /* Drawer เปิด */
+  .drawer.open {
+    right: 0; /* แสดง Drawer */
+  }
+  
+  /* สไตล์เนื้อหาใน Drawer */
+  .drawer-content {
+    padding: 20px;
+  }
+  
+  .drawer-content h3 {
+    margin-top: 0;
+  }
+  
+  .drawer-content ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .drawer-content ul li {
+    margin: 10px 0;
+  }
+  
+  .fixed-toolbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: rgb(233, 135, 135); 
+    height: 90px;
+    width: 100%;
+    z-index: 1; /* Ensure it is above other content */
+  }
+
 //font
 .itim-regular {
     margin-top: 5px;
@@ -90,13 +136,16 @@ body {
 }
 
 .menu-item.active::after {
-    content: '';
-    position: absolute;
-    bottom: -12px;
-    left: 50%; /* เริ่มที่กึ่งกลางของเมนู */
-    transform: translateX(-50%); /* ดันกลับมาครึ่งหนึ่งของความกว้าง */
-    height: 4px;
-    background-color: #000000; /* สีขีดล่าง */
-    width: 70px; /* ความกว้างของขีด */
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  /* เริ่มที่กึ่งกลางของเมนู */
+  transform: translateX(-50%);
+  /* ดันกลับมาครึ่งหนึ่งของความกว้าง */
+  height: 5px;
+  background-color: #000000;
+  /* สีขีดล่าง */
+  width: 80px;
+  /* ความกว้างของขีด */
 }
-
