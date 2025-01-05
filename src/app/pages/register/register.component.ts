@@ -75,26 +75,36 @@ export class RegisterComponent {
   // ฟังก์ชันสำหรับการลงทะเบียน
   register() {
     if (this.userData.password !== this.confirmPassword) {
-      Swal.fire({
-        icon: 'error',
-        text: 'รหัสผ่านไม่ตรงกัน!',
-      });
+      alert('รหัสผ่านไม่ตรงกัน');
       return;
     }
 
     // ตรวจสอบว่าเบอร์โทรศัพท์ต้องเป็นตัวเลข 10 หลัก
     const phoneRegex = /^[0-9]{10}$/;
     if (!phoneRegex.test(this.userData.phone)) {
-      Swal.fire({
-        icon: 'error',
-        text: 'เบอร์โทรศัพท์ต้องเป็นตัวเลข 10 หลัก!',
-      });
+      alert('เบอร์โทรศัพท์ต้องเป็นตัวเลข 10 หลัก!');
+      return;
+    }
+    
+    // ตรวจสอบว่า username เป็นไปตามเงื่อนไข
+    const usernameRegex = /^[a-zA-Z0-9._]{1,30}$/; // เงื่อนไข username
+    if (!usernameRegex.test(this.userData.username)) {
+      alert('ชื่อผู้ใช้ต้องมีความยาวไม่เกิน 30 ตัวอักษร และใช้ได้เฉพาะ a-z, A-Z, 0-9, จุด (.) และขีดล่าง (_)');
       return;
     }
 
     console.log('Data to be sent:', this.userData); // ตรวจสอบข้อมูลที่กำลังส่ง
 
-    this.userService.registerUser(this.userData).subscribe(
+    const formData = new FormData();
+    formData.append('email', this.userData.email);
+    formData.append('password', this.userData.password);
+    formData.append('username', this.userData.username);
+    formData.append('phone', this.userData.phone);
+    if (this.selectedFile) {
+      formData.append('profileImage', this.selectedFile); // แนบไฟล์รูปภาพ
+    }
+
+    this.userService.registerUser(formData).subscribe(
       (response) => {
         Swal.fire({
           icon: 'success',
@@ -139,5 +149,6 @@ export class RegisterComponent {
       }
     );
   }
+
 
 }

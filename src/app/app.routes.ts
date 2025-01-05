@@ -5,9 +5,10 @@ import { RegisterComponent } from './pages/register/register.component';
 import { HomepageUserComponent } from './pages/homepage-user/homepage-user.component';
 import { HomepageMainComponent } from './pages/homepage-main/homepage-main.component';
 import { HomeFollowComponent } from './pages/home-follow/home-follow.component';
-import { NotificationUserComponent } from './notification-user/notification-user.component';
 import { ProfileUserComponent } from './pages/profile-user/profile-user.component';
 import { CreatePostComponent } from './pages/create-post/create-post.component';
+import { CategoryPageComponent } from './pages/category-page/category-page.component';
+import { NotificationUserComponent } from './pages/notification-user/notification-user.component';
 
 export const routes: Routes = [
 
@@ -20,4 +21,5 @@ export const routes: Routes = [
     {path: 'Notification_user', component: NotificationUserComponent},
     {path: 'ProfileUser', component: ProfileUserComponent},
     {path: 'CreatePost', component: CreatePostComponent},
+    {path: 'category', component: CategoryPageComponent}
 ];
