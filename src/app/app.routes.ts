@@ -9,6 +9,7 @@ import { ProfileUserComponent } from './pages/profile-user/profile-user.componen
 import { CreatePostComponent } from './pages/create-post/create-post.component';
 import { CategoryPageComponent } from './pages/category-page/category-page.component';
 import { NotificationUserComponent } from './pages/notification-user/notification-user.component';
+import { DetailPostComponent } from './pages/detail-post/detail-post.component';
 
 export const routes: Routes = [
 
@@ -21,5 +22,6 @@ export const routes: Routes = [
     {path: 'Notification_user', component: NotificationUserComponent},
     {path: 'ProfileUser', component: ProfileUserComponent},
     {path: 'CreatePost', component: CreatePostComponent},
-    {path: 'category', component: CategoryPageComponent}
+    {path: 'category', component: CategoryPageComponent},
+    {path: 'detail_post', component: DetailPostComponent}
 ];

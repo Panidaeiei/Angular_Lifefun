@@ -18,8 +18,6 @@ body {
 :host {
   display: block;
   min-height: 100vh;
-  align-items: center;
-  justify-content: center;
   /* ครอบคลุมความสูงเต็มหน้าจอ */
   background-color: rgb(249, 241, 239);
   /* สีพื้นหลัง */
@@ -82,7 +80,7 @@ body {
   background-color: rgb(233, 135, 135);
   height: 90px;
   width: 100%;
-  z-index: 1;
+  z-index: 2;
   /* Ensure it is above other content */
 }
 
@@ -93,7 +91,7 @@ body {
 }
 
 .heart-icon {
-  color: gray;
+  color: rgb(165, 163, 163);
   transition: color 0.3s ease;
 }
 
@@ -166,107 +164,70 @@ body {
   position: relative;
 }
 
-.menu-item.active {
-  color: #ff0000;
-  /* สีเมื่อ active */
-}
-
-
 .menu-item span {
-  font-size: 14px;
+  font-size: 22px;
   margin-top: 5px;
+  color: black;
 }
 
-.menu-item.active i,
-.menu-item.active span {
-  color: #000000;
-  /* เปลี่ยนสีเมื่อ active */
+.divpost{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: auto;
+    margin-top: 150px;
+    background-color: white;
 }
 
-.menu-item.active::after {
-  content: '';
-  position: absolute;
-  bottom: -10px;
-  left: 50%;
-  /* เริ่มที่กึ่งกลางของเมนู */
-  transform: translateX(-50%);
-  /* ดันกลับมาครึ่งหนึ่งของความกว้าง */
-  height: 5px;
-  background-color: #000000;
-  /* สีขีดล่าง */
-  width: 80px;
-  /* ความกว้างของขีด */
+a.mat-button {
+    overflow: visible; /* ป้องกันการถูกตัด */
+    padding: 0; /* ลด padding ที่ไม่จำเป็น */
 }
 
-.card-container-wrapper {
-  display: flex;
-  justify-content: center; /* จัดกลุ่มการ์ดให้อยู่กลาง */
-  width: 100%; /* ทำให้ wrapper ใช้ความกว้างทั้งหมด */
+mat-icon {
+    vertical-align: middle; /* จัดไอคอนให้ตรงกลาง */
 }
 
-.card-container {
-  display: grid;  /* ใช้ CSS Grid */
-  grid-template-columns: repeat(4, 1fr);  /* กำหนดให้แถวมี 4 คอลัมน์ */
-  gap: 20px;  /* ระยะห่างระหว่างการ์ด */
-  max-width: 1900px;  /* กำหนดความกว้างสูงสุดของการ์ด */
-}
-
-/* สำหรับอุปกรณ์ที่มีความกว้างไม่เกิน 768px (Tablet) */
-@media (max-width: 768px) {
-  .card-container {
-    grid-template-columns: repeat(2, 1fr);  /* กำหนดให้แถวมี 2 คอลัมน์ */
+.divpost {
+    margin-bottom: 70px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   }
-}
-
-/* สำหรับอุปกรณ์ที่มีความกว้างไม่เกิน 480px (Mobile) */
-@media (max-width: 480px) {
-  .card-container {
-    grid-template-columns: 1fr;  /* กำหนดให้แถวมี 1 คอลัมน์ */
+  
+  .media-container {
+    position: relative;
   }
-}
+  
+  .slider-controls {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: none;  /* ซ่อนปุ่มเลื่อนโดยปกติ */
+    z-index: 10;
+  }
+  
+  /* เมื่อเมาส์อยู่บน media container หรือเมื่อปุ่มต้องการแสดง */
+  .slider-controls.visible {
+    display: flex;  /* แสดงปุ่มเลื่อน */
+    gap: 700px;
+  }
+  
+  .prev-btn, .next-btn {
+    background-color: rgba(134, 134, 134, 0.5);
+    color: white;
+    border: none;
+    padding: 10px;
+    font-size: 24px;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  
+  .prev-btn:hover, .next-btn:hover {
+    background: rgba(112, 109, 109, 0.7); /* เพิ่มความเข้มเมื่อ hover */
+  }
+  
 
-.card-wrapper {
-  width: 370px; /* ใช้ความกว้างเต็มในแต่ละคอลัมน์ */
-  cursor: pointer;
-  padding: 20px;
-  display: flex;
-  justify-content: flex-start;
-  align-items: flex-start;
-}
-
-.cardpost {
-  background-color: white;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  overflow: hidden;
-  width: 100%; /* กำหนดให้การ์ดใช้ความกว้างทั้งหมด */
-}
-
-.cardpost:hover {
-  transform: scale(1.02); /* ขยายการ์ดเล็กน้อยเมื่อ hover */
-  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2); /* เพิ่มเงา */
-}
-
-
-.hover-link {
-  transition: color 0.3s ease, text-decoration 0.3s ease;
-  /* ทำให้เปลี่ยนสไตล์นุ่มนวล */
-}
-
-/* เอฟเฟกต์เมื่อ hover */
-.hover-link:hover {
-  color: #007BFF;
-  /* เปลี่ยนสีเป็นสีน้ำเงิน */
-  text-decoration: underline;
-  /* เพิ่มเส้นใต้ */
-  font-weight: bold;
-  /* ทำให้ข้อความหนาขึ้น */
-}
-
-.multiple-media-icon {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  padding: 5px;
-  border-radius: 50%;
-}

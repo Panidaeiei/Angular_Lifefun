@@ -17,7 +17,7 @@ export class LoginComponent {
   password: string = '';   // ตัวแปรสำหรับเก็บ Password
   errorMessage: string = ''; // ข้อความแสดงข้อผิดพลาด (ถ้ามี)
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient, private router: Router) { }
 
   // ฟังก์ชันสำหรับการล็อกอิน
   login() {
@@ -28,20 +28,23 @@ export class LoginComponent {
       });
       return;
     }
-  
+
     const payload = {
       email: this.isEmail(this.identifier) ? this.identifier : undefined,
       username: this.isEmail(this.identifier) ? undefined : this.identifier,
       password: this.password,
     };
-  
+
     this.http.post('http://localhost:3000/api/login', payload).subscribe(
       (response: any) => {
-        // เก็บข้อมูลผู้ใช้ใน localStorage หรือ sessionStorage
+        // เก็บ JWT ใน localStorage
+        localStorage.setItem('token', response.token);
+
+        // เก็บข้อมูลผู้ใช้ใน localStorage
         localStorage.setItem('userId', response.id);
         localStorage.setItem('userRole', response.role);
-  
-        // หากต้องการเปลี่ยนเส้นทาง สามารถทำหลังจากนี้ได้
+
+        // นำทางไปยังหน้า Home ตาม role
         if (response.role === 'admin') {
           this.router.navigate(['/HomepageAdmin'], { queryParams: { id: response.id } });
         } else if (response.role === 'user') {
@@ -55,6 +58,7 @@ export class LoginComponent {
         });
       }
     );
+
   }
 
   // ตรวจสอบว่าข้อมูลที่กรอกเป็น Email หรือไม่

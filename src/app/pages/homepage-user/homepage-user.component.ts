@@ -5,13 +5,15 @@ import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatCardModule } from '@angular/material/card';
-import {MatButtonModule} from '@angular/material/button';
+import { MatButtonModule } from '@angular/material/button';
 import { ShowPost } from '../../models/showpost_model';
-import { UserService } from '../../services/service';
+import { UserService } from '../../services/Userservice';
+import { PostService } from '../../services/Postservice';
+import { LikePostService } from '../../services/ReactPostservice';
 
 @Component({
   selector: 'app-homepage-user',
-  imports: [MatToolbarModule, RouterModule, CommonModule, MatTabsModule, MatCardModule,MatButtonModule],
+  imports: [MatToolbarModule, RouterModule, CommonModule, MatTabsModule, MatCardModule, MatButtonModule],
   templateUrl: './homepage-user.component.html',
   styleUrl: './homepage-user.component.scss',
 })
@@ -21,7 +23,7 @@ export class HomepageUserComponent {
   isDrawerOpen: boolean = false; // เริ่มต้น Drawer ปิด
   posts: ShowPost[] = []; // เก็บโพสต์ทั้งหมด
 
-  constructor(private route: ActivatedRoute, private userService: UserService) {}
+  constructor(private route: ActivatedRoute, private userService: UserService, private postService: PostService, private likePostService: LikePostService,) { }
 
   ngOnInit(): void {
     // ดึงค่าจาก Query Parameters
@@ -30,23 +32,46 @@ export class HomepageUserComponent {
         this.userId = params['id'];
         console.log('User ID:', this.userId);
       } else {
-        console.error('User ID not found in query parameters.');
+        this.userId = ''; // กำหนดค่าเริ่มต้นเมื่อไม่มี User ID
+        console.warn('User ID not found in query parameters.');
       }
     });
 
+    this.likePostService.likeStatus$.subscribe((status) => {
+      console.log("Like status updated:", status);
+      // ดำเนินการที่ต้องการเมื่อไลค์เปลี่ยนแปลง
+    });
+
+    this.posts.forEach((post) => {
+      this.checkLikeStatus(post.post_id);
+    });
+
+    
     // ดึงโพสต์จาก Backend
     this.fetchPosts();
   }
 
   fetchPosts(): void {
-    this.userService.getPosts().subscribe(
-      (response) => {
-        // เพิ่มสถานะ isLiked เริ่มต้นเป็น false ให้กับแต่ละโพสต์
-        this.posts = response.map((post) => ({
-          ...post,
-          isLiked: false,
-        }));
-        console.log('Fetched posts:', this.posts);
+    this.postService.getPosts().subscribe(
+      (response: ShowPost[]) => {
+        console.log('Response from API:', response);  // ตรวจสอบข้อมูลที่ได้รับจาก API
+  
+        // กรองโพสต์ที่มี `post_id` ซ้ำ
+        const uniquePosts = response.filter((value, index, self) => 
+          index === self.findIndex((t) => (
+            t.post_id === value.post_id
+          ))
+        );
+  
+        console.log('Unique Posts:', uniquePosts); // ตรวจสอบโพสต์ที่กรองออกมา
+  
+        // อัปเดตค่า posts ที่กรองแล้ว
+        this.posts = uniquePosts;
+  
+        // เพียงแค่ใช้ค่าของ hasMultipleMedia ที่มาจาก API
+        this.posts.forEach(post => {
+          console.log('Has Multiple Media:', post.hasMultipleMedia);  // ตรวจสอบสถานะ hasMultipleMedia
+        });
       },
       (error) => {
         console.error('Error fetching posts:', error);
@@ -54,17 +79,41 @@ export class HomepageUserComponent {
     );
   }
   
-
   toggleHeart(post: ShowPost): void {
-    post.isLiked = !post.isLiked; // เปลี่ยนสถานะ isLiked เฉพาะโพสต์ที่กด
+    const userId = this.userId;  // ใช้ userId ที่ได้จาก queryParams
+
+    // เปลี่ยนสถานะ isLiked
+    post.isLiked = !post.isLiked;
     console.log('Heart icon clicked for post:', post.post_id, 'Liked:', post.isLiked);
+
+    // เรียกใช้ LikePostService เพื่ออัปเดตสถานะการไลค์ในฐานข้อมูล
+    this.likePostService.likePost(post.post_id, Number(userId)).subscribe(
+      (response) => {
+        console.log('Post liked successfully:', response);
+        post.likes_count = response.likes_count;  // อัปเดตยอดไลค์
+      },
+      (error) => {
+        console.error('Error liking post:', error);
+      }
+    );
   }
   
-
   toggleDrawer(): void {
     this.isDrawerOpen = !this.isDrawerOpen; // สลับสถานะเปิด/ปิด
   }
 
-  
-
+  checkLikeStatus(postId: number): void {
+    this.likePostService.checkLikeStatus(postId).subscribe(
+      (response) => {
+        // ตั้งค่าการไลค์สำหรับโพสต์นี้
+        const post = this.posts.find(p => p.post_id === postId);
+        if (post) {
+          post.isLiked = response.liked;  // อัปเดตสถานะการไลค์ของโพสต์
+        }
+      },
+      (error) => {
+        console.error('Error checking like status:', error);
+      }
+    );
+  }
 }
