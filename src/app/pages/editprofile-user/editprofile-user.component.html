@@ -1,0 +1,76 @@
+<button class="back-button" [routerLink]="['/ProfileUser']" >
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    height="40px"
+    viewBox="0 -960 960 960"
+    width="50px"
+    fill="#5f6368"
+  >
+    <path d="M400-80 0-480l400-400 71 71-329 329 329 329-71 71Z" />
+  </svg>
+</button>
+<div class="profile-wrapper">
+  <h2 class="profile-title">แก้ไขโปรไฟล์</h2>
+  <div class="profile-container">
+    <div class="profile-header">
+      <button mat-flat-button style="background-color: #ff3d3d">ลบบัญชี</button>
+    </div>
+
+    <div class="profile-form">
+      <!-- เพิ่มรูปภาพตรงกลาง -->
+      <div class="profile-image-wrapper">
+        <img src="path_to_your_image.jpg" alt="Profile Image" />
+      </div>
+
+      <div class="form-group">
+        <label>ชื่อผู้ใช้</label>
+        <input type="text" value="นีสา" />
+      </div>
+
+      <div class="form-group">
+        <label>อีเมล</label>
+        <input type="email" value="nisa@gmail.com" />
+      </div>
+
+      <div class="form-group">
+        <label>เบอร์โทรศัพท์</label>
+        <input type="tel" value="0254567286" />
+      </div>
+
+      <div class="form-group">
+        <label>คำอธิบายตัวเอง</label>
+        <textarea>เพิ่มคำอธิบาย ...</textarea>
+      </div>
+
+      <div class="form-group">
+        <label>รหัสผ่านปัจจุบัน</label>
+        <div class="password-field">
+          <input type="password" value="nn123" />
+          <button class="toggle-password">👁</button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>รหัสผ่านใหม่</label>
+        <div class="password-field">
+          <input type="password" value="nn100" />
+          <button class="toggle-password">👁</button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>ยืนยันรหัสผ่าน</label>
+        <div class="password-field">
+          <input type="password" value="nn100" />
+          <button class="toggle-password">👁</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ปุ่ม ยกเลิก และ บันทึกข้อมูล -->
+    <div class="form-actions">
+      <button class="cancel-button">ยกเลิก</button>
+      <button class="save-button">บันทึกข้อมูล</button>
+    </div>
+  </div>
+</div>

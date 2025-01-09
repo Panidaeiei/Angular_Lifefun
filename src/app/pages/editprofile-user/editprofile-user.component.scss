@@ -1,0 +1,143 @@
+body {
+    font-family: 'Prompt', sans-serif;
+    background-color: #fff4f4;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .profile-wrapper {
+    position: relative;
+    text-align: center;
+    margin-top: 20px;
+  }
+  
+  .profile-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #0c0b0b;
+  }
+  
+  .profile-container {
+    width: 90%;
+    max-width: 600px;
+    margin: 0 auto;
+    background-color: #ffe3e3;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .profile-header {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  }
+
+
+  
+  .back-button,
+  .delete-button {
+    background-color: transparent;
+    border: none;
+    color: #ff6161;
+    font-size: 50px;
+    cursor: pointer;
+    margin-left: 20px;
+    margin-top: 20px;
+  }
+  
+  .profile-content {
+    margin-top: 20px;
+    text-align: center;
+  }
+  
+  .profile-image-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  
+  .profile-image-wrapper img {
+    max-width: 150px; /* กำหนดขนาดรูปภาพ */
+    border-radius: 50%; /* เพื่อให้รูปภาพเป็นวงกลม */
+  }
+  
+  .profile-form {
+    margin-top: 20px;
+  }
+  
+  .form-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+  
+  label {
+    width: 30%; /* กำหนดความกว้างให้หัวข้อ */
+    text-align: left;
+    font-weight: bold;
+  }
+  
+  input,
+  textarea {
+    width: 70%; /* กำหนดความกว้างให้ช่องกรอกข้อมูล */
+    padding: 10px;
+    border: 1px solid #ffbcbc;
+    border-radius: 5px;
+    font-size: 14px;
+  }
+  
+  textarea {
+    resize: none;
+  }
+  
+  .password-field {
+    display: flex;
+    align-items: center;
+  }
+  
+  .password-field input {
+    flex: 1;
+  }
+  
+  .password-field .toggle-password {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    margin-left: 5px;
+  }
+  .form-actions {
+    display: flex;
+    justify-content: center;
+    gap: 20px; /* ช่องว่างระหว่างปุ่ม */
+    margin-top: 20px;
+  }
+  
+  .cancel-button,
+  .save-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  .cancel-button {
+    background-color: #ec7272; /* สีแดง */
+    color: white;
+    border: none;
+    border-radius: 5px;
+  }
+  
+  .save-button {
+    background-color: #ff6161; /* สีเขียว */
+    color: white;
+    border: none;
+    border-radius: 5px;
+  }
+  
+  .cancel-button:hover,
+  .save-button:hover {
+    opacity: 0.8;
+  }
+  
+  
