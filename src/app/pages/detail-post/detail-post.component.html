@@ -1,103 +1,113 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
 
-<mat-toolbar class="fixed-toolbar">
-    <!-- Logo ด้านซ้าย -->
-    <a [routerLink]="['/HomepageUser']" [queryParams]="{ id: userId }">
-        <img src="https://shorturl.asia/2pOd3" alt="Home Icon" width="80px">
-    </a>
-    <div style="width: 10%;"></div>
-    <!-- เมนูตรงกลาง -->
-    <div style="display: flex; flex-grow: 1; justify-content: center; align-items: center;">
-        <div style="display: flex; justify-content: center; align-items: center; gap: 50px;">
 
-            <!-- หน้าหลัก -->
-            <a class="menu-item" routerLinkActive="active" [routerLink]="['/HomepageUser']"
-                [queryParams]="{ id: userId }">
-                <i style="font-size: 40px; color: black;" class="fa-solid fa-house"></i>
-                <span class="itim-regular">หน้าหลัก</span>
-            </a>
-
-            <!-- ติดตาม -->
-            <div style="display: flex; flex-direction: column; align-items: center;">
-                <a [routerLink]="['/Homepagefollow']" [queryParams]="{ id: userId }">
-                    <i style="font-size: 40px; color: black;" class="fa-solid fa-users"></i>
-                </a>
-                <span class="itim-regular">ติดตาม</span>
-            </div>
-
-            <div>
-                <a [routerLink]="['/CreatePost']" [queryParams]="{ id: userId }"><img src="https://shorturl.asia/ngKuG"
-                        alt="" width="60px"></a>
-            </div>
-
-            <!-- การแจ้งเตือน -->
-            <div style="display: flex; flex-direction: column; align-items: center;">
-                <a [routerLink]="['/Notification_user']" [queryParams]="{ id: userId }">
-                    <i style="font-size: 40px; color: black;" class="fa-solid fa-bell"></i>
-                </a>
-                <span class="itim-regular">การแจ้งเตือน</span>
-            </div>
-
-            <!-- โปรไฟล์ -->
-            <div style="display: flex; flex-direction: column; align-items: center;">
-                <a [routerLink]="['/ProfileUser']" [queryParams]="{ id: userId }">
-                    <i style="font-size: 40px; color: black;" class="fa-solid fa-user"></i>
-                </a>
-                <span class="itim-regular">โปรไฟล์</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- ช่องค้นหา -->
-    <div class="search-container">
-        <i class="fa-solid fa-magnifying-glass"></i>
-        <input type="text" class="search-input" placeholder="ค้นหา...">
-    </div>
-
-    <!-- ไอคอนเมนู -->
-    <div style="display: flex; flex-direction: column; align-items: center; margin-left: 20px;">
-        <a href="javascript:void(0)" (click)="toggleDrawer()">
-            <i style="font-size: 40px; color: black;" class="fa-solid fa-bars"></i>
-        </a>
-    </div>
-
-    <!-- Drawer -->
-    <div class="drawer" [class.open]="isDrawerOpen">
-        <div class="drawer-content">
-            <h3 style="font-weight: 500; font-size: 30px;">MENU</h3>
-            <ul style="list-style: none; padding: 0;">
-                <!-- หมวดหมู่ -->
-                <li
-                    style="border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; align-items: center; gap: 10px;">
-                    <i class="fa fa-list" style="font-size: 20px; color: black;"></i>
-                    <a [routerLink]="['/category']" [queryParams]="{ id: userId }"
-                        style="text-decoration: none; color: black;">
-                        <span class="itim-regular">หมวดหมู่</span>
-                    </a>
-                </li>
-                <!-- ออกจากระบบ -->
-                <li
-                    style="border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; align-items: center; gap: 10px;">
-                    <i class="fa fa-sign-out" style="font-size: 20px; color: black;"></i>
-                    <a href="/login" style="text-decoration: none; color: black;">
-                        <span class="itim-regular">ออกจากระบบ</span>
-                    </a>
-                </li>
-            </ul>
-            <button mat-flat-button style="background-color: rgb(226, 124, 150); width: 100px;"
-                (click)="toggleDrawer()">ปิด</button>
-        </div>
-    </div>
-</mat-toolbar>
 <div style="display: flex; align-items: center; justify-content: center; flex-direction: column; ">
+    <mat-toolbar class="fixed-toolbar">
+        <!-- Logo ด้านซ้าย -->
+        <a [routerLink]="['/HomepageUser']" [queryParams]="{ id: userId }">
+            <img src="https://shorturl.asia/2pOd3" alt="Home Icon" width="80px">
+        </a>
+        <div style="width: 10%;"></div>
+        <!-- เมนูตรงกลาง -->
+        <div style="display: flex; flex-grow: 1; justify-content: center; align-items: center;">
+            <div style="display: flex; justify-content: center; align-items: center; gap: 50px;">
+
+                <!-- หน้าหลัก -->
+                <a class="menu-item" routerLinkActive="active" [routerLink]="['/HomepageUser']"
+                    [queryParams]="{ id: userId }">
+                    <i style="font-size: 40px; color: black;" class="fa-solid fa-house"></i>
+                    <span class="itim-regular">หน้าหลัก</span>
+                </a>
+
+                <!-- ติดตาม -->
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <a [routerLink]="['/Homepagefollow']" [queryParams]="{ id: userId }">
+                        <i style="font-size: 40px; color: black;" class="fa-solid fa-users"></i>
+                    </a>
+                    <span class="itim-regular">ติดตาม</span>
+                </div>
+
+                <div>
+                    <a [routerLink]="['/CreatePost']" [queryParams]="{ id: userId }"><img
+                            src="https://shorturl.asia/ngKuG" alt="" width="60px"></a>
+                </div>
+
+                <!-- การแจ้งเตือน -->
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <a [routerLink]="['/Notification_user']" [queryParams]="{ id: userId }">
+                        <i style="font-size: 40px; color: black;" class="fa-solid fa-bell"></i>
+                    </a>
+                    <span class="itim-regular">การแจ้งเตือน</span>
+                </div>
+
+                <!-- โปรไฟล์ -->
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <a [routerLink]="['/ProfileUser']" [queryParams]="{ id: userId }">
+                        <i style="font-size: 40px; color: black;" class="fa-solid fa-user"></i>
+                    </a>
+                    <span class="itim-regular">โปรไฟล์</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ช่องค้นหา -->
+        <div class="search-container">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" class="search-input" placeholder="ค้นหา...">
+        </div>
+
+        <!-- ไอคอนเมนู -->
+        <div style="display: flex; flex-direction: column; align-items: center; margin-left: 20px;">
+            <a href="javascript:void(0)" (click)="toggleDrawer()">
+                <i style="font-size: 40px; color: black;" class="fa-solid fa-bars"></i>
+            </a>
+        </div>
+
+        <!-- Drawer -->
+        <div class="drawer" [class.open]="isDrawerOpen">
+            <div class="drawer-content">
+                <h3 style="font-weight: 500; font-size: 30px;">MENU</h3>
+                <ul style="list-style: none; padding: 0;">
+                    <!-- หมวดหมู่ -->
+                    <li
+                        style="border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; align-items: center; gap: 10px;">
+                        <i class="fa fa-list" style="font-size: 20px; color: black;"></i>
+                        <a [routerLink]="['/category']" [queryParams]="{ id: userId }"
+                            style="text-decoration: none; color: black;">
+                            <span class="itim-regular">หมวดหมู่</span>
+                        </a>
+                    </li>
+                    <!-- ออกจากระบบ -->
+                    <li
+                        style="border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; align-items: center; gap: 10px;">
+                        <i class="fa fa-sign-out" style="font-size: 20px; color: black;"></i>
+                        <a href="/login" style="text-decoration: none; color: black;">
+                            <span class="itim-regular">ออกจากระบบ</span>
+                        </a>
+                    </li>
+                </ul>
+                <button mat-flat-button style="background-color: rgb(226, 124, 150); width: 100px;"
+                    (click)="toggleDrawer()">ปิด</button>
+            </div>
+        </div>
+    </mat-toolbar>
     <div *ngIf="post" class="divpost">
         <!-- ส่วนแสดงโปรไฟล์ผู้ใช้ -->
         <div
             style="display: flex; flex-direction: row; margin-bottom: 20px; margin-top: 20px; margin-left: 15px; justify-content: space-between; ">
             <div style="display: flex;">
                 <img [src]="post.user_profile_image || 'default-profile-image.png'" alt="รูปโปรไฟล์"
-                    style="width: 100px; height: 100px; border-radius: 50%;">
-                <span style="font-size: 30px; font-weight: 500; margin-left: 20px;">{{ post.user_name }}</span>
+                    style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover;">
+                <div style="display: flex; flex-direction: column;">
+                    <span style="font-size: 30px; font-weight: 500; margin-left: 20px; margin-bottom: 10px;">{{
+                        post.user_name }}</span>
+                    <div *ngIf="post.location">
+                        <i class="fa-solid fa-location-dot"
+                            style="margin-left: 20px; margin-right: 5px; font-size: 20px; color: rgb(228, 63, 91);"></i>
+                        <a class="location" [href]="post.location" target="_blank">Location: {{ post.location.length >
+                            30 ? (post.location.substring(0, 30) + '...') : post.location }}</a>
+                    </div>
+                </div>
             </div>
             <a mat-button [matMenuTriggerFor]="menu"
                 style="display: flex; align-items: center; justify-content: center; padding: 0;">
@@ -107,21 +117,25 @@
                     <circle cx="12" cy="19" r="2"></circle>
                 </svg>
             </a>
+
             <mat-menu #menu="matMenu">
-                <button mat-menu-item> <span style="font-size: 15px;">รายงานโพสต์</span></button>
-                <button mat-menu-item>Item 2</button>
+                <button mat-menu-item *ngIf="post.user_uid === +userId" (click)="deletePost(post.post_id)">
+                    <i style="margin-right: 5px; font-size: 20px; color: rgb(87, 73, 75);"
+                        class="fa-solid fa-trash"></i>
+                    <span style="font-size: 15px;">ลบโพสต์</span>
+                </button>
+                <button mat-menu-item *ngIf="post.user_uid === +userId" (click)="editPost()">
+                    <i style="margin-right: 5px; font-size: 20px; color: rgb(87, 73, 75);"
+                        class="fa-solid fa-pen-to-square"></i>
+                    <span style="font-size: 15px;">แก้ไขโพสต์</span>
+                </button>
+                <button mat-menu-item *ngIf="post.user_uid !== +userId">
+                    <i style="margin-right: 5px; font-size: 20px; color: rgb(87, 73, 75);" class="fa fa-flag"></i>
+                    <span style="font-size: 15px;">รายงานโพสต์</span>
+                </button>
             </mat-menu>
-
-            <!-- <mat-menu #menu="matMenu">
-                <button mat-menu-item *ngIf="post.user_id === userId">
-                  <span style="font-size: 15px;">ลบโพสต์</span>
-                </button>
-                <button mat-menu-item *ngIf="post.user_id !== userId">
-                  <span style="font-size: 15px;">รายงานโพสต์</span>
-                </button>
-            </mat-menu> -->
-
         </div>
+
         <div *ngIf="post" class="media-slider" (mouseenter)="showControls()" (mouseleave)="hideControls()">
             <!-- แสดงรูปภาพหรือวิดีโอ -->
             <div class="media-container" style="position: relative;">
@@ -147,7 +161,6 @@
             </div>
         </div>
 
-
         <div style="display: flex; flex-direction: row; gap: 5px; align-items: center; margin-left: 15px; margin-right: 15px;
         margin-top: 15px; margin-bottom: 15px; justify-content: space-between;">
             <div style="display: flex; gap: 20px;">
@@ -161,12 +174,89 @@
                         {{ post.likes_count }}
                     </span>
                 </div>
-                <i style="font-size: 40px;" class="fa-regular fa-comment"></i>
-                <i style="font-size: 40px;" class="fa-solid fa-share"></i>
+                <div style="display: flex; align-items: center; gap: 5px;">
+                    <i style="font-size: 40px; cursor: pointer;" class="fa-regular fa-comment"
+                        (click)="toggleShowComments()"></i>
+                    <span *ngIf="comments.length > 0" style="font-weight: 500; font-size: 25px;">{{ comments.length
+                        }}</span>
+                </div>
+                <i style="font-size: 40px; cursor: pointer;" class="fa-solid fa-share" (click)="sharePost()"
+                    [ngClass]="{ 'shared': isShared, 'not-shared': !isShared }">
+                </i>
+
             </div>
-            <i style="font-size: 30px;" class="fa-regular fa-bookmark"></i>
+            <i style="font-size: 30px; cursor: pointer;" class="fa-regular fa-bookmark"
+                [ngClass]="{ 'saved': isSave, 'not-saved': !isSave }" (click)="toggleSavePost()"></i>
         </div>
-        <span class="itim-regular" style="padding: 0px 20px; font-size: 25px; margin-bottom: 20px;"
+        <span *ngIf="!isEditing" class="itim-regular" style="padding: 0px 20px; font-size: 25px; margin-bottom: 20px;"
             [innerHTML]="post.title | newlineToBr"></span>
+
+        <!-- ฟอร์มแก้ไข -->
+        <div *ngIf="isEditing" style="margin-top: 15px;">
+            <textarea [(ngModel)]="title" rows="4" cols="50"
+                style="width: 777px; font-size: 18px; padding: 10px;"></textarea>
+            <div
+                style="display: flex; justify-content: flex-end; margin-top: 10px; gap: 10px; margin-bottom: 15px; margin-right: 10px;">
+                <button mat-button style="color: rgb(33, 135, 224); font-size: 18px;"
+                    (click)="saveEditedPost()">บันทึก</button>
+                <button mat-button style="font-size: 16px; background-color: rgb(204, 60, 60); color: aliceblue;"
+                    (click)="cancelEdit()">ยกเลิก</button>
+            </div>
+        </div>
+
+        <!-- คอมเมนต์ -->
+        <div *ngFor="let comment of (showAllComments ? comments : comments.slice(0, 2))" style="margin-bottom: 20px;">
+            <div style="display: flex; gap: 10px; margin-left: 20px; justify-content: space-between;">
+                <div style="display: flex; gap: 15px;">
+                    <img style="width: 60px; height: 60px; object-fit: cover; border-radius: 50%;"
+                        [src]="comment.image_url" alt="">
+                    <div style="display: flex; flex-direction: column;">
+                        <div style="margin-bottom: 5px;">
+                            <span style="font-size: 20px; font-weight: 500;" title="username">{{ comment.username
+                                }}</span>
+                            <span style="margin-left: 10px; color: #949090;">{{ comment.date_time | timeAgo }}</span>
+                        </div>
+                        <span style="font-size: 20px;" title="comment">{{ comment.title }}</span>
+                    </div>
+                </div>
+
+                <button mat-icon-button [matMenuTriggerFor]="menu2">
+                    <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #menu2="matMenu">
+                    <button mat-menu-item *ngIf="comment.uid === +userId" (click)="deleteComment(comment.cid)">
+                        <i style="margin-right: 5px; font-size: 20px; color: rgb(87, 73, 75);"
+                            class="fa-solid fa-trash"></i>
+                        ลบ
+                    </button>
+                    <button mat-menu-item *ngIf="comment.uid !== +userId">
+                        <i style="margin-right: 5px; font-size: 20px; color: rgb(87, 73, 75);" class="fa fa-flag"></i>
+                        <span style="font-size: 15px;">รายงานความคิดเห็น</span>
+                    </button>
+                </mat-menu>
+            </div>
+        </div>
+
+        <!-- ปุ่มแสดงคอมเมนต์เพิ่มเติม -->
+        <div *ngIf="comments.length > 2" style="margin-bottom: 10px; margin-left: 10px;">
+            <button mat-button  (click)="toggleShowComments()" style=" color: #7e7776;">
+                {{ showAllComments ? 'แสดงคอมเมนต์น้อยลง' : 'แสดงคอมเมนต์เพิ่มเติม' }}
+            </button>
+        </div>
+
+        <!-- คอมเมนต์ -->
+        <div style="margin-left: 20px; margin-right: 20px; margin-bottom: 20px;">
+            <div style="position: relative; width: 100%; display: flex; align-items: center;">
+                <input #commentInput
+                    style="width: 100%; border-radius: 20px; height: 50px; font-size: 20px; border: none; background-color: #f0f0f0; padding: 10px; padding-right: 40px;"
+                    type="text" placeholder="เพิ่มความคิดเห็น" (keydown.enter)="onSubmitComment(commentInput.value)" />
+
+                <button (click)="onSubmitComment(commentInput.value)"
+                    style="position: absolute; right: 10px; background: none; border: none; color: #423534; font-size: 30px; cursor: pointer;">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+
     </div>
 </div>

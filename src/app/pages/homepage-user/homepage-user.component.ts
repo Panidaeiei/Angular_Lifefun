@@ -9,7 +9,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { ShowPost } from '../../models/showpost_model';
 import { UserService } from '../../services/Userservice';
 import { PostService } from '../../services/Postservice';
-import { LikePostService } from '../../services/ReactPostservice';
+import { ReactPostservice } from '../../services/ReactPostservice';
 
 @Component({
   selector: 'app-homepage-user',
@@ -23,7 +23,7 @@ export class HomepageUserComponent {
   isDrawerOpen: boolean = false; // เริ่มต้น Drawer ปิด
   posts: ShowPost[] = []; // เก็บโพสต์ทั้งหมด
 
-  constructor(private route: ActivatedRoute, private userService: UserService, private postService: PostService, private likePostService: LikePostService,) { }
+  constructor(private route: ActivatedRoute, private userService: UserService, private postService: PostService, private likePostService: ReactPostservice,) { }
 
   ngOnInit(): void {
     // ดึงค่าจาก Query Parameters

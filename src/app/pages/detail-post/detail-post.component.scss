@@ -80,7 +80,7 @@ body {
   background-color: rgb(233, 135, 135);
   height: 90px;
   width: 100%;
-  z-index: 2;
+  z-index: 100;
   /* Ensure it is above other content */
 }
 
@@ -170,64 +170,96 @@ body {
   color: black;
 }
 
-.divpost{
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    height: auto;
-    margin-top: 150px;
-    background-color: white;
+.divpost {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: auto;
+  margin-top: 150px;
+  background-color: white;
 }
 
 a.mat-button {
-    overflow: visible; /* ป้องกันการถูกตัด */
-    padding: 0; /* ลด padding ที่ไม่จำเป็น */
+  overflow: visible;
+  /* ป้องกันการถูกตัด */
+  padding: 0;
+  /* ลด padding ที่ไม่จำเป็น */
 }
 
 mat-icon {
-    vertical-align: middle; /* จัดไอคอนให้ตรงกลาง */
+  vertical-align: middle;
+  /* จัดไอคอนให้ตรงกลาง */
 }
 
 .divpost {
-    margin-bottom: 70px;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    overflow: hidden;
-    background-color: #fff;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  }
-  
-  .media-container {
-    position: relative;
-  }
-  
-  .slider-controls {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    display: none;  /* ซ่อนปุ่มเลื่อนโดยปกติ */
-    z-index: 10;
-  }
-  
-  /* เมื่อเมาส์อยู่บน media container หรือเมื่อปุ่มต้องการแสดง */
-  .slider-controls.visible {
-    display: flex;  /* แสดงปุ่มเลื่อน */
-    gap: 700px;
-  }
-  
-  .prev-btn, .next-btn {
-    background-color: rgba(134, 134, 134, 0.5);
-    color: white;
-    border: none;
-    padding: 10px;
-    font-size: 24px;
-    cursor: pointer;
-    border-radius: 5px;
-  }
-  
-  .prev-btn:hover, .next-btn:hover {
-    background: rgba(112, 109, 109, 0.7); /* เพิ่มความเข้มเมื่อ hover */
-  }
-  
+  margin-bottom: 70px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  overflow: hidden;
+  background-color: #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.media-container {
+  position: relative;
+}
+
+.slider-controls {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: none;
+  /* ซ่อนปุ่มเลื่อนโดยปกติ */
+}
+
+/* เมื่อเมาส์อยู่บน media container หรือเมื่อปุ่มต้องการแสดง */
+.slider-controls.visible {
+  display: flex;
+  /* แสดงปุ่มเลื่อน */
+  gap: 680px;
+}
+
+.prev-btn,
+.next-btn {
+  background-color: rgba(134, 134, 134, 0.5);
+  color: white;
+  border: none;
+  padding: 10px;
+  font-size: 24px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.prev-btn:hover,
+.next-btn:hover {
+  background: rgba(112, 109, 109, 0.7);
+  /* เพิ่มความเข้มเมื่อ hover */
+}
+
+.location {
+  font-size: 20px;
+  text-decoration: none;
+  color: rgb(87, 81, 83);
+}
+
+.shared {
+  color: rgb(212, 117, 125); 
+}
+
+.not-shared {
+  color: rgb(112, 106, 106); 
+
+}
+
+.saved {
+  color: rgb(24, 24, 24); 
+  font-weight: bold;
+}
+
+.not-saved {
+  color: #111111; 
+}
+
+
 

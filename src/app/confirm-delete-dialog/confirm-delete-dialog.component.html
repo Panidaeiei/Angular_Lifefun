@@ -1,0 +1,8 @@
+<h1 mat-dialog-title class="dialog-title">ยืนยันการลบโพสต์</h1>
+<div mat-dialog-content class="dialog-content">
+  <p class="dialog-text">คุณต้องการลบโพสต์นี้จริงหรือ?</p>
+</div>
+<div mat-dialog-actions class="dialog-actions" style="margin-bottom: 30px; gap: 20px;">
+  <button mat-button (click)="onCancel()" class="cancel-btn" style="font-size: 18px;"><span class="itim-regular">ยกเลิก</span></button>
+  <button mat-button color="warn" (click)="onConfirm()" class="confirm-btn" style="font-size: 15px;"><span class="itim-regular">ลบโพสต์</span></button>
+</div>
