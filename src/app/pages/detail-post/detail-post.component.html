@@ -99,8 +99,11 @@
                 <img [src]="post.user_profile_image || 'default-profile-image.png'" alt="รูปโปรไฟล์"
                     style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover;">
                 <div style="display: flex; flex-direction: column;">
-                    <span style="font-size: 30px; font-weight: 500; margin-left: 20px; margin-bottom: 10px;">{{
-                        post.user_name }}</span>
+
+                    <span style="font-size: 30px; font-weight: 500; margin-left: 20px; ">
+                        {{post.user_name }}</span>
+                    <span style="color: #7e7776; margin-top: 5px; margin-left: 25px; margin-bottom: 10px;">{{post.post_time | timeAgo}}</span>
+
                     <div *ngIf="post.location">
                         <i class="fa-solid fa-location-dot"
                             style="margin-left: 20px; margin-right: 5px; font-size: 20px; color: rgb(228, 63, 91);"></i>
@@ -188,7 +191,7 @@
             <i style="font-size: 30px; cursor: pointer;" class="fa-regular fa-bookmark"
                 [ngClass]="{ 'saved': isSave, 'not-saved': !isSave }" (click)="toggleSavePost()"></i>
         </div>
-        <span *ngIf="!isEditing" class="itim-regular" style="padding: 0px 20px; font-size: 25px; margin-bottom: 20px;"
+        <span *ngIf="!isEditing" style="padding: 0px 20px; font-size: 22px; margin-bottom: 20px;"
             [innerHTML]="post.title | newlineToBr"></span>
 
         <!-- ฟอร์มแก้ไข -->
@@ -239,7 +242,7 @@
 
         <!-- ปุ่มแสดงคอมเมนต์เพิ่มเติม -->
         <div *ngIf="comments.length > 2" style="margin-bottom: 10px; margin-left: 10px;">
-            <button mat-button  (click)="toggleShowComments()" style=" color: #7e7776;">
+            <button mat-button (click)="toggleShowComments()" style=" color: #7e7776;">
                 {{ showAllComments ? 'แสดงคอมเมนต์น้อยลง' : 'แสดงคอมเมนต์เพิ่มเติม' }}
             </button>
         </div>

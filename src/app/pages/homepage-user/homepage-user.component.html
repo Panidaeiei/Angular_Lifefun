@@ -90,7 +90,7 @@
     </div>
 </mat-toolbar>
 <div class="background-div">
-    <div class="itim-regular2" style="display: flex; margin-top: 120px; justify-content: center; margin-bottom: 30px;">
+    <div style="display: flex; margin-top: 120px; justify-content: center; margin-bottom: 30px; font-size: 25px;">
         <span>สำหรับคุณ</span>
     </div>
 
@@ -104,10 +104,10 @@
                     <a [routerLink]="['/detail_post']" [queryParams]="{ post_id: post.post_id, user_id: userId }">
                       <ng-container *ngIf="post.media_type === 'image'; else videoTemplate">
                         <img [src]="post.media_url || 'https://via.placeholder.com/360x300'"
-                             style="width: 370px; height: 320px; object-fit: cover;" alt="รูปที่โพสต์">
+                             style="width: 390px; height: 350px; object-fit: cover;" alt="รูปที่โพสต์">
                       </ng-container>
                       <ng-template #videoTemplate>
-                        <video [src]="post.media_url" controls style="width: 370px; height: 320px; object-fit: cover;">
+                        <video [src]="post.media_url" controls style="width: 390px; height: 350px; object-fit: cover;">
                         </video>
                       </ng-template>
                     </a>
@@ -121,7 +121,7 @@
               
                     <!-- ข้อมูลโพสต์ -->
                     <div style="display: flex; align-items: center; justify-content: space-between; margin-right: 10px;">
-                      <span style="margin-left: 15px; margin-right: 15px; margin-top: 10px;" class="itim-regular3">
+                      <span style="margin-left: 15px; margin-right: 15px; margin-top: 10px; font-size: 20px;" >
                         {{ post.title | slice:0:15 }}{{ post.title.length > 15 ? '...' : '' }}
                       </span>
                       <div style="display: flex; align-items: center; justify-content: space-between; margin-right: 10px;">
@@ -134,7 +134,7 @@
                     </div>
               
                     <!-- ข้อมูลโปรไฟล์ผู้ใช้ -->
-                    <div style="display: flex; flex-direction: row; margin-left: 15px; margin-right: 15px; margin-top: 25px; gap: 10px; justify-content: space-between;">
+                    <div style="display: flex; flex-direction: row; margin-left: 15px; margin-right: 15px; margin-top: 35px; gap: 10px; justify-content: space-between;">
                       <div style="display: flex; align-items: center; gap: 10px;">
                         <img [src]="post.user_profile_image || 'https://via.placeholder.com/50'"
                              alt="รูปโปรไฟล์" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">

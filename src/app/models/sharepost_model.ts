@@ -3,6 +3,7 @@ export interface SharePostModel {
     uid?: number;        
     date_time?: string;  
     notify?: number;    
-    isShared?: boolean;  
+    isShared?: boolean;
+    hasMultipleMedia?: boolean;   
   }
   
