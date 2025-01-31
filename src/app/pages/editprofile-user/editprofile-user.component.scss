@@ -1,9 +1,35 @@
+:host,
+html,
 body {
-    font-family: 'Prompt', sans-serif;
-    background-color: #fff4f4;
-    margin: 0;
-    padding: 0;
-  }
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgb(249, 241, 239);
+  /* สีพื้นหลัง */
+  box-sizing: border-box;
+  /* คำนวณขนาดไม่เกินขอบ */
+  overflow-x: hidden;
+  /* ปิดการเลื่อนแนวนอน */
+}
+
+:host {
+  display: block;
+  min-height: 100vh;
+  /* ครอบคลุมความสูงเต็มหน้าจอ */
+  background-color: rgb(249, 241, 239);
+  /* สีพื้นหลัง */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+body {
+  overflow-y: auto;
+  /* เปิดใช้งานการเลื่อนแนวตั้ง */
+  background-color: rgb(249, 241, 239);
+  /* สีพื้นหลังเหมือนกัน */
+}
   
   .profile-wrapper {
     position: relative;
@@ -14,7 +40,7 @@ body {
   .profile-title {
     font-size: 24px;
     font-weight: bold;
-    margin-bottom: 10px;
+    margin-bottom: 30px;
     color: #0c0b0b;
   }
   
@@ -22,7 +48,7 @@ body {
     width: 90%;
     max-width: 600px;
     margin: 0 auto;
-    background-color: #ffe3e3;
+    background-color: #fce8e4;
     border-radius: 15px;
     padding: 20px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -83,7 +109,7 @@ body {
   textarea {
     width: 70%; /* กำหนดความกว้างให้ช่องกรอกข้อมูล */
     padding: 10px;
-    border: 1px solid #ffbcbc;
+    border: 1px solid #d8d0d0;
     border-radius: 5px;
     font-size: 14px;
   }
@@ -129,7 +155,7 @@ body {
   }
   
   .save-button {
-    background-color: #ff6161; /* สีเขียว */
+    background-color: #3151e2; /* สีเขียว */
     color: white;
     border: none;
     border-radius: 5px;
@@ -139,5 +165,121 @@ body {
   .save-button:hover {
     opacity: 0.8;
   }
+
+  .profile-image-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+  }
+  
+  .profile-image-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+  }
+  
+  .image-container {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%; /* ทำให้เป็นวงกลม */
+    overflow: visible; /* อนุญาตให้ไอคอนแก้ไขออกนอกขอบ */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%; /* ให้รูปภาพเป็นวงกลม */
+  }
+  
+  .edit-icon {
+    position: absolute;
+    bottom: -5px; /* ขยับไอคอนออกนอกขอบล่าง */
+    right: 20px;  /* ขยับไอคอนออกนอกขอบขวา */
+    background-color: #ffffff;
+    border: none;
+    border-radius: 50%;
+    padding: 8px;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .edit-icon i {
+    font-size: 16px;
+    color: #666;
+  }
+  
+  .edit-icon:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .spinner {
+    border: 8px solid #f3f3f3;
+    border-top: 8px solid #3498db;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+  
+  .profile-container.loading {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+  
+  .form-group {
+    position: relative;
+  }
+  
+  .emoji-button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+  }
+  
+  ngx-emoji-mart {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    z-index: 10;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.2);
+  }
+  
   
   

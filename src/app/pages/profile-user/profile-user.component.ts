@@ -45,18 +45,19 @@ export class ProfileUserComponent implements OnInit {
       if (params['id']) {
         this.userId = params['id'];
         console.log('User ID:', this.userId);
+  
+        // เรียกฟังก์ชันเมื่อมีค่า userId
+        this.getUserProfile();
+        this.getUserPosts();
+        this.getSharedPosts();
+        this.getSavePosts();
       } else {
         this.userId = ''; // กำหนดค่าเริ่มต้นเมื่อไม่มี User ID
         console.warn('User ID not found in query parameters.');
       }
     });
-
-    // ดึงข้อมูลผู้ใช้ที่ล็อกอินอยู่
-    this.getUserProfile();
-    this.getUserPosts();
-    this.getSharedPosts();
-    this.getSavePosts();
   }
+  
 
   // ดึงข้อมูลโปรไฟล์ผู้ใช้
   getUserProfile(): void {

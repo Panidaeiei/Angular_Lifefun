@@ -47,6 +47,7 @@ export class DetailPostComponent implements OnInit {
   shareCount: number = 0;
   isShared: boolean = false;
   isSave: boolean = false;
+  currentUserId: string | null = null;
 
   @ViewChild('commentInput') commentInput!: ElementRef;
   @ViewChildren(MatMenuTrigger) menuTriggers!: QueryList<MatMenuTrigger>;
@@ -80,6 +81,11 @@ export class DetailPostComponent implements OnInit {
       // ดำเนินการที่ต้องการเมื่อไลค์เปลี่ยนแปลง
     });
 
+    this.userService.getCurrentUserId().subscribe((userId) => {
+      this.currentUserId = userId;
+      console.log('Current User ID eiei:', this.currentUserId);
+    });
+
     this.posts.forEach((post) => {
       this.checkLikeStatus(post.post_id);
     });
@@ -87,6 +93,18 @@ export class DetailPostComponent implements OnInit {
 
     this.fetchComments();
 
+  }
+
+  goToProfile(userId: string): void {
+    console.log('Current User ID:', this.currentUserId);
+
+    if (userId === this.currentUserId) {
+      // นำทางไปหน้าโปรไฟล์ของตนเอง
+      this.router.navigate(['/ProfileUser'], { queryParams: { id: this.userId } });
+    } else {
+      // นำทางไปหน้าโปรไฟล์ของคนอื่น
+      this.router.navigate(['/view_user', userId]);
+    }
   }
 
   fetchComments(): void {

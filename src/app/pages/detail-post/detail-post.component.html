@@ -7,7 +7,7 @@
         <a [routerLink]="['/HomepageUser']" [queryParams]="{ id: userId }">
             <img src="https://shorturl.asia/2pOd3" alt="Home Icon" width="80px">
         </a>
-        <div style="width: 10%;"></div>
+        <div style="width: 15%;"></div>
         <!-- เมนูตรงกลาง -->
         <div style="display: flex; flex-grow: 1; justify-content: center; align-items: center;">
             <div style="display: flex; justify-content: center; align-items: center; gap: 50px;">
@@ -29,7 +29,7 @@
 
                 <div>
                     <a [routerLink]="['/CreatePost']" [queryParams]="{ id: userId }"><img
-                            src="https://shorturl.asia/ngKuG" alt="" width="60px"></a>
+                            src="https://scontent.fbkk10-1.fna.fbcdn.net/v/t1.15752-9/465505200_630347202693129_7507803564120503230_n.png?_nc_cat=107&ccb=1-7&_nc_sid=9f807c&_nc_ohc=DJIwEq0Dzw0Q7kNvgEqLS7u&_nc_zt=23&_nc_ht=scontent.fbkk10-1.fna&oh=03_Q7cD1gGDgXF2I13SrHWdmuiFc5AlVfULXTA9MvkjeMjETEJkow&oe=67C3DCBC" alt="" width="60px"></a>
                 </div>
 
                 <!-- การแจ้งเตือน -->
@@ -97,7 +97,7 @@
             style="display: flex; flex-direction: row; margin-bottom: 20px; margin-top: 20px; margin-left: 15px; justify-content: space-between; ">
             <div style="display: flex;">
                 <img [src]="post.user_profile_image || 'default-profile-image.png'" alt="รูปโปรไฟล์"
-                    style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover;">
+                (click)="goToProfile(post.user_uid.toString())" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover;">
                 <div style="display: flex; flex-direction: column;">
 
                     <span style="font-size: 30px; font-weight: 500; margin-left: 20px; ">
@@ -212,7 +212,7 @@
             <div style="display: flex; gap: 10px; margin-left: 20px; justify-content: space-between;">
                 <div style="display: flex; gap: 15px;">
                     <img style="width: 60px; height: 60px; object-fit: cover; border-radius: 50%;"
-                        [src]="comment.image_url" alt="">
+                        [src]="comment.image_url" alt=""  (click)="goToProfile(comment.uid)">
                     <div style="display: flex; flex-direction: column;">
                         <div style="margin-bottom: 5px;">
                             <span style="font-size: 20px; font-weight: 500;" title="username">{{ comment.username

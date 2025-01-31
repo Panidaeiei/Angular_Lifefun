@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import Swal from 'sweetalert2';
+import { UserService } from '../../services/Userservice';
 
 @Component({
   selector: 'app-login',
@@ -17,7 +18,7 @@ export class LoginComponent {
   password: string = '';   // ตัวแปรสำหรับเก็บ Password
   errorMessage: string = ''; // ข้อความแสดงข้อผิดพลาด (ถ้ามี)
 
-  constructor(private http: HttpClient, private router: Router) { }
+  constructor(private http: HttpClient, private router: Router,private userService: UserService, ) { }
 
   // ฟังก์ชันสำหรับการล็อกอิน
   login() {
@@ -43,6 +44,8 @@ export class LoginComponent {
         // เก็บข้อมูลผู้ใช้ใน localStorage
         localStorage.setItem('userId', response.id);
         localStorage.setItem('userRole', response.role);
+
+        this.userService.setCurrentUserId(response.id);
 
         // นำทางไปยังหน้า Home ตาม role
         if (response.role === 'admin') {

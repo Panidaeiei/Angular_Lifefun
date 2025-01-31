@@ -32,7 +32,6 @@
             "styles": [
               "@angular/material/prebuilt-themes/azure-blue.css",
               "src/styles.scss",
-              "src/styles/theme.scss",
               "node_modules/@fortawesome/fontawesome-free/css/all.min.css",
               "node_modules/@pqina/pintura/pintura.css"
             ],
