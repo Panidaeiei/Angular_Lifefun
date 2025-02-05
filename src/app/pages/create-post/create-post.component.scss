@@ -101,7 +101,8 @@ button {
   background-color: rgb(233, 135, 135); 
   height: 90px;
   width: 100%;
-  z-index: 1; /* Ensure it is above other content */
+  z-index: 100; /* Ensure it is above other content */
+  
 }
 
 .content {
@@ -223,7 +224,7 @@ button {
     content: '';
     position: absolute;
     bottom: -12px;
-    left: 50%; /* เริ่มที่กึ่งกลางของเมนู */
+    left: 100%; /* เริ่มที่กึ่งกลางของเมนู */
     transform: translateX(-50%); /* ดันกลับมาครึ่งหนึ่งของความกว้าง */
     height: 4px;
     background-color: #000000; /* สีขีดล่าง */

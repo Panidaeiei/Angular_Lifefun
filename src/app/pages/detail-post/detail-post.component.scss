@@ -80,35 +80,23 @@ body {
   background-color: rgb(233, 135, 135);
   height: 90px;
   width: 100%;
-  z-index: 1;
+  z-index: 100;
   /* Ensure it is above other content */
 }
 
 .cardpost {
   background-color: white;
   width: auto;
-  height: 400px;
+  height: 450px;
 }
 
 .heart-icon {
-  color: gray;
+  color: rgb(165, 163, 163);
   transition: color 0.3s ease;
 }
 
 .heart-icon.liked {
   color: rgb(224, 67, 67);
-}
-
-
-.fixed-toolbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  background-color: rgb(233, 135, 135);
-  height: 90px;
-  width: 100%;
-  z-index: 100;
-  /* Ensure it is above other content */
 }
 
 
@@ -118,6 +106,22 @@ body {
   font-family: "Itim", serif;
   font-weight: 400;
   font-style: normal;
+}
+
+.itim-regular2 {
+  margin-top: 5px;
+  font-family: "Itim", serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 30px;
+}
+
+.itim-regular3 {
+  margin-top: 5px;
+  font-family: "Itim", serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 25px;
 }
 
 .search-container {
@@ -160,89 +164,102 @@ body {
   position: relative;
 }
 
-.menu-item.active {
-  color: #ff0000;
-  /* สีเมื่อ active */
-}
-
-
 .menu-item span {
-  font-size: 14px;
+  font-size: 22px;
   margin-top: 5px;
+  color: black;
 }
 
-.menu-item.active i,
-.menu-item.active span {
-  color: #000000;
+.divpost {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: auto;
+  margin-top: 150px;
+  background-color: white;
 }
 
-.menu-item.active::after {
-  content: '';
-  position: absolute;
-  bottom: -10px;
-  left: 50%;
-  /* เริ่มที่กึ่งกลางของเมนู */
-  transform: translateX(-50%);
-  /* ดันกลับมาครึ่งหนึ่งของความกว้าง */
-  height: 5px;
-  background-color: #000000;
-  /* สีขีดล่าง */
-  width: 80px;
-  /* ความกว้างของขีด */
+a.mat-button {
+  overflow: visible;
+  /* ป้องกันการถูกตัด */
+  padding: 0;
+  /* ลด padding ที่ไม่จำเป็น */
 }
 
-.buttonEdit {
-  border: none;
-  width: 120px;
-  height: 35px;
-  font-size: 15px;
-  background-color: #f0d9db;
-  cursor: pointer;
+mat-icon {
+  vertical-align: middle;
+  /* จัดไอคอนให้ตรงกลาง */
 }
 
-.buttonEdit:hover {
-  background-color: #d1bec0;
+.divpost {
+  margin-bottom: 70px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  overflow: hidden;
+  background-color: #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-/* บังคับให้ Ink Bar เป็นสีเขียว */
-::ng-deep .mdc-tab-indicator__content--underline {
-  --mdc-tab-indicator-active-indicator-color: rgb(0, 0, 0) !important;
-}
-
-/* แก้ไขสีเมื่อแท็บถูกเลือก */
-::ng-deep .mat-mdc-tab.mdc-tab--active .mdc-tab-indicator__content--underline {
-  --mdc-tab-indicator-active-indicator-color: rgb(0, 0, 0)  !important;
-  border-color: rgb(0, 0, 0) !important; /* บังคับให้เส้นใต้เป็นสีเขียว */
-  border-top-width: 2px !important;
-}
-
-.post-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, 300px); /* ความกว้างของแต่ละโพสต์ถูกกำหนดเป็น 300px */
-  gap: 10px; /* ระยะห่างระหว่างโพสต์ */
-  padding: 40px; /* ระยะห่างจากขอบ */
-  justify-content: center;
-}
-
-.post-item {
-  width: 300px; /* กำหนดความกว้างเฉพาะโพสต์ */
+.media-container {
   position: relative;
-  margin-top: -15px; 
 }
 
-.post-image,
-.post-video {
-  width: 300px; /* ความกว้างของสื่อ */
-  height: 300px; /* ความสูงของสื่อ */
-  object-fit: cover;
-  border-radius: 0px; /* ไม่มีความมน */
+.slider-controls {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: none;
+  /* ซ่อนปุ่มเลื่อนโดยปกติ */
+}
+
+/* เมื่อเมาส์อยู่บน media container หรือเมื่อปุ่มต้องการแสดง */
+.slider-controls.visible {
+  display: flex;
+  /* แสดงปุ่มเลื่อน */
+  gap: 680px;
+}
+
+.prev-btn,
+.next-btn {
+  background-color: rgba(134, 134, 134, 0.5);
+  color: white;
+  border: none;
+  padding: 10px;
+  font-size: 24px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.prev-btn:hover,
+.next-btn:hover {
+  background: rgba(112, 109, 109, 0.7);
+  /* เพิ่มความเข้มเมื่อ hover */
+}
+
+.location {
+  font-size: 20px;
+  text-decoration: none;
+  color: rgb(87, 81, 83);
+}
+
+.shared {
+  color: rgb(212, 117, 125); 
+}
+
+.not-shared {
+  color: rgb(112, 106, 106); 
+
+}
+
+.saved {
+  color: rgb(24, 24, 24); 
+  font-weight: bold;
+}
+
+.not-saved {
+  color: #111111; 
 }
 
 
-.multiple-media-icon {
-  top: 10px;
-  right: 10px;
-  padding: 5px;
-  border-radius: 50%;
-}
 

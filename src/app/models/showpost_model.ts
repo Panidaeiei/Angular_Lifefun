@@ -8,8 +8,10 @@ export interface ShowPost {
   user_name: string;
   user_profile_image: string | null;
   user_uid: number;
-  media_url: string | null; // รูปภาพหรือวิดีโอ URL
-  media_type: 'image' | 'video' | null; // ประเภทของ media
+  media_url: string | null; // รูปแรกหรือวิดีโอแรก
+  media_type: 'image' | 'video' | null; // ประเภทของ media_url
   isLiked?: boolean; // สถานะถูกใจ
-  hasMultipleMedia?: boolean; // สถานะว่ามีหลายรูปภาพหรือไม่
+  hasMultipleMedia?: boolean; // สถานะว่ามีหลายรูป
+  currentImageIndex: number; // รูปภาพที่แสดงในปัจจุบัน
 }
+

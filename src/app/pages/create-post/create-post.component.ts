@@ -9,11 +9,12 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import { Post } from '../../models/post_model';
-import { UserService } from '../../services/service';
+import { UserService } from '../../services/Userservice';
 import { Category } from '../../models/category_model';
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import { User } from '../../models/register_model';
+import { PostService } from '../../services/Postservice';
 
 @Component({
   selector: 'app-create-post',
@@ -52,9 +53,12 @@ export class CreatePostComponent {
 
   constructor(
     private route: ActivatedRoute,
-    private userService: UserService,
+    private postService: PostService,
+    private userService: UserService,  // Inject UserService
     private router: Router
   ) {}
+  
+  
 
   toggleDrawer(): void {
     this.isDrawerOpen = !this.isDrawerOpen; // สลับสถานะเปิด/ปิด
@@ -72,6 +76,7 @@ export class CreatePostComponent {
         this.router.navigate(['/login']); // เปลี่ยนเส้นทางไปหน้า login หากไม่มี userId
       }
     });
+    
     this.loadCategories();
   }
   
@@ -90,7 +95,7 @@ export class CreatePostComponent {
   }
   
   loadCategories(): void {
-    this.userService.getCategories().subscribe(
+    this.postService.getCategories().subscribe(
       (data: Category[]) => {
         this.categories = data;
         console.log('Categories loaded:', this.categories);
@@ -194,7 +199,7 @@ export class CreatePostComponent {
     console.log('Request Body:', this.postData);
     console.log('Files:', this.files);
   
-    this.userService.addPost(formData).subscribe(
+    this.postService.addPost(formData).subscribe(
       (response) => {
         this.isLoading = false; // ปิดสถานะการโหลด
         Swal.fire({

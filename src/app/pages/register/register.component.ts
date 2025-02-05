@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import Swal from 'sweetalert2';
-import { UserService } from '../../services/service';
+import { UserService } from '../../services/Userservice';
 import { User } from '../../models/register_model';
 import { Router } from '@angular/router';
 

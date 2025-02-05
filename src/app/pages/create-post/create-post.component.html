@@ -3,9 +3,9 @@
     <a [routerLink]="['/HomepageUser']" [queryParams]="{ id: userId }">
         <img src="https://shorturl.asia/2pOd3" alt="Home Icon" width="80px">
     </a>
-    <div style="width: 10%;"></div>
+    <div style="width: 15%;"></div>
     <!-- เมนูตรงกลาง -->
-    <div style="display: flex; flex-grow: 1; justify-content: center; align-items: center;">
+    <div style="display: flex; flex-grow: 1; justify-content: center; align-items: center; ">
         <div style="display: flex; justify-content: center; align-items: center; gap: 50px;">
 
             <div style="display: flex; flex-direction: column; align-items: center;">
@@ -25,7 +25,7 @@
 
             <div>
                 <a [routerLink]="['/CreatePost']" [queryParams]="{ id: userId }"><img
-                        src="https://shorturl.asia/ngKuG" alt="" width="60px"></a>
+                        src="https://scontent.fbkk10-1.fna.fbcdn.net/v/t1.15752-9/465505200_630347202693129_7507803564120503230_n.png?_nc_cat=107&ccb=1-7&_nc_sid=9f807c&_nc_ohc=DJIwEq0Dzw0Q7kNvgEqLS7u&_nc_zt=23&_nc_ht=scontent.fbkk10-1.fna&oh=03_Q7cD1gGDgXF2I13SrHWdmuiFc5AlVfULXTA9MvkjeMjETEJkow&oe=67C3DCBC" alt="" width="60px"></a>
             </div>
 
             <!-- การแจ้งเตือน -->
@@ -110,7 +110,7 @@
 
                     <div style="display: flex; align-items: center; gap: 20px; margin-top: 10px; margin-bottom: 20px;">
                         <img [src]="user?.image_url ?? 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'" alt="User Profile Image"
-                            width="80px" style="border-radius: 50%;" />
+                            width="80px" height="80px" style="border-radius: 50%; object-fit: cover;" />
 
                         <div style="display: flex; flex-direction: column; margin-left: 5px; margin-right: 5px;">
                             <span style="font-size: 20px; font-weight: bold;">{{ user?.username || 'ชื่อผู้ใช้'
@@ -148,7 +148,7 @@
 
                         <!-- ปุ่มลบไฟล์ -->
                         <button *ngIf="files.length > 0"
-                            style="position: absolute; top: 10px; left: 10px; background-color: rgb(216, 57, 57); color: white; padding: 5px 10px; border: none; border-radius: 50%; font-size: 16px; cursor: pointer; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); z-index: 10;"
+                            style="position: absolute; top: 10px; left: 10px; background-color: rgb(216, 57, 57); color: white; padding: 5px 10px; border: none; border-radius: 50%; font-size: 16px; cursor: pointer; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); z-index: 5;"
                             (click)="confirmRemoveFile()">
                             <span style="font-size: 20px;">×</span>
                         </button>
