@@ -1,7 +1,11 @@
 <div class="background-div">
     <mat-toolbar
       style="background-color: rgb(233, 135, 135); height: 90px; display: flex; align-items: center; justify-content: space-between;">
-  
+        <!-- Logo ด้านซ้าย -->
+        <a [routerLink]="['/HomepageUser']" [queryParams]="">
+            <img src="https://shorturl.asia/2pOd3" alt="Home Icon" width="80px">
+        </a>
+        <div style="width: 15%;"></div>
       <!-- กลุ่มไอคอนด้านซ้าย -->
       <div style="display: flex; flex-grow: 1; justify-content: center; align-items: center;">
         <div style="display: flex; justify-content: center; align-items: center; gap: 60px;">
@@ -10,11 +14,11 @@
             <a href="">
               <i style="font-size: 40px; color: black;" class="fa-solid fa-house"></i>
             </a>
-            <span class="itim-regular">หน้าหลัjjก</span>
+            <span class="itim-regular">หน้าหลัก</span>
           </div>
   
           <div style="display: flex; flex-direction: column; align-items: center;">
-            <a [routerLink]="['']" [queryParams]="">
+            <a [routerLink]="['/userlist']" [queryParams]="">
                 <i style="font-size: 40px; color: black;" class="fa-solid fa-users"></i>
             </a>
             <span class="itim-regular">ผู้ใช้งาน</span>
@@ -43,5 +47,78 @@
        <!-- </a> -->
     </div>
     </mat-toolbar>
-  </div>
+
+    <div style="display: flex; justify-content: flex-end; margin-top: 20px; padding-right: 20px;">
+        <button class="buttonEdit" [routerLink]="['']" [queryParams]="" style="font-size: 20px; font-weight: bold;">
+            <span>ระงับบัญชีผู้ใช้</span>
+        </button>
+    </div>
+    
+    <div style="display: flex; flex-direction: column; margin-top: 50px;">
+
+        <div style="display: flex; flex-direction: row; justify-content: center;">
+            <div style="display: flex; flex-direction: row; gap: 180px;">
+                <!-- รูปโปรไฟล์ -->
+                <img [src]=""
+                    style="width: 250px; height: 250px;  border-radius: 50%; object-fit: cover;" >
+                <img src="" alt="">
+                <!-- ข้อมูลผู้ใช้ -->
+                <div style="display: flex; flex-direction: column;">
+                    <div style="display: flex; flex-direction: row; justify-content: flex-start; gap: 30px; width: 100%;">
+                        <!-- ชื่อผู้ใช้ -->
+                        <span style="font-size: 30px;"> วาสันต์</span>
+                        <!-- อีเมล -->
+                        <span style="font-size: 30px; color: rgb(147, 142, 142);"> email: wasan.com</span>
+                        
+                    </div>
+                    
+                    <div style="display: flex; flex-direction: row; margin-top: 30px; gap: 60px;">
+                        <!-- จำนวนโพสต์ -->
+                        <div style="display: flex; flex-direction: column; align-items: center;">
+                            <span style="font-size: 25px; font-weight: 500;">1</span>
+                            <span style="font-size: 20px;">จำนวนโพสต์</span>
+                        </div>
+
+                        <!-- กำลังติดตาม -->
+                        <div style="display: flex; flex-direction: column; align-items: center;">
+                            <span style="font-size: 25px; font-weight: 500;">2</span>
+                            <span style="font-size: 20px;">กำลังติดตาม</span>
+                        </div>
+
+                        <!-- ผู้ติดตาม -->
+                        <div style="display: flex; flex-direction: column; align-items: center;">
+                            <span style="font-size: 25px; font-weight: 500;">220</span>
+                            <span style="font-size: 20px;">ผู้ติดตาม</span>
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <span style="margin-top: 30px; font-size: 19px;">คำอธิบายตัวเอง
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div style="display: flex; justify-content: center; align-items: center; margin-top: 50px; z-index: 1;">
+            <mat-tab-group style="width: 70%;">
+                <!-- โพสต์ของผู้ใช้ -->
+                <mat-tab>
+                    <ng-template mat-tab-label>
+                        <mat-icon>apps</mat-icon>
+                    </ng-template>
+                    <div class="post-grid">
+                       <!--  <div *ngFor="let post of posts" class="post-item">-->
+                       </div>
+                            <!-- แสดงรูปภาพหรือวิดีโอ -->
+                         <!--    <a [routerLink]="['']" [queryParams]="{ post_id: post.post_id, user_id: userId }"
+                              <img *ngIf="post.media_type === 'image'"
+                                   [src]="post.firstMediaUrl || 'https://via.placeholder.com/350x300'"
+                                   alt="รูปที่โพสต์" class="post-image">
+                              <video *ngIf="post.media_type === 'video'" [src]="post.firstMediaUrl" controls
+                                   class="post-video"></video>
+                            </a>-->    
+                </mat-tab>
+            </mat-tab-group>
+        </div>
+    </div>
+ </div>
   
