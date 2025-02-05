@@ -10,6 +10,8 @@ import { CreatePostComponent } from './pages/create-post/create-post.component';
 import { CategoryPageComponent } from './pages/category-page/category-page.component';
 import { NotificationUserComponent } from './pages/notification-user/notification-user.component';
 import { EditprofileUserComponent } from './pages/editprofile-user/editprofile-user.component';
+import { UserListAdminComponent } from './pages/user-list-admin/user-list-admin.component';
+import { ProfileuserAdminComponent } from './pages/profileuser-admin/profileuser-admin.component';
 
 export const routes: Routes = [
 
@@ -23,5 +25,7 @@ export const routes: Routes = [
     {path: 'ProfileUser', component: ProfileUserComponent},
     {path: 'CreatePost', component: CreatePostComponent},
     {path: 'category', component: CategoryPageComponent},
-    {path: 'EditProfile', component: EditprofileUserComponent}
+    {path: 'EditProfile', component: EditprofileUserComponent},
+    {path: 'Userlist', component: UserListAdminComponent},
+    {path: 'ProfileuserAdmin', component: ProfileuserAdminComponent}
 ];

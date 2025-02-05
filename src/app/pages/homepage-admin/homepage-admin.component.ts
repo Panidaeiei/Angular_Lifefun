@@ -1,9 +1,11 @@
+import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-homepage-admin',
-  imports: [],
+  imports: [MatToolbarModule, RouterModule, CommonModule],
   templateUrl: './homepage-admin.component.html',
   styleUrl: './homepage-admin.component.scss'
 })
