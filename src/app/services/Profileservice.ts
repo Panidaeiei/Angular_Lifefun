@@ -48,6 +48,21 @@ export class ProfileService {
         })
       );
   }
+
+  getUserProfileById(userId: string): Observable<User> {
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${localStorage.getItem('token')}`, // ใส่ JWT Token
+    });
+  
+    return this.http
+      .get<User>(`${this.baseUrl}/Prouser/${userId}`, { headers }) 
+      .pipe(
+        catchError((error) => {
+          console.error(`Error fetching profile for user ${userId}:`, error);
+          return throwError(error);
+        })
+      );
+  }
   
 }
 

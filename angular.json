@@ -18,8 +18,13 @@
           "builder": "@angular-devkit/build-angular:application",
           "options": {
             "assets": [
+              "src/assets",
               "src/favicon.ico",
-              "src/assets"
+              {
+                "glob": "**/*",
+                "input": "node_modules/@fortawesome/fontawesome-free/webfonts",
+                "output": "assets/webfonts"
+              }
             ],
             "outputPath": "dist/lifefun-project",
             "index": "src/index.html",

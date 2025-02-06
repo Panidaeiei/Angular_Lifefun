@@ -24,7 +24,7 @@ export class RegisterComponent {
 
   confirmPassword: string = ''; // ตัวแปรสำหรับยืนยันรหัสผ่าน
   selectedFile: File | null = null; // ตัวแปรสำหรับไฟล์ที่เลือก
-  previewImage: string = 'https://shorturl.asia/BE0j7'; // รูปเริ่มต้น
+  previewImage: string = 'https://scontent.fbkk10-1.fna.fbcdn.net/v/t1.15752-9/467486088_9395369247162722_9124289913270465764_n.png?_nc_cat=103&ccb=1-7&_nc_sid=9f807c&_nc_ohc=2RTdWkSDo2UQ7kNvgEH-_5J&_nc_zt=23&_nc_ht=scontent.fbkk10-1.fna&oh=03_Q7cD1gFbqFNDtEI2fV3h-86ZYef56ySuHmYe-BRdNTjy3Vyi9g&oe=67CAB874'; // รูปเริ่มต้น
 
   constructor(private userService: UserService, private router: Router) { }
 

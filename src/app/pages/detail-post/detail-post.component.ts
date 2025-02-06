@@ -103,7 +103,7 @@ export class DetailPostComponent implements OnInit {
       this.router.navigate(['/ProfileUser'], { queryParams: { id: this.userId } });
     } else {
       // นำทางไปหน้าโปรไฟล์ของคนอื่น
-      this.router.navigate(['/view_user', userId]);
+      this.router.navigate(['/view_user', userId], { queryParams: { id: this.userId } });
     }
   }
 

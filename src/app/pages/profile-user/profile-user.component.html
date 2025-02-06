@@ -26,7 +26,8 @@
 
                 <div>
                     <a [routerLink]="['/CreatePost']" [queryParams]="{ id: userId }"><img
-                            src="https://scontent.fbkk10-1.fna.fbcdn.net/v/t1.15752-9/465505200_630347202693129_7507803564120503230_n.png?_nc_cat=107&ccb=1-7&_nc_sid=9f807c&_nc_ohc=DJIwEq0Dzw0Q7kNvgEqLS7u&_nc_zt=23&_nc_ht=scontent.fbkk10-1.fna&oh=03_Q7cD1gGDgXF2I13SrHWdmuiFc5AlVfULXTA9MvkjeMjETEJkow&oe=67C3DCBC" alt="" width="60px"></a>
+                            src="https://scontent.fbkk10-1.fna.fbcdn.net/v/t1.15752-9/465505200_630347202693129_7507803564120503230_n.png?_nc_cat=107&ccb=1-7&_nc_sid=9f807c&_nc_ohc=DJIwEq0Dzw0Q7kNvgEqLS7u&_nc_zt=23&_nc_ht=scontent.fbkk10-1.fna&oh=03_Q7cD1gGDgXF2I13SrHWdmuiFc5AlVfULXTA9MvkjeMjETEJkow&oe=67C3DCBC"
+                            alt="" width="60px"></a>
                 </div>
 
                 <!-- การแจ้งเตือน -->
@@ -93,14 +94,14 @@
             <div style="display: flex; flex-direction: row; gap: 180px;">
                 <!-- รูปโปรไฟล์ -->
                 <img [src]="user?.image_url || ''" alt="Profile Picture"
-                    style="width: 250px; height: 250px;  border-radius: 50%; object-fit: cover;" >
+                    style="width: 250px; height: 250px;  border-radius: 50%; object-fit: cover;">
 
                 <!-- ข้อมูลผู้ใช้ -->
                 <div style="display: flex; flex-direction: column;">
                     <div style="display: flex; flex-direction: row; gap: 30px;">
                         <!-- ชื่อผู้ใช้ -->
                         <span style="font-size: 30px;">{{ user?.username || 'Username' }}</span>
-                        <button class="buttonEdit" [routerLink]="['/editprofile']" [queryParams]="{ id: userId }" >
+                        <button class="buttonEdit" [routerLink]="['/editprofile']" [queryParams]="{ id: userId }">
                             <span style="font-weight: 500;">แก้ไขโปรไฟล์</span>
                         </button>
                     </div>
@@ -141,24 +142,25 @@
                     </ng-template>
                     <div class="post-grid">
                         <div *ngFor="let post of posts" class="post-item">
-                          <div>
-                            <!-- แสดงรูปภาพหรือวิดีโอ -->
-                            <a [routerLink]="['/detail_post']" [queryParams]="{ post_id: post.post_id, user_id: userId }">
-                              <img *ngIf="post.media_type === 'image'"
-                                   [src]="post.firstMediaUrl || 'https://via.placeholder.com/350x300'"
-                                   alt="รูปที่โพสต์" class="post-image">
-                              <video *ngIf="post.media_type === 'video'" [src]="post.firstMediaUrl" controls
-                                   class="post-video"></video>
-                            </a>
-                      
-                            <!-- ไอคอนแสดงว่ามีหลายรูป -->
-                            <div *ngIf="post.hasMultipleMedia" class="multiple-media-icon">
-                                <i class="fa fa-clone"
-                                   style="font-size: 30px; color: white; position: absolute; top: 10px; right: 10px; padding: 5px; border-radius: 50%;"></i>
+                            <div>
+                                <!-- แสดงรูปภาพหรือวิดีโอ -->
+                                <a [routerLink]="['/detail_post']"
+                                    [queryParams]="{ post_id: post.post_id, user_id: userId }">
+                                    <img *ngIf="post.media_type === 'image'"
+                                        [src]="post.firstMediaUrl || 'https://via.placeholder.com/350x300'"
+                                        alt="รูปที่โพสต์" class="post-image">
+                                    <video *ngIf="post.media_type === 'video'" [src]="post.firstMediaUrl" controls
+                                        class="post-video"></video>
+                                </a>
+
+                                <!-- ไอคอนแสดงว่ามีหลายรูป -->
+                                <div *ngIf="post.hasMultipleMedia" class="multiple-media-icon">
+                                    <i class="fa fa-clone"
+                                        style="font-size: 30px; color: white; position: absolute; top: 10px; right: 10px; padding: 5px; border-radius: 50%;"></i>
+                                </div>
                             </div>
-                          </div>
                         </div>
-                      </div>                      
+                    </div>
                 </mat-tab>
                 <mat-tab>
                     <ng-template mat-tab-label>
@@ -166,24 +168,25 @@
                     </ng-template>
                     <div class="post-grid">
                         <div *ngFor="let post of sharedPosts" class="post-item">
-                          <div>
-                            <!-- แสดงรูปภาพหรือวิดีโอ -->
-                            <a [routerLink]="['/detail_post']" [queryParams]="{ post_id: post.post_id, user_id: userId }">
-                              <img *ngIf="post.media_type === 'image'"
-                                   [src]="post.firstMediaUrl || 'https://via.placeholder.com/350x300'"
-                                   alt="รูปที่โพสต์" class="post-image">
-                              <video *ngIf="post.media_type === 'video'" [src]="post.firstMediaUrl" controls
-                                   class="post-video"></video>
-                            </a>
-                      
-                            <!-- ไอคอนแสดงว่ามีหลายรูป -->
-                            <div *ngIf="post.hasMultipleMedia" class="multiple-media-icon">
-                              <i class="fa fa-clone"
-                                 style="font-size: 30px; color: white; position: absolute; top: 10px; right: 10px; padding: 5px; border-radius: 50%;"></i>
+                            <div>
+                                <!-- แสดงรูปภาพหรือวิดีโอ -->
+                                <a [routerLink]="['/detail_post']"
+                                    [queryParams]="{ post_id: post.post_id, user_id: userId }">
+                                    <img *ngIf="post.media_type === 'image'"
+                                        [src]="post.firstMediaUrl || 'https://via.placeholder.com/350x300'"
+                                        alt="รูปที่โพสต์" class="post-image">
+                                    <video *ngIf="post.media_type === 'video'" [src]="post.firstMediaUrl" controls
+                                        class="post-video"></video>
+                                </a>
+
+                                <!-- ไอคอนแสดงว่ามีหลายรูป -->
+                                <div *ngIf="post.hasMultipleMedia" class="multiple-media-icon">
+                                    <i class="fa fa-clone"
+                                        style="font-size: 30px; color: white; position: absolute; top: 10px; right: 10px; padding: 5px; border-radius: 50%;"></i>
+                                </div>
                             </div>
-                          </div>
                         </div>
-                      </div>                      
+                    </div>
                 </mat-tab>
                 <mat-tab>
                     <ng-template mat-tab-label>
@@ -191,24 +194,24 @@
                     </ng-template>
                     <div class="post-grid">
                         <div *ngFor="let post of savePosts" class="post-item">
-                          <div>
-                            <!-- แสดงรูปภาพหรือวิดีโอ -->
-                            <a [routerLink]="['/detail_post']" [queryParams]="{ post_id: post.post_id, user_id: userId }">
-                              <img *ngIf="post.media_type === 'image'"
-                                   [src]="post.firstMediaUrl || ''"
-                                   alt="รูปที่โพสต์" class="post-image">
-                              <video *ngIf="post.media_type === 'video'" [src]="post.firstMediaUrl" controls
-                                   class="post-video"></video>
-                            </a>
-                      
-                            <!-- ไอคอนแสดงว่ามีหลายรูป -->
-                            <div *ngIf="post.hasMultipleMedia" class="multiple-media-icon">
-                              <i class="fa fa-clone"
-                                 style="font-size: 30px; color: white; position: absolute; top: 10px; right: 10px; padding: 5px; border-radius: 50%;"></i>
+                            <div>
+                                <!-- แสดงรูปภาพหรือวิดีโอ -->
+                                <a [routerLink]="['/detail_post']"
+                                    [queryParams]="{ post_id: post.post_id, user_id: userId }">
+                                    <img *ngIf="post.media_type === 'image'" [src]="post.firstMediaUrl || ''"
+                                        alt="รูปที่โพสต์" class="post-image">
+                                    <video *ngIf="post.media_type === 'video'" [src]="post.firstMediaUrl" controls
+                                        class="post-video"></video>
+                                </a>
+
+                                <!-- ไอคอนแสดงว่ามีหลายรูป -->
+                                <div *ngIf="post.hasMultipleMedia" class="multiple-media-icon">
+                                    <i class="fa fa-clone"
+                                        style="font-size: 30px; color: white; position: absolute; top: 10px; right: 10px; padding: 5px; border-radius: 50%;"></i>
+                                </div>
                             </div>
-                          </div>
                         </div>
-                      </div>      
+                    </div>
                 </mat-tab>
             </mat-tab-group>
         </div>

@@ -33,7 +33,7 @@ export class ProfileUserComponent implements OnInit {
   isDrawerOpen: boolean = false; // เริ่มต้น Drawer ปิด
   user: User | null = null; // เก็บข้อมูลผู้ใช้
   posts: Postme[] = []; 
-  isLoading = true; // สถานะการโหลดข้อมูล
+  isLoading = true; 
   sharedPosts: Postme[] = [];
   savePosts: Postme[] = [];
 
