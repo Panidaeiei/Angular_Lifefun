@@ -16,11 +16,11 @@ import { UserService } from '../../services/Userservice';
 export class LoginComponent {
   identifier: string = ''; // ตัวแปรสำหรับเก็บ Email หรือ Username
   password: string = '';   // ตัวแปรสำหรับเก็บ Password
-  errorMessage: string = ''; // ข้อความแสดงข้อผิดพลาด (ถ้ามี)
+  errorMessage: string = ''; 
+  isPasswordVisible: boolean = false;
 
   constructor(private http: HttpClient, private router: Router,private userService: UserService, ) { }
 
-  // ฟังก์ชันสำหรับการล็อกอิน
   login() {
     if (!this.identifier || !this.password) {
       Swal.fire({
@@ -29,24 +29,37 @@ export class LoginComponent {
       });
       return;
     }
-
+  
     const payload = {
       email: this.isEmail(this.identifier) ? this.identifier : undefined,
       username: this.isEmail(this.identifier) ? undefined : this.identifier,
       password: this.password,
     };
-
-    this.http.post('http://localhost:3000/api/login', payload).subscribe(
+  
+    this.http.post('http://projectnodejs.thammadalok.com/lifefunproject/login', payload).subscribe(
       (response: any) => {
-        // เก็บ JWT ใน localStorage
+        // ตรวจสอบว่ามีสถานะของบัญชีและถูกระงับหรือไม่
+        if (response.status === 0) {
+          Swal.fire({
+            icon: 'error',
+            title: 'บัญชีถูกระงับ',
+            text: 'บัญชีของคุณถูกระงับ กรุณาติดต่อผู้ดูแลระบบ',
+          });
+          return;
+        }
+  
+        // ถ้า login สำเร็จให้บันทึก token
         localStorage.setItem('token', response.token);
-
-        // เก็บข้อมูลผู้ใช้ใน localStorage
+        sessionStorage.setItem('token', response.token);
+  
         localStorage.setItem('userId', response.id);
+        sessionStorage.setItem('userId', response.id);
+  
         localStorage.setItem('userRole', response.role);
-
+        sessionStorage.setItem('userRole', response.role);
+  
         this.userService.setCurrentUserId(response.id);
-
+  
         // นำทางไปยังหน้า Home ตาม role
         if (response.role === 'admin') {
           this.router.navigate(['/HomepageAdmin'], { queryParams: { id: response.id } });
@@ -55,13 +68,30 @@ export class LoginComponent {
         }
       },
       (error) => {
-        Swal.fire({
-          icon: 'error',
-          text: 'อีเมลหรือรหัสผ่านไม่ถูกต้อง!',
-        });
+        console.log("เกิดข้อผิดพลาด:", error); // 🔍 ตรวจสอบค่าที่ API ส่งกลับมา
+        console.log("error.error:", error.error); // ดูค่าที่อยู่ใน error.error
+        console.log("error.error.status:", error.error?.status); // ดูค่าที่ API ส่งมา
+      
+        if (error.status === 403) {
+          Swal.fire({
+            icon: 'warning',
+            title: 'บัญชีถูกระงับ',
+            text: 'บัญชีของคุณถูกระงับเนื่องจากทำผิดกฏของชุมชนเรา',
+          });
+        } else {
+          Swal.fire({
+            icon: 'error',
+            text: 'อีเมลหรือรหัสผ่านไม่ถูกต้อง!',
+          });
+        }
       }
+      
     );
-
+  }
+  
+  
+  togglePasswordVisibility() {
+    this.isPasswordVisible = !this.isPasswordVisible;
   }
 
   // ตรวจสอบว่าข้อมูลที่กรอกเป็น Email หรือไม่

@@ -50,8 +50,11 @@ export class EditprofileUserComponent implements OnInit {
   confirmPassword: string = '';
   selectedFile: File | null = null; // เก็บไฟล์ที่เลือก
   isLoading: boolean = true;
+  isPasswordVisible: boolean = false;
+  isNewPasswordVisible: boolean = false;
+  isConfirmPasswordVisible: boolean = false;
 
-  constructor(private userService: UserService, private route: ActivatedRoute,private router: Router,private dialog: MatDialog) {}
+  constructor(private userService: UserService, private route: ActivatedRoute, private router: Router, private dialog: MatDialog) { }
 
   @ViewChild('fileInput', { static: false }) fileInput!: ElementRef<HTMLInputElement>;
 
@@ -127,14 +130,38 @@ export class EditprofileUserComponent implements OnInit {
 
   // บันทึกข้อมูล
   onSaveProfile(): void {
-    if (this.newPassword && this.newPassword !== this.confirmPassword) {
-      alert('รหัสผ่านใหม่และรหัสผ่านยืนยันไม่ตรงกัน');
-      return;
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/; // ต้องมีตัวอักษรและตัวเลขอย่างน้อย 1 ตัว ความยาว ≥ 8
+
+    // ตรวจสอบว่ามีการเปลี่ยนรหัสผ่านหรือไม่
+    // ✅ ถ้าผู้ใช้ต้องการเปลี่ยนรหัสผ่าน ต้องกรอกให้ครบทั้ง 3 ช่อง
+    if (this.newPassword || this.confirmPassword || this.currentPassword) {
+      if (!this.currentPassword || !this.newPassword || !this.confirmPassword) {
+        alert('กรุณากรอกรหัสผ่านให้ครบทุกช่อง');
+        return;
+      }
+
+      // ✅ เช็ครหัสผ่านใหม่ว่าตรงกับรหัสผ่านเดิมหรือไม่
+      if (this.newPassword === this.currentPassword) {
+        alert('คุณกรอกรหัสผ่านเดิม กรุณาใช้รหัสผ่านใหม่');
+        return;
+      }
+
+      // ✅ ตรวจสอบความแข็งแรงของรหัสผ่าน
+      if (!passwordRegex.test(this.newPassword)) {
+        alert('รหัสผ่านต้องประกอบด้วย:\n- ตัวอักษร (A-Z, a-z)\n- ตัวเลข (0-9)\n- หรือตัวอักษรพิเศษ เช่น @$!%*?&\n- ความยาวอย่างน้อย 8 ตัวอักษร');
+        return;
+      }
+
+      // ✅ ตรวจสอบว่ารหัสผ่านใหม่และรหัสผ่านยืนยันตรงกันหรือไม่
+      if (this.newPassword !== this.confirmPassword) {
+        alert('รหัสผ่านไม่ตรงกัน');
+        return;
+      }
     }
-  
+
     this.isLoading = true;
     const formData = new FormData();
-    
+
     // ตรวจสอบก่อนเพิ่มค่า
     if (this.user.uid) {
       formData.append('uid', this.user.uid);
@@ -158,7 +185,7 @@ export class EditprofileUserComponent implements OnInit {
     if (this.selectedFile) {
       formData.append('image', this.selectedFile);
     }
-  
+
     this.userService.updateUser(formData).subscribe({
       next: (response) => {
         alert('อัปเดตข้อมูลสำเร็จ');
@@ -172,10 +199,11 @@ export class EditprofileUserComponent implements OnInit {
       }
     });
   }
-  
+
+
   onDeleteUser(): void {
     const dialogRef = this.dialog.open(ConfirmDeuserDialogComponent);
-  
+
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.isLoading = true; // เริ่มโหลด
@@ -195,11 +223,23 @@ export class EditprofileUserComponent implements OnInit {
       }
     });
   }
-  
+
 
   // ยกเลิก
   onCancel(): void {
     window.history.back();
+  }
+
+  togglePasswordVisibility(field: string) {
+
+    if (field === 'pass') {
+      this.isPasswordVisible = !this.isPasswordVisible;
+
+    } else if (field === 'new') {
+      this.isNewPasswordVisible = !this.isNewPasswordVisible;
+    }else{
+      this.isConfirmPasswordVisible = !this.isConfirmPasswordVisible;
+    }
   }
 
 }

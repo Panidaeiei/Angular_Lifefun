@@ -23,19 +23,31 @@ export class HomepageUserComponent {
   isLiked: boolean = false;
   isDrawerOpen: boolean = false; // เริ่มต้น Drawer ปิด
   posts: ShowPost[] = []; // เก็บโพสต์ทั้งหมด
+  message: string = '';
+  postId: string = '';
 
   constructor(private route: ActivatedRoute, private userService: UserService, private postService: PostService, private likePostService: ReactPostservice, private router: Router,) { }
 
   ngOnInit(): void {
+    this.userService.getCurrentUserId().subscribe((userId) => {
+      this.currentUserId = userId;
+      console.log('Current User ID:', this.currentUserId);
+    });
     // ดึงค่าจาก Query Parameters
     this.route.queryParams.subscribe((params) => {
-      if (params['id']) {
-        this.userId = params['id'];
-        console.log('User ID:', this.userId);
+      this.postId = params['post_id'] || ''; // ดึง post_id
+      console.log('User ID:', this.userId);
+
+      if (this.postId) {
+        this.viewPost(this.postId); // ✅ อัพเดตจำนวนการดูโพสต์
       } else {
-        this.userId = ''; // กำหนดค่าเริ่มต้นเมื่อไม่มี User ID
-        console.warn('User ID not found in query parameters.');
+
       }
+    });
+
+    this.route.queryParamMap.subscribe(params => {
+      const viewerId = params.get('viewerId');
+      console.log('Viewer ID (ผู้ใช้ที่กำลังดู):', viewerId);
     });
 
     this.likePostService.likeStatus$.subscribe((status) => {
@@ -49,7 +61,7 @@ export class HomepageUserComponent {
 
     this.userService.getCurrentUserId().subscribe((userId) => {
       this.currentUserId = userId;
-      console.log('Current User ID eiei:', this.currentUserId);
+
     });
 
     this.userService.loadCurrentUserId();
@@ -58,8 +70,21 @@ export class HomepageUserComponent {
     this.fetchPosts();
   }
 
+  viewPost(postId: string): void {
+
+
+    this.postService.viewPost(postId).subscribe({
+      next: () => {
+        // เมื่อ API viewPost สำเร็จแล้ว ค่อยเปลี่ยนหน้า
+        this.router.navigate(['/detail_post'], { queryParams: { post_id: postId, user_id: this.currentUserId } });
+      },
+      error: (err) => console.error('Error updating view count:', err)
+    });
+  }
+
+
   fetchPosts(): void {
-    this.postService.getPosts().subscribe(
+    this.postService.getPosts_interests().subscribe(
       (response: ShowPost[]) => {
         console.log('Response from API:', response);  // ตรวจสอบข้อมูลที่ได้รับจาก API
 
@@ -85,9 +110,10 @@ export class HomepageUserComponent {
       }
     );
   }
-
+  
   toggleHeart(post: ShowPost): void {
-    const userId = this.userId;  // ใช้ userId ที่ได้จาก queryParams
+    const userId = this.userId;  
+    console.log('userId Like:', userId); 
 
     // เปลี่ยนสถานะ isLiked
     post.isLiked = !post.isLiked;
@@ -107,15 +133,23 @@ export class HomepageUserComponent {
 
   goToProfile(userId: string): void {
     console.log('Current User ID:', this.currentUserId);
-
+    console.log('Navigating to:', userId);
+    console.log('Query Params ID:', this.userId);
+  
+    if (!userId || !this.currentUserId) {
+      console.error('User ID is missing! Navigation aborted.');
+      return;
+    }
+  
     if (userId === this.currentUserId) {
-      // นำทางไปหน้าโปรไฟล์ของตนเอง
-      this.router.navigate(['/ProfileUser'], { queryParams: { id: this.userId } });
+      // หาก userId คือ currentUserId, ไปที่หน้าประวัติของผู้ใช้ (ProfileUser)
+      this.router.navigate(['/ProfileUser'], { queryParams: { id: this.currentUserId } });
     } else {
-      // นำทางไปหน้าโปรไฟล์ของคนอื่น
-      this.router.navigate(['/view_user', userId], { queryParams: { id: this.userId } });
+      // หาก userId ไม่เหมือน currentUserId, ไปที่หน้าผู้ใช้ที่กำลังดู (view_user) พร้อม queryParams สำหรับ viewerId
+      this.router.navigate(['/view_user', this.currentUserId], { queryParams: { Profileuser: userId } });
     }
   }
+  
 
   toggleDrawer(): void {
     this.isDrawerOpen = !this.isDrawerOpen; // สลับสถานะเปิด/ปิด

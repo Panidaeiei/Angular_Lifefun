@@ -1,41 +1,57 @@
 <body>
-    <div style="margin-top: 50px;">
-      <span class="itim-regular" style="font-size: 1.5cm; margin-left: 42cm;">เข้าสู่ระบบ</span>
+  <div style="margin-top: 50px;">
+    <span class="itim-regular" style="font-size: 1.5cm; margin-left: 42cm;">เข้าสู่ระบบ</span>
+  </div>
+  <div style="display: flex; height: 100vh; margin: 0; padding: 0;">
+    <!-- กล่องซ้าย -->
+    <div
+      style="width: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; margin-right: 150px; margin-top: -300px;">
+      <p class="itim-regular2" style="font-size: 40px; margin: 0; margin-top: -220px;">ยินดีตอนรับเข้าสู่ระบบ</p>
+      <a href=""> <img
+          src="https://scontent.fbkk10-1.fna.fbcdn.net/v/t1.15752-9/467011559_1309959883362728_6149497978643079622_n.png?_nc_cat=107&ccb=1-7&_nc_sid=9f807c&_nc_ohc=YCDaXk0TRJoQ7kNvgELQ_yE&_nc_oc=Adgw1-0qVy0c465vCPgZn65aHiM4NSXN3nbzvGrtEq6x69QnZVvlfUQjY1fkT-xy24s&_nc_zt=23&_nc_ht=scontent.fbkk10-1.fna&oh=03_Q7cD1gE-IRosOQT7rsinr7ol_0Ul6pkO0cmfVk1Z2xLab0K5kA&oe=67D157E4"
+          alt="Logo" style="margin-top: 70px;" width="250"></a>
+      <span class="itim-regular" style="font-size: 25px; margin-top: 70px;">เว็บไซต์ที่ทำให้คุณเพลิดเพลิน
+        กับการแลกเปลี่ยนทริคความรู้</span>
+      <span class="itim-regular" style="font-size: 25px; margin-top: -20;">แชร์ประสบการณ์ กับผู้คนมากมาย</span>
     </div>
-    <div style="display: flex; height: 100vh; margin: 0; padding: 0;">
-      <!-- กล่องซ้าย -->
-      <div style="width: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; margin-right: 150px; margin-top: -300px;">
-        <p class="itim-regular2" style="font-size: 40px; margin: 0; margin-top: -220px;">ยินดีตอนรับเข้าสู่ระบบ</p>
-        <a href="">  <img src="https://shorturl.asia/2pOd3" alt="Logo" style="margin-top: 70px;" width="250"></a>  
-        <span class="itim-regular" style="font-size: 25px; margin-top: 70px;">เว็บไซต์ที่ทำให้คุณเพลิดเพลิน กับการแลกเปลี่ยนทริคความรู้</span>
-        <span class="itim-regular" style="font-size: 25px; margin-top: -20;">แชร์ประสบการณ์ กับผู้คนมากมาย</span>
-      </div>
-  
-      <!-- กล่องขวา -->
-      <div style="width: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; margin-left: 5%;">
-        <form (ngSubmit)="login()" style="width: 80%; text-align: left;">
-          <div>
-            <span class="itim-regular" style="font-size: 35px;">อีเมล/ชื่อผู้ใช้(E-mail/Username)</span>
-            <div class="input-container" style="margin-top: 10px;">
-              <input type="text" [(ngModel)]="identifier" name="identifier" placeholder="กรอกอีเมล หรือ ชื่อผู้ใช้" required />
+
+    <!-- กล่องขวา -->
+    <div
+      style="width: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; margin-left: 5%;">
+      <form (ngSubmit)="login()" style="width: 80%; text-align: left;">
+        <div>
+          <span class="itim-regular" style="font-size: 35px;">อีเมล/ชื่อผู้ใช้(E-mail/Username)</span>
+          <div class="input-container" style="margin-top: 10px;">
+            <input type="text" [(ngModel)]="identifier" name="identifier" placeholder="กรอกอีเมล หรือ ชื่อผู้ใช้"
+              required />
+          </div>
+        </div>
+        <div style="margin-top: 50px;">
+          <span class="itim-regular" style="font-size: 35px;">รหัสผ่าน (Password)</span>
+          <div class="input-container" style="margin-top: 10px; position: relative; width: 100%;">
+            <input [type]="isPasswordVisible ? 'text' : 'password'" [(ngModel)]="password" name="password"
+              placeholder="กรอกรหัสผ่าน" required />
+            <!-- ปุ่มเปิด/ปิดรหัสผ่าน -->
+            <div style="margin-left: 480px; margin-top: -50px;">
+              <button type="button" (click)="togglePasswordVisibility()"
+                style="background: none; border: none; cursor: pointer;">
+                <i [class]="isPasswordVisible ? 'fa fa-eye' : 'fa fa-eye-slash'"></i>
+              </button>
             </div>
+
           </div>
-          <div style="margin-top: 50px;">
-            <span class="itim-regular" style="font-size: 35px;">รหัสผ่าน(password)</span>
-            <div class="input-container" style="margin-top: 10px;">
-              <input type="password" [(ngModel)]="password" name="password" placeholder="กรอกรหัสผ่าน" required />
-            </div>
-          </div>
-          <div style="display: flex; flex-direction: row; margin-top: 30px; margin-left: 80px;">
-            <span class="itim-regular" style="font-size: 20px;">ยังไม่มีบัญชีผู้ใช้ใช่หรือไม่?</span>
-            <a href="/register" class="itim-regular" style="color: rgb(189, 35, 35); font-size: 20px; margin-left: 10px;">สมัครสมาชิก</a>
-          </div>
-          <button class="styled-button" type="submit">
-            <span class="itim-regular">เข้าสู่ระบบ</span>
-          </button>
-        </form>
-        <!-- จบ Form -->
-      </div>
+        </div>
+
+        <div style="display: flex; flex-direction: row; margin-top: 60px; margin-left: 80px;">
+          <span class="itim-regular" style="font-size: 20px;">ยังไม่มีบัญชีผู้ใช้ใช่หรือไม่?</span>
+          <a href="/register" class="itim-regular"
+            style="color: rgb(189, 35, 35); font-size: 20px; margin-left: 10px;">สมัครสมาชิก</a>
+        </div>
+        <button class="styled-button" type="submit">
+          <span class="itim-regular">เข้าสู่ระบบ</span>
+        </button>
+      </form>
+      <!-- จบ Form -->
     </div>
-  </body>
-  
+  </div>
+</body>

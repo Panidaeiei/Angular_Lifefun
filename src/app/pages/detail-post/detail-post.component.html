@@ -5,7 +5,8 @@
     <mat-toolbar class="fixed-toolbar">
         <!-- Logo ด้านซ้าย -->
         <a [routerLink]="['/HomepageUser']" [queryParams]="{ id: userId }">
-            <img src="https://shorturl.asia/2pOd3" alt="Home Icon" width="80px">
+            <img src="https://scontent.fbkk10-1.fna.fbcdn.net/v/t1.15752-9/467011559_1309959883362728_6149497978643079622_n.png?_nc_cat=107&ccb=1-7&_nc_sid=9f807c&_nc_ohc=YCDaXk0TRJoQ7kNvgELQ_yE&_nc_oc=Adgw1-0qVy0c465vCPgZn65aHiM4NSXN3nbzvGrtEq6x69QnZVvlfUQjY1fkT-xy24s&_nc_zt=23&_nc_ht=scontent.fbkk10-1.fna&oh=03_Q7cD1gE-IRosOQT7rsinr7ol_0Ul6pkO0cmfVk1Z2xLab0K5kA&oe=67D157E4"
+                alt="Home Icon" width="80px">
         </a>
         <div style="width: 15%;"></div>
         <!-- เมนูตรงกลาง -->
@@ -29,7 +30,8 @@
 
                 <div>
                     <a [routerLink]="['/CreatePost']" [queryParams]="{ id: userId }"><img
-                            src="https://scontent.fbkk10-1.fna.fbcdn.net/v/t1.15752-9/465505200_630347202693129_7507803564120503230_n.png?_nc_cat=107&ccb=1-7&_nc_sid=9f807c&_nc_ohc=DJIwEq0Dzw0Q7kNvgEqLS7u&_nc_zt=23&_nc_ht=scontent.fbkk10-1.fna&oh=03_Q7cD1gGDgXF2I13SrHWdmuiFc5AlVfULXTA9MvkjeMjETEJkow&oe=67C3DCBC" alt="" width="60px"></a>
+                            src="https://scontent.fbkk10-1.fna.fbcdn.net/v/t1.15752-9/465505200_630347202693129_7507803564120503230_n.png?_nc_cat=107&ccb=1-7&_nc_sid=9f807c&_nc_ohc=DJIwEq0Dzw0Q7kNvgEqLS7u&_nc_zt=23&_nc_ht=scontent.fbkk10-1.fna&oh=03_Q7cD1gGDgXF2I13SrHWdmuiFc5AlVfULXTA9MvkjeMjETEJkow&oe=67C3DCBC"
+                            alt="" width="60px"></a>
                 </div>
 
                 <!-- การแจ้งเตือน -->
@@ -81,7 +83,7 @@
                     <li
                         style="border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; align-items: center; gap: 10px;">
                         <i class="fa fa-sign-out" style="font-size: 20px; color: black;"></i>
-                        <a href="/login" style="text-decoration: none; color: black;">
+                        <a href="" style="text-decoration: none; color: black;">
                             <span class="itim-regular">ออกจากระบบ</span>
                         </a>
                     </li>
@@ -96,13 +98,16 @@
         <div
             style="display: flex; flex-direction: row; margin-bottom: 20px; margin-top: 20px; margin-left: 15px; justify-content: space-between; ">
             <div style="display: flex;">
-                <img [src]="post.user_profile_image || 'default-profile-image.png'" alt="รูปโปรไฟล์"
-                (click)="goToProfile(post.user_uid.toString())" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover;">
+                <img [src]="post.user_profile_image || 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'" alt="รูปโปรไฟล์"
+                    (click)="goToProfile(post.user_uid.toString())"
+                    style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; cursor: pointer;">
                 <div style="display: flex; flex-direction: column;">
 
                     <span style="font-size: 30px; font-weight: 500; margin-left: 20px; ">
                         {{post.user_name }}</span>
-                    <span style="color: #7e7776; margin-top: 5px; margin-left: 25px; margin-bottom: 10px;">{{post.post_time | timeAgo}}</span>
+                    <span
+                        style="color: #7e7776; margin-top: 5px; margin-left: 25px; margin-bottom: 10px;">{{post.post_time
+                        | timeAgo}}</span>
 
                     <div *ngIf="post.location">
                         <i class="fa-solid fa-location-dot"
@@ -137,6 +142,7 @@
                     <span style="font-size: 15px;">รายงานโพสต์</span>
                 </button>
             </mat-menu>
+            
         </div>
 
         <div *ngIf="post" class="media-slider" (mouseenter)="showControls()" (mouseleave)="hideControls()">
@@ -191,8 +197,10 @@
             <i style="font-size: 30px; cursor: pointer;" class="fa-regular fa-bookmark"
                 [ngClass]="{ 'saved': isSave, 'not-saved': !isSave }" (click)="toggleSavePost()"></i>
         </div>
-        <span *ngIf="!isEditing" style="padding: 0px 20px; font-size: 22px; margin-bottom: 20px;"
+        <div style="width: 760px; padding: 0px 20px; font-size: 22px; margin-bottom: 20px; ">
+            <span *ngIf="!isEditing" 
             [innerHTML]="post.title | newlineToBr"></span>
+        </div>
 
         <!-- ฟอร์มแก้ไข -->
         <div *ngIf="isEditing" style="margin-top: 15px;">
@@ -211,15 +219,16 @@
         <div *ngFor="let comment of (showAllComments ? comments : comments.slice(0, 2))" style="margin-bottom: 20px;">
             <div style="display: flex; gap: 10px; margin-left: 20px; justify-content: space-between;">
                 <div style="display: flex; gap: 15px;">
-                    <img style="width: 60px; height: 60px; object-fit: cover; border-radius: 50%;"
-                        [src]="comment.image_url" alt=""  (click)="goToProfile(comment.uid)">
-                    <div style="display: flex; flex-direction: column;">
+                    <img style="width: 60px; height: 60px; object-fit: cover; border-radius: 50%; cursor: pointer;"
+                        [src]="comment.image_url || 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'"  alt="" (click)="goToProfile(comment.uid)">
+                    <div style="display: flex; flex-direction: column;  width: 450px; ">
                         <div style="margin-bottom: 5px;">
                             <span style="font-size: 20px; font-weight: 500;" title="username">{{ comment.username
                                 }}</span>
+                              
                             <span style="margin-left: 10px; color: #949090;">{{ comment.date_time | timeAgo }}</span>
                         </div>
-                        <span style="font-size: 20px;" title="comment">{{ comment.title }}</span>
+                        <span style="font-size: 20px; white-space: pre-line; word-wrap: break-word; word-break: break-word;" title="comment">{{ comment.title }}</span>
                     </div>
                 </div>
 

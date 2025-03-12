@@ -1,30 +1,33 @@
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
 <div class="background-div">
-    <mat-toolbar
+    <mat-toolbar  class="fixed-toolbar"
         style="background-color: rgb(233, 135, 135); height: 90px; display: flex; align-items: center; justify-content: space-between;">
 
-        <a [routerLink]="['/HomepageUser']" [queryParams]="{ id: userId }">
-            <img src="https://shorturl.asia/2pOd3" alt="Home Icon" width="80px">
+        <a [routerLink]="['']">
+            <img src="https://scontent.fbkk10-1.fna.fbcdn.net/v/t1.15752-9/467011559_1309959883362728_6149497978643079622_n.png?_nc_cat=107&ccb=1-7&_nc_sid=9f807c&_nc_ohc=YCDaXk0TRJoQ7kNvgELQ_yE&_nc_oc=Adgw1-0qVy0c465vCPgZn65aHiM4NSXN3nbzvGrtEq6x69QnZVvlfUQjY1fkT-xy24s&_nc_zt=23&_nc_ht=scontent.fbkk10-1.fna&oh=03_Q7cD1gE-IRosOQT7rsinr7ol_0Ul6pkO0cmfVk1Z2xLab0K5kA&oe=67D157E4"
+                alt="Home Icon" width="80px">
         </a>
 
-        <div style="display: flex; flex-grow: 1; justify-content: center; align-items: center;">
+        <div style="display: flex; flex-grow: 1; justify-content: center; align-items: center;  margin-left: 120px;">
             <div style="display: flex; justify-content: center; align-items: center; gap: 60px;">
 
-                <div style="display: flex; flex-direction: column; align-items: center;">
-                    <a href="">
-                        <i style="font-size: 40px; color: black;" class="fa-solid fa-house"></i>
-                    </a>
+
+                <a class="menu-item" routerLinkActive="active" [routerLink]="['']" >
+                    <i style="font-size: 40px; color: black;" class="fa-solid fa-house"></i>
                     <span class="itim-regular">หน้าหลัก</span>
-                </div>
+                  </a>
+            
 
                 <div style="display: flex; flex-direction: column; align-items: center;">
-                    <a href="">
+                    <a [routerLink]="['']">
                         <i style="font-size: 40px; color: black;" class="fa-solid fa-magnifying-glass"></i>
                     </a>
-                    <span class="itim-regular">ติดตาม</span>
+                    <span class="itim-regular">ค้นหา</span>
                 </div>
 
                 <div style="display: flex; flex-direction: column; align-items: center;">
-                    <a href="">
+                    <a [routerLink]="['']">
                         <i style="font-size: 40px; color: black;" class="fa-solid fa-bars"></i>
                     </a>
                     <span class="itim-regular">หมวดหมู่</span>
@@ -32,6 +35,101 @@
             </div>
         </div>
 
-        <div style="width: 80px;"></div>
+        <button routerLink="/login" class="login-link"
+            style="text-decoration: none; color: black; background: none; border: none; outline: none;">
+            <div style="display: flex; flex-direction: row; align-items: center; justify-content: center;">
+                <i class="material-icons" st>login</i>
+                <span style="margin-left: 10px; font-size: 17px;">เข้าสู่ระบบ/สมัครสมาชิก</span>
+            </div>
+        </button>
+
     </mat-toolbar>
+</div>
+<div class="background-div">
+    <div style="display: flex; margin-top: 130px; justify-content: center; margin-bottom: 30px; font-size: 25px;">
+        <span>สำหรับคุณ</span>
+    </div>
+
+    <div class="card-container-wrapper">
+        <div class="card-container">
+            <div *ngFor="let post of posts" class="card-wrapper">
+                <mat-card class="cardpost">
+                    <div style="display: flex; flex-direction: column; position: relative;">
+
+                        <!-- แสดงรูปภาพหรือวิดีโอ -->
+                        <a [routerLink]="['']">
+                            <ng-container *ngIf="post.media_type === 'image'; else videoTemplate">
+                                <img [src]="post.media_url || 'https://via.placeholder.com/360x300'"
+                                    style="width: 390px; height: 350px; object-fit: cover;" alt="รูปที่โพสต์">
+                            </ng-container>
+                            <ng-template #videoTemplate>
+                                <video [src]="post.media_url" controls
+                                    style="width: 390px; height: 350px; object-fit: cover;">
+                                </video>
+                            </ng-template>
+                        </a>
+
+                        <!-- ไอคอนแสดงว่ามีหลายรูป -->
+                        <div *ngIf="post.hasMultipleMedia" class="multiple-media-icon">
+                            <i class="fa fa-clone"
+                                style="font-size: 30px; color: white; position: absolute; top: 10px; right: 10px; padding: 5px; border-radius: 50%;"></i>
+                        </div>
+
+
+                        <!-- ข้อมูลโพสต์ -->
+                        <div
+                            style="display: flex; align-items: center; justify-content: space-between; margin-right: 10px;">
+                            <span style="margin-left: 15px; margin-right: 15px; margin-top: 10px; font-size: 20px;">
+                                {{ post.title | slice:0:15 }}{{ post.title.length > 15 ? '...' : '' }}
+                            </span>
+                            <div
+                                style="display: flex; align-items: center; justify-content: space-between; margin-right: 10px;">
+                                <a [routerLink]="['']" class="hover-link"
+                                    style="color: #e96e7e; font-size: 20px; text-decoration: none;">
+                                    View
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- ข้อมูลโปรไฟล์ผู้ใช้ -->
+                        <div
+                            style="display: flex; flex-direction: row; margin-left: 15px; margin-right: 15px; margin-top: 35px; gap: 10px; justify-content: space-between;">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <img [src]="post.user_profile_image || 'https://via.placeholder.com/50'"
+                                    alt="รูปโปรไฟล์"
+                                    style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
+                                <span style="font-weight: 600; font-size: 20px;">
+                                    {{ post.user_name }}
+                                </span>
+                            </div>
+
+                            <!-- ไอคอนหัวใจสำหรับการกดไลค์ -->
+                            <div style="display: flex; gap: 5px; align-items: center;">
+                                <i class="fa fa-heart heart-icon" style="font-size: 30px; cursor: pointer;"
+                                    (click)="onHeartClick()">
+                                </i>
+
+                                <span *ngIf="post.likes_count > 0 && post.likes_count !== null"
+                                    style="font-weight: 500; font-size: 20px;">
+                                    {{ post.likes_count }}
+                                </span>
+                            </div>
+
+                        </div>
+                    </div>
+                </mat-card>
+                
+                <div *ngIf="isDialogOpen" class="dialog-overlay" (click)="closeDialog()">
+                    <div class="dialog-box" (click)="$event.stopPropagation()">
+                        <button class="close-button" (click)="closeDialog()">×</button>
+                        <img src="https://scontent.fbkk10-1.fna.fbcdn.net/v/t1.15752-9/467011559_1309959883362728_6149497978643079622_n.png?_nc_cat=107&ccb=1-7&_nc_sid=9f807c&_nc_ohc=YCDaXk0TRJoQ7kNvgELQ_yE&_nc_oc=Adgw1-0qVy0c465vCPgZn65aHiM4NSXN3nbzvGrtEq6x69QnZVvlfUQjY1fkT-xy24s&_nc_zt=23&_nc_ht=scontent.fbkk10-1.fna&oh=03_Q7cD1gE-IRosOQT7rsinr7ol_0Ul6pkO0cmfVk1Z2xLab0K5kA&oe=67D157E4"
+                        alt="Home Icon" width="140px">
+                        <h3>กรุณาเข้าสู่ระบบ/สมัครสมาชิก</h3>
+                        <button class="button1" (click)="navigateToLogin()">เข้าสู่ระบบ</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div style="height: 30px;"></div>
 </div>

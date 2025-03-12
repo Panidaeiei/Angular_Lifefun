@@ -107,10 +107,6 @@ export class CreatePostComponent {
   }
 
 
-  onTitleChange(value: string): void {
-    this.postData.title = value;
-  }
-
   setCategory(cat_id: number): void {
     this.postData.cat_id = cat_id;
   }
@@ -129,6 +125,10 @@ export class CreatePostComponent {
     if (fileInput) {
       fileInput.click();
     }
+  }
+
+  onTitleChange(value: string): void {
+    this.postData.title = value;
   }
 
   onFileSelected(event: Event): void {

@@ -11,8 +11,12 @@ import { CategoryPageComponent } from './pages/category-page/category-page.compo
 import { NotificationUserComponent } from './pages/notification-user/notification-user.component';
 import { DetailPostComponent } from './pages/detail-post/detail-post.component';
 import { EditprofileUserComponent } from './pages/editprofile-user/editprofile-user.component';
-import { ViewUserProfileComponent } from './pages/view-user-profile/view-user-profile.component';
 import { ProfileuserAdminComponent } from './pages/profileuser-admin/profileuser-admin.component';
+import { ViewUserComponent } from './pages/view-user/view-user.component';
+import { UserListAdminComponent } from './pages/user-list-admin/user-list-admin.component';
+import { SearchUsersComponent } from './pages/search-users/search-users.component';
+import { UserBanComponent } from './pages/user-ban/user-ban.component';
+import { STestComponent } from './pages/s-test/s-test.component';
 
 
 
@@ -31,7 +35,10 @@ export const routes: Routes = [
     {path: 'category', component: CategoryPageComponent},
     {path: 'detail_post', component: DetailPostComponent},
     {path: 'editprofile', component: EditprofileUserComponent},
-    {path: 'view_user/:userId', component: ViewUserProfileComponent},
+    {path: 'view_user/:userId', component: ViewUserComponent},
     {path: 'profileuserAdmin', component: ProfileuserAdminComponent},
-    {path: 'userlist', component: ProfileuserAdminComponent},
+    {path: 'userlist', component: UserListAdminComponent},
+    {path: 'search_users', component: SearchUsersComponent},
+    {path: 'userban', component: UserBanComponent},
+    {path: 'stest', component: STestComponent}
 ];

@@ -25,13 +25,28 @@
                         <input type="text" placeholder="กรอกชื่อผู้ใช้" [(ngModel)]="userData.username" name="username" required />
                     </div>
                 </div>
-                <div
-                    style="display: flex; flex-direction: column; align-items: flex-start; margin-top: 30px; margin-left: 30px;">
+                <div style="display: flex; flex-direction: column; align-items: flex-start; margin-top: 30px; margin-left: 30px;">
                     <label class="itim-regular" style="font-size: 30px; margin-bottom: 10px;">รหัสผ่าน (Password)</label>
-                    <div class="input-container2">
-                        <input type="password" placeholder="กรอกรหัสผ่าน" [(ngModel)]="userData.password" name="password" required />
+                    <div class="input-container2" style="position: relative; width: 100%;">
+                        <!-- ช่องกรอกรหัสผ่าน -->
+                        <input 
+                            [type]="isPasswordVisible ? 'text' : 'password'" 
+                            placeholder="กรอกรหัสผ่าน" 
+                            [(ngModel)]="userData.password" 
+                            name="password" 
+                            required 
+                            style="padding-right: 40px;" 
+                        />
+                        <!-- ปุ่มเปิด/ปิดการแสดงรหัสผ่าน -->
+                        <button 
+                            type="button" 
+                            (click)="togglePasswordVisibility()" 
+                            style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer;">
+                            <i [class]="isPasswordVisible ? 'fa fa-eye' : 'fa fa-eye-slash'"></i>
+                        </button>
                     </div>
                 </div>
+                
             </div>
             <div style="display: flex; flex-direction: row;">
                 <div style="display: flex; flex-direction: column; align-items: flex-start; margin-top: 30px;">
@@ -40,13 +55,29 @@
                         <input type="text" placeholder="กรอกเบอร์โทรศัพท์" [(ngModel)]="userData.phone" name="phone" required />
                     </div>
                 </div>
-                <div
-                    style="display: flex; flex-direction: column; align-items: flex-start; margin-top: 30px; margin-left: 30px;">
-                    <label class="itim-regular" style="font-size: 30px; margin-bottom: 10px;">ยืนยันรหัสผ่าน (Confirm Password)</label>
-                    <div class="input-container2">
-                        <input type="password" placeholder="ยืนยันรหัสผ่าน" [(ngModel)]="confirmPassword" name="confirmPassword" required />
+                <div style="display: flex; flex-direction: column; align-items: flex-start; margin-top: 30px; margin-left: 30px;">
+                    <label class="itim-regular" style="font-size: 30px; margin-bottom: 10px;">
+                        ยืนยันรหัสผ่าน (Confirm Password)
+                    </label>
+                    <div class="input-container2" style="position: relative; width: 100%;">
+                        <input 
+                            [type]="isConfirmPasswordVisible ? 'text' : 'password'" 
+                            placeholder="ยืนยันรหัสผ่าน" 
+                            [(ngModel)]="confirmPassword" 
+                            name="confirmPassword" 
+                            required 
+                            style="padding-right: 40px;" 
+                        />
+                        <!-- ปุ่มเปิด/ปิดการแสดงรหัสผ่าน -->
+                        <button 
+                            type="button" 
+                            (click)="toggleConfirmPasswordVisibility()" 
+                            style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer;">
+                            <i [class]="isConfirmPasswordVisible ? 'fa fa-eye' : 'fa fa-eye-slash'"></i>
+                        </button>
                     </div>
                 </div>
+                
             </div>
             <div style="display: flex; flex-direction: row; margin-top: 30px;">
                 <span class="itim-regular" style="font-size: 20px;">มีบัญชีอยู่แล้วใช่หรือไม่?</span>

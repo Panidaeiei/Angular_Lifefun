@@ -18,7 +18,7 @@ import { ConfirmDeleteDialogComponent } from '../../confirm-delete-dialog/confir
 import { MatDialog } from '@angular/material/dialog';
 import { EditPostModel } from '../../models/edit-post.model';
 import { FormsModule } from '@angular/forms'
-import { TimeAgoPipe } from '../../pipes/time-ago.pipe';
+import { TimeAgoPipe, NewlinePipe } from '../../pipes/time-ago.pipe';
 import { Comment } from '../../models/comment_model';
 import { SharePostModel } from '../../models/sharepost_model';
 import { SavePostModel } from '../../models/savepost_service';
@@ -31,6 +31,7 @@ import { SavePostModel } from '../../models/savepost_service';
 })
 export class DetailPostComponent implements OnInit {
   userId: string = '';
+  commentOwnerId: string = '';
   postId: string = '';
   isLiked: boolean = false;
   isDrawerOpen: boolean = false; // เริ่มต้น Drawer ปิด
@@ -48,6 +49,7 @@ export class DetailPostComponent implements OnInit {
   isShared: boolean = false;
   isSave: boolean = false;
   currentUserId: string | null = null;
+  viewerId: string = '';
 
   @ViewChild('commentInput') commentInput!: ElementRef;
   @ViewChildren(MatMenuTrigger) menuTriggers!: QueryList<MatMenuTrigger>;
@@ -56,54 +58,67 @@ export class DetailPostComponent implements OnInit {
   constructor(private route: ActivatedRoute, private router: Router, private userService: UserService, private postService: PostService, private reactPostservice: ReactPostservice, public dialog: MatDialog) { }
 
   ngOnInit(): void {
-    // ดึงค่าจาก Query Parameters
+    // ดึงค่าจาก Query Parameters เพียงครั้งเดียว
     this.route.queryParams.subscribe((params) => {
+      // ตรวจสอบว่า post_id และ user_id อยู่ใน query params หรือไม่
       if (params['post_id']) {
         this.postId = params['post_id'];
         console.log('Post ID:', this.postId);
-        this.fetchPost(this.postId); // Fetch the post based on postId
+        this.fetchPost(this.postId); // ดึงข้อมูลโพสต์ตาม postId
         this.loadComments(Number(this.postId));
         this.loadShareStatus();
         this.loadSaveStatus();
       } else {
         console.error('Post ID not found in query parameters.');
       }
+
       if (params['user_id']) {
         this.userId = params['user_id'];
         console.log('User ID:', this.userId);
       } else {
         console.error('User ID not found in query parameters.');
       }
+
     });
 
+    // การ subscribe กับ likeStatus$
     this.reactPostservice.likeStatus$.subscribe((status) => {
       console.log("Like status updated:", status);
       // ดำเนินการที่ต้องการเมื่อไลค์เปลี่ยนแปลง
     });
 
+    // ดึง currentUserId
     this.userService.getCurrentUserId().subscribe((userId) => {
       this.currentUserId = userId;
       console.log('Current User ID eiei:', this.currentUserId);
     });
 
+    // ตรวจสอบสถานะไลค์ของโพสต์
     this.posts.forEach((post) => {
       this.checkLikeStatus(post.post_id);
     });
 
-
+    // ดึงคอมเมนต์ (ฟังก์ชันนี้ยังคงเรียกเช่นเดิม)
     this.fetchComments();
 
+    this.userService.getCurrentUserId().subscribe((userId) => {
+      this.currentUserId = userId;
+      console.log('Current User ID eiei:', this.currentUserId);
+    });
   }
+
 
   goToProfile(userId: string): void {
     console.log('Current User ID:', this.currentUserId);
-
-    if (userId === this.currentUserId) {
-      // นำทางไปหน้าโปรไฟล์ของตนเอง
-      this.router.navigate(['/ProfileUser'], { queryParams: { id: this.userId } });
+    console.log('Navigating to:', userId);
+    console.log('Query Params ID:', this.userId);
+  
+    if (String(userId) === String(this.userId)) {
+      // หาก userId คือ currentUserId, ไปที่หน้าประวัติของผู้ใช้ (ProfileUser)
+      this.router.navigate(['/ProfileUser'], { queryParams: { id: userId } });
     } else {
-      // นำทางไปหน้าโปรไฟล์ของคนอื่น
-      this.router.navigate(['/view_user', userId], { queryParams: { id: this.userId } });
+      // หาก userId ไม่เหมือน currentUserId, ไปที่หน้าผู้ใช้ที่กำลังดู (view_user) พร้อม queryParams สำหรับ viewerId
+      this.router.navigate(['/view_user', this.currentUserId], { queryParams: { Profileuser: userId } });
     }
   }
 
@@ -174,7 +189,7 @@ export class DetailPostComponent implements OnInit {
       }
     );
   }
-  
+
 
   loadComments(postId: number): void {
     this.reactPostservice.getComments(postId).subscribe({
@@ -386,11 +401,11 @@ export class DetailPostComponent implements OnInit {
 
   toggleSavePost(): void {
     const data: SavePostModel = { post_id: Number(this.postId) }; // ตรวจสอบ postId เป็นตัวเลข
-  
+
     this.reactPostservice.saveOrUnsavePost(data).subscribe(
       (response) => {
         this.isSave = response.isSave;
-       
+
       },
       (error) => {
         console.error('Error saving/unsaving post:', error);
@@ -398,44 +413,44 @@ export class DetailPostComponent implements OnInit {
       }
     );
   }
-  
-  
 
-sharePost(): void {
-  // กำหนดข้อความยืนยันตามสถานะการแชร์
-  const confirmMessage = this.isShared
-    ? 'คุณต้องการยกเลิกการแชร์โพสต์นี้หรือไม่?'
-    : 'คุณต้องการแชร์โพสต์นี้หรือไม่?';
 
-  // แสดงกล่องยืนยัน
-  const userConfirmed = window.confirm(confirmMessage);
 
-  if(userConfirmed) {
-    const data: SharePostModel = {
-      post_id: Number(this.postId),
-    };
+  sharePost(): void {
+    // กำหนดข้อความยืนยันตามสถานะการแชร์
+    const confirmMessage = this.isShared
+      ? 'คุณต้องการยกเลิกการแชร์โพสต์นี้หรือไม่?'
+      : 'คุณต้องการแชร์โพสต์นี้หรือไม่?';
 
-    // เรียกใช้บริการแชร์หรือยกเลิกการแชร์
-    this.reactPostservice.sharePost(data).subscribe(
-      (response) => {
-        if (response.message === 'Post shared successfully.') {
-          console.log('Post shared successfully:', response);
-          this.isShared = true; // ตั้งค่าสถานะว่าแชร์แล้ว
-        } else if (response.message === 'Post unshared successfully.') {
-          console.log('Post unshared successfully:', response);
-          this.isShared = false;
+    // แสดงกล่องยืนยัน
+    const userConfirmed = window.confirm(confirmMessage);
+
+    if (userConfirmed) {
+      const data: SharePostModel = {
+        post_id: Number(this.postId),
+      };
+
+      // เรียกใช้บริการแชร์หรือยกเลิกการแชร์
+      this.reactPostservice.sharePost(data).subscribe(
+        (response) => {
+          if (response.message === 'Post shared successfully.') {
+            console.log('Post shared successfully:', response);
+            this.isShared = true; // ตั้งค่าสถานะว่าแชร์แล้ว
+          } else if (response.message === 'Post unshared successfully.') {
+            console.log('Post unshared successfully:', response);
+            this.isShared = false;
+          }
+        },
+        (error) => {
+          console.error('Error sharing/unsharing post:', error);
+          alert('เกิดข้อผิดพลาดในการดำเนินการ');
         }
-      },
-      (error) => {
-        console.error('Error sharing/unsharing post:', error);
-        alert('เกิดข้อผิดพลาดในการดำเนินการ');
-      }
-    );
-  } else {
-    // ผู้ใช้กดยกเลิกการยืนยัน
-    console.log('การดำเนินการถูกยกเลิกโดยผู้ใช้');
+      );
+    } else {
+      // ผู้ใช้กดยกเลิกการยืนยัน
+      console.log('การดำเนินการถูกยกเลิกโดยผู้ใช้');
+    }
   }
-}
-   
-  
+
+
 }

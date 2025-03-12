@@ -24,7 +24,10 @@ export class RegisterComponent {
 
   confirmPassword: string = ''; // ตัวแปรสำหรับยืนยันรหัสผ่าน
   selectedFile: File | null = null; // ตัวแปรสำหรับไฟล์ที่เลือก
-  previewImage: string = 'https://scontent.fbkk10-1.fna.fbcdn.net/v/t1.15752-9/467486088_9395369247162722_9124289913270465764_n.png?_nc_cat=103&ccb=1-7&_nc_sid=9f807c&_nc_ohc=2RTdWkSDo2UQ7kNvgEH-_5J&_nc_zt=23&_nc_ht=scontent.fbkk10-1.fna&oh=03_Q7cD1gFbqFNDtEI2fV3h-86ZYef56ySuHmYe-BRdNTjy3Vyi9g&oe=67CAB874'; // รูปเริ่มต้น
+  previewImage: string = 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'; // รูปเริ่มต้น
+
+  isPasswordVisible: boolean = false;
+  isConfirmPasswordVisible: boolean = false;
 
   constructor(private userService: UserService, private router: Router) { }
 
@@ -72,13 +75,36 @@ export class RegisterComponent {
     }
   }
 
+  
+  togglePasswordVisibility() {
+    this.isPasswordVisible = !this.isPasswordVisible;
+  }
+
+  toggleConfirmPasswordVisibility() {
+    this.isConfirmPasswordVisible = !this.isConfirmPasswordVisible;
+  }
+
   // ฟังก์ชันสำหรับการลงทะเบียน
   register() {
+    // ตรวจสอบว่าผู้ใช้กรอกข้อมูลทุกฟิลด์หรือไม่
+    if (!this.userData.email || !this.userData.password || !this.confirmPassword || !this.userData.username || !this.userData.phone) {
+      alert('กรุณากรอกข้อมูลให้ครบ');
+      return;
+    }
+  
+    // ตรวจสอบว่ารหัสผ่านกับการยืนยันรหัสผ่านตรงกัน
     if (this.userData.password !== this.confirmPassword) {
       alert('รหัสผ่านไม่ตรงกัน');
       return;
     }
-
+  
+    // กำหนดรูปแบบการตรวจสอบรหัสผ่าน
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordRegex.test(this.userData.password)) {
+      alert('รหัสผ่านต้องประกอบด้วย: \n- ตัวอักษร (A-Z, a-z) \n- ตัวเลข (0-9) \n- หรือตัวอักษรพิเศษ เช่น @$!%*?& \n- ความยาวอย่างน้อย 8 ตัวอักษร');
+      return;
+    }
+  
     // ตรวจสอบว่าเบอร์โทรศัพท์ต้องเป็นตัวเลข 10 หลัก
     const phoneRegex = /^[0-9]{10}$/;
     if (!phoneRegex.test(this.userData.phone)) {
@@ -92,9 +118,9 @@ export class RegisterComponent {
       alert('ชื่อผู้ใช้ต้องมีความยาวไม่เกิน 30 ตัวอักษร และใช้ได้เฉพาะ a-z, A-Z, 0-9, จุด (.) และขีดล่าง (_)');
       return;
     }
-
+  
     console.log('Data to be sent:', this.userData); // ตรวจสอบข้อมูลที่กำลังส่ง
-
+  
     const formData = new FormData();
     formData.append('email', this.userData.email);
     formData.append('password', this.userData.password);
@@ -103,7 +129,7 @@ export class RegisterComponent {
     if (this.selectedFile) {
       formData.append('profileImage', this.selectedFile); // แนบไฟล์รูปภาพ
     }
-
+  
     this.userService.registerUser(formData).subscribe(
       (response) => {
         Swal.fire({
@@ -116,7 +142,7 @@ export class RegisterComponent {
       },
       (error) => {
         console.error('Error response:', error); // ดูข้อผิดพลาดจาก Backend
-
+  
         // ตรวจสอบข้อความข้อผิดพลาดจาก Backend
         if (error.error?.error) {
           if (error.error.error.includes('email')) {
@@ -149,6 +175,7 @@ export class RegisterComponent {
       }
     );
   }
+  
 
 
 }

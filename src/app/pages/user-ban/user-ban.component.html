@@ -18,7 +18,8 @@
                 </div>
 
                 <div style="display: flex; flex-direction: column; align-items: center;">
-                    <a class="menu-item" routerLinkActive="active" [routerLink]="['/userlist']" [queryParams]="{ id: userId }">
+                    <a class="menu-item" routerLinkActive="active" [routerLink]="['/userban']"
+                        [queryParams]="{ id: userId }">
                         <i style="font-size: 40px; color: black;" class="fas fa-users"></i>
                         <span class="itim-regular">ผู้ใช้งาน</span>
                     </a>
@@ -68,8 +69,8 @@
 
     <!-- Tabs -->
     <div class="tabs">
-        <a [routerLink]="['/userlist']" [queryParams]="{ id: userId }" class="active">ผู้ใช้งาน</a>
-        <a [routerLink]="['/userban']" [queryParams]="{ id: userId }" >ผู้ใช้งานที่ถูกระงับ</a>
+        <a [routerLink]="['/userlist']" [queryParams]="{ id: userId }">ผู้ใช้งาน</a>
+        <a [routerLink]="['/userban']" [queryParams]="{ id: userId }" class="active">ผู้ใช้งานที่ถูกระงับ</a>
     </div>
 
     <div style="margin-left: 150px; font-size: 100%; font-weight: bold; margin-left: 400px">
@@ -78,25 +79,27 @@
 
     <!-- User List -->
     <div class="user-list">
-        <div class="user-card" *ngFor="let user of users"
-            style="display: flex; justify-content: space-between; align-items: center;">
-            <div style="display: flex; align-items: center;">
-                <img [src]="user.image_url ? user.image_url : 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'" class="user-avatar"
-                    style="object-fit: cover; width: 100px; height: 100px;">
-                <div style="margin-top: -30px; margin-left: 10px;">
-                    <div class="user-name" style="font-size: 20px;">{{ user.username }}</div>
-                    <div class="user-email" style="font-size: 20px;">Email: {{ user.email }}</div>
-                    <div class="user-meta" style="font-size: 18px;">
-                        <span>โทรศัพท์: {{ user.phone }}</span>
+        <ng-container *ngFor="let user of users">
+            <div *ngIf="user.status === 0" class="user-card"
+                style="display: flex; justify-content: space-between; align-items: center;">
+                <div style="display: flex; align-items: center;">
+                    <img [src]="user.image_url ? user.image_url : 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'"
+                        class="user-avatar" style="object-fit: cover; width: 100px; height: 100px;">
+                    <div style="margin-top: -30px; margin-left: 10px;">
+                        <div class="user-name" style="font-size: 20px;">{{ user.username }}</div>
+                        <div class="user-email" style="font-size: 20px;">Email: {{ user.email }}</div>
+                        <div class="user-meta" style="font-size: 18px;">
+                            <span>โทรศัพท์: {{ user.phone }}</span>
+                        </div>
                     </div>
                 </div>
+                <button mat-flat-button style="background-color: green" (click)="toggleBan(user)">
+                    ยกเลิกการระงับบัญชี
+                </button>
             </div>
-            <button mat-flat-button [style.background-color]="user.status === 0 ? 'green' : 'rgb(216, 57, 57)'"
-                (click)="toggleBan(user)">
-                {{ user.status === 0 ? 'ยกเลิกการระงับบัญชี' : 'ระงับบัญชี' }}
-            </button>
-        </div>
+        </ng-container>
     </div>
+
 
     <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
 </div>

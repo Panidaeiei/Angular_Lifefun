@@ -78,6 +78,10 @@
       transform: scale(1.05); /* ขยายเล็กน้อยเมื่อ hover */
     }
 
- 
+    input[type="password"]::-ms-reveal, 
+    input[type="password"]::-webkit-credentials-auto-fill-button {
+        display: none;
+    }
+    
     
   

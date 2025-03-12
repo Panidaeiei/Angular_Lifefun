@@ -7,6 +7,7 @@ import { LikePost } from '../models/LikePost_model';
 import { Comment } from '../models/comment_model';
 import { SharePostModel } from '../models/sharepost_model';
 import { SavePostModel } from '../models/savepost_service';
+import { Follow, FollowCount, FollowStatus } from '../models/follow.model';
 
 @Injectable({
   providedIn: 'root',
@@ -166,14 +167,14 @@ export class ReactPostservice {
       `${this.baseUrl}/savepost/save`,
       data,
       { headers }).pipe(
-      tap((response) => {
-        console.log('Response save:', response); // Log response ที่ได้จาก API
-      }),
-      catchError((error) => {
-        console.error('API Error:', error); // Log กรณีเกิดข้อผิดพลาด
-        return throwError(error); // ส่งข้อผิดพลาดกลับไป
-      })
-    );
+        tap((response) => {
+          console.log('Response save:', response); // Log response ที่ได้จาก API
+        }),
+        catchError((error) => {
+          console.error('API Error:', error); // Log กรณีเกิดข้อผิดพลาด
+          return throwError(error); // ส่งข้อผิดพลาดกลับไป
+        })
+      );
   }
 
   getSaveStatus(post_id: number): Observable<{ isSave: boolean }> {
@@ -187,6 +188,42 @@ export class ReactPostservice {
       `${this.baseUrl}/savepost/get-save-status`,
       { post_id },
       { headers }
+    );
+  }
+
+  toggleFollow(follow: Follow): Observable<any> {
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${localStorage.getItem('token')}`,  // ส่ง JWT token ใน header
+      'Content-Type': 'application/json'  // กำหนด Content-Type ให้ถูกต้อง
+    });
+
+    return this.http.post(
+      `${this.baseUrl}/follows/toggle-follow`,
+      follow,  // ส่งข้อมูลแบบ Follow model
+      { headers }
+    );
+  }
+
+  checkFollowStatus(following_id: string, followed_id: string): Observable<FollowStatus> {
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${localStorage.getItem('token')}`,  // ส่ง JWT token ใน header
+      'Content-Type': 'application/json'  // กำหนด Content-Type ให้ถูกต้อง
+    });
+
+    return this.http.get<FollowStatus>(
+      `${this.baseUrl}/follows/follow-status?following_id=${following_id}&followed_id=${followed_id}`,{ headers }
+    );
+  }
+
+  getFollowCount(userId: string): Observable<FollowCount> {
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${localStorage.getItem('token')}`,  // ส่ง JWT token ใน header
+      'Content-Type': 'application/json'  // กำหนด Content-Type ให้ถูกต้อง
+    });
+
+    return this.http.get<FollowCount>(
+      `${this.baseUrl}/follows/follow-count?userId=${userId}`, { headers }
+
     );
   }
 

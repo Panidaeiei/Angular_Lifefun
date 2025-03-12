@@ -69,7 +69,34 @@ export class PostService {
       .set('uid', uid || '');  // ส่ง uid ของผู้ใช้ใน header
   
     // ส่งคำขอ GET ไปที่ API พร้อม Token และ uid
-    return this.http.get<ShowPost[]>(`${this.baseUrl}/posts/getPosts`, { headers }).pipe(
+    return this.http.get<ShowPost[]>(`http://projectnodejs.thammadalok.com/lifefunproject/posts/getPosts`, { headers }).pipe(
+      tap((response) => {
+        console.log('Response from API:', response);  // ตรวจสอบข้อมูลที่ได้รับจาก API
+  
+      })
+    );
+  }
+
+  getPosts_interests(): Observable<ShowPost[]> {
+    // ดึง JWT และ uid จาก localStorage
+    const token = localStorage.getItem('token');  // JWT Token
+    const uid = localStorage.getItem('userId');   // uid ของผู้ใช้ที่ล็อกอิน
+  
+    if (!token || !uid) {
+      return throwError('Token or UserId not found'); // ถ้าไม่มี Token หรือ uid ให้โยน error
+    }
+  
+    // ตรวจสอบค่าของ token และ uid
+    console.log(localStorage.getItem('token'));
+    console.log(localStorage.getItem('userId'));
+  
+    // สร้าง HttpHeaders ที่มี Authorization: Bearer <JWT-TOKEN>
+    const headers = new HttpHeaders()
+      .set('Authorization', `Bearer ${token}`)
+      .set('uid', uid || '');  // ส่ง uid ของผู้ใช้ใน header
+  
+    // ส่งคำขอ GET ไปที่ API พร้อม Token และ uid
+    return this.http.get<ShowPost[]>(`${this.baseUrl}/posts/getPosts_interests`, { headers }).pipe(
       tap((response) => {
         console.log('Response from API:', response);  // ตรวจสอบข้อมูลที่ได้รับจาก API
   
@@ -133,4 +160,35 @@ export class PostService {
     // ส่งคำขอ PUT ไปที่ API เพื่อแก้ไขโพสต์
     return this.http.put(`${this.baseUrl}/posts/editPost/${postId}`, editData, { headers });
   }
+
+  
+  // profile.service.ts
+  viewPost(postId: string): Observable<any> {
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${localStorage.getItem('token')}`,
+    });
+    return this.http
+      .post<any>(`${this.baseUrl}/posts/viewPost/${postId}`, {}, { headers })
+      .pipe(
+        catchError((error) => {
+          console.error('Error updating view count:', error);
+          return throwError(error);
+        })
+      );
+  }
+
+  searchPosts(searchTerm: string): Observable<ShowPost[]> {
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${localStorage.getItem('token')}`,
+    });
+  
+    return this.http.get<ShowPost[]>(`${this.baseUrl}/posts/s_getPosts?search=${encodeURIComponent(searchTerm)}`, { headers })
+      .pipe(
+        catchError(error => {
+          console.error('Error fetching search results:', error);
+          return throwError(() => new Error(error.message || 'Failed to fetch posts'));
+        })
+      );
+  }
+  
 }

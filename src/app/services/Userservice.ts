@@ -4,6 +4,7 @@ import { BehaviorSubject, catchError, Observable, tap, throwError } from 'rxjs';
 import { User } from '../models/register_model';
 import { environment } from '../../environments/environment';
 import { EditUser } from '../models/edit-user.model';
+import { SearchUser } from '../models/search-user.model';
 
 @Injectable({
   providedIn: 'root',
@@ -37,10 +38,22 @@ export class UserService {
     localStorage.removeItem('token'); // ลบ Token
   }
 
-  // ดึงข้อมูลผู้ดูแลระบบ
-  getAdmins(): Observable<any> {
-    return this.http.get(`${this.baseUrl}/view_admin`);
+  getUsers(): Observable<User[]> {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      return throwError(() => new Error('Unauthorized'));
+    }
+
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+
+    return this.http.get<User[]>(`${this.baseUrl}/view_users`, { headers }).pipe(
+      catchError(error => {
+        console.error('Error fetching users:', error);
+        return throwError(() => new Error(error.message || 'Failed to fetch users'));
+      })
+    );
   }
+
 
   // ดึงข้อมูลผู้ใช้
   getUserById(userId: string): Observable<User> {
@@ -116,6 +129,22 @@ export class UserService {
       catchError((error) => {
         console.error('Error in deleteUser:', error);
         return throwError(() => new Error(error.message));
+      })
+    );
+  }
+
+  searchUsers(username: string): Observable<SearchUser[]> {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      return throwError(() => new Error('Unauthorized: Token not found in LocalStorage'));
+    }
+
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+
+    return this.http.get<SearchUser[]>(`${this.baseUrl}/search_user?username=${username}`, { headers }).pipe(
+      catchError(error => {
+        console.error('Error fetching searched users:', error);
+        return throwError(() => new Error(error.message || 'Failed to search users'));
       })
     );
   }

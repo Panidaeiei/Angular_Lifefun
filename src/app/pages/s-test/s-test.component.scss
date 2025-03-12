@@ -1,5 +1,3 @@
-
-
 :host,
 html,
 body {
@@ -18,6 +16,8 @@ body {
 :host {
   display: block;
   min-height: 100vh;
+  align-items: center;
+  justify-content: center;
   /* ครอบคลุมความสูงเต็มหน้าจอ */
   background-color: rgb(249, 241, 239);
   /* สีพื้นหลัง */
@@ -33,7 +33,38 @@ body {
   /* สีพื้นหลังเหมือนกัน */
 }
 
-/* สไตล์พื้นฐานของ Drawer */
+.post-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  /* กำหนดให้แสดง 4 คอลัมน์ในแต่ละแถว */
+  gap: 20px;
+  /* ช่องว่างระหว่างโพสต์ */
+}
+
+.post-card {
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.post-card img,
+.post-card video {
+  border-radius: 10px;
+  margin-bottom: 15px;
+  max-width: 100%;
+}
+
+.post-meta {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 10px;
+}
+
+
 .drawer {
   position: fixed;
   top: 0;
@@ -87,7 +118,7 @@ body {
 .cardpost {
   background-color: white;
   width: auto;
-  height: 400px;
+  height: 450px;
 }
 
 .heart-icon {
@@ -97,18 +128,6 @@ body {
 
 .heart-icon.liked {
   color: rgb(224, 67, 67);
-}
-
-
-.fixed-toolbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  background-color: rgb(233, 135, 135);
-  height: 90px;
-  width: 100%;
-  z-index: 100;
-  /* Ensure it is above other content */
 }
 
 
@@ -123,14 +142,14 @@ body {
 .search-container {
   display: flex;
   align-items: center;
-  background-color: rgb(230, 200, 211);
+  background-color: rgb(233, 223, 213);
   /* สีพื้นหลังของช่องค้นหา */
   border-radius: 30px;
   /* ขอบมน */
   padding: 10px 10px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  height: 30px;
-  width: 220px;
+  height: 40px;
+  width: 300px;
   /* ความกว้างของช่องค้นหา */
 }
 
@@ -174,6 +193,7 @@ body {
 .menu-item.active i,
 .menu-item.active span {
   color: #000000;
+  /* เปลี่ยนสีเมื่อ active */
 }
 
 .menu-item.active::after {
@@ -187,62 +207,40 @@ body {
   height: 5px;
   background-color: #000000;
   /* สีขีดล่าง */
-  width: 80px;
+  width: 150px;
   /* ความกว้างของขีด */
 }
 
-.buttonEdit {
-  border: none;
-  width: 120px;
-  height: 35px;
-  font-size: 15px;
-  background-color: #f0d9db;
-  cursor: pointer;
+.user-list {
+  max-width: 650px;
+  margin: 40px;
+  display: flex;
+  flex-direction: column;
+  margin-left: 630px;
 }
 
-.buttonEdit:hover {
-  background-color: #d1bec0;
+.user-card {
+  display: flex;
+  align-items: center;
+  background-color: rgb(255, 255, 255);
+  padding: 15px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-/* บังคับให้ Ink Bar เป็นสีเขียว */
-::ng-deep .mdc-tab-indicator__content--underline {
-  --mdc-tab-indicator-active-indicator-color: rgb(0, 0, 0) !important;
-}
-
-/* แก้ไขสีเมื่อแท็บถูกเลือก */
-::ng-deep .mat-mdc-tab.mdc-tab--active .mdc-tab-indicator__content--underline {
-  --mdc-tab-indicator-active-indicator-color: rgb(0, 0, 0)  !important;
-  border-color: rgb(0, 0, 0) !important; /* บังคับให้เส้นใต้เป็นสีเขียว */
-  border-top-width: 2px !important;
-}
-
-.post-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, 300px); /* ความกว้างของแต่ละโพสต์ถูกกำหนดเป็น 300px */
-  gap: 10px; /* ระยะห่างระหว่างโพสต์ */
-  padding: 40px; /* ระยะห่างจากขอบ */
-  justify-content: center;
-}
-
-.post-item {
-  width: 300px; /* กำหนดความกว้างเฉพาะโพสต์ */
-  position: relative;
-  margin-top: -15px; 
-}
-
-.post-image,
-.post-video {
-  width: 300px; /* ความกว้างของสื่อ */
-  height: 300px; /* ความสูงของสื่อ */
-  object-fit: cover;
-  border-radius: 0px; /* ไม่มีความมน */
-}
-
-
-.multiple-media-icon {
-  top: 10px;
-  right: 10px;
-  padding: 5px;
+.user-avatar {
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
+  margin-right: 15px;
 }
 
+
+.user-name {
+  font-weight: bold;
+
+}
+
+.user-email {
+  color: gray;
+}

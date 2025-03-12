@@ -1,38 +1,41 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
 
+
 <mat-toolbar class="fixed-toolbar">
   <!-- Logo ด้านซ้าย -->
-  <a [routerLink]="['/HomepageUser']" [queryParams]="{ id: userId }">
-    <img src="https://shorturl.asia/2pOd3" alt="Home Icon" width="80px">
+  <a [routerLink]="['/HomepageUser']" [queryParams]="{ id: this.currentUserId }">
+    <img
+      src="https://scontent.fbkk10-1.fna.fbcdn.net/v/t1.15752-9/467011559_1309959883362728_6149497978643079622_n.png?_nc_cat=107&ccb=1-7&_nc_sid=9f807c&_nc_ohc=YCDaXk0TRJoQ7kNvgELQ_yE&_nc_oc=Adgw1-0qVy0c465vCPgZn65aHiM4NSXN3nbzvGrtEq6x69QnZVvlfUQjY1fkT-xy24s&_nc_zt=23&_nc_ht=scontent.fbkk10-1.fna&oh=03_Q7cD1gE-IRosOQT7rsinr7ol_0Ul6pkO0cmfVk1Z2xLab0K5kA&oe=67D157E4"
+      alt="Home Icon" width="80px">
   </a>
-  <div style="width: 15%;"></div>
+  <div style="width: 5%;"></div>
   <!-- เมนูตรงกลาง -->
   <div style="display: flex; flex-grow: 1; justify-content: center; align-items: center;">
     <div style="display: flex; justify-content: center; align-items: center; gap: 50px;">
 
       <!-- หน้าหลัก -->
-      <a class="menu-item" routerLinkActive="active" [routerLink]="['/HomepageUser']" [queryParams]="{ id: userId }">
+      <a class="menu-item" routerLinkActive="active" [routerLink]="['/HomepageUser']" [queryParams]="{ id: this.currentUserId}">
         <i style="font-size: 40px; color: black;" class="fa-solid fa-house"></i>
         <span class="itim-regular">หน้าหลัก</span>
       </a>
 
       <!-- ติดตาม -->
       <div style="display: flex; flex-direction: column; align-items: center;">
-        <a [routerLink]="['/Homepagefollow']" [queryParams]="{ id: userId }">
+        <a [routerLink]="['/Homepagefollow']" [queryParams]="{ id: this.currentUserId}">
           <i style="font-size: 40px; color: black;" class="fa-solid fa-users"></i>
         </a>
         <span class="itim-regular">ติดตาม</span>
       </div>
 
       <div>
-        <a [routerLink]="['/CreatePost']" [queryParams]="{ id: userId }"><img
+        <a [routerLink]="['/CreatePost']" [queryParams]="{ id: this.currentUserId}"><img
             src="https://scontent.fbkk10-1.fna.fbcdn.net/v/t1.15752-9/465505200_630347202693129_7507803564120503230_n.png?_nc_cat=107&ccb=1-7&_nc_sid=9f807c&_nc_ohc=DJIwEq0Dzw0Q7kNvgEqLS7u&_nc_zt=23&_nc_ht=scontent.fbkk10-1.fna&oh=03_Q7cD1gGDgXF2I13SrHWdmuiFc5AlVfULXTA9MvkjeMjETEJkow&oe=67C3DCBC"
             alt="" width="60px"></a>
       </div>
 
       <!-- การแจ้งเตือน -->
       <div style="display: flex; flex-direction: column; align-items: center;">
-        <a [routerLink]="['/Notification_user']" [queryParams]="{ id: userId }">
+        <a [routerLink]="['/Notification_user']" [queryParams]="{ id: this.currentUserId }">
           <i style="font-size: 40px; color: black;" class="fa-solid fa-bell"></i>
         </a>
         <span class="itim-regular">การแจ้งเตือน</span>
@@ -40,7 +43,7 @@
 
       <!-- โปรไฟล์ -->
       <div style="display: flex; flex-direction: column; align-items: center;">
-        <a [routerLink]="['/ProfileUser']" [queryParams]="{ id: userId }">
+        <a [routerLink]="['/ProfileUser']" [queryParams]="{ id: this.currentUserId }">
           <i style="font-size: 40px; color: black;" class="fa-solid fa-user"></i>
         </a>
         <span class="itim-regular">โปรไฟล์</span>
@@ -48,14 +51,15 @@
     </div>
   </div>
 
-  <!-- ช่องค้นหา -->
-  <div class="search-container">
-    <i class="fa-solid fa-magnifying-glass"></i>
-    <input type="text" class="search-input" placeholder="ค้นหา...">
+  <!-- ค้นหา -->
+  <div style="display: flex; flex-direction: column; align-items: center;">
+    <a [routerLink]="['/search_users']" [queryParams]="{ id: this.currentUserId }">
+      <i style="font-size: 40px; color: black;" class="fa-solid fa-search"></i>
+    </a>
   </div>
 
   <!-- ไอคอนเมนู -->
-  <div style="display: flex; flex-direction: column; align-items: center; margin-left: 20px;">
+  <div style="display: flex; flex-direction: column; align-items: center; margin-left: 30px;">
     <a href="javascript:void(0)" (click)="toggleDrawer()">
       <i style="font-size: 40px; color: black;" class="fa-solid fa-bars"></i>
     </a>
@@ -69,14 +73,14 @@
         <!-- หมวดหมู่ -->
         <li style="border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; align-items: center; gap: 10px;">
           <i class="fa fa-list" style="font-size: 20px; color: black;"></i>
-          <a [routerLink]="['/category']" [queryParams]="{ id: userId }" style="text-decoration: none; color: black;">
+          <a [routerLink]="['/category']" [queryParams]="{ id: this.currentUserId }" style="text-decoration: none; color: black;">
             <span class="itim-regular">หมวดหมู่</span>
           </a>
         </li>
         <!-- ออกจากระบบ -->
         <li style="border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; align-items: center; gap: 10px;">
           <i class="fa fa-sign-out" style="font-size: 20px; color: black;"></i>
-          <a href="/login" style="text-decoration: none; color: black;">
+          <a href="/" style="text-decoration: none; color: black;">
             <span class="itim-regular">ออกจากระบบ</span>
           </a>
         </li>
@@ -86,6 +90,7 @@
     </div>
   </div>
 </mat-toolbar>
+
 <div class="background-div">
   <div style="display: flex; margin-top: 120px; justify-content: center; margin-bottom: 30px; font-size: 25px;">
     <span>สำหรับคุณ</span>
@@ -98,7 +103,7 @@
           <div style="display: flex; flex-direction: column; position: relative;">
 
             <!-- แสดงรูปภาพหรือวิดีโอ -->
-            <a [routerLink]="['/detail_post']" [queryParams]="{ post_id: post.post_id, user_id: userId }">
+            <a (click)="viewPost(post.post_id.toString())">
               <ng-container *ngIf="post.media_type === 'image'; else videoTemplate">
                 <img [src]="post.media_url || 'https://via.placeholder.com/360x300'"
                   style="width: 390px; height: 350px; object-fit: cover;" alt="รูปที่โพสต์">

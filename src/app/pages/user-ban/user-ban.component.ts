@@ -10,18 +10,20 @@ import { UserService } from '../../services/Userservice';
 import { User } from '../../models/register_model';
 import { AdminService } from '../../services/Admin';
 import { UserBan } from '../../models/ban.model';
+
 @Component({
-  selector: 'app-user-list-admin',
+  selector: 'app-user-ban',
   imports: [MatToolbarModule, RouterModule, CommonModule, MatTabsModule, MatCardModule, MatButtonModule],
-  templateUrl: './user-list-admin.component.html',
-  styleUrl: './user-list-admin.component.scss'
+  templateUrl: './user-ban.component.html',
+  styleUrl: './user-ban.component.scss'
 })
-export class UserListAdminComponent {
-  [x: string]: any;
+export class UserBanComponent {
+ [x: string]: any;
   userId: string = '';
   users: User[] = [];
   errorMessage: string = '';
   isDrawerOpen: boolean = false; // เริ่มต้น Drawer ปิด
+  filteredUsers: User[] = []; 
 
   constructor(private route: ActivatedRoute,private userService: UserService,private adminservice: AdminService) { }
 
@@ -42,9 +44,14 @@ export class UserListAdminComponent {
   }
   
 
+  filterUsers() {
+    this.filteredUsers = this.users.filter(user => user.status === 0); // กรองเฉพาะ user ที่ status = 0
+  }
+
   toggleDrawer(): void {
     this.isDrawerOpen = !this.isDrawerOpen; // สลับสถานะเปิด/ปิด
   }
+
   toggleBan(user: UserBan) {
     if (user.uid === undefined || user.uid === null) {
       console.error('User ID is missing');
@@ -53,10 +60,11 @@ export class UserListAdminComponent {
   
     if (user.status === 0) {
       // แจ้งเตือนก่อนยกเลิกการระงับบัญชี
-      if (window.confirm(`คุณแน่ใจหรือไม่ว่าต้องการยกเลิกการระงับบัญชีของ ${user.username}`)) {
+      if (window.confirm(`คุณแน่ใจหรือไม่ว่าต้องการยกเลิกการระงับบัญชีของ ${user.username}?`)) {
         this.adminservice.unbanUser(user.uid).subscribe({
           next: (response) => {
-            user.status = 1;  // เปลี่ยนสถานะผู้ใช้เป็นปกติ
+            user.status = 1; // เปลี่ยนสถานะเป็นปกติ
+            this.filterUsers(); // อัปเดต filteredUsers หลังจากเปลี่ยนสถานะ
             console.log('ยกเลิกการระงับบัญชี:', response);
           },
           error: (error) => {
@@ -69,7 +77,8 @@ export class UserListAdminComponent {
       if (window.confirm(`คุณแน่ใจหรือไม่ว่าต้องการระงับบัญชีของ ${user.username}?`)) {
         this.adminservice.banUser(user.uid, 'ยังไม่ระบุ', '2025-12-31').subscribe({
           next: (response) => {
-            user.status = 0;  // เปลี่ยนสถานะผู้ใช้เป็นระงับ
+            user.status = 0; // เปลี่ยนสถานะเป็นระงับ
+            this.filterUsers(); // อัปเดต filteredUsers หลังจากเปลี่ยนสถานะ
             console.log('บัญชีผู้ใช้ถูกระงับ:', response);
           },
           error: (error) => {
