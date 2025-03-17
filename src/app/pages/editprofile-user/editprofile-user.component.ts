@@ -157,6 +157,7 @@ export class EditprofileUserComponent implements OnInit {
         alert('รหัสผ่านไม่ตรงกัน');
         return;
       }
+
     }
 
     this.isLoading = true;
@@ -186,6 +187,7 @@ export class EditprofileUserComponent implements OnInit {
       formData.append('image', this.selectedFile);
     }
 
+
     this.userService.updateUser(formData).subscribe({
       next: (response) => {
         alert('อัปเดตข้อมูลสำเร็จ');
@@ -195,7 +197,8 @@ export class EditprofileUserComponent implements OnInit {
       },
       error: (err) => {
         console.error('Error updating user:', err);
-        alert('เกิดข้อผิดพลาดในการอัปเดตข้อมูล');
+        alert('รหัสผ่านเดิมไม่ถูกต้อง');
+        this.router.navigate(['/ProfileUser'], { queryParams: { id: this.userId } });
       }
     });
   }

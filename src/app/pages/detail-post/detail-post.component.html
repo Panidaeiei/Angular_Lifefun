@@ -198,7 +198,7 @@
                 [ngClass]="{ 'saved': isSave, 'not-saved': !isSave }" (click)="toggleSavePost()"></i>
         </div>
         <div style="width: 760px; padding: 0px 20px; font-size: 22px; margin-bottom: 20px; ">
-            <span *ngIf="!isEditing" 
+            <span  *ngIf="!isEditing" 
             [innerHTML]="post.title | newlineToBr"></span>
         </div>
 
