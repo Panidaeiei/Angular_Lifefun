@@ -15,6 +15,7 @@ import { Router } from '@angular/router';
 import { EditUser } from '../../models/edit-user.model';
 import { UserService } from '../../services/Userservice';
 import { ConfirmDeuserDialogComponent } from '../../confirm-deuser-dialog/confirm-deuser-dialog.component';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-editprofile-user',
@@ -187,20 +188,48 @@ export class EditprofileUserComponent implements OnInit {
       formData.append('image', this.selectedFile);
     }
 
-
     this.userService.updateUser(formData).subscribe({
       next: (response) => {
-        alert('อัปเดตข้อมูลสำเร็จ');
-        console.log('Updated user:', response);
-        this.router.navigate(['/ProfileUser'], { queryParams: { id: this.userId } });
-        console.log('Navigating with User ID:', this.userId);
+        alert(response.message || 'อัปเดตข้อมูลสำเร็จ');
+        this.router.navigate(['/ProfileUser'], { queryParams: { id: this.userId } }); //ยังคงไปหน้าข้อมูลโปรไฟล์เมื่อลงทะเบียนสำเร็จ
+
       },
-      error: (err) => {
-        console.error('Error updating user:', err);
-        alert('รหัสผ่านเดิมไม่ถูกต้อง');
-        this.router.navigate(['/ProfileUser'], { queryParams: { id: this.userId } });
+      error: (error) => {
+        console.error('❌ Error updating user:', error);
+        console.log('📌 Full error object:', error);
+    
+        let errorMessage = 'รหัสผ่านเดิมไม่ถูกต้อง!';
+    
+        // ✅ กรณีที่ error เป็น `Error` object และอยู่ใน `error.message`
+        let backendResponse;
+        try {
+          backendResponse = JSON.parse(error.message); // ลองแปลงเป็น JSON
+        } catch (e) {
+          backendResponse = error.error || {}; // ถ้าแปลงไม่ได้ ใช้ error.error แทน
+        }
+    
+        // ✅ ถ้า backendResponse มี errors ให้ดึงมาแสดงผล
+        if (backendResponse.errors) {
+          const errors = backendResponse.errors;
+          errorMessage = '';
+    
+          if (errors.username) {
+            errorMessage += errors.username + '\n';
+          }
+          if (errors.email) {
+            errorMessage += errors.email + '\n';
+          }
+          if (errors.phone) {
+            errorMessage += errors.phone + '\n';
+          }
+        }
+    
+        alert(errorMessage.trim()); // ✅ แจ้งเตือนข้อผิดพลาด และให้ผู้ใช้แก้ไขข้อมูล
+        this.isLoading = false;
+
       }
-    });
+    });    
+    
   }
 
 
@@ -240,7 +269,7 @@ export class EditprofileUserComponent implements OnInit {
 
     } else if (field === 'new') {
       this.isNewPasswordVisible = !this.isNewPasswordVisible;
-    }else{
+    } else {
       this.isConfirmPasswordVisible = !this.isConfirmPasswordVisible;
     }
   }
