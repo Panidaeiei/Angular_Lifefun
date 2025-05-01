@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, catchError, Observable, tap, throwError } from 'rxjs';
 import { User } from '../models/register_model';
 import { environment } from '../../environments/environment';
@@ -99,18 +99,23 @@ export class UserService {
       console.error('No token found');
       return throwError(() => new Error('Unauthorized: Token not found in LocalStorage'));
     }
-
+  
     const headers = new HttpHeaders({
       Authorization: `Bearer ${token}`,
     });
-
-    return this.http.put(`${this.baseUrl}/edit_user`, formData, { headers }).pipe(
-      catchError((error) => {
-        console.error('Error in updateUser:', error);
-        return throwError(() => new Error(error.message));
+  
+    return this.http.put(`${this.baseUrl}/edit_user`, formData, { headers, responseType: 'json' }).pipe(
+      catchError((error: HttpErrorResponse) => {
+        console.error('❌ Error in updateUser:', error);
+        console.log('📌 Full raw error response:', error);
+        console.log('📌 Parsed error object:', error.error);
+  
+        // ถ้า error.error มีค่าให้ใช้มัน ถ้าไม่มีให้ใช้ error เอง
+        return throwError(() => new Error(JSON.stringify(error.error || error)));
       })
     );
   }
+  
 
   // ลบผู้ใช้
   deleteUser(userId: string): Observable<any> {

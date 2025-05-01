@@ -136,8 +136,8 @@ export class CreatePostComponent {
     if (input.files) {
       const file = input.files[0];
       if (file.type.startsWith('image/')) {
-        if (this.files.filter((f) => f.type === 'image').length >= 10) {
-          alert('คุณสามารถเลือกรูปภาพได้สูงสุด 10 ไฟล์');
+        if (this.files.filter((f) => f.type === 'image').length >= 9) {
+          alert('คุณสามารถเลือกรูปภาพได้สูงสุด 9 ไฟล์');
           return;
         }
         const reader = new FileReader();
