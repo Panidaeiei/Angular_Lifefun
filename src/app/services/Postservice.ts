@@ -18,6 +18,9 @@ export class PostService {
 
   constructor(private http: HttpClient, private router: Router) { }
 
+  getViewCounts(): Observable<any> {
+    return this.http.get<any>(`${this.baseUrl}/posts/getviwepost`);
+  }
 
   addPost(formData: FormData): Observable<any> {
     // Retrieve the JWT token from localStorage
@@ -97,6 +100,23 @@ export class PostService {
   
     // ส่งคำขอ GET ไปที่ API พร้อม Token และ uid
     return this.http.get<ShowPost[]>(`${this.baseUrl}/posts/getPosts_interests`, { headers }).pipe(
+      tap((response) => {
+        console.log('Response from API:', response);  // ตรวจสอบข้อมูลที่ได้รับจาก API
+  
+      })
+    );
+  }
+
+  getPostsFollowing(): Observable<ShowPost[]> {
+    const uid = localStorage.getItem('userId');  
+  
+    console.log(localStorage.getItem('userId'));
+  
+    const headers = new HttpHeaders()
+      .set('uid', uid || '');  // ส่ง uid ของผู้ใช้ใน header
+  
+    // ส่งคำขอ GET ไปที่ API พร้อม Token และ uid
+    return this.http.get<ShowPost[]>(`${this.baseUrl}/posts/getFollowingPosts`, { headers }).pipe(
       tap((response) => {
         console.log('Response from API:', response);  // ตรวจสอบข้อมูลที่ได้รับจาก API
   

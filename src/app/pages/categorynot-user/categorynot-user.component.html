@@ -1,0 +1,102 @@
+<div class="background-div">
+    <mat-toolbar class="fixed-toolbar"
+        style="background-color: rgb(233, 135, 135); height: 90px; display: flex; align-items: center; justify-content: space-between;">
+
+        <a [routerLink]="['']">
+            <img src="../../../assets/images/Logoweb.png" alt="Home Icon" width="80px">
+        </a>
+
+        <div style="display: flex; flex-grow: 1; justify-content: center; align-items: center;  margin-left: 120px;">
+            <div style="display: flex; justify-content: center; align-items: center; gap: 60px;">
+
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <a [routerLink]="['']">
+                        <i style="font-size: 40px; color: black;" class="fa-solid fa-house"></i>
+                    </a>
+                    <span class="itim-regular">หน้าหลัก</span>
+                </div>
+
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <a [routerLink]="['']">
+                        <i style="font-size: 40px; color: black;" class="fa-solid fa-magnifying-glass"></i>
+                    </a>
+                    <span class="itim-regular">ค้นหา</span>
+                </div>
+
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <a class="menu-item" routerLinkActive="active" [routerLink]="['/category_main']">
+                        <i style="font-size: 40px; color: black;" class="fa-solid fa-bars"></i>
+                    </a>
+                    <span class="itim-regular">หมวดหมู่</span>
+                </div>
+            </div>
+        </div>
+
+        <button routerLink="/login" class="login-link"
+            style="text-decoration: none; color: black; background: none; border: none; outline: none;">
+            <div style="display: flex; flex-direction: row; align-items: center; justify-content: center;">
+                <i class="material-icons" st>login</i>
+                <span style="margin-left: 10px; font-size: 17px;">เข้าสู่ระบบ/สมัครสมาชิก</span>
+            </div>
+        </button>
+
+    </mat-toolbar>
+</div>
+<div style="margin-top: 130px;">
+    <div style="display: flex; justify-content: center; margin-bottom: 30px; gap: 30px; margin-top: 30px;">
+        <a style="text-decoration: none; color: black;">
+            <span style="font-size: 22px; ">หมวดหมู่</span>
+        </a>
+    </div>
+
+    <div style="display: flex; flex-direction: column; align-items: center; margin-top: 40px;">
+        <div style="display: flex; flex-direction: row; gap: 160px;">
+            <div style="display: flex; flex-direction: column; align-items: center;">
+                <a href="">
+                    <img src="../../../assets/images/cosmatic.jpg"
+                        style="border-radius: 50%; width: 300px; height: 300px; object-fit: cover;" alt="">
+                </a>
+                <p style="font-size: 22px;">เครื่องสำอาง</p>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: center;">
+                <a href="">
+                    <img src="https://i.pinimg.com/736x/c1/51/cd/c151cdffa326596504b10c6bd98a9958.jpg"
+                        style="border-radius: 50%; width: 300px; height: 300px; object-fit: cover;" alt="">
+                </a>
+                <p style="font-size: 22px;">แฟชั่น</p>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: center;">
+                <a href="">
+                    <img src="../../../assets/images/skincare.jpg"
+                        style="border-radius: 50%; width: 300px; height: 300px; object-fit: cover;" alt="">
+                </a>
+                <p style="font-size: 22px;">เครื่องสำอาง</p>
+            </div>
+        </div>
+
+        <div style="display: flex; flex-direction: row; gap: 150px; margin-top: 30px;">
+            <div style="display: flex; flex-direction: column; align-items: center;">
+                <a href="">
+                    <img src="../../../assets/images/food.jpg"
+                        style="border-radius: 50%; width: 300px; height: 300px; object-fit: cover;" alt="">
+                </a>
+                <p style="font-size: 22px;">อาหาร</p>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: center;">
+                <a href="">
+                    <img src="../../../assets/images/woman.jpg"
+                        style="border-radius: 50%; width: 300px; height: 300px; object-fit: cover;" alt="">
+                </a>
+                <p style="font-size: 22px;">สุขภาพ</p>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: center;">
+                <a href="">
+                    <img src="https://i.pinimg.com/736x/3c/39/7a/3c397a110bed100bf40ccd76ad94c922.jpg"
+                        style="border-radius: 50%; width: 300px; height: 300px; object-fit: cover;" alt="">
+                </a>
+                <p style="font-size: 22px;">ท่องเที่ยว</p>
+            </div>
+        </div>
+    </div>
+    <div style="height: 40px;"></div>
+</div>

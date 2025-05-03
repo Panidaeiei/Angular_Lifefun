@@ -1,4 +1,4 @@
-import { Component} from '@angular/core';
+import { Component } from '@angular/core';
 import { ShowPost } from '../../models/showpost_model';
 import { PostService } from '../../services/Postservice';
 import { FormsModule } from '@angular/forms';
@@ -8,16 +8,17 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
-import { RouterModule } from '@angular/router'; 
+import { RouterModule } from '@angular/router';
+import { TimeAgoPipe} from '../../pipes/time-ago.pipe';
 
 @Component({
   selector: 'app-s-test',
-  imports: [MatToolbarModule,  CommonModule, MatTabsModule, MatCardModule, MatButtonModule, FormsModule, RouterModule],
+  imports: [MatToolbarModule, CommonModule, MatTabsModule, MatCardModule, MatButtonModule, FormsModule, RouterModule, TimeAgoPipe],
   templateUrl: './s-test.component.html',
   styleUrl: './s-test.component.scss'
 })
 export class STestComponent {
-   
+
   userId: string = '';
   searchQuery = '';
   posts: ShowPost[] = [];
@@ -25,7 +26,7 @@ export class STestComponent {
   errorMessage = '';
   isDrawerOpen: boolean = false; // เริ่มต้น Drawer ปิด
 
-  constructor(private postService: PostService,private router: ActivatedRoute,) {}
+  constructor(private postService: PostService, private router: ActivatedRoute,) { }
 
   ngOnInit(): void {
     this.router.queryParams.subscribe((params) => {
@@ -58,6 +59,7 @@ export class STestComponent {
         this.loading = false;
       }
     });
+
   }
 
   toggleDrawer(): void {

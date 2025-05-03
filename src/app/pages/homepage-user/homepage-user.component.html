@@ -4,9 +4,7 @@
 <mat-toolbar class="fixed-toolbar">
   <!-- Logo ด้านซ้าย -->
   <a [routerLink]="['/HomepageUser']" [queryParams]="{ id: this.currentUserId }">
-    <img
-      src="https://scontent.fbkk10-1.fna.fbcdn.net/v/t1.15752-9/467011559_1309959883362728_6149497978643079622_n.png?_nc_cat=107&ccb=1-7&_nc_sid=9f807c&_nc_ohc=YCDaXk0TRJoQ7kNvgELQ_yE&_nc_oc=Adgw1-0qVy0c465vCPgZn65aHiM4NSXN3nbzvGrtEq6x69QnZVvlfUQjY1fkT-xy24s&_nc_zt=23&_nc_ht=scontent.fbkk10-1.fna&oh=03_Q7cD1gE-IRosOQT7rsinr7ol_0Ul6pkO0cmfVk1Z2xLab0K5kA&oe=67D157E4"
-      alt="Home Icon" width="80px">
+    <img src="../../../assets/images/Logoweb.png" alt="Home Icon" width="80px">
   </a>
   <div style="width: 5%;"></div>
   <!-- เมนูตรงกลาง -->
@@ -14,7 +12,8 @@
     <div style="display: flex; justify-content: center; align-items: center; gap: 50px;">
 
       <!-- หน้าหลัก -->
-      <a class="menu-item" routerLinkActive="active" [routerLink]="['/HomepageUser']" [queryParams]="{ id: this.currentUserId}">
+      <a class="menu-item" routerLinkActive="active" [routerLink]="['/HomepageUser']"
+        [queryParams]="{ id: this.currentUserId}">
         <i style="font-size: 40px; color: black;" class="fa-solid fa-house"></i>
         <span class="itim-regular">หน้าหลัก</span>
       </a>
@@ -29,8 +28,7 @@
 
       <div>
         <a [routerLink]="['/CreatePost']" [queryParams]="{ id: this.currentUserId}"><img
-            src="https://scontent.fbkk10-1.fna.fbcdn.net/v/t1.15752-9/465505200_630347202693129_7507803564120503230_n.png?_nc_cat=107&ccb=1-7&_nc_sid=9f807c&_nc_ohc=QoYx49OB-ZIQ7kNvgFdJUjP&_nc_oc=Adjn1noxAVi_m9ZMnzNGxS5Quf0tNgLsh4Eta97leZC0NPqkekXeZNO2I5QYQ_uY3Lg&_nc_zt=23&_nc_ht=scontent.fbkk10-1.fna&oh=03_Q7cD1wFrFUMxcjFgf-sF2ffvaKXPS9R1cvWXAgdvV6GUgRapAA&oe=67FF303C"
-            alt="" width="60px"></a>
+            src="../../../assets/images/Addpost.png" alt="" width="60px"></a>
       </div>
 
       <!-- การแจ้งเตือน -->
@@ -73,7 +71,8 @@
         <!-- หมวดหมู่ -->
         <li style="border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; align-items: center; gap: 10px;">
           <i class="fa fa-list" style="font-size: 20px; color: black;"></i>
-          <a [routerLink]="['/category']" [queryParams]="{ id: this.currentUserId }" style="text-decoration: none; color: black;">
+          <a [routerLink]="['/category']" [queryParams]="{ id: this.currentUserId }"
+            style="text-decoration: none; color: black;">
             <span class="itim-regular">หมวดหมู่</span>
           </a>
         </li>
@@ -92,8 +91,15 @@
 </mat-toolbar>
 
 <div class="background-div">
-  <div style="display: flex; margin-top: 120px; justify-content: center; margin-bottom: 30px; font-size: 25px;">
-    <span>สำหรับคุณ</span>
+  <div style="display: flex; justify-content: center; margin-bottom: 30px; gap: 30px; margin-top: 120px;">
+    <a [routerLink]="['/HomepageUser']" [queryParams]="{ id: this.currentUserId }"
+      style="text-decoration: none; color: black;">
+      <span style="font-size: 22px; font-weight: 600;">บัญชีผู้ใช้งาน</span>
+    </a>
+    <a [routerLink]="['/Homepagefollow']" [queryParams]="{ id: this.currentUserId}"
+      style="text-decoration: none; color: rgb(109, 106, 106);">
+      <span style="font-size: 22px; ">กำลังติดตาม</span>
+    </a>
   </div>
 
   <div class="card-container-wrapper">
@@ -120,17 +126,18 @@
                 style="font-size: 30px; color: white; position: absolute; top: 10px; right: 10px; padding: 5px; border-radius: 50%;"></i>
             </div>
 
-
             <!-- ข้อมูลโพสต์ -->
             <div style="display: flex; align-items: center; justify-content: space-between; margin-right: 10px;">
               <span style="margin-left: 15px; margin-right: 15px; margin-top: 10px; font-size: 20px;">
                 {{ post.title | slice:0:15 }}{{ post.title.length > 15 ? '...' : '' }}
               </span>
               <div style="display: flex; align-items: center; justify-content: space-between; margin-right: 10px;">
-                <a [routerLink]="['/detail_post']" [queryParams]="{ post_id: post.post_id, user_id: userId }"
+                <a [routerLink]="['/detail_post']" [queryParams]="{ post_id: post.post_id, id: this.currentUserId }"
                   class="hover-link" style="color: #e96e7e; font-size: 20px; text-decoration: none;">
                   View
                 </a>
+                <span style="margin-left: 5px; color: rgb(168, 168, 168); margin-top: 5px;">{{
+                  getViewsForPost(post.post_id.toString())}}</span>
               </div>
             </div>
 

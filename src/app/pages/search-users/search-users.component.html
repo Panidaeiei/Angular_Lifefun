@@ -1,7 +1,7 @@
 <mat-toolbar class="fixed-toolbar">
     <!-- Logo ด้านซ้าย -->
     <a [routerLink]="['/HomepageUser']" [queryParams]="{ id: userId }">
-        <img src="https://scontent.fbkk10-1.fna.fbcdn.net/v/t1.15752-9/467011559_1309959883362728_6149497978643079622_n.png?_nc_cat=107&ccb=1-7&_nc_sid=9f807c&_nc_ohc=YCDaXk0TRJoQ7kNvgELQ_yE&_nc_oc=Adgw1-0qVy0c465vCPgZn65aHiM4NSXN3nbzvGrtEq6x69QnZVvlfUQjY1fkT-xy24s&_nc_zt=23&_nc_ht=scontent.fbkk10-1.fna&oh=03_Q7cD1gE-IRosOQT7rsinr7ol_0Ul6pkO0cmfVk1Z2xLab0K5kA&oe=67D157E4"
+        <img src="../../../assets/images/Logoweb.png"
             alt="Home Icon" width="80px">
     </a>
     <div style="width: 2%;"></div>
@@ -25,7 +25,7 @@
 
             <div>
                 <a [routerLink]="['/CreatePost']" [queryParams]="{ id: userId }"><img
-                        src="https://scontent.fbkk10-1.fna.fbcdn.net/v/t1.15752-9/465505200_630347202693129_7507803564120503230_n.png?_nc_cat=107&ccb=1-7&_nc_sid=9f807c&_nc_ohc=DJIwEq0Dzw0Q7kNvgEqLS7u&_nc_zt=23&_nc_ht=scontent.fbkk10-1.fna&oh=03_Q7cD1gGDgXF2I13SrHWdmuiFc5AlVfULXTA9MvkjeMjETEJkow&oe=67C3DCBC"
+                    src="../../../assets/images/Addpost.png"
                         alt="" width="60px"></a>
             </div>
 
@@ -88,7 +88,7 @@
         <div class="search-container">
             <i class="fa-solid fa-magnifying-glass"></i>
             <input type="text" class="search-input" [(ngModel)]="searchQuery" (keyup.enter)="onSearch()"
-                placeholder="ค้นหา...">
+                placeholder="ค้นหาผู้ใช้งาน...">
         </div>
     </div>
 
@@ -100,7 +100,7 @@
         </a>
         <a class="menu-item"  [routerLink]="['/stest']" [queryParams]="{ id: userId }"
             style="text-decoration: none; color: black;">
-            <span style="font-size: 22px; font-weight: 600;">โพสต์</span>
+            <span style="font-size: 22px; ">โพสต์</span>
         </a>
     </div>
 

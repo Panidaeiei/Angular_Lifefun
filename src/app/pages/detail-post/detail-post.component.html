@@ -5,38 +5,35 @@
     <mat-toolbar class="fixed-toolbar">
         <!-- Logo ด้านซ้าย -->
         <a [routerLink]="['/HomepageUser']" [queryParams]="{ id: userId }">
-            <img src="https://scontent.fbkk10-1.fna.fbcdn.net/v/t1.15752-9/467011559_1309959883362728_6149497978643079622_n.png?_nc_cat=107&ccb=1-7&_nc_sid=9f807c&_nc_ohc=YCDaXk0TRJoQ7kNvgELQ_yE&_nc_oc=Adgw1-0qVy0c465vCPgZn65aHiM4NSXN3nbzvGrtEq6x69QnZVvlfUQjY1fkT-xy24s&_nc_zt=23&_nc_ht=scontent.fbkk10-1.fna&oh=03_Q7cD1gE-IRosOQT7rsinr7ol_0Ul6pkO0cmfVk1Z2xLab0K5kA&oe=67D157E4"
-                alt="Home Icon" width="80px">
+            <img src="../../../assets/images/Logoweb.png" alt="Home Icon" width="80px">
         </a>
-        <div style="width: 15%;"></div>
         <!-- เมนูตรงกลาง -->
         <div style="display: flex; flex-grow: 1; justify-content: center; align-items: center;">
             <div style="display: flex; justify-content: center; align-items: center; gap: 50px;">
 
                 <!-- หน้าหลัก -->
                 <a class="menu-item" routerLinkActive="active" [routerLink]="['/HomepageUser']"
-                    [queryParams]="{ id: userId }">
+                    [queryParams]="{ id: this.currentUserId}">
                     <i style="font-size: 40px; color: black;" class="fa-solid fa-house"></i>
                     <span class="itim-regular">หน้าหลัก</span>
                 </a>
 
                 <!-- ติดตาม -->
                 <div style="display: flex; flex-direction: column; align-items: center;">
-                    <a [routerLink]="['/Homepagefollow']" [queryParams]="{ id: userId }">
+                    <a [routerLink]="['/Homepagefollow']" [queryParams]="{ id: this.currentUserId}">
                         <i style="font-size: 40px; color: black;" class="fa-solid fa-users"></i>
                     </a>
                     <span class="itim-regular">ติดตาม</span>
                 </div>
 
                 <div>
-                    <a [routerLink]="['/CreatePost']" [queryParams]="{ id: userId }"><img
-                            src="https://scontent.fbkk10-1.fna.fbcdn.net/v/t1.15752-9/465505200_630347202693129_7507803564120503230_n.png?_nc_cat=107&ccb=1-7&_nc_sid=9f807c&_nc_ohc=QoYx49OB-ZIQ7kNvgFdJUjP&_nc_oc=Adjn1noxAVi_m9ZMnzNGxS5Quf0tNgLsh4Eta97leZC0NPqkekXeZNO2I5QYQ_uY3Lg&_nc_zt=23&_nc_ht=scontent.fbkk10-1.fna&oh=03_Q7cD1wFrFUMxcjFgf-sF2ffvaKXPS9R1cvWXAgdvV6GUgRapAA&oe=67FF303C"
-                            alt="" width="60px"></a>
+                    <a [routerLink]="['/CreatePost']" [queryParams]="{ id: this.currentUserId}"><img
+                            src="../../../assets/images/Addpost.png" alt="" width="60px"></a>
                 </div>
 
                 <!-- การแจ้งเตือน -->
                 <div style="display: flex; flex-direction: column; align-items: center;">
-                    <a [routerLink]="['/Notification_user']" [queryParams]="{ id: userId }">
+                    <a [routerLink]="['/Notification_user']" [queryParams]="{ id: this.currentUserId }">
                         <i style="font-size: 40px; color: black;" class="fa-solid fa-bell"></i>
                     </a>
                     <span class="itim-regular">การแจ้งเตือน</span>
@@ -44,7 +41,7 @@
 
                 <!-- โปรไฟล์ -->
                 <div style="display: flex; flex-direction: column; align-items: center;">
-                    <a [routerLink]="['/ProfileUser']" [queryParams]="{ id: userId }">
+                    <a [routerLink]="['/ProfileUser']" [queryParams]="{ id: this.currentUserId }">
                         <i style="font-size: 40px; color: black;" class="fa-solid fa-user"></i>
                     </a>
                     <span class="itim-regular">โปรไฟล์</span>
@@ -52,10 +49,11 @@
             </div>
         </div>
 
-        <!-- ช่องค้นหา -->
-        <div class="search-container">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" class="search-input" placeholder="ค้นหา...">
+        <!-- ค้นหา -->
+        <div style="display: flex; flex-direction: column; align-items: center;">
+            <a [routerLink]="['/search_users']" [queryParams]="{ id: this.currentUserId }">
+                <i style="font-size: 40px; color: black;" class="fa-solid fa-search"></i>
+            </a>
         </div>
 
         <!-- ไอคอนเมนู -->
@@ -98,8 +96,8 @@
         <div
             style="display: flex; flex-direction: row; margin-bottom: 20px; margin-top: 20px; margin-left: 15px; justify-content: space-between; ">
             <div style="display: flex;">
-                <img [src]="post.user_profile_image || 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'" alt="รูปโปรไฟล์"
-                    (click)="goToProfile(post.user_uid.toString())"
+                <img [src]="post.user_profile_image || 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'"
+                    alt="รูปโปรไฟล์" (click)="goToProfile(post.user_uid.toString())"
                     style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover; cursor: pointer;">
                 <div style="display: flex; flex-direction: column;">
 
@@ -142,7 +140,7 @@
                     <span style="font-size: 15px;">รายงานโพสต์</span>
                 </button>
             </mat-menu>
-            
+
         </div>
 
         <div *ngIf="post" class="media-slider" (mouseenter)="showControls()" (mouseleave)="hideControls()">
@@ -198,8 +196,7 @@
                 [ngClass]="{ 'saved': isSave, 'not-saved': !isSave }" (click)="toggleSavePost()"></i>
         </div>
         <div style="width: 760px; padding: 0px 20px; font-size: 22px; margin-bottom: 20px; ">
-            <span  *ngIf="!isEditing" 
-            [innerHTML]="post.title | newlineToBr"></span>
+            <span *ngIf="!isEditing" [innerHTML]="post.title | newlineToBr"></span>
         </div>
 
         <!-- ฟอร์มแก้ไข -->
@@ -220,15 +217,18 @@
             <div style="display: flex; gap: 10px; margin-left: 20px; justify-content: space-between;">
                 <div style="display: flex; gap: 15px;">
                     <img style="width: 60px; height: 60px; object-fit: cover; border-radius: 50%; cursor: pointer;"
-                        [src]="comment.image_url || 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'"  alt="" (click)="goToProfile(comment.uid)">
+                        [src]="comment.image_url || 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'"
+                        alt="" (click)="goToProfile(comment.uid)">
                     <div style="display: flex; flex-direction: column;  width: 450px; ">
                         <div style="margin-bottom: 5px;">
                             <span style="font-size: 20px; font-weight: 500;" title="username">{{ comment.username
                                 }}</span>
-                              
+
                             <span style="margin-left: 10px; color: #949090;">{{ comment.date_time | timeAgo }}</span>
                         </div>
-                        <span style="font-size: 20px; white-space: pre-line; word-wrap: break-word; word-break: break-word;" title="comment">{{ comment.title }}</span>
+                        <span
+                            style="font-size: 20px; white-space: pre-line; word-wrap: break-word; word-break: break-word;"
+                            title="comment">{{ comment.title }}</span>
                     </div>
                 </div>
 

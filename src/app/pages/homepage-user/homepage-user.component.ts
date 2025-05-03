@@ -25,6 +25,7 @@ export class HomepageUserComponent {
   posts: ShowPost[] = []; // เก็บโพสต์ทั้งหมด
   message: string = '';
   postId: string = '';
+  viewPosts: any[] = [];
 
   constructor(private route: ActivatedRoute, private userService: UserService, private postService: PostService, private likePostService: ReactPostservice, private router: Router,) { }
 
@@ -68,11 +69,32 @@ export class HomepageUserComponent {
 
     // ดึงโพสต์จาก Backend
     this.fetchPosts();
+
+    this.postService.getViewCounts().subscribe({
+      next: (data) => {
+        this.viewPosts = data;
+        console.log('View Data:', data);
+      },
+      error: (err) => {
+        console.error('Error loading views:', err);
+      }
+    });
+  
   }
 
+  getViewsForPost(postId: string): number {
+    const postIdString = postId.toString();
+  
+    // ค้นหาข้อมูลใน viewPosts โดยเปรียบเทียบ post_id
+    const view = this.viewPosts.find(v => v.post_id.toString() === postIdString);
+    
+    // console.log('View Post ID:', postId, 'View Data:', view); 
+  
+    // ถ้าไม่พบให้แสดงเป็น 0
+    return view?.total_views ? parseInt(view.total_views) : 0; 
+  }
+  
   viewPost(postId: string): void {
-
-
     this.postService.viewPost(postId).subscribe({
       next: () => {
         // เมื่อ API viewPost สำเร็จแล้ว ค่อยเปลี่ยนหน้า
@@ -81,7 +103,6 @@ export class HomepageUserComponent {
       error: (err) => console.error('Error updating view count:', err)
     });
   }
-
 
   fetchPosts(): void {
     this.postService.getPosts_interests().subscribe(
@@ -94,8 +115,6 @@ export class HomepageUserComponent {
             t.post_id === value.post_id
           ))
         );
-
-        console.log('Unique Posts:', uniquePosts); // ตรวจสอบโพสต์ที่กรองออกมา
 
         // อัปเดตค่า posts ที่กรองแล้ว
         this.posts = uniquePosts;
