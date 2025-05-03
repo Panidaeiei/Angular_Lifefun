@@ -37,15 +37,13 @@ body {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   /* กำหนดให้แสดง 4 คอลัมน์ในแต่ละแถว */
-  gap: 20px;
+  gap: 30px;
   /* ช่องว่างระหว่างโพสต์ */
 }
 
 .post-card {
   background-color: #fff;
-  border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  padding: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -53,8 +51,7 @@ body {
 
 .post-card img,
 .post-card video {
-  border-radius: 10px;
-  margin-bottom: 15px;
+  margin-bottom: 5px;
   max-width: 100%;
 }
 
@@ -204,11 +201,18 @@ body {
   /* เริ่มที่กึ่งกลางของเมนู */
   transform: translateX(-50%);
   /* ดันกลับมาครึ่งหนึ่งของความกว้าง */
-  height: 5px;
+  height: 4px;
   background-color: #000000;
   /* สีขีดล่าง */
-  width: 150px;
+  width: 90px;
   /* ความกว้างของขีด */
+}
+
+.multiple-media-icon {
+  top: 10px;
+  right: 10px;
+  padding: 5px;
+  border-radius: 50%;
 }
 
 .user-list {

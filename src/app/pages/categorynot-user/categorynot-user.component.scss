@@ -1,0 +1,96 @@
+:host,
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgb(249, 241, 239);
+  /* สีพื้นหลัง */
+  box-sizing: border-box;
+  /* คำนวณขนาดไม่เกินขอบ */
+  overflow-x: hidden;
+  /* ปิดการเลื่อนแนวนอน */
+}
+
+:host {
+  display: block;
+  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
+  /* ครอบคลุมความสูงเต็มหน้าจอ */
+  background-color: rgb(249, 241, 239);
+  /* สีพื้นหลัง */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+body {
+  overflow-y: auto;
+  /* เปิดใช้งานการเลื่อนแนวตั้ง */
+  background-color: rgb(249, 241, 239);
+  /* สีพื้นหลังเหมือนกัน */
+}
+
+.login-link {
+  background: none; /* ไม่มีสีพื้นหลัง */
+  border: none; /* ไม่มีเส้นขอบ */
+  outline: none; /* ไม่มีเส้นขอบเมื่อคลิก */
+  transition: box-shadow 0.3s ease; 
+  cursor: pointer;
+}
+
+.login-link:hover {
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* เงาเมื่อเอาเมาส์เข้า */
+}
+.fixed-toolbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: rgb(233, 135, 135);
+  height: 90px;
+  width: 100%;
+  z-index: 1;
+  /* Ensure it is above other content */
+}
+
+.menu-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  position: relative;
+}
+
+.menu-item.active {
+  color: #ff0000;
+  /* สีเมื่อ active */
+}
+
+
+.menu-item span {
+  font-size: 14px;
+  margin-top: 5px;
+}
+
+.menu-item.active i,
+.menu-item.active span {
+  color: #000000;
+  /* เปลี่ยนสีเมื่อ active */
+}
+
+.menu-item.active::after {
+  content: '';
+  position: absolute;
+  bottom: -40px;
+  left: 50%;
+  /* เริ่มที่กึ่งกลางของเมนู */
+  transform: translateX(-50%);
+  /* ดันกลับมาครึ่งหนึ่งของความกว้าง */
+  height: 5px;
+  background-color: #000000;
+  /* สีขีดล่าง */
+  width: 95px;
+  /* ความกว้างของขีด */
+}

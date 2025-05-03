@@ -17,6 +17,7 @@ import { UserListAdminComponent } from './pages/user-list-admin/user-list-admin.
 import { SearchUsersComponent } from './pages/search-users/search-users.component';
 import { UserBanComponent } from './pages/user-ban/user-ban.component';
 import { STestComponent } from './pages/s-test/s-test.component';
+import { CategorynotUserComponent } from './pages/categorynot-user/categorynot-user.component';
 
 
 
@@ -40,5 +41,6 @@ export const routes: Routes = [
     {path: 'userlist', component: UserListAdminComponent},
     {path: 'search_users', component: SearchUsersComponent},
     {path: 'userban', component: UserBanComponent},
-    {path: 'stest', component: STestComponent}
+    {path: 'stest', component: STestComponent},
+    {path: 'category_main', component: CategorynotUserComponent}
 ];

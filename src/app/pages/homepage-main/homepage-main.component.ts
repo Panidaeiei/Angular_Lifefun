@@ -7,9 +7,8 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { ShowPost } from '../../models/showpost_model';
-import { UserService } from '../../services/Userservice';
 import { PostService } from '../../services/Postservice';
-import { ReactPostservice } from '../../services/ReactPostservice';
+
 
 @Component({
   selector: 'app-homepage-main',
@@ -19,13 +18,12 @@ import { ReactPostservice } from '../../services/ReactPostservice';
 })
 export class HomepageMainComponent {
   currentUserId: string | null = null;
-   userId: string = '';
    isLiked: boolean = false;
    isDrawerOpen: boolean = false; // เริ่มต้น Drawer ปิด
    posts: ShowPost[] = []; // เก็บโพสต์ทั้งหมด
    isDialogOpen = false; 
  
-   constructor(private route: ActivatedRoute, private userService: UserService, private postService: PostService, private likePostService: ReactPostservice, private router: Router,) { }
+   constructor(private postService: PostService, private router: Router,) { }
  
    ngOnInit(): void {
    

@@ -1,117 +1,161 @@
 <mat-toolbar class="fixed-toolbar">
   <!-- Logo ด้านซ้าย -->
   <a [routerLink]="['/HomepageUser']" [queryParams]="{ id: userId }">
-      <img src="https://scontent.fbkk10-1.fna.fbcdn.net/v/t1.15752-9/467011559_1309959883362728_6149497978643079622_n.png?_nc_cat=107&ccb=1-7&_nc_sid=9f807c&_nc_ohc=YCDaXk0TRJoQ7kNvgELQ_yE&_nc_oc=Adgw1-0qVy0c465vCPgZn65aHiM4NSXN3nbzvGrtEq6x69QnZVvlfUQjY1fkT-xy24s&_nc_zt=23&_nc_ht=scontent.fbkk10-1.fna&oh=03_Q7cD1gE-IRosOQT7rsinr7ol_0Ul6pkO0cmfVk1Z2xLab0K5kA&oe=67D157E4"
-          alt="Home Icon" width="80px">
+    <img
+    src="../../../assets/images/Logoweb.png"
+      alt="Home Icon" width="80px">
   </a>
   <div style="width: 2%;"></div>
   <!-- เมนูตรงกลาง -->
   <div style="display: flex; flex-grow: 1; justify-content: center; align-items: center;">
-      <div style="display: flex; justify-content: center; align-items: center; gap: 50px;">
+    <div style="display: flex; justify-content: center; align-items: center; gap: 50px;">
 
-          <div style="display: flex; flex-direction: column; align-items: center;">
-              <a [routerLink]="['/HomepageUser']" [queryParams]="{ id: userId }">
-                  <i style="font-size: 40px; color: black;" class="fa-solid fa-house"></i>
-              </a>
-              <span class="itim-regular">หน้าหลัก</span>
-          </div>
-          <!-- ติดตาม -->
-          <div style="display: flex; flex-direction: column; align-items: center;">
-              <a [routerLink]="['/Homepagefollow']" [queryParams]="{ id: userId }">
-                  <i style="font-size: 40px; color: black;" class="fa-solid fa-users"></i>
-              </a>
-              <span class="itim-regular">ติดตาม</span>
-          </div>
-
-          <div>
-              <a [routerLink]="['/CreatePost']" [queryParams]="{ id: userId }"><img
-                      src="https://scontent.fbkk10-1.fna.fbcdn.net/v/t1.15752-9/465505200_630347202693129_7507803564120503230_n.png?_nc_cat=107&ccb=1-7&_nc_sid=9f807c&_nc_ohc=QoYx49OB-ZIQ7kNvgFdJUjP&_nc_oc=Adjn1noxAVi_m9ZMnzNGxS5Quf0tNgLsh4Eta97leZC0NPqkekXeZNO2I5QYQ_uY3Lg&_nc_zt=23&_nc_ht=scontent.fbkk10-1.fna&oh=03_Q7cD1wFrFUMxcjFgf-sF2ffvaKXPS9R1cvWXAgdvV6GUgRapAA&oe=67FF303C"
-                      alt="" width="60px"></a>
-          </div>
-
-          <!-- การแจ้งเตือน -->
-          <div style="display: flex; flex-direction: column; align-items: center;">
-              <a [routerLink]="['/Notification_user']" [queryParams]="{ id: userId }">
-                  <i style="font-size: 40px; color: black;" class="fa-solid fa-bell"></i>
-              </a>
-              <span class="itim-regular">การแจ้งเตือน</span>
-          </div>
-
-          <!-- โปรไฟล์ -->
-          <div style="display: flex; flex-direction: column; align-items: center;">
-              <a [routerLink]="['/ProfileUser']" [queryParams]="{ id: userId }">
-                  <i style="font-size: 40px; color: black;" class="fa-solid fa-user"></i>
-              </a>
-              <span class="itim-regular">โปรไฟล์</span>
-          </div>
+      <div style="display: flex; flex-direction: column; align-items: center;">
+        <a [routerLink]="['/HomepageUser']" [queryParams]="{ id: userId }">
+          <i style="font-size: 40px; color: black;" class="fa-solid fa-house"></i>
+        </a>
+        <span class="itim-regular">หน้าหลัก</span>
       </div>
+      <!-- ติดตาม -->
+      <div style="display: flex; flex-direction: column; align-items: center;">
+        <a [routerLink]="['/Homepagefollow']" [queryParams]="{ id: userId }">
+          <i style="font-size: 40px; color: black;" class="fa-solid fa-users"></i>
+        </a>
+        <span class="itim-regular">ติดตาม</span>
+      </div>
+
+      <div>
+        <a [routerLink]="['/CreatePost']" [queryParams]="{ id: userId }"><img
+          src="../../../assets/images/Addpost.png"
+            alt="" width="60px"></a>
+      </div>
+
+      <!-- การแจ้งเตือน -->
+      <div style="display: flex; flex-direction: column; align-items: center;">
+        <a [routerLink]="['/Notification_user']" [queryParams]="{ id: userId }">
+          <i style="font-size: 40px; color: black;" class="fa-solid fa-bell"></i>
+        </a>
+        <span class="itim-regular">การแจ้งเตือน</span>
+      </div>
+
+      <!-- โปรไฟล์ -->
+      <div style="display: flex; flex-direction: column; align-items: center;">
+        <a [routerLink]="['/ProfileUser']" [queryParams]="{ id: userId }">
+          <i style="font-size: 40px; color: black;" class="fa-solid fa-user"></i>
+        </a>
+        <span class="itim-regular">โปรไฟล์</span>
+      </div>
+    </div>
   </div>
 
   <!-- ไอคอนเมนู -->
   <div style="display: flex; flex-direction: column; align-items: center; margin-left: 20px;">
-      <a href="javascript:void(0)" (click)="toggleDrawer()">
-          <i style="font-size: 40px; color: black;" class="fa-solid fa-bars"></i>
-      </a>
+    <a href="javascript:void(0)" (click)="toggleDrawer()">
+      <i style="font-size: 40px; color: black;" class="fa-solid fa-bars"></i>
+    </a>
   </div>
 
   <!-- Drawer -->
   <div class="drawer" [class.open]="isDrawerOpen">
-      <div class="drawer-content">
-          <h3 style="font-weight: 500; font-size: 30px;">MENU</h3>
-          <ul style="list-style: none; padding: 0;">
-              <!-- หมวดหมู่ -->
-              <li
-                  style="border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; align-items: center; gap: 10px;">
-                  <i class="fa fa-list" style="font-size: 20px; color: black;"></i>
-                  <a [routerLink]="['/category']" [queryParams]="{ id: userId }"
-                      style="text-decoration: none; color: black;">
-                      <span class="itim-regular">หมวดหมู่</span>
-                  </a>
-              </li>
-              <!-- ออกจากระบบ -->
-              <li
-                  style="border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; align-items: center; gap: 10px;">
-                  <i class="fa fa-sign-out" style="font-size: 20px; color: black;"></i>
-                  <a href="" style="text-decoration: none; color: black;">
-                      <span class="itim-regular">ออกจากระบบ</span>
-                  </a>
-              </li>
-          </ul>
-          <button mat-flat-button style="background-color: rgb(226, 124, 150); width: 100px;"
-              (click)="toggleDrawer()">ปิด</button>
-      </div>
+    <div class="drawer-content">
+      <h3 style="font-weight: 500; font-size: 30px;">MENU</h3>
+      <ul style="list-style: none; padding: 0;">
+        <!-- หมวดหมู่ -->
+        <li style="border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; align-items: center; gap: 10px;">
+          <i class="fa fa-list" style="font-size: 20px; color: black;"></i>
+          <a [routerLink]="['/category']" [queryParams]="{ id: userId }" style="text-decoration: none; color: black;">
+            <span class="itim-regular">หมวดหมู่</span>
+          </a>
+        </li>
+        <!-- ออกจากระบบ -->
+        <li style="border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; align-items: center; gap: 10px;">
+          <i class="fa fa-sign-out" style="font-size: 20px; color: black;"></i>
+          <a href="" style="text-decoration: none; color: black;">
+            <span class="itim-regular">ออกจากระบบ</span>
+          </a>
+        </li>
+      </ul>
+      <button mat-flat-button style="background-color: rgb(226, 124, 150); width: 100px;"
+        (click)="toggleDrawer()">ปิด</button>
+    </div>
   </div>
 </mat-toolbar>
-<div style="display: flex; flex-direction: column; align-items: center; margin-top: 130px;">
-  <div style="position: relative; display: inline-block;">
-    <input [(ngModel)]="searchQuery" (input)="onSearch()" (keyup.enter)="onSearch()" placeholder="ค้นหาโพสต์..."
-      style="width: 200px; height: 30px; padding-left: 30px;" />
-    <span class="material-icons"
-      style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%);">search</span>
+<div style="display: flex; flex-direction: column; align-items: center; margin-top: 120px;">
+
+  <div style="display: flex;  justify-content: center; margin-bottom: 30px;">
+    <div class="search-container">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <input type="text" class="search-input" [(ngModel)]="searchQuery" (input)="onSearch()" (keyup.enter)="onSearch()"
+        placeholder="ค้นหาโพสต์...">
+    </div>
   </div>
 
+  <div style="display: flex; justify-content: center; margin-bottom: 30px; gap: 30px;">
+    <a class="menu-item" [routerLink]="['/search_users']" [queryParams]="{ id: userId }"
+      style="text-decoration: none; color: black;">
+      <span style="font-size: 22px; ">บัญชีผู้ใช้งาน</span>
+    </a>
+    <a class="menu-item" routerLinkActive="active" [routerLink]="['/stest']" [queryParams]="{ id: userId }"
+      style="text-decoration: none; color: black;">
+      <span style="font-size: 22px; font-weight: 600;">โพสต์</span>
+    </a>
+  </div>
 
   <div *ngIf="loading" class="loading">⏳ กำลังค้นหา...</div>
 
   <div style="margin-top: 30px;" *ngIf="posts.length > 0">
     <div class="post-grid">
-      <div *ngFor="let post of posts" class="post-card">
-        <div style="display: flex; flex-direction: column; align-items: center;">
-          <div style="width: 300px;">
-            <p class="post-meta">
-              <strong></strong>  👤 {{ post.user_name }} | ❤️ {{ post.likes_count }}
-            </p>
+      <div *ngFor="let post of posts" class="post-card" style="width: 350px; height: 560px;">
+        <!-- ความกว้างอยู่ที่การ์ด -->
+        <div style="display: flex; flex-direction: column;">
+          <!-- ส่วนโปรไฟล์ -->
+          <div style="display: flex; align-items: center; gap: 10px; margin-top: 10px;">
+            <img style="border-radius: 50%; width: 70px; height: 70px; object-fit: cover; padding: 5px;"
+              [src]="post.user_profile_image" alt="">
+            <div style="display: flex; flex-direction: column; ">
+              <span style="font-size: 20px;">{{ post.user_name }}</span>
+              <span style="color: #7e7776; margin-top: 5px; margin-bottom: 10px;">{{post.post_time | timeAgo}}</span>
+            </div>
           </div>
-          <img *ngIf="post.media_type === 'image'" [src]="post.media_url" alt="Post Image"
-            style="width: 300px; height: 300px; object-fit: cover;">
-          <video *ngIf="post.media_type === 'video'" [src]="post.media_url" controls class="post-video"></video>
-          <div style="width: 300px; text-align: left; padding: 10px; margin-left: 2;">
-            <h2 class="post-title" style="font-size: 20px;">{{ post.title }}</h2>
+
+          <!-- Container ที่ครอบทั้งภาพ/วิดีโอ และไอคอน -->
+          <div style="position: relative; width: 350px; height: 350px;">
+            <!-- รูปภาพ -->
+            <a [routerLink]="['/detail_post']" [queryParams]="{ post_id: post.post_id, user_id: userId }">
+              <img *ngIf="post.media_type === 'image'" [src]="post.media_url" alt="Post Image"
+                style="width: 100%; height: 100%; object-fit: cover;">
+            </a>
+
+            <!-- วิดีโอ -->
+            <a [routerLink]="['/detail_post']" [queryParams]="{ post_id: post.post_id, user_id: userId }">
+              <video *ngIf="post.media_type === 'video'" [src]="post.media_url" controls
+                style="width: 100%; height: 100%; object-fit: cover;"></video>
+            </a>
+
+            <!-- ไอคอนแสดงว่ามีหลายสื่อ -->
+            <div *ngIf="post.hasMultipleMedia" class="multiple-media-icon">
+              <i class="fa fa-clone" style="font-size: 24px; color: white;
+              position: absolute; top: 10px; right: 10px; padding: 5px; border-radius: 50%;"></i>
+            </div>
+          </div>
+
+          <!-- ไอคอนหัวใจ -->
+          <div style="margin-top: 10px; margin-left: 10px;">
+            <span style="font-size: 25px;">♥️</span>
+            <span style="font-size: 20px; margin-left: 5px;">{{ post.likes_count != null ? post.likes_count : 0 }}</span>
+          </div>
+          
+
+          <!-- เนื้อหาหลังรูป -->
+          <div style="text-align: left; padding: 10px; margin-top: -15px;">
+            <h2 class="post-title" style="font-size: 19px;">{{ post.title | slice:0:40 }}{{ post.title.length > 15 ?
+              '...' : '' }}</h2>
           </div>
         </div>
       </div>
     </div>
-  </div>  
+  </div>
+
 
   <div *ngIf="posts.length === 0 && searchQuery.trim() !== ''" class="no-results">
     <p> ไม่พบโพสต์ที่เกี่ยวข้อง</p>
