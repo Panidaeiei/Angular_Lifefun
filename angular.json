@@ -14,7 +14,7 @@
       "sourceRoot": "src",
       "prefix": "app",
       "architect": {
-        "build": {        
+        "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
             "baseHref": "/",
@@ -43,9 +43,13 @@
               "src/styles.scss",
               "@angular/material/prebuilt-themes/azure-blue.css",
               "node_modules/@fortawesome/fontawesome-free/css/all.min.css",
-              "node_modules/@pqina/pintura/pintura.css"
+              "node_modules/@pqina/pintura/pintura.css",
+              "node_modules/leaflet-control-geocoder/dist/Control.Geocoder.css"
             ],
-            "scripts": []
+            "scripts": [
+              "node_modules/leaflet/dist/leaflet.js",
+              "node_modules/leaflet-control-geocoder/dist/Control.Geocoder.js"
+            ]
           },
           "configurations": {
             "production": {
@@ -103,9 +107,14 @@
             ],
             "styles": [
               "@angular/material/prebuilt-themes/azure-blue.css",
+              "node_modules/@pqina/pintura/pintura.css",
+              "node_modules/leaflet-control-geocoder/dist/Control.Geocoder.css",
               "src/styles.scss"
             ],
-            "scripts": []
+            "scripts": [
+              "node_modules/leaflet/dist/leaflet.js",
+              "node_modules/leaflet-control-geocoder/dist/Control.Geocoder.js"   
+            ]
           }
         }
       }

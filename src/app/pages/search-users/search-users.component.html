@@ -1,8 +1,7 @@
 <mat-toolbar class="fixed-toolbar">
     <!-- Logo ด้านซ้าย -->
     <a [routerLink]="['/HomepageUser']" [queryParams]="{ id: userId }">
-        <img src="../../../assets/images/Logoweb.png"
-            alt="Home Icon" width="80px">
+        <img src="../../../assets/images/Logoweb.png" alt="Home Icon" width="80px">
     </a>
     <div style="width: 2%;"></div>
     <!-- เมนูตรงกลาง -->
@@ -25,8 +24,7 @@
 
             <div>
                 <a [routerLink]="['/CreatePost']" [queryParams]="{ id: userId }"><img
-                    src="../../../assets/images/Addpost.png"
-                        alt="" width="60px"></a>
+                        src="../../../assets/images/Addpost.png" alt="" width="60px"></a>
             </div>
 
             <!-- การแจ้งเตือน -->
@@ -98,7 +96,7 @@
             style="text-decoration: none; color: black;">
             <span style="font-size: 22px; font-weight: 600;">บัญชีผู้ใช้งาน</span>
         </a>
-        <a class="menu-item"  [routerLink]="['/stest']" [queryParams]="{ id: userId }"
+        <a class="menu-item" [routerLink]="['/stest']" [queryParams]="{ id: userId }"
             style="text-decoration: none; color: black;">
             <span style="font-size: 22px; ">โพสต์</span>
         </a>
@@ -106,17 +104,17 @@
 
     <div class="user-list" *ngIf="searchResults !== null">
         <div *ngIf="searchResults.length > 0; else noResults">
-            <div class="user-card" 
-                *ngFor="let user of searchResults" 
-                (click)="goToProfile(user.uid)"
-                style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding: 10px; border: 1px solid #ddd; margin-bottom: -2px; transition: 0.3s;">  
+            <div class="user-card" *ngFor="let user of searchResults" (click)="goToProfile(user.uid)"
+                style="display: flex; justify-content: space-between; align-items: center; cursor: pointer; padding: 10px; border: 1px solid #ddd; margin-bottom: -2px; transition: 0.3s;">
                 <div style="display: flex; align-items: center;">
-                    <img [src]="user.image_url ? user.image_url : 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'" 
-                         alt="Default Profile Picture" 
-                         class="user-avatar"
-                         style="object-fit: cover; width: 90px; height: 90px;">
-                    <div style="margin-top: -30px; margin-left: 10px;">
+                    <img [src]="user.image_url ? user.image_url : 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'"
+                        alt="Default Profile Picture" class="user-avatar"
+                        style="object-fit: cover; width: 90px; height: 90px;">
+                    <div style="margin-top: -20px; margin-left: 10px;">
                         <div class="user-name" style="font-size: 20px;">{{ user.username }}</div>
+                        <div style="margin-top: 5px;">
+                            <span>{{ user.description }}</span>
+                        </div>
                         <div style="font-size: 18px; margin-top: 5px; display: flex; flex-direction: row; gap: 10px;">
                             <span>ผู้ติดตาม {{ user.followersCount }}</span>
                             <span>กำลังติดตาม {{ user.followingCount }}</span>
@@ -125,14 +123,13 @@
                 </div>
             </div>
         </div>
-    
+
         <!-- แสดงข้อความ "ไม่พบผู้ใช้งาน" เฉพาะเมื่อกดค้นหาแล้วและไม่มีผลลัพธ์ -->
         <ng-template #noResults>
-            <div *ngIf="isSearchPerformed" style="text-align: center; font-size: 20px; color: rgb(114, 106, 106); margin-top: 20px;">
+            <div *ngIf="isSearchPerformed"
+                style="text-align: center; font-size: 20px; color: rgb(114, 106, 106); margin-top: 20px;">
                 ไม่พบผู้ใช้งาน
             </div>
         </ng-template>
     </div>
-    
-    
 </div>

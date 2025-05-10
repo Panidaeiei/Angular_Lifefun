@@ -1,0 +1,271 @@
+:host,
+html,
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgb(249, 241, 239);
+    /* สีพื้นหลัง */
+    box-sizing: border-box;
+    /* คำนวณขนาดไม่เกินขอบ */
+    overflow-x: hidden;
+    /* ปิดการเลื่อนแนวนอน */
+}
+
+:host {
+    display: block;
+    min-height: 100vh;
+    align-items: center;
+    justify-content: center;
+    /* ครอบคลุมความสูงเต็มหน้าจอ */
+    background-color: rgb(249, 241, 239);
+    /* สีพื้นหลัง */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+body {
+    overflow-y: auto;
+    /* เปิดใช้งานการเลื่อนแนวตั้ง */
+    background-color: rgb(249, 241, 239);
+    /* สีพื้นหลังเหมือนกัน */
+}
+
+.post-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    /* กำหนดให้แสดง 4 คอลัมน์ในแต่ละแถว */
+    gap: 30px;
+    /* ช่องว่างระหว่างโพสต์ */
+}
+
+.post-card {
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.post-card img,
+.post-card video {
+    margin-bottom: 5px;
+    max-width: 100%;
+}
+
+.post-meta {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 10px;
+}
+
+
+.drawer {
+    position: fixed;
+    top: 0;
+    right: -300px;
+    /* ซ่อน Drawer ทางขวา */
+    width: 300px;
+    height: 100%;
+    background-color: white;
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
+    transition: right 0.3s ease;
+    /* เพิ่ม Transition */
+    z-index: 1000;
+}
+
+/* Drawer เปิด */
+.drawer.open {
+    right: 0;
+    /* แสดง Drawer */
+}
+
+/* สไตล์เนื้อหาใน Drawer */
+.drawer-content {
+    padding: 20px;
+}
+
+.drawer-content h3 {
+    margin-top: 0;
+}
+
+.drawer-content ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.drawer-content ul li {
+    margin: 10px 0;
+}
+
+
+.fixed-toolbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: rgb(233, 135, 135);
+    height: 90px;
+    width: 100%;
+    z-index: 1;
+    /* Ensure it is above other content */
+}
+
+.cardpost {
+    background-color: white;
+    width: auto;
+    height: 450px;
+}
+
+.heart-icon {
+    color: gray;
+    transition: color 0.3s ease;
+}
+
+.heart-icon.liked {
+    color: rgb(224, 67, 67);
+}
+
+
+//font
+.itim-regular {
+    margin-top: 5px;
+    font-family: "Itim", serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.search-container {
+    display: flex;
+    align-items: center;
+    background-color: rgb(233, 223, 213);
+    /* สีพื้นหลังของช่องค้นหา */
+    border-radius: 30px;
+    /* ขอบมน */
+    padding: 10px 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    height: 40px;
+    width: 300px;
+    /* ความกว้างของช่องค้นหา */
+}
+
+.search-container i {
+    font-size: 16px;
+    color: black;
+    /* สีไอคอน */
+    margin-right: 10px;
+    /* ระยะห่างระหว่างไอคอนกับช่อง */
+}
+
+.search-input {
+    border: none;
+    outline: none;
+    /* ซ่อนขอบตอนคลิก */
+    font-size: 16px;
+    width: 100%;
+    background: transparent;
+    /* พื้นหลังโปร่งใส */
+}
+
+.menu-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    position: relative;
+}
+
+.menu-item span {
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+.menu-item.active i,
+.menu-item.active span {
+    color: #000000;
+    /* เปลี่ยนสีเมื่อ active */
+}
+
+.menu-item.active::after {
+    content: '';
+    position: absolute;
+    bottom: -40px;
+    left: 50%;
+    /* เริ่มที่กึ่งกลางของเมนู */
+    transform: translateX(-50%);
+    /* ดันกลับมาครึ่งหนึ่งของความกว้าง */
+    height: 5px;
+    background-color: #000000;
+    /* สีขีดล่าง */
+    width: 85px;
+    /* ความกว้างของขีด */
+}
+
+.menu-item2 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    position: relative;
+}
+
+.menu-item2 span {
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+.menu-item2.active i,
+.menu-item2.active span {
+    color: #000000;
+    /* เปลี่ยนสีเมื่อ active */
+}
+
+.menu-item2.active::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    /* เริ่มที่กึ่งกลางของเมนู */
+    transform: translateX(-50%);
+    /* ดันกลับมาครึ่งหนึ่งของความกว้าง */
+    height: 4px;
+    background-color: #000000;
+    /* สีขีดล่าง */
+    width: 80px;
+    /* ความกว้างของขีด */
+}
+
+.user-list {
+    max-width: 650px;
+    margin: 40px;
+    display: flex;
+    flex-direction: column;
+    margin-left: 630px;
+}
+
+.user-card {
+    display: flex;
+    align-items: center;
+    background-color: rgb(255, 255, 255);
+    padding: 15px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.user-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 15px;
+}
+
+
+.user-name {
+    font-weight: bold;
+
+}
+
+.user-email {
+    color: gray;
+}

@@ -1,9 +1,7 @@
 <mat-toolbar class="fixed-toolbar">
   <!-- Logo ด้านซ้าย -->
   <a [routerLink]="['/HomepageUser']" [queryParams]="{ id: userId }">
-    <img
-    src="../../../assets/images/Logoweb.png"
-      alt="Home Icon" width="80px">
+    <img src="../../../assets/images/Logoweb.png" alt="Home Icon" width="80px">
   </a>
   <div style="width: 2%;"></div>
   <!-- เมนูตรงกลาง -->
@@ -25,8 +23,7 @@
       </div>
 
       <div>
-        <a [routerLink]="['/CreatePost']" [queryParams]="{ id: userId }"><img
-          src="../../../assets/images/Addpost.png"
+        <a [routerLink]="['/CreatePost']" [queryParams]="{ id: userId }"><img src="../../../assets/images/Addpost.png"
             alt="" width="60px"></a>
       </div>
 
@@ -142,9 +139,10 @@
           <!-- ไอคอนหัวใจ -->
           <div style="margin-top: 10px; margin-left: 10px;">
             <span style="font-size: 25px;">♥️</span>
-            <span style="font-size: 20px; margin-left: 5px;">{{ post.likes_count != null ? post.likes_count : 0 }}</span>
+            <span style="font-size: 20px; margin-left: 5px;">{{ post.likes_count != null ? post.likes_count : 0
+              }}</span>
           </div>
-          
+
 
           <!-- เนื้อหาหลังรูป -->
           <div style="text-align: left; padding: 10px; margin-top: -15px;">

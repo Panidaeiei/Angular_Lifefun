@@ -15,7 +15,14 @@ import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import { User } from '../../models/register_model';
 import { PostService } from '../../services/Postservice';
+import * as L from 'leaflet';
+import 'leaflet-control-geocoder';
 
+declare module 'leaflet' {
+  namespace Control {
+    function geocoder(options?: any): any;
+  }
+}
 @Component({
   selector: 'app-create-post',
   imports: [
@@ -38,9 +45,12 @@ export class CreatePostComponent {
   currentIndex: number = 0; // ดัชนีปัจจุบัน
   files: { url: string; file: File; type: 'image' | 'video' }[] = [];
   fullscreenFile: { url: string; type: 'image' | 'video' } | null = null;
-  user: User | null = null; 
+  user: User | null = null;
   isLoading: boolean = false;
   isDrawerOpen: boolean = false; // เริ่มต้น Drawer ปิด
+  map: any;
+  isMapOpen: boolean = false;
+
 
   postData: Post = {
     title: '',
@@ -56,9 +66,65 @@ export class CreatePostComponent {
     private postService: PostService,
     private userService: UserService,  // Inject UserService
     private router: Router
-  ) {}
+  ) { }
+
+  openMapDialog() {
+    this.isMapOpen = true;
   
+    setTimeout(() => {
+      const mapElement = document.getElementById('map');
+      if (!mapElement) {
+        console.error('Map div ยังไม่ถูกโหลด');
+        return;
+      }
   
+      if (this.map) {
+        this.map.remove();
+      }
+  
+      // ✅ สร้างแผนที่ใหม่
+      this.map = L.map(mapElement).setView([13.736717, 100.523186], 6);
+  
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+      }).addTo(this.map);
+  
+      // ✅ ใส่ Geocoder แบบ try-catch เพื่อกัน crash
+      try {
+        const geocoderService = L.Control.Geocoder.nominatim({
+          geocodingQueryParams: { 'accept-language': 'th' }
+        });
+  
+        const geocoderControl = L.Control.geocoder({
+          geocoder: geocoderService,
+          defaultMarkGeocode: true
+        })
+        .on('markgeocode', (e: any) => {
+          const center = e.geocode.center;
+          const name = e.geocode.name;
+  
+          L.marker(center).addTo(this.map);
+          this.map.setView(center, 13);
+          this.postData.location = name;
+          this.closeMapDialog();
+        });
+  
+        geocoderControl.addTo(this.map);
+      } catch (error) {
+        console.error('Geocoder error:', error);
+      }
+  
+    }, 100); // รอให้ DOM สร้าง #map เสร็จก่อน
+  }
+  
+
+  closeMapDialog() {
+    this.isMapOpen = false;
+
+    if (this.map) {
+      this.map = null;
+    }
+  }
 
   toggleDrawer(): void {
     this.isDrawerOpen = !this.isDrawerOpen; // สลับสถานะเปิด/ปิด
@@ -76,10 +142,10 @@ export class CreatePostComponent {
         this.router.navigate(['/login']); // เปลี่ยนเส้นทางไปหน้า login หากไม่มี userId
       }
     });
-    
+
     this.loadCategories();
   }
-  
+
   loadUserData(userId: string): void {
     this.userService.getUserById(userId).subscribe(
       (response) => {
@@ -93,7 +159,7 @@ export class CreatePostComponent {
       }
     );
   }
-  
+
   loadCategories(): void {
     this.postService.getCategories().subscribe(
       (data: Category[]) => {
@@ -174,19 +240,19 @@ export class CreatePostComponent {
       this.currentIndex++;
     }
   }
-  
+
   submitPost(): void {
     if (!this.postData.title || !this.postData.cat_id) {
       Swal.fire('กรุณากรอกข้อมูลให้ครบถ้วน');
       return;
     }
-  
+
     const formData = new FormData();
     formData.append('title', this.postData.title);
     formData.append('location', this.postData.location);
     formData.append('cat_id', this.postData.cat_id.toString());
     formData.append('uid', this.postData.uid.toString());
-  
+
     this.files.forEach(file => {
       if (file.type === 'image') {
         formData.append('images', file.file);
@@ -194,11 +260,11 @@ export class CreatePostComponent {
         formData.append('videos', file.file);
       }
     });
-  
+
     this.isLoading = true; // เปิดสถานะการโหลด
     console.log('Request Body:', this.postData);
     console.log('Files:', this.files);
-  
+
     this.postService.addPost(formData).subscribe(
       (response) => {
         this.isLoading = false; // ปิดสถานะการโหลด
@@ -207,7 +273,7 @@ export class CreatePostComponent {
           icon: 'success',
         }).then(() => {
           this.resetForm();
-          this.router.navigate(['/HomepageUser'], { queryParams: { id: this.userId } });
+          this.router.navigate(['/Homepagefollow'], { queryParams: { id: this.userId } });
         });
       },
       (error) => {
@@ -217,7 +283,7 @@ export class CreatePostComponent {
     );
   }
 
-  
+
   resetForm(): void {
     this.postData = {
       title: '',

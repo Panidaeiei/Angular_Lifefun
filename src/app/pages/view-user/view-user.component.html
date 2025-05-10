@@ -5,8 +5,7 @@
 
         <!-- Logo ด้านซ้าย -->
         <a [routerLink]="['/HomepageUser']" [queryParams]="{ id: userId }">
-            <img src="../../../assets/images/Logoweb.png"
-                alt="Home Icon" width="80px">
+            <img src="../../../assets/images/Logoweb.png" alt="Home Icon" width="80px">
         </a>
         <div style="width: 5%;"></div>
         <!-- เมนูตรงกลาง -->
@@ -29,8 +28,7 @@
 
                 <div>
                     <a [routerLink]="['/CreatePost']" [queryParams]="{ id: userId }"><img
-                        src="../../../assets/images/Addpost.png"
-                            alt="" width="60px"></a>
+                            src="../../../assets/images/Addpost.png" alt="" width="60px"></a>
                 </div>
 
                 <!-- การแจ้งเตือน -->
@@ -96,8 +94,8 @@
     <div style="display: flex; flex-direction: column; margin-top: 170px;">
         <div style="display: flex; flex-direction: row; justify-content: center;">
             <div style="display: flex; flex-direction: row; gap: 180px;">
-                <img [src]="userProfile?.image_url || 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'" alt="Profile Picture"
-                    style="width: 250px; height: 250px; border-radius: 50%; object-fit: cover;">
+                <img [src]="userProfile?.image_url || 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'"
+                    alt="Profile Picture" style="width: 250px; height: 250px; border-radius: 50%; object-fit: cover;">
 
                 <ng-template #defaultImage>
                     <img src="https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg"
@@ -219,5 +217,4 @@
             </mat-tab>
         </mat-tab-group>
     </div>
-
 </div>

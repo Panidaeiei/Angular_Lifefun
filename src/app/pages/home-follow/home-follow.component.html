@@ -28,7 +28,7 @@
             </div>
 
             <div>
-                <a [routerLink]="['/CreatePost']" [queryParams]="{ id: userId }"><img
+                <a [routerLink]="['/CreatePost']" [queryParams]="{ id: this.currentUserId }"><img
                         src="../../../assets/images/Addpost.png" alt="" width="60px"></a>
             </div>
 
@@ -104,6 +104,7 @@
             <span style="font-size: 22px; ">กำลังติดตาม</span>
         </a>
     </div>
+    
     <div class="card-container-wrapper">
         <div class="card-container">
             <div *ngFor="let post of posts" class="card-wrapper">

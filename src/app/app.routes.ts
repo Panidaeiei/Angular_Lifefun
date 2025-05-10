@@ -18,6 +18,16 @@ import { SearchUsersComponent } from './pages/search-users/search-users.componen
 import { UserBanComponent } from './pages/user-ban/user-ban.component';
 import { STestComponent } from './pages/s-test/s-test.component';
 import { CategorynotUserComponent } from './pages/categorynot-user/categorynot-user.component';
+import { SearchMainComponent } from './pages/search-main/search-main.component';
+import { ViewuserMainComponent } from './pages/viewuser-main/viewuser-main.component';
+import { SearctpostMainComponent } from './pages/searctpost-main/searctpost-main.component';
+import { UserCosmeticsComponent } from './pagecat/user-cosmetics/user-cosmetics.component';
+import { UserFashionComponent } from './pagecat/user-fashion/user-fashion.component';
+import { UserFoodComponent } from './pagecat/user-food/user-food.component';
+import { UserSkincareComponent } from './pagecat/user-skincare/user-skincare.component';
+import { UserHealthComponent } from './pagecat/user-health/user-health.component';
+import { UserTravelComponent } from './pagecat/user-travel/user-travel.component';
+import { CategoryMainComponent } from './pagecat/category-main/category-main.component';
 
 
 
@@ -42,5 +52,15 @@ export const routes: Routes = [
     {path: 'search_users', component: SearchUsersComponent},
     {path: 'userban', component: UserBanComponent},
     {path: 'stest', component: STestComponent},
-    {path: 'category_main', component: CategorynotUserComponent}
+    {path: 'category_main', component: CategorynotUserComponent},
+    {path: 'search_main', component: SearchMainComponent},
+    {path: 'viewuser_main', component: ViewuserMainComponent},
+    {path: 'searchpost_main', component: SearctpostMainComponent},
+    {path: 'Post_Cosmetics', component: UserCosmeticsComponent},
+    {path: 'Post_Fashion', component: UserFashionComponent},
+    {path: 'Post_Food', component: UserFoodComponent},
+    {path: 'Post_Skincare', component: UserSkincareComponent},
+    {path: 'Post_Health', component: UserHealthComponent},
+    {path: 'Post_Travel', component: UserTravelComponent},
+    {path: 'Cat_main/:cat_id', component: CategoryMainComponent}
 ];

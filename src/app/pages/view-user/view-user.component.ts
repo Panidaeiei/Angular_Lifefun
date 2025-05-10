@@ -22,7 +22,7 @@ import { ReactPostservice } from '../../services/ReactPostservice';
     MatTabsModule,
     MatCardModule,
     MatButtonModule,
-    MatIconModule,],
+    MatIconModule],
   templateUrl: './view-user.component.html',
   styleUrls: ['./view-user.component.scss']
 })
@@ -162,7 +162,6 @@ export class ViewUserComponent {
       );
     }
   }
-  
   
 
   //ตรวจสอบสถานะการติดตาม

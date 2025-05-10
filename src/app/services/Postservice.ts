@@ -23,7 +23,6 @@ export class PostService {
   }
 
   addPost(formData: FormData): Observable<any> {
-    // Retrieve the JWT token from localStorage
     const token = localStorage.getItem('token');
 
 
@@ -40,7 +39,7 @@ export class PostService {
 
   getCategories(): Observable<Category[]> {
     // ดึง JWT token จาก localStorage หรือ sessionStorage
-    const token = localStorage.getItem('token');  // JWT Token ที่ได้จากการล็อกอิน
+    const token = localStorage.getItem('token');
 
     // ตรวจสอบว่า token มีค่าไหม
     if (!token) {
@@ -55,71 +54,64 @@ export class PostService {
   // ดึงข้อมูลโพสต์ทั้งหมด
   getPosts(): Observable<ShowPost[]> {
     // ดึง JWT และ uid จาก localStorage
-    const token = localStorage.getItem('token');  // JWT Token
+
     const uid = localStorage.getItem('userId');   // uid ของผู้ใช้ที่ล็อกอิน
-  
-    if (!token || !uid) {
-      return throwError('Token or UserId not found'); // ถ้าไม่มี Token หรือ uid ให้โยน error
-    }
-  
-    // ตรวจสอบค่าของ token และ uid
-    console.log(localStorage.getItem('token'));
+
     console.log(localStorage.getItem('userId'));
-  
+
     // สร้าง HttpHeaders ที่มี Authorization: Bearer <JWT-TOKEN>
     const headers = new HttpHeaders()
-      .set('Authorization', `Bearer ${token}`)
       .set('uid', uid || '');  // ส่ง uid ของผู้ใช้ใน header
-  
+
     // ส่งคำขอ GET ไปที่ API พร้อม Token และ uid
     return this.http.get<ShowPost[]>(`${this.baseUrl}/posts/getPosts`, { headers }).pipe(
       tap((response) => {
         console.log('Response from API:', response);  // ตรวจสอบข้อมูลที่ได้รับจาก API
-  
+
       })
     );
   }
 
   getPosts_interests(): Observable<ShowPost[]> {
     // ดึง JWT และ uid จาก localStorage
-    const token = localStorage.getItem('token');  // JWT Token
-    const uid = localStorage.getItem('userId');   // uid ของผู้ใช้ที่ล็อกอิน
-  
+    const token = localStorage.getItem('token');
+    const uid = localStorage.getItem('userId');
+
     if (!token || !uid) {
       return throwError('Token or UserId not found'); // ถ้าไม่มี Token หรือ uid ให้โยน error
     }
-  
+
     // ตรวจสอบค่าของ token และ uid
     console.log(localStorage.getItem('token'));
     console.log(localStorage.getItem('userId'));
-  
+
     // สร้าง HttpHeaders ที่มี Authorization: Bearer <JWT-TOKEN>
     const headers = new HttpHeaders()
       .set('Authorization', `Bearer ${token}`)
       .set('uid', uid || '');  // ส่ง uid ของผู้ใช้ใน header
-  
+
     // ส่งคำขอ GET ไปที่ API พร้อม Token และ uid
     return this.http.get<ShowPost[]>(`${this.baseUrl}/posts/getPosts_interests`, { headers }).pipe(
       tap((response) => {
         console.log('Response from API:', response);  // ตรวจสอบข้อมูลที่ได้รับจาก API
-  
+
       })
     );
   }
 
   getPostsFollowing(): Observable<ShowPost[]> {
-    const uid = localStorage.getItem('userId');  
-  
+    const uid = localStorage.getItem('userId');
+
     console.log(localStorage.getItem('userId'));
-  
+
     const headers = new HttpHeaders()
       .set('uid', uid || '');  // ส่ง uid ของผู้ใช้ใน header
-  
+
     // ส่งคำขอ GET ไปที่ API พร้อม Token และ uid
     return this.http.get<ShowPost[]>(`${this.baseUrl}/posts/getFollowingPosts`, { headers }).pipe(
       tap((response) => {
         console.log('Response from API:', response);  // ตรวจสอบข้อมูลที่ได้รับจาก API
-  
+
       })
     );
   }
@@ -127,17 +119,17 @@ export class PostService {
   getPostById(postId: number): Observable<DetailPost> {
     const token = localStorage.getItem('token'); // JWT Token
     const uid = localStorage.getItem('userId'); // uid ของผู้ใช้ที่ล็อกอิน
-  
+
     // ตรวจสอบว่า JWT และ uid มีค่า
     if (!token || !uid) {
       console.error('JWT token or user ID not found in localStorage');
       return throwError(() => new Error('Unauthorized: Missing token or user ID'));
     }
-  
+
     const headers = new HttpHeaders()
       .set('Authorization', `Bearer ${token}`)
       .set('uid', uid); // ส่ง uid ของผู้ใช้ใน header
-  
+
     // ส่งคำขอ GET ไปที่ API พร้อม Token และ uid
     return this.http.get<DetailPost>(`${this.baseUrl}/posts/getPost/${postId}`, { headers }).pipe(
       catchError((error) => {
@@ -146,21 +138,21 @@ export class PostService {
       })
     );
   }
-  
-   // ฟังก์ชันสำหรับลบโพสต์
-   deletePost(postId: number): Observable<any> {
+
+  // ฟังก์ชันสำหรับลบโพสต์
+  deletePost(postId: number): Observable<any> {
     const token = localStorage.getItem('token');  // ดึง JWT token จาก localStorage
-  
+
     // ตรวจสอบว่า JWT token มีค่าไหม
     if (!token) {
       console.error('JWT token not found in localStorage');
       throw new Error('Unauthorized: Missing token');
     }
-  
+
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`  // ส่ง JWT token
     });
-  
+
     // ส่งคำขอลบโพสต์ไปยัง Backend
     return this.http.delete(`${this.baseUrl}/posts/deletePost/${postId}`, { headers });
   }
@@ -181,7 +173,7 @@ export class PostService {
     return this.http.put(`${this.baseUrl}/posts/editPost/${postId}`, editData, { headers });
   }
 
-  
+
   // profile.service.ts
   viewPost(postId: string): Observable<any> {
     const headers = new HttpHeaders({
@@ -198,11 +190,7 @@ export class PostService {
   }
 
   searchPosts(searchTerm: string): Observable<ShowPost[]> {
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${localStorage.getItem('token')}`,
-    });
-  
-    return this.http.get<ShowPost[]>(`${this.baseUrl}/posts/s_getPosts?search=${encodeURIComponent(searchTerm)}`, { headers })
+    return this.http.get<ShowPost[]>(`${this.baseUrl}/posts/s_getPosts?search=${encodeURIComponent(searchTerm)}`)
       .pipe(
         catchError(error => {
           console.error('Error fetching search results:', error);
@@ -210,5 +198,105 @@ export class PostService {
         })
       );
   }
+
+  getPostsCosmetics(): Observable<ShowPost[]> {
+    const uid = localStorage.getItem('userId');
+
+    console.log(localStorage.getItem('userId'));
+
+    const headers = new HttpHeaders()
+      .set('uid', uid || '');
+
+    return this.http.get<ShowPost[]>(`${this.baseUrl}/categories/getPosts/Cosmetics`, { headers }).pipe(
+      tap((response) => {
+        console.log('Response from API:', response);
+
+      })
+    );
+  }
+
+  getPostsFashion(): Observable<ShowPost[]> {
+    const uid = localStorage.getItem('userId');
+
+    console.log(localStorage.getItem('userId'));
+
+    const headers = new HttpHeaders()
+      .set('uid', uid || '');
+
+    return this.http.get<ShowPost[]>(`${this.baseUrl}/categories/getPosts/Fashion`, { headers }).pipe(
+      tap((response) => {
+        console.log('Response from API:', response);
+
+      })
+    );
+  }
+
+  getPostsSkincare(): Observable<ShowPost[]> {
+    const uid = localStorage.getItem('userId');
+
+    console.log(localStorage.getItem('userId'));
+
+    const headers = new HttpHeaders()
+      .set('uid', uid || '');
+
+    return this.http.get<ShowPost[]>(`${this.baseUrl}/categories/getPosts/Skincare`, { headers }).pipe(
+      tap((response) => {
+        console.log('Response from API:', response);
+
+      })
+    );
+  }
+
+  getPostsFood(): Observable<ShowPost[]> {
+    const uid = localStorage.getItem('userId');
+
+    console.log(localStorage.getItem('userId'));
+
+    const headers = new HttpHeaders()
+      .set('uid', uid || '');
+
+    return this.http.get<ShowPost[]>(`${this.baseUrl}/categories/getPosts/Food`, { headers }).pipe(
+      tap((response) => {
+        console.log('Response from API:', response);
+
+      })
+    );
+  }
   
+  getPostsHealth(): Observable<ShowPost[]> {
+    const uid = localStorage.getItem('userId');
+
+    console.log(localStorage.getItem('userId'));
+
+    const headers = new HttpHeaders()
+      .set('uid', uid || '');
+
+    return this.http.get<ShowPost[]>(`${this.baseUrl}/categories/getPosts/Health`, { headers }).pipe(
+      tap((response) => {
+        console.log('Response from API:', response);
+
+      })
+    );
+  }
+
+  getPostsTravel(): Observable<ShowPost[]> {
+    const uid = localStorage.getItem('userId');
+
+    console.log(localStorage.getItem('userId'));
+
+    const headers = new HttpHeaders()
+      .set('uid', uid || '');
+
+    return this.http.get<ShowPost[]>(`${this.baseUrl}/categories/getPosts/Travel`, { headers }).pipe(
+      tap((response) => {
+        console.log('Response from API:', response);
+
+      })
+    );
+  }
+
+  getPostsByCategory(cat_id: number): Observable<any> {
+    return this.http.get(`${this.baseUrl}/categories/getPosts/${cat_id}`);
+  }
+
 }

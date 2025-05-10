@@ -1,0 +1,182 @@
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+<div class="background-div">
+    <mat-toolbar class="fixed-toolbar"
+        style="background-color: rgb(233, 135, 135); height: 90px; display: flex; align-items: center; justify-content: space-between;">
+
+        <a [routerLink]="['']">
+            <img src="../../../assets/images/Logoweb.png" alt="Home Icon" width="80px">
+        </a>
+
+        <div style="display: flex; flex-grow: 1; justify-content: center; align-items: center;  margin-left: 120px;">
+            <div style="display: flex; justify-content: center; align-items: center; gap: 60px;">
+
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <a [routerLink]="['']">
+                        <i style="font-size: 40px; color: black;" class="fa-solid fa-house"></i>
+                    </a>
+                    <span class="itim-regular">หน้าหลัก</span>
+                </div>
+
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <a  class="menu-item" [routerLink]="['/search_main']">
+                        <i style="font-size: 40px; color: black;" class="fa-solid fa-magnifying-glass"></i>
+                    </a>
+                    <span class="itim-regular">ค้นหา</span>
+                </div>
+
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <a [routerLink]="['/category_main']">
+                        <i style="font-size: 40px; color: black;" class="fa-solid fa-bars"></i>
+                    </a>
+                    <span class="itim-regular">หมวดหมู่</span>
+                </div>
+            </div>
+        </div>
+
+        <button routerLink="/login" class="login-link"
+            style="text-decoration: none; color: black; background: none; border: none; outline: none;">
+            <div style="display: flex; flex-direction: row; align-items: center; justify-content: center;">
+                <i class="material-icons" st>login</i>
+                <span style="margin-left: 10px; font-size: 17px;">เข้าสู่ระบบ/สมัครสมาชิก</span>
+            </div>
+        </button>
+    </mat-toolbar>
+</div>
+<div>
+    <div style="display: flex; flex-direction: column; margin-top: 170px;">
+        <div style="display: flex; flex-direction: row; justify-content: center;">
+            <div style="display: flex; flex-direction: row; gap: 180px;">
+                <img [src]="userProfile?.image_url || 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'"
+                    alt="Profile Picture" style="width: 250px; height: 250px; border-radius: 50%; object-fit: cover;">
+
+                <ng-template #defaultImage>
+                    <img src="https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg"
+                        alt="Default Profile Picture"
+                        style="width: 250px; height: 250px; border-radius: 50%; object-fit: cover;">
+                </ng-template>
+
+                <div style="display: flex; flex-direction: column;">
+                    <div style="display: flex; flex-direction: row; gap: 30px;">
+                        <span style="font-size: 30px;">{{ userProfile?.username }}</span>
+                        <button class="buttonEdit" (click)="onloginClick()">
+                            <span style="font-weight: 500;">ติดตาม</span>
+                        </button>
+                        <button class="buttonsend" (click)="onloginClick()">
+                            <i class="fa-solid fa-envelope" style="font-size: 20px;"></i>
+                        </button>
+                    </div>
+                    <div style="display: flex; flex-direction: row; margin-top: 30px; gap: 60px;">
+                        <div style="display: flex; flex-direction: column; align-items: center;">
+                            <span style="font-size: 25px; font-weight: 500;">{{userPosts.length }}</span>
+                            <span style="font-size: 20px;">จำนวนโพสต์</span>
+                        </div>
+                        <div style="display: flex; flex-direction: column; align-items: center;">
+                            <span style="font-size: 25px; font-weight: 500;">{{ followingCount }}</span>
+                            <span style="font-size: 20px;">กำลังติดตาม</span>
+                        </div>
+                        <div style="display: flex; flex-direction: column; align-items: center;">
+                            <span style="font-size: 25px; font-weight: 500;"> {{ followersCount }}</span>
+                            <span style="font-size: 20px;">ผู้ติดตาม</span>
+                        </div>
+                    </div>
+                    <span style="margin-top: 30px; font-size: 19px;">
+                        {{ userProfile?.description || '' }}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div style="display: flex; justify-content: center; align-items: center; margin-top: 50px; z-index: 1;">
+        <mat-tab-group style="width: 70%;">
+            <!-- โพสต์ของผู้ใช้ -->
+            <mat-tab>
+                <ng-template mat-tab-label>
+                    <mat-icon>apps</mat-icon>
+                </ng-template>
+                <div class="post-grid">
+                    <div *ngFor="let post of userPosts" class="post-item">
+                        <div>
+                            <!-- แสดงรูปภาพหรือวิดีโอ -->
+                            <a [routerLink]="['/detail_post']"
+                                [queryParams]="{ post_id: post.post_id, user_id: userId }">
+                                <img *ngIf="post.media_type === 'image'"
+                                    [src]="post.firstMediaUrl || 'https://via.placeholder.com/350x300'"
+                                    alt="รูปที่โพสต์" class="post-image">
+                                <video *ngIf="post.media_type === 'video'" [src]="post.firstMediaUrl" controls
+                                    class="post-video"></video>
+                            </a>
+
+                            <!-- ไอคอนแสดงว่ามีหลายรูป -->
+                            <div *ngIf="post.hasMultipleMedia" class="multiple-media-icon">
+                                <i class="fa fa-clone"
+                                    style="font-size: 30px; color: white; position: absolute; top: 10px; right: 10px; padding: 5px; border-radius: 50%;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </mat-tab>
+            <mat-tab>
+                <ng-template mat-tab-label>
+                    <mat-icon>share</mat-icon>
+                </ng-template>
+                <div class="post-grid">
+                    <div *ngFor="let post of sharedPosts" class="post-item">
+                        <div>
+                            <!-- แสดงรูปภาพหรือวิดีโอ -->
+                            <a [routerLink]="['/']"
+                                [queryParams]="{ post_id: post.post_id, user_id: userId }">
+                                <img *ngIf="post.media_type === 'image'"
+                                    [src]="post.firstMediaUrl || 'https://via.placeholder.com/350x300'"
+                                    alt="รูปที่โพสต์" class="post-image">
+                                <video *ngIf="post.media_type === 'video'" [src]="post.firstMediaUrl" controls
+                                    class="post-video"></video>
+                            </a>
+
+                            <!-- ไอคอนแสดงว่ามีหลายรูป -->
+                            <div *ngIf="post.hasMultipleMedia" class="multiple-media-icon">
+                                <i class="fa fa-clone"
+                                    style="font-size: 30px; color: white; position: absolute; top: 10px; right: 10px; padding: 5px; border-radius: 50%;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </mat-tab>
+            <mat-tab>
+                <ng-template mat-tab-label>
+                    <mat-icon>bookmark</mat-icon>
+                </ng-template>
+                <div class="post-grid">
+                    <div *ngFor="let post of savedPosts" class="post-item">
+                        <div>
+                            <!-- แสดงรูปภาพหรือวิดีโอ -->
+                            <a [routerLink]="['/detail_post']"
+                                [queryParams]="{ post_id: post.post_id, user_id: userId }">
+                                <img *ngIf="post.media_type === 'image'"
+                                    [src]="post.firstMediaUrl || 'https://via.placeholder.com/350x300'"
+                                    alt="รูปที่โพสต์" class="post-image">
+                                <video *ngIf="post.media_type === 'video'" [src]="post.firstMediaUrl" controls
+                                    class="post-video"></video>
+                            </a>
+
+                            <!-- ไอคอนแสดงว่ามีหลายรูป -->
+                            <div *ngIf="post.hasMultipleMedia" class="multiple-media-icon">
+                                <i class="fa fa-clone"
+                                    style="font-size: 30px; color: white; position: absolute; top: 10px; right: 10px; padding: 5px; border-radius: 50%;"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </mat-tab>
+        </mat-tab-group>
+        <div *ngIf="isDialogOpen" class="dialog-overlay" (click)="closeDialog()">
+            <div class="dialog-box" (click)="$event.stopPropagation()">
+                <button class="close-button" (click)="closeDialog()">×</button>
+                <img src="../../../assets/images/Logoweb.png"
+                alt="Home Icon" width="140px">
+                <h3>กรุณาเข้าสู่ระบบ/สมัครสมาชิก</h3>
+                <button class="button1" (click)="navigateToLogin()">เข้าสู่ระบบ</button>
+            </div>
+        </div>
+    </div>
+</div>

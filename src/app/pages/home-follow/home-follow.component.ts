@@ -27,7 +27,7 @@ export class HomeFollowComponent {
   postId: string = '';
   viewPosts: any[] = [];
 
-   constructor(private route: ActivatedRoute, private userService: UserService, private postService: PostService, private likePostService: ReactPostservice, private router: Router,) { }
+   constructor(private route: ActivatedRoute, private userService: UserService, private postService: PostService, private likePostService: ReactPostservice, private router: Router) { }
 
   ngOnInit(): void {
     this.userService.getCurrentUserId().subscribe((userId) => {

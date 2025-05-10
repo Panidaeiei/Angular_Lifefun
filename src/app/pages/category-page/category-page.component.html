@@ -92,8 +92,7 @@
 </mat-toolbar>
 <div style="margin-top: 130px;">
     <div style="display: flex; justify-content: center; margin-bottom: 30px; gap: 30px; margin-top: 30px;">
-        <a [routerLink]="['/HomepageUser']" [queryParams]="{ id: this.currentUserId }"
-            style="text-decoration: none; color: black;">
+        <a style="text-decoration: none; color: black;">
             <span style="font-size: 22px; ">หมวดหมู่</span>
         </a>
     </div>
@@ -101,46 +100,46 @@
     <div style="display: flex; flex-direction: column; align-items: center; margin-top: 40px;">
         <div style="display: flex; flex-direction: row; gap: 160px;">
             <div style="display: flex; flex-direction: column; align-items: center;">
-                <a href="">
-                    <img src="../../../assets/images/cosmatic.jpg"
+                <a [routerLink]="['/Post_Cosmetics']" [queryParams]="{ id: userId }">
+                    <img class="hover-img" src="../../../assets/images/istockphoto.jpg"
                         style="border-radius: 50%; width: 300px; height: 300px; object-fit: cover;" alt="">
                 </a>
                 <p style="font-size: 22px;">เครื่องสำอาง</p>
             </div>
             <div style="display: flex; flex-direction: column; align-items: center;">
-                <a href="">
-                    <img src="https://i.pinimg.com/736x/c1/51/cd/c151cdffa326596504b10c6bd98a9958.jpg"
+                <a [routerLink]="['/Post_Fashion']" [queryParams]="{ id: userId }">
+                    <img class="hover-img" src="https://i.pinimg.com/736x/c1/51/cd/c151cdffa326596504b10c6bd98a9958.jpg"
                         style="border-radius: 50%; width: 300px; height: 300px; object-fit: cover;" alt="">
                 </a>
                 <p style="font-size: 22px;">แฟชั่น</p>
             </div>
             <div style="display: flex; flex-direction: column; align-items: center;">
-                <a href="">
-                    <img src="../../../assets/images/skincare.jpg"
+                <a [routerLink]="['/Post_Skincare']" [queryParams]="{ id: userId }">
+                    <img class="hover-img" src="../../../assets/images/skincare.jpg"
                         style="border-radius: 50%; width: 300px; height: 300px; object-fit: cover;" alt="">
                 </a>
-                <p style="font-size: 22px;">เครื่องสำอาง</p>
+                <p style="font-size: 22px;">สกินแคร์</p>
             </div>
         </div>
 
         <div style="display: flex; flex-direction: row; gap: 150px; margin-top: 30px;">
             <div style="display: flex; flex-direction: column; align-items: center;">
-                <a href="">
-                    <img src="../../../assets/images/food.jpg"
+                <a [routerLink]="['/Post_Food']" [queryParams]="{ id: userId }">
+                    <img class="hover-img" src="../../../assets/images/food.jpg"
                         style="border-radius: 50%; width: 300px; height: 300px; object-fit: cover;" alt="">
                 </a>
                 <p style="font-size: 22px;">อาหาร</p>
             </div>
             <div style="display: flex; flex-direction: column; align-items: center;">
-                <a href="">
-                    <img src="../../../assets/images/woman.jpg"
+                <a [routerLink]="['/Post_Health']" [queryParams]="{ id: userId }">
+                    <img class="hover-img" src="../../../assets/images/woman.jpg"
                         style="border-radius: 50%; width: 300px; height: 300px; object-fit: cover;" alt="">
                 </a>
                 <p style="font-size: 22px;">สุขภาพ</p>
             </div>
             <div style="display: flex; flex-direction: column; align-items: center;">
-                <a href="">
-                    <img src="https://i.pinimg.com/736x/3c/39/7a/3c397a110bed100bf40ccd76ad94c922.jpg"
+                <a [routerLink]="['/Post_Travel']" [queryParams]="{ id: userId }">
+                    <img class="hover-img" src="https://i.pinimg.com/736x/3c/39/7a/3c397a110bed100bf40ccd76ad94c922.jpg"
                         style="border-radius: 50%; width: 300px; height: 300px; object-fit: cover;" alt="">
                 </a>
                 <p style="font-size: 22px;">ท่องเที่ยว</p>

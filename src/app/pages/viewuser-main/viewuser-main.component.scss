@@ -1,0 +1,272 @@
+:host,
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgb(249, 241, 239);
+  /* สีพื้นหลัง */
+  box-sizing: border-box;
+  /* คำนวณขนาดไม่เกินขอบ */
+  overflow-x: hidden;
+  /* ปิดการเลื่อนแนวนอน */
+}
+
+:host {
+  display: block;
+  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
+  /* ครอบคลุมความสูงเต็มหน้าจอ */
+  background-color: rgb(249, 241, 239);
+  /* สีพื้นหลัง */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+body {
+  overflow-y: auto;
+  /* เปิดใช้งานการเลื่อนแนวตั้ง */
+  background-color: rgb(249, 241, 239);
+  /* สีพื้นหลังเหมือนกัน */
+}
+
+.dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(221, 214, 214, 0.5);
+  /* พื้นหลังโปร่งใสกับสีดำอ่อน */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.dialog-box {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  width: 300px;
+}
+
+.button1 {
+  margin: 10px;
+  padding: 10px;
+  background-color: #e65580;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.button1:hover {
+  background-color: #0056b3;
+}
+
+.close-button {
+  top: 10px;
+  right: 10px;
+  font-size: 20px;
+  background-color: #d43232;
+  /* สีพื้นหลังปุ่ม */
+  border: none;
+  color: #fffdfd;
+  /* สีของข้อความ */
+  cursor: pointer;
+  font-weight: bold;
+  border-radius: 50%;
+  /* ทำให้เป็นปุ่มกลม */
+  padding: 5px;
+  /* ขนาดของปุ่ม */
+  width: 30px;
+  margin-left: 250px;
+}
+
+.close-button:hover {
+  color: #000;
+  /* สีของข้อความเมื่อ hover */
+  background-color: #e60000;
+  /* เปลี่ยนสีพื้นหลังเมื่อ hover */
+}
+
+.close-button:active {
+  background-color: #b30000;
+  /* เปลี่ยนสีพื้นหลังเมื่อคลิก */
+  color: #fff;
+  /* เปลี่ยนสีข้อความเมื่อคลิก */
+}
+
+
+.login-link {
+  background: none;
+  /* ไม่มีสีพื้นหลัง */
+  border: none;
+  /* ไม่มีเส้นขอบ */
+  outline: none;
+  /* ไม่มีเส้นขอบเมื่อคลิก */
+  transition: box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.login-link:hover {
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  /* เงาเมื่อเอาเมาส์เข้า */
+}
+
+.fixed-toolbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: rgb(233, 135, 135);
+  height: 90px;
+  width: 100%;
+  z-index: 1;
+  /* Ensure it is above other content */
+}
+
+.cardpost {
+  background-color: white;
+  width: auto;
+  height: 400px;
+}
+
+.fixed-toolbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: rgb(233, 135, 135);
+  height: 90px;
+  width: 100%;
+  z-index: 200;
+  /* Ensure it is above other content */
+}
+
+
+//font
+.itim-regular {
+  margin-top: 5px;
+  font-family: "Itim", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.menu-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  position: relative;
+}
+
+.menu-item.active {
+  color: #ff0000;
+  /* สีเมื่อ active */
+}
+
+
+.menu-item span {
+  font-size: 14px;
+  margin-top: 5px;
+}
+
+.menu-item.active i,
+.menu-item.active span {
+  color: #000000;
+}
+
+.menu-item.active::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  /* เริ่มที่กึ่งกลางของเมนู */
+  transform: translateX(-50%);
+  /* ดันกลับมาครึ่งหนึ่งของความกว้าง */
+  height: 5px;
+  background-color: #000000;
+  /* สีขีดล่าง */
+  width: 80px;
+  /* ความกว้างของขีด */
+}
+
+.buttonEdit {
+  border: none;
+  width: 120px;
+  height: 35px;
+  font-size: 15px;
+  background-color: #f0d9db;
+  cursor: pointer;
+}
+
+.buttonEdit:hover {
+  background-color: #d1bec0;
+}
+
+.buttonsend {
+  border: none;
+  width: 50px;
+  height: 35px;
+  font-size: 15px;
+  background-color: #f0d9db;
+  cursor: pointer;
+}
+
+.buttonsend:hover {
+  background-color: #d1bec0;
+}
+
+/* บังคับให้ Ink Bar เป็นสีเขียว */
+::ng-deep .mdc-tab-indicator__content--underline {
+  --mdc-tab-indicator-active-indicator-color: rgb(0, 0, 0) !important;
+}
+
+/* แก้ไขสีเมื่อแท็บถูกเลือก */
+::ng-deep .mat-mdc-tab.mdc-tab--active .mdc-tab-indicator__content--underline {
+  --mdc-tab-indicator-active-indicator-color: rgb(0, 0, 0) !important;
+  border-color: rgb(0, 0, 0) !important;
+  /* บังคับให้เส้นใต้เป็นสีเขียว */
+  border-top-width: 2px !important;
+}
+
+.post-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 300px);
+  /* ความกว้างของแต่ละโพสต์ถูกกำหนดเป็น 300px */
+  gap: 10px;
+  /* ระยะห่างระหว่างโพสต์ */
+  padding: 40px;
+  /* ระยะห่างจากขอบ */
+  justify-content: center;
+}
+
+.post-item {
+  width: 300px;
+  /* กำหนดความกว้างเฉพาะโพสต์ */
+  position: relative;
+  margin-top: -15px;
+}
+
+.post-image,
+.post-video {
+  width: 300px;
+  /* ความกว้างของสื่อ */
+  height: 300px;
+  /* ความสูงของสื่อ */
+  object-fit: cover;
+  border-radius: 0px;
+  /* ไม่มีความมน */
+}
+
+
+.multiple-media-icon {
+  top: 10px;
+  right: 10px;
+  padding: 5px;
+  border-radius: 50%;
+}

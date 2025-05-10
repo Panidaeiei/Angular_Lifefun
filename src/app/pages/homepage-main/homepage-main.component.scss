@@ -1,5 +1,4 @@
 
-
 :host,
 html,
 body {
@@ -149,10 +148,9 @@ body {
   height: 5px;
   background-color: #000000;
   /* สีขีดล่าง */
-  width: 80px;
+  width: 90px;
   /* ความกว้างของขีด */
 }
-
 
 .card-container-wrapper {
   display: flex;
@@ -232,7 +230,7 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(194, 187, 187, 0.1); /* พื้นหลังโปร่งใสกับสีดำอ่อน */
+  background: rgba(219, 213, 213, 0.1); /* พื้นหลังโปร่งใสกับสีดำอ่อน */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -285,5 +283,4 @@ body {
   background-color: #b30000; /* เปลี่ยนสีพื้นหลังเมื่อคลิก */
   color: #fff; /* เปลี่ยนสีข้อความเมื่อคลิก */
 }
-
 

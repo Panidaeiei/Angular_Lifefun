@@ -20,7 +20,7 @@
             
 
                 <div style="display: flex; flex-direction: column; align-items: center;">
-                    <a [routerLink]="['']">
+                    <a [routerLink]="['/search_main']">
                         <i style="font-size: 40px; color: black;" class="fa-solid fa-magnifying-glass"></i>
                     </a>
                     <span class="itim-regular">ค้นหา</span>
@@ -75,7 +75,6 @@
                                 style="font-size: 30px; color: white; position: absolute; top: 10px; right: 10px; padding: 5px; border-radius: 50%;"></i>
                         </div>
 
-
                         <!-- ข้อมูลโพสต์ -->
                         <div
                             style="display: flex; align-items: center; justify-content: space-between; margin-right: 10px;">
@@ -95,9 +94,11 @@
                         <div
                             style="display: flex; flex-direction: row; margin-left: 15px; margin-right: 15px; margin-top: 35px; gap: 10px; justify-content: space-between;">
                             <div style="display: flex; align-items: center; gap: 10px;">
-                                <img [src]="post.user_profile_image || 'https://via.placeholder.com/50'"
+                                <a (click)="goToProfile(post.user_uid.toString())" >
+                                    <img [src]="post.user_profile_image || 'https://via.placeholder.com/50'"
                                     alt="รูปโปรไฟล์"
                                     style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
+                                </a>                              
                                 <span style="font-weight: 600; font-size: 20px;">
                                     {{ post.user_name }}
                                 </span>
@@ -117,12 +118,11 @@
 
                         </div>
                     </div>
-                </mat-card>
-                
+                </mat-card>               
                 <div *ngIf="isDialogOpen" class="dialog-overlay" (click)="closeDialog()">
                     <div class="dialog-box" (click)="$event.stopPropagation()">
                         <button class="close-button" (click)="closeDialog()">×</button>
-                        <img src="https://scontent.fbkk10-1.fna.fbcdn.net/v/t1.15752-9/467011559_1309959883362728_6149497978643079622_n.png?_nc_cat=107&ccb=1-7&_nc_sid=9f807c&_nc_ohc=YCDaXk0TRJoQ7kNvgELQ_yE&_nc_oc=Adgw1-0qVy0c465vCPgZn65aHiM4NSXN3nbzvGrtEq6x69QnZVvlfUQjY1fkT-xy24s&_nc_zt=23&_nc_ht=scontent.fbkk10-1.fna&oh=03_Q7cD1gE-IRosOQT7rsinr7ol_0Ul6pkO0cmfVk1Z2xLab0K5kA&oe=67D157E4"
+                        <img src="../../../assets/images/Logoweb.png"
                         alt="Home Icon" width="140px">
                         <h3>กรุณาเข้าสู่ระบบ/สมัครสมาชิก</h3>
                         <button class="button1" (click)="navigateToLogin()">เข้าสู่ระบบ</button>

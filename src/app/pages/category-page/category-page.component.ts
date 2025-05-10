@@ -15,9 +15,10 @@ import {MatButtonModule} from '@angular/material/button';
 })
 export class CategoryPageComponent {
   currentUserId: string | null = null;
-   userId: string | null = null;
+  userId: string | null = null;
   isLiked: boolean = false;
   isDrawerOpen: boolean = false; 
+  cat_id!: number;
 
   constructor(private router: ActivatedRoute,) { }
 
@@ -25,6 +26,7 @@ export class CategoryPageComponent {
     this.router.queryParams.subscribe((params: any) => {
       if (params['id']) {
         this.userId = params['id'];
+        this.cat_id = +params['cat_id'];
         console.log('User ID set from queryParams:', this.userId);
       } else {
         console.error('User ID not found in queryParams.');
