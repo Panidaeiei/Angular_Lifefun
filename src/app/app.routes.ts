@@ -13,13 +13,15 @@ import { DetailPostComponent } from './pages/detail-post/detail-post.component';
 import { EditprofileUserComponent } from './pages/editprofile-user/editprofile-user.component';
 import { ViewUserProfileComponent } from './pages/view-user-profile/view-user-profile.component';
 import { ProfileuserAdminComponent } from './pages/profileuser-admin/profileuser-admin.component';
+import { ChatUserComponent } from './pages/chat-user/chat-user.component';
+import { NoticeComponent } from './pages/notice/notice.component';
 
 
 
 
 export const routes: Routes = [
 
-    {path: '', component: HomepageMainComponent},
+    {path: '', component: NoticeComponent},
     {path: 'login', component: LoginComponent},
     {path: 'register', component: RegisterComponent},
     {path: 'HomepageAdmin', component: HomepageAdminComponent},
@@ -34,4 +36,7 @@ export const routes: Routes = [
     {path: 'view_user/:userId', component: ViewUserProfileComponent},
     {path: 'profileuserAdmin', component: ProfileuserAdminComponent},
     {path: 'userlist', component: ProfileuserAdminComponent},
+    {path: 'chat', component: ChatUserComponent},
+    {path: 'notice', component: NoticeComponent},
+
 ];

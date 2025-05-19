@@ -1,0 +1,126 @@
+<div class="background-div">
+    <mat-toolbar class="fixed-toolbar">
+
+        <!-- Logo ด้านซ้าย -->
+        <a >
+            <img src="https://shorturl.asia/2pOd3" alt="Home Icon" width="80px">
+        </a>
+        <div style="width: 15%;"></div>
+        <!-- เมนูตรงกลาง -->
+        <div style="display: flex; flex-grow: 1; justify-content: center; align-items: center;">
+            <div style="display: flex; justify-content: center; align-items: center; gap: 50px;">
+
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <a >
+                        <i style="font-size: 40px; color: black;" class="fa-solid fa-house"></i>
+                    </a>
+                    <span class="itim-regular">หน้าหลัก</span>
+                </div>
+
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <a >
+                        <i style="font-size: 40px; color: black;" class="fa-solid fa-users"></i>
+                    </a>
+                    <span class="itim-regular">ติดตาม</span>
+                </div>
+
+                <div>
+                    <a ><img
+                            src="https://scontent.fbkk10-1.fna.fbcdn.net/v/t1.15752-9/465505200_630347202693129_7507803564120503230_n.png?_nc_cat=107&ccb=1-7&_nc_sid=9f807c&_nc_ohc=DJIwEq0Dzw0Q7kNvgEqLS7u&_nc_zt=23&_nc_ht=scontent.fbkk10-1.fna&oh=03_Q7cD1gGDgXF2I13SrHWdmuiFc5AlVfULXTA9MvkjeMjETEJkow&oe=67C3DCBC" alt="" width="60px"></a>
+                </div>
+
+                <!-- การแจ้งเตือน -->
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <a >
+                        <i style="font-size: 40px; color: black;" class="fa-solid fa-bell"></i>
+                    </a>
+                    <span class="itim-regular">การแจ้งเตือน</span>
+                </div>
+
+                <!-- โปรไฟล์ -->
+                <div class="menu-item" routerLinkActive="active">
+                    <i style="font-size: 40px; color: black;" class="fa-solid fa-user"></i>
+                    <span class="itim-regular">โปรไฟล์</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ช่องค้นหา -->
+        <div class="search-container">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" class="search-input" placeholder="ค้นหา...">
+        </div>
+
+        <!-- ไอคอนเมนู -->
+        <div style="display: flex; flex-direction: column; align-items: center; margin-left: 20px;">
+            <a href="javascript:void(0)" >
+                <i style="font-size: 40px; color: black;" class="fa-solid fa-bars"></i>
+            </a>
+        </div>
+
+        <!-- Drawer -->
+        <div class="drawer" [class.open]="">
+            <div class="drawer-content">
+                <h3 style="font-weight: 500; font-size: 30px;">MENU</h3>
+                <ul style="list-style: none; padding: 0;">
+                    <!-- หมวดหมู่ -->
+                    <li
+                        style="border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; align-items: center; gap: 10px;">
+                        <i class="fa fa-list" style="font-size: 20px; color: black;"></i>
+                        <a 
+                            style="text-decoration: none; color: black;">
+                            <span class="itim-regular">หมวดหมู่</span>
+                        </a>
+                    </li>
+                    <!-- ออกจากระบบ -->
+                    <li
+                        style="border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; align-items: center; gap: 10px;">
+                        <i class="fa fa-sign-out" style="font-size: 20px; color: black;"></i>
+                        <a href="/login" style="text-decoration: none; color: black;">
+                            <span class="itim-regular">ออกจากระบบ</span>
+                        </a>
+                    </li>
+                </ul>
+                
+            </div>
+        </div>
+    </mat-toolbar>
+    <div class="chat-container" style="margin-top: 90px;">
+        <div class="container">
+            <!-- Sidebar -->
+            <div class="sidebar">
+              <h3>การแจ้งเตือน</h3>
+              <ul class="menu">
+                <li class="active"><i class="fa-solid fa-bell"></i> การแจ้งเตือนของระบบ <span class="badge">2</span></li>
+                <li><i class="fa-solid fa-user-plus"></i> ผู้ติดตามใหม่ <span class="badge">1</span></li>
+                <li><i class="fa-solid fa-heart"></i> ถูกใจ <span class="badge">2</span></li>
+                <li><i class="fa-solid fa-share"></i> แชร์ <span class="badge">1</span></li>
+                <li><i class="fa-solid fa-comment-dots"></i> ความคิดเห็น</li>
+              </ul>
+            </div>
+          
+            <!-- Main Notification Content -->
+            <div class="main">
+              <div class="search-bar">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" placeholder="Search for notifications..." />
+              </div>
+          
+              <div class="notification-list">
+                <div class="notification-item">
+                  <img src="https://i.imgur.com/6VBx3io.png" />
+                  <div><strong>Natt</strong> ถูกใจโพสต์ของคุณ</div>
+                  <span class="dot"></span>
+                </div>
+                <div class="notification-item">
+                  <img src="https://i.imgur.com/QrKdv2k.png" />
+                  <div><strong>Bow_</strong> ถูกใจโพสต์ของคุณ</div>
+                  <span class="dot"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+      
+
+</div>
