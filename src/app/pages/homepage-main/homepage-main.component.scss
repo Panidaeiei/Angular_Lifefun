@@ -80,37 +80,6 @@ body {
   font-style: normal;
 }
 
-.search-container {
-  display: flex;
-  align-items: center;
-  background-color: rgb(230, 200, 211);
-  /* สีพื้นหลังของช่องค้นหา */
-  border-radius: 30px;
-  /* ขอบมน */
-  padding: 10px 10px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  height: 30px;
-  width: 220px;
-  /* ความกว้างของช่องค้นหา */
-}
-
-.search-container i {
-  font-size: 16px;
-  color: black;
-  /* สีไอคอน */
-  margin-right: 10px;
-  /* ระยะห่างระหว่างไอคอนกับช่อง */
-}
-
-.search-input {
-  border: none;
-  outline: none;
-  /* ซ่อนขอบตอนคลิก */
-  font-size: 16px;
-  width: 100%;
-  background: transparent;
-  /* พื้นหลังโปร่งใส */
-}
 
 .menu-item {
   display: flex;

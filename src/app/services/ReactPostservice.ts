@@ -211,7 +211,7 @@ export class ReactPostservice {
     });
 
     return this.http.get<FollowStatus>(
-      `${this.baseUrl}/follows/follow-status?following_id=${following_id}&followed_id=${followed_id}`,{ headers }
+      `${this.baseUrl}/follows/follow-status?following_id=${following_id}&followed_id=${followed_id}`, { headers }
     );
   }
 
@@ -226,5 +226,11 @@ export class ReactPostservice {
 
     );
   }
+
+  sendReport(reason: string, pid: number, uid: string | number): Observable<any> {
+    const body = { reason, pid, uid: Number(uid) };
+    return this.http.post(`${this.baseUrl}/report/send-report`, body);
+  }
+
 
 }

@@ -6,10 +6,11 @@ import { CommonModule } from '@angular/common';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
+import { MatSidenavModule } from '@angular/material/sidenav';
 
 @Component({
   selector: 'app-notification-user',
-  imports: [MatToolbarModule, RouterModule, CommonModule, MatTabsModule, MatCardModule, MatButtonModule],
+  imports: [MatToolbarModule, RouterModule, CommonModule, MatTabsModule, MatCardModule, MatButtonModule, MatSidenavModule],
   templateUrl: './notification-user.component.html',
   styleUrls: ['./notification-user.component.scss'] // Corrected property name and path
 })
@@ -17,6 +18,8 @@ export class NotificationUserComponent {
   userId: string = '';
   isLiked: boolean = false;
   isDrawerOpen: boolean = false; // เริ่มต้น Drawer ปิด
+  isNotiDrawerOpen = true;
+  selectedCard: any = null;
 
   constructor(private route: ActivatedRoute) { }
 
@@ -36,8 +39,17 @@ export class NotificationUserComponent {
     this.isLiked = !this.isLiked; // สลับสถานะ isLiked เมื่อคลิก
     console.log('Heart icon clicked. Liked:', this.isLiked);
   }
-  
+
   toggleDrawer(): void {
     this.isDrawerOpen = !this.isDrawerOpen; // สลับสถานะเปิด/ปิด
+  }
+
+  toggleNotiDrawer() {
+    this.isNotiDrawerOpen = !this.isNotiDrawerOpen;
+  }
+
+  selectCard(cardData: any) {
+    this.selectedCard = cardData;
+    this.isNotiDrawerOpen = false;
   }
 }

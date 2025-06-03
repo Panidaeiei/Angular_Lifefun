@@ -29,7 +29,7 @@ import { UserHealthComponent } from './pagecat/user-health/user-health.component
 import { UserTravelComponent } from './pagecat/user-travel/user-travel.component';
 import { CategoryMainComponent } from './pagecat/category-main/category-main.component';
 import { ChatUserComponent } from './pages/chat-user/chat-user.component';
-import { NoticeComponent } from './pages/notice/notice.component';
+import { NotiAddminComponent } from './pages/noti-addmin/noti-addmin.component';
 
 
 
@@ -66,7 +66,6 @@ export const routes: Routes = [
     {path: 'Post_Health', component: UserHealthComponent},
     {path: 'Post_Travel', component: UserTravelComponent},
     {path: 'Cat_main/:cat_id', component: CategoryMainComponent},
-    {path: 'userlist', component: ProfileuserAdminComponent},
     {path: 'chat', component: ChatUserComponent},
-    {path: 'notice', component: NoticeComponent},
+    {path: 'noti_addmin', component: NotiAddminComponent}
 ];

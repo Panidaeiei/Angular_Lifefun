@@ -120,49 +120,6 @@ body {
 }
 
 
-//ส่วนการจัดการการ์ด
-.card-container {
-  display: flex;
-  justify-content: flex-start;
-  /* เรียงจากด้านซ้าย */
-  align-items: center;
-  flex-wrap: wrap;
-  /* ย้ายไปบรรทัดใหม่เมื่อเกินความกว้าง */
-  padding: 0 80px;
-  /* เพิ่มระยะห่างด้านซ้ายและขวา */
-  gap: 40px;
-  /* ระยะห่างระหว่างการ์ด */
-  max-width: 100%;
-}
-
-
-.card-wrapper {
-  flex: 1 1 calc(25% - 20px);
-  /* ให้การ์ดแต่ละอันกว้าง 25% และลดช่องว่าง */
-  max-width: 360px;
-  /* จำกัดความกว้างสูงสุด */
-  margin-bottom: 20px;
-  /* เว้นระยะระหว่างแถว */
-  cursor: pointer;
-  /* เปลี่ยน Cursor เป็นมือเมื่อ Hover */
-}
-
-.cardpost {
-  display: flex;
-  flex-direction: column;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  border-radius: 10px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  /* เพิ่ม Animation */
-}
-
-.cardpost:hover {
-  transform: scale(1.02);
-  /* ขยายการ์ดเล็กน้อย */
-  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
-  /* เพิ่มเงา */
-}
-
 .tabs {
   display: flex;
   justify-content: center;

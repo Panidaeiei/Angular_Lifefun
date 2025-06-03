@@ -69,8 +69,8 @@
                 <div style="display: flex; flex-direction: column;">
                     <!-- ส่วนโปรไฟล์ -->
                     <div style="display: flex; align-items: center; gap: 10px; margin-top: 10px;">
-                        <img style="border-radius: 50%; width: 70px; height: 70px; object-fit: cover; padding: 5px;"
-                            [src]="post.user_profile_image" alt="">
+                        <a (click)="goToProfile(post.user_uid.toString())" style="cursor: pointer;"><img style="border-radius: 50%; width: 70px; height: 70px; object-fit: cover; padding: 5px;"
+                            [src]="post.user_profile_image" alt=""></a>      
                         <div style="display: flex; flex-direction: column; ">
                             <span style="font-size: 20px;">{{ post.user_name }}</span>
                             <span style="color: #7e7776; margin-top: 5px; margin-bottom: 10px;">{{post.post_time |
@@ -81,13 +81,13 @@
                     <!-- Container ที่ครอบทั้งภาพ/วิดีโอ และไอคอน -->
                     <div style="position: relative; width: 350px; height: 350px;">
                         <!-- รูปภาพ -->
-                        <a [routerLink]="['/']" >
+                        <a (click)="onloginClick()" style="cursor: pointer;">
                             <img *ngIf="post.media_type === 'image'" [src]="post.media_url" alt="Post Image"
                                 style="width: 100%; height: 100%; object-fit: cover;">
                         </a>
 
                         <!-- วิดีโอ -->
-                        <a [routerLink]="['/']">
+                        <a (click)="onloginClick()" style="cursor: pointer;">
                             <video *ngIf="post.media_type === 'video'" [src]="post.media_url" controls
                                 style="width: 100%; height: 100%; object-fit: cover;"></video>
                         </a>
@@ -117,7 +117,15 @@
             </div>
         </div>
     </div>
-
+    <div *ngIf="isDialogOpen" class="dialog-overlay" (click)="closeDialog()">
+            <div class="dialog-box" (click)="$event.stopPropagation()">
+                <button class="close-button" (click)="closeDialog()">×</button>
+                <img src="../../../assets/images/Logoweb.png"
+                alt="Home Icon" width="140px">
+                <h3>กรุณาเข้าสู่ระบบ/สมัครสมาชิก</h3>
+                <button class="button1" (click)="navigateToLogin()">เข้าสู่ระบบ</button>
+            </div>
+    </div>
 
     <div *ngIf="posts.length === 0 && searchQuery.trim() !== ''" class="no-results">
         <p> ไม่พบโพสต์ที่เกี่ยวข้อง</p>

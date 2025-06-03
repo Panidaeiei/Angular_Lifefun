@@ -22,6 +22,7 @@ import { TimeAgoPipe, NewlinePipe } from '../../pipes/time-ago.pipe';
 import { Comment } from '../../models/comment_model';
 import { SharePostModel } from '../../models/sharepost_model';
 import { SavePostModel } from '../../models/savepost_service';
+import { ReportDialogComponent } from '../../report-dialog/report-dialog.component';
 
 @Component({
   selector: 'app-detail-post',
@@ -107,12 +108,38 @@ export class DetailPostComponent implements OnInit {
     });
   }
 
+  openReportDialog(postId: number): void {
+    const dialogRef = this.dialog.open(ReportDialogComponent, {
+      width: '400px',
+      data: { pid: postId, uid: this.userId }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === true) {
+        console.log('รายงานถูกส่งแล้ว');
+      }
+    });
+  }
+
+    openReportCommentDialog(cid: number) {
+    const dialogRef = this.dialog.open(ReportDialogComponent, {
+      width: '400px',
+      data: { cid }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        console.log('เหตุผลการรายงาน:', result);
+        // 🔻 ส่งเหตุผลและ postId ไป backend ได้ที่นี่
+      }
+    });
+  }
 
   goToProfile(userId: string): void {
     console.log('Current User ID:', this.currentUserId);
     console.log('Navigating to:', userId);
     console.log('Query Params ID:', this.userId);
-  
+
     if (String(userId) === String(this.userId)) {
       // หาก userId คือ currentUserId, ไปที่หน้าประวัติของผู้ใช้ (ProfileUser)
       this.router.navigate(['/ProfileUser'], { queryParams: { id: userId } });
@@ -451,6 +478,5 @@ export class DetailPostComponent implements OnInit {
       console.log('การดำเนินการถูกยกเลิกโดยผู้ใช้');
     }
   }
-
 
 }

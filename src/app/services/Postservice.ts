@@ -299,4 +299,7 @@ export class PostService {
     return this.http.get(`${this.baseUrl}/categories/getPosts/${cat_id}`);
   }
 
+   getPostMain(postId: string): Observable<DetailPost[]> {
+    return this.http.get<any>(`${this.baseUrl}/posts/getPostmain/${postId}`);
+  }
 }

@@ -1,0 +1,126 @@
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+<div class="background-div">
+  <mat-toolbar class="fixed-toolbar"
+    style="background-color: rgb(233, 135, 135); height: 90px; display: flex; align-items: center; justify-content: space-between;">
+
+    <a [routerLink]="['']">
+      <img src="../../../assets/images/Logoweb.png" alt="Home Icon" width="80px">
+    </a>
+
+    <div style="display: flex; flex-grow: 1; justify-content: center; align-items: center;  margin-left: 120px;">
+      <div style="display: flex; justify-content: center; align-items: center; gap: 60px;">
+
+
+        <a class="menu-item" routerLinkActive="active" [routerLink]="['']">
+          <i style="font-size: 40px; color: black;" class="fa-solid fa-house"></i>
+          <span style="font-size: 22px;">หน้าหลัก</span>
+        </a>
+
+
+        <div style="display: flex; flex-direction: column; align-items: center;">
+          <a [routerLink]="['/search_main']">
+            <i style="font-size: 40px; color: black;" class="fa-solid fa-magnifying-glass"></i>
+          </a>
+          <span class="itim-regular">ค้นหา</span>
+        </div>
+
+        <div style="display: flex; flex-direction: column; align-items: center;">
+          <a [routerLink]="['/category_main']">
+            <i style="font-size: 40px; color: black;" class="fa-solid fa-bars"></i>
+          </a>
+          <span class="itim-regular">หมวดหมู่</span>
+        </div>
+      </div>
+    </div>
+
+    <button routerLink="/login" class="login-link"
+      style="text-decoration: none; color: black; background: none; border: none; outline: none;">
+      <div style="display: flex; flex-direction: row; align-items: center; justify-content: center;">
+        <i class="material-icons" st>login</i>
+        <span style="margin-left: 10px; font-size: 17px;">เข้าสู่ระบบ/สมัครสมาชิก</span>
+      </div>
+    </button>
+
+  </mat-toolbar>
+</div>
+<div style="display: flex; justify-content: center; align-items: center;">
+  <div *ngIf="post" class="divpost">
+    <!-- ส่วนแสดงโปรไฟล์ผู้ใช้ -->
+    <div
+      style="display: flex; flex-direction: row; margin-bottom: 20px; margin-top: 20px; margin-left: 15px; justify-content: space-between;">
+      <div style="display: flex;">
+        <img
+          [src]="post.user_profile_image || 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'"
+          alt="รูปโปรไฟล์" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover;">
+        <div style="display: flex; flex-direction: column;">
+          <span style="font-size: 30px; font-weight: 500; margin-left: 20px;">
+            {{ post.user_name }}
+          </span>
+          <span style="color: #7e7776; margin-top: 5px; margin-left: 25px; margin-bottom: 10px;">
+            {{ post.post_time | timeAgo }}
+          </span>
+          <div *ngIf="post.location">
+            <i class="fa-solid fa-location-dot"
+              style="margin-left: 20px; margin-right: 5px; font-size: 20px; color: rgb(228, 63, 91);"></i>
+            <a class="location" [href]="post.location" target="_blank">
+              Location:
+              {{ post.location.length > 30 ? (post.location.substring(0, 30) + '...') : post.location }}
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- รูปภาพ/วิดีโอ -->
+    <div *ngIf="post" class="media-slider">
+      <div class="media-container" style="position: relative;">
+        <ng-container *ngIf="post.images.length || post.videos.length">
+          <div *ngIf="currentMediaIndex >= 0">
+            <ng-container *ngIf="currentMedia.type === 'image'; else videoTemplate">
+              <img [src]="currentMedia.url" alt="โพสต์รูปภาพ"
+                style="width: 800px; height: 750px; object-fit: cover; margin-bottom: 10px;">
+            </ng-container>
+            <ng-template #videoTemplate>
+              <video [src]="currentMedia.url" controls
+                style="width: 800px; height: 750px; object-fit: cover; background-color: black; margin-bottom: 10px;"></video>
+            </ng-template>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+
+
+    <div style="display: flex; align-items: center; gap: 10px; margin: 15px;">
+      <i class="fa fa-heart" style="font-size: 30px; color: rgb(109, 105, 106);"></i>
+      <span *ngIf="post.likes_count > 0" style="font-weight: 500; font-size: 22px;">
+        {{ post.likes_count }}
+      </span>
+    </div>
+    <!-- คำบรรยาย -->
+    <div style="width: 760px; padding: 0px 20px; font-size: 22px; margin-bottom: 20px;">
+      <span [innerHTML]="post.title | newlineToBr"></span>
+    </div>
+    
+     <div *ngFor="let comment of (showAllComments ? comments : comments.slice(0, 2))" style="margin-bottom: 20px;">
+            <div style="display: flex; gap: 10px; margin-left: 20px; justify-content: space-between;">
+                <div style="display: flex; gap: 15px;">
+                    <img style="width: 60px; height: 60px; object-fit: cover; border-radius: 50%; cursor: pointer;"
+                        [src]="comment.image_url || 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'"
+                        alt="" >
+                    <div style="display: flex; flex-direction: column;  width: 450px; ">
+                        <div style="margin-bottom: 5px;">
+                            <span style="font-size: 20px; font-weight: 500;" title="username">{{ comment.username}}</span>
+
+                            <span style="margin-left: 10px; color: #949090;">{{ comment.date_time | timeAgo }}</span>
+                        </div>
+                        <span
+                            style="font-size: 20px; white-space: pre-line; word-wrap: break-word; word-break: break-word;"
+                            title="comment">{{ comment.title }}</span>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+  </div>
+</div>

@@ -57,7 +57,7 @@
                     <div style="display: flex; flex-direction: column; position: relative;">
 
                         <!-- แสดงรูปภาพหรือวิดีโอ -->
-                        <a [routerLink]="['']">
+                        <a (click)="onHeartClick()">
                             <ng-container *ngIf="post.media_type === 'image'; else videoTemplate">
                                 <img [src]="post.media_url || 'https://via.placeholder.com/360x300'"
                                     style="width: 390px; height: 350px; object-fit: cover;" alt="รูปที่โพสต์">

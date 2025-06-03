@@ -1,4 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Itim&display=swap');
 
 :host,
 html,
@@ -18,6 +17,8 @@ body {
 :host {
   display: block;
   min-height: 100vh;
+  align-items: center;
+  justify-content: center;
   /* ครอบคลุมความสูงเต็มหน้าจอ */
   background-color: rgb(249, 241, 239);
   /* สีพื้นหลัง */
@@ -33,7 +34,62 @@ body {
   /* สีพื้นหลังเหมือนกัน */
 }
 
-/* สไตล์พื้นฐานของ Drawer */
+.menu-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  position: relative;
+}
+
+.menu-item.active {
+  color: #ff0000;
+  /* สีเมื่อ active */
+}
+
+.menu-item span {
+  font-size: 14px;
+  margin-top: 5px;
+}
+
+.menu-item.active i,
+.menu-item.active span {
+  color: #000000;
+  /* เปลี่ยนสีเมื่อ active */
+}
+
+.menu-item.active::after {
+  content: '';
+  position: absolute;
+  bottom: -41px;
+  left: 50%;
+  /* เริ่มที่กึ่งกลางของเมนู */
+  transform: translateX(-50%);
+  /* ดันกลับมาครึ่งหนึ่งของความกว้าง */
+  height: 5px;
+  background-color: #000000;
+  /* สีขีดล่าง */
+  width: 130px;
+  /* ความกว้างของขีด */
+
+}
+
+
+.hover-link {
+  transition: color 0.3s ease, text-decoration 0.3s ease;
+  /* ทำให้เปลี่ยนสไตล์นุ่มนวล */
+}
+/* เอฟเฟกต์เมื่อ hover */
+/* เอฟเฟกต์เมื่อ hover */
+.hover-link:hover {
+  color: #007BFF;
+  /* เปลี่ยนสีเป็นสีน้ำเงิน */
+  text-decoration: underline;
+  /* เพิ่มเส้นใต้ */
+  font-weight: bold;
+  /* ทำให้ข้อความหนาขึ้น */
+}
+
 .drawer {
   position: fixed;
   top: 0;
@@ -71,97 +127,6 @@ body {
 .drawer-content ul li {
   margin: 10px 0;
 }
-
-.fixed-toolbar {
-
-  top: 0;
-  left: 0;
-  background-color: rgb(233, 135, 135);
-  height: 90px;
-  width: 100%;
-  z-index: 1;
-  /* Ensure it is above other content */
-}
-
-//font
-.itim-regular {
-  margin-top: 5px;
-  font-family: "Itim", serif;
-  font-weight: 400;
-  font-style: normal;
-}
-
-.search-container {
-  display: flex;
-  align-items: center;
-  background-color: rgb(230, 200, 211);
-  /* สีพื้นหลังของช่องค้นหา */
-  border-radius: 30px;
-  /* ขอบมน */
-  padding: 10px 10px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  height: 30px;
-  width: 220px;
-  /* ความกว้างของช่องค้นหา */
-}
-
-.search-container i {
-  font-size: 16px;
-  color: black;
-  /* สีไอคอน */
-  margin-right: 10px;
-  /* ระยะห่างระหว่างไอคอนกับช่อง */
-}
-
-.search-input {
-  border: none;
-  outline: none;
-  /* ซ่อนขอบตอนคลิก */
-  font-size: 16px;
-  width: 100%;
-  background: transparent;
-  /* พื้นหลังโปร่งใส */
-}
-
-.menu-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-decoration: none;
-  position: relative;
-}
-
-.menu-item.active {
-  color: #ff0000;
-  /* สีเมื่อ active */
-}
-
-
-.menu-item span {
-  font-size: 14px;
-  margin-top: 5px;
-}
-
-.menu-item.active i,
-.menu-item.active span {
-  color: #000000;
-}
-
-.menu-item.active::after {
-  content: '';
-  position: absolute;
-  bottom: -10px;
-  left: 50%;
-  /* เริ่มที่กึ่งกลางของเมนู */
-  transform: translateX(-50%);
-  /* ดันกลับมาครึ่งหนึ่งของความกว้าง */
-  height: 5px;
-  background-color: #000000;
-  /* สีขีดล่าง */
-  width: 80px;
-  /* ความกว้างของขีด */
-}
-
 
 .drawer-notification {
   position: fixed;

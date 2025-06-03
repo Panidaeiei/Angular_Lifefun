@@ -24,6 +24,7 @@ export class SearctpostMainComponent {
   searchQuery = '';
   errorMessage = '';
   loading = false;
+  isDialogOpen = false; 
   
   onSearch() {
     if (this.searchQuery.trim() === '') {
@@ -44,5 +45,42 @@ export class SearctpostMainComponent {
     });
 
   }
+
+    onloginClick(): void {
+    if (!this.isUserLoggedIn()) {  // ตรวจสอบว่าเข้าสู่ระบบหรือยัง
+      this.openDialog();
+    } else {
+      // ทำการเพิ่มไลค์หรือดำเนินการอื่น ๆ
+      console.log("User has liked the post.");
+    }
+  }
+
+    isUserLoggedIn(): boolean {
+    return false; // สมมุติว่า user ยังไม่ได้เข้าสู่ระบบ
+  }
+
+  openDialog() {
+    this.isDialogOpen = true;
+  }
+
+  closeDialog() {
+    this.isDialogOpen = false;
+  }
+
+  navigateToLogin() {
+    this.router.navigate(['/login']); // ไปที่หน้า Login
+  }
+
+    goToProfile(userId: string): void {
+    console.log('Navigating to user profile:', userId);
+
+    if (!userId) {
+      console.error('User ID is missing! Navigation aborted.');
+      return;
+    }
+
+    this.router.navigate(['/viewuser_main'], { queryParams: { Profileuser: userId } });
+  }
+
 
 }
