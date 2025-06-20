@@ -1,56 +1,71 @@
-import { Component, ElementRef, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { MatTabsModule } from '@angular/material/tabs';
-import { MatCardModule } from '@angular/material/card';
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
 import { PostService } from '../../services/Postservice';
 import { ReactPostservice } from '../../services/ReactPostservice';
 import { NewlineToBrPipe } from '../../newline-to-br.pipe';
-import { FormsModule } from '@angular/forms'
 import { TimeAgoPipe } from '../../pipes/time-ago.pipe';
+import { AdminService } from '../../services/Admin';
+import { MatDialog } from '@angular/material/dialog';
+import { User } from '../../models/register_model';
+import { UserService } from '../../services/Userservice';
+import { ConfirmDeleteDialogComponent } from '../../confirm-delete-dialog/confirm-delete-dialog.component';
 
 @Component({
-  selector: 'app-detail-postmain',
+  selector: 'app-report-postdetail',
   imports: [MatToolbarModule, RouterModule, CommonModule, MatTabsModule, MatCardModule, MatButtonModule, MatMenuModule, MatIconModule, NewlineToBrPipe, FormsModule, TimeAgoPipe],
-  templateUrl: './detail-postmain.component.html',
-  styleUrl: './detail-postmain.component.scss'
+  templateUrl: './report-postdetail.component.html',
+  styleUrl: './report-postdetail.component.scss'
 })
-export class DetailPostmainComponent {
+export class ReportPostdetailComponent {
+
+  userId: string = '';
+  postId: string = '';
+  isDrawerOpen: boolean = false;
   post: any;
   currentMedia: { type: string; url: string } = { type: '', url: '' };
   currentMediaIndex: number = 0; // ตัวแปรนี้ใช้สำหรับการเลื่อนดูสื่อ
-  postId: string = '';
   comments: any[] = []; // คอมเมนต์ที่ดึงมา
+  reportNotifications: any[] = [];
+  users: User[] = [];
+  filteredUsers: any[] = [];
+  errorMessage: string = '';
 
-  constructor(
-    private route: ActivatedRoute,
-    private postService: PostService,
-    private reactPostservice: ReactPostservice
-  ) { }
+  constructor(private router: Router, private route: ActivatedRoute, private postService: PostService, private reactPostservice: ReactPostservice, private adminservice: AdminService, private userService: UserService, public dialog: MatDialog) { }
 
-  ngOnInit(): void {
-    // ดึงค่าจาก Query Parameters เพียงครั้งเดียว
-    this.route.queryParams.subscribe((params) => {
-      // ตรวจสอบว่า post_id และ user_id อยู่ใน query params หรือไม่
-      if (params['post_id']) {
-        this.postId = params['post_id'];
-        console.log('Post ID:', this.postId);
-        this.fetchPost(this.postId); // ดึงข้อมูลโพสต์ตาม postId
-        
-      } else {
-        console.error('Post ID not found in query parameters.');
-      }
+  ngOnInit() {
+    this.route.queryParams.subscribe(params => {
+      this.postId = params['post_id'];     // รับ post_id จาก query
+      this.userId = params['user_id'];
+
+      this.fetchPost(this.postId);
+      console.log('Post ID:', this.postId);
+    });
+
+    this.userService.getUsers().subscribe({
+      next: (data) => {
+        this.users = data.filter(user => user.status !== 0);
+        this.filteredUsers = this.users;
+      },
+      error: (error) => this.errorMessage = error.message
     });
 
     this.fetchComments();
+    console.log('โพสต์ที่โหลด:', this.post);
+
   }
 
-  
+  toggleDrawer(): void {
+    this.isDrawerOpen = !this.isDrawerOpen; // สลับสถานะเปิด/ปิด
+  }
+
   fetchPost(postId: string): void {
     const postIdNumber = Number(postId);  // แปลง postId จาก string เป็น number
 
@@ -73,7 +88,7 @@ export class DetailPostmainComponent {
 
   }
 
-    fetchComments(): void {
+  fetchComments(): void {
     const postId = Number(this.postId);
 
     if (isNaN(postId)) {
@@ -92,7 +107,7 @@ export class DetailPostmainComponent {
     );
   }
 
-   showAllComments: boolean = false; // กำหนดค่าเริ่มต้นให้แสดงคอมเมนต์แค่ 4 อันแรก
+  showAllComments: boolean = false; // กำหนดค่าเริ่มต้นให้แสดงคอมเมนต์แค่ 4 อันแรก
 
   toggleShowComments(): void {
     this.showAllComments = !this.showAllComments;
@@ -121,4 +136,29 @@ export class DetailPostmainComponent {
       this.updateCurrentMedia();
     }
   }
+
+  deletePost(postId: number): void {
+    // เปิด dialog เพื่อยืนยันการลบโพสต์ โดยไม่มีการเคลื่อนไหว
+    const dialogRef = this.dialog.open(ConfirmDeleteDialogComponent, {
+      enterAnimationDuration: '0ms',  // ปิดการเคลื่อนไหวในการเปิด
+      exitAnimationDuration: '0ms'   // ปิดการเคลื่อนไหวในการปิด
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {  // ถ้าผู้ใช้ยืนยัน
+        this.postService.deletePost(postId).subscribe(
+          (response) => {
+            alert('โพสต์ถูกลบเรียบร้อย');
+            this.router.navigate(['/noti_addmin'], { queryParams: { id: this.userId } });
+          },
+          (error) => {
+            alert('เกิดข้อผิดพลาดในการลบโพสต์');
+            console.error(error);
+          }
+        );
+      }
+    });
+  }
+
+
 }

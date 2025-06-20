@@ -32,7 +32,7 @@ export class ReportDialogComponent {
       uid: this.data.uid
     });
 
-    console.log('onSubmit ถูกเรียกแล้ว');
+    this.dialogRef.close(true);
     this.reportService.sendReport(this.reason, this.data.pid, this.data.uid).subscribe({
       next: res => {
         console.log('Response จาก server:', res);  // ลองดูค่าที่นี่ว่าคืออะไร

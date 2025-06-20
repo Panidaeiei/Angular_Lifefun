@@ -10,42 +10,59 @@ import { UserService } from '../../services/Userservice';
 import { User } from '../../models/register_model';
 import { AdminService } from '../../services/Admin';
 import { UserBan } from '../../models/ban.model';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-user-ban',
-  imports: [MatToolbarModule, RouterModule, CommonModule, MatTabsModule, MatCardModule, MatButtonModule],
+  imports: [MatToolbarModule, RouterModule, CommonModule, MatTabsModule, MatCardModule, MatButtonModule, FormsModule],
   templateUrl: './user-ban.component.html',
   styleUrl: './user-ban.component.scss'
 })
 export class UserBanComponent {
- [x: string]: any;
+  [x: string]: any;
   userId: string = '';
   users: User[] = [];
   errorMessage: string = '';
   isDrawerOpen: boolean = false; // เริ่มต้น Drawer ปิด
-  filteredUsers: User[] = []; 
+  filteredUsers: any[] = [];
+  searchQuery: string = '';
+  isSearchPerformed: boolean = false;
 
-  constructor(private route: ActivatedRoute,private userService: UserService,private adminservice: AdminService) { }
+
+  constructor(private route: ActivatedRoute, private userService: UserService, private adminservice: AdminService) { }
 
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
       this.userId = params['id']; // ดึง ID จาก Query Parameters
       console.log('User ID:', this.userId);
     });
-  
+
+    
     this.userService.getUsers().subscribe({
       next: (data) => {
         this.users = data;
-        // ตรวจสอบว่าแต่ละ user มี id หรือไม่
-    
+        this.filterUsers();
+
       },
       error: (error) => this.errorMessage = error.message
     });
   }
-  
 
-  filterUsers() {
-    this.filteredUsers = this.users.filter(user => user.status === 0); // กรองเฉพาะ user ที่ status = 0
+  filterUsers(): void {
+    this.filteredUsers = this.users.filter(user => user.status === 0);
+  }
+
+  onSearchBannedUsers(): void {
+    if (this.searchQuery.trim() === '') {
+      this.filterUsers(); // ถ้าช่องค้นหาว่างให้แสดงผู้ถูกระงับทั้งหมดที่กรองแล้ว
+      return;
+    }
+
+    // ค้นหาแบบกรองใน array เดิม (client-side filtering)
+    this.filteredUsers = this.users.filter(user =>
+      user.status === 0 &&
+      user.username.toLowerCase().includes(this.searchQuery.toLowerCase())
+    );
   }
 
   toggleDrawer(): void {
@@ -57,7 +74,7 @@ export class UserBanComponent {
       console.error('User ID is missing');
       return;
     }
-  
+
     if (user.status === 0) {
       // แจ้งเตือนก่อนยกเลิกการระงับบัญชี
       if (window.confirm(`คุณแน่ใจหรือไม่ว่าต้องการยกเลิกการระงับบัญชีของ ${user.username}?`)) {
@@ -88,5 +105,5 @@ export class UserBanComponent {
       }
     }
   }
-  
+
 }

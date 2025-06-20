@@ -1,34 +1,4 @@
-.search-container {
-    display: flex;
-    align-items: center;
-    background-color: rgb(230, 200, 211);
-    /* สีพื้นหลังของช่องค้นหา */
-    border-radius: 30px;
-    /* ขอบมน */
-    padding: 10px 10px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    height: 30px;
-    width: 220px;
-    /* ความกว้างของช่องค้นหา */
-  }
-  
-  .search-container i {
-    font-size: 16px;
-    color: black;
-    /* สีไอคอน */
-    margin-right: 10px;
-    /* ระยะห่างระหว่างไอคอนกับช่อง */
-  }
-  
-  .search-input {
-    border: none;
-    outline: none;
-    /* ซ่อนขอบตอนคลิก */
-    font-size: 16px;
-    width: 100%;
-    background: transparent;
-    /* พื้นหลังโปร่งใส */
-  }
+
   
   .menu-item {
     display: flex;
@@ -121,3 +91,83 @@
     cursor: pointer;
     color: aliceblue;
   }
+
+  /* บังคับให้ Ink Bar เป็นสีเขียว */
+::ng-deep .mdc-tab-indicator__content--underline {
+  --mdc-tab-indicator-active-indicator-color: rgb(0, 0, 0) !important;
+}
+
+/* แก้ไขสีเมื่อแท็บถูกเลือก */
+::ng-deep .mat-mdc-tab.mdc-tab--active .mdc-tab-indicator__content--underline {
+  --mdc-tab-indicator-active-indicator-color: rgb(0, 0, 0)  !important;
+  border-color: rgb(0, 0, 0) !important; /* บังคับให้เส้นใต้เป็นสีเขียว */
+  border-top-width: 2px !important;
+}
+.post-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 300px); /* ความกว้างของแต่ละโพสต์ถูกกำหนดเป็น 300px */
+  gap: 10px; /* ระยะห่างระหว่างโพสต์ */
+  padding: 40px; /* ระยะห่างจากขอบ */
+  justify-content: center;
+}
+
+.post-item {
+  width: 300px; /* กำหนดความกว้างเฉพาะโพสต์ */
+  position: relative;
+  margin-top: -15px; 
+}
+
+.post-image,
+.post-video {
+  width: 300px; /* ความกว้างของสื่อ */
+  height: 300px; /* ความสูงของสื่อ */
+  object-fit: cover;
+  border-radius: 0px; /* ไม่มีความมน */
+}
+
+
+.multiple-media-icon {
+  top: 10px;
+  right: 10px;
+  padding: 5px;
+  border-radius: 50%;
+}
+
+.drawer {
+  position: fixed;
+  top: 0;
+  right: -300px;
+  /* ซ่อน Drawer ทางขวา */
+  width: 300px;
+  height: 100%;
+  background-color: white;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
+  transition: right 0.3s ease;
+  /* เพิ่ม Transition */
+  z-index: 1000;
+}
+
+/* Drawer เปิด */
+.drawer.open {
+  right: 0;
+  /* แสดง Drawer */
+}
+
+/* สไตล์เนื้อหาใน Drawer */
+.drawer-content {
+  padding: 20px;
+}
+
+.drawer-content h3 {
+  margin-top: 0;
+}
+
+.drawer-content ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.drawer-content ul li {
+  margin: 10px 0;
+}
+

@@ -119,13 +119,14 @@
                             <span style="font-size: 20px;">จำนวนโพสต์</span>
                         </div>
                         <div style="display: flex; flex-direction: column; align-items: center;">
-                            <span style="font-size: 25px; font-weight: 500;">{{ followingCount }}</span>
-                            <span style="font-size: 20px;">กำลังติดตาม</span>
-                        </div>
-                        <div style="display: flex; flex-direction: column; align-items: center;">
                             <span style="font-size: 25px; font-weight: 500;"> {{ followersCount }}</span>
                             <span style="font-size: 20px;">ผู้ติดตาม</span>
                         </div>
+                        <div style="display: flex; flex-direction: column; align-items: center;">
+                            <span style="font-size: 25px; font-weight: 500;">{{ followingCount }}</span>
+                            <span style="font-size: 20px;">กำลังติดตาม</span>
+                        </div>
+
                     </div>
                     <span style="margin-top: 30px; font-size: 19px;">
                         {{ userProfile?.description || '' }}

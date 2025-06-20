@@ -16,6 +16,8 @@ body {
 :host {
   display: block;
   min-height: 100vh;
+  align-items: center;
+  justify-content: center;
   /* ครอบคลุมความสูงเต็มหน้าจอ */
   background-color: rgb(249, 241, 239);
   /* สีพื้นหลัง */
@@ -31,7 +33,6 @@ body {
   /* สีพื้นหลังเหมือนกัน */
 }
 
-
 .fixed-toolbar {
   position: fixed;
   top: 0;
@@ -39,68 +40,46 @@ body {
   background-color: rgb(233, 135, 135);
   height: 90px;
   width: 100%;
-  z-index: 100;
+  z-index: 2;
   /* Ensure it is above other content */
 }
 
-//font
-.itim-regular {
-  margin-top: 5px;
-  font-family: "Itim", serif;
-  font-weight: 400;
-  font-style: normal;
-}
-
-.itim-regular2 {
-  margin-top: 5px;
-  font-family: "Itim", serif;
-  font-weight: 400;
-  font-style: normal;
-  font-size: 30px;
-}
-
-.itim-regular3 {
-  margin-top: 5px;
-  font-family: "Itim", serif;
-  font-weight: 400;
-  font-style: normal;
-  font-size: 25px;
-}
-
-
-.menu-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-decoration: none;
-  position: relative;
-}
-
-.menu-item span {
-  font-size: 22px;
-  margin-top: 5px;
-  color: black;
-}
-
-.divpost {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  height: auto;
-  margin-top: 150px;
+.drawer {
+  position: fixed;
+  top: 0;
+  right: -300px;
+  /* ซ่อน Drawer ทางขวา */
+  width: 300px;
+  height: 100%;
   background-color: white;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
+  transition: right 0.3s ease;
+  /* เพิ่ม Transition */
+  z-index: 1000;
 }
 
-a.mat-button {
-  overflow: visible;
-  /* ป้องกันการถูกตัด */
+/* Drawer เปิด */
+.drawer.open {
+  right: 0;
+  /* แสดง Drawer */
+}
+
+/* สไตล์เนื้อหาใน Drawer */
+.drawer-content {
+  padding: 20px;
+}
+
+.drawer-content h3 {
+  margin-top: 0;
+}
+
+.drawer-content ul {
+  list-style-type: none;
   padding: 0;
-  /* ลด padding ที่ไม่จำเป็น */
 }
 
-mat-icon {
-  vertical-align: middle;
-  /* จัดไอคอนให้ตรงกลาง */
+.drawer-content ul li {
+  margin: 10px 0;
 }
 
 .divpost {
@@ -157,34 +136,28 @@ mat-icon {
 }
 
 .shared {
-  color: rgb(212, 117, 125); 
+  color: rgb(212, 117, 125);
 }
 
 .not-shared {
-  color: rgb(112, 106, 106); 
+  color: rgb(112, 106, 106);
 
 }
 
 .saved {
-  color: rgb(24, 24, 24); 
+  color: rgb(24, 24, 24);
   font-weight: bold;
 }
 
 .not-saved {
-  color: #111111; 
+  color: #111111;
 }
 
-
-.login-link {
-  background: none; /* ไม่มีสีพื้นหลัง */
-  border: none; /* ไม่มีเส้นขอบ */
-  outline: none; /* ไม่มีเส้นขอบเมื่อคลิก */
-  transition: box-shadow 0.3s ease; 
-  cursor: pointer;
+.post-header {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 20px;
+  margin-top: 20px;
+  margin-left: 15px;
+  justify-content: space-between;
 }
-
-.login-link:hover {
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* เงาเมื่อเอาเมาส์เข้า */
-}
-
-

@@ -3,8 +3,7 @@
         style="background-color: rgb(233, 135, 135); height: 90px; display: flex; align-items: center; justify-content: space-between;">
 
         <a [routerLink]="['/HomepageAdmin']" [queryParams]="{ id: userId }">
-            <img src="https://scontent.fbkk10-1.fna.fbcdn.net/v/t1.15752-9/467011559_1309959883362728_6149497978643079622_n.png?_nc_cat=107&ccb=1-7&_nc_sid=9f807c&_nc_ohc=YCDaXk0TRJoQ7kNvgELQ_yE&_nc_oc=Adgw1-0qVy0c465vCPgZn65aHiM4NSXN3nbzvGrtEq6x69QnZVvlfUQjY1fkT-xy24s&_nc_zt=23&_nc_ht=scontent.fbkk10-1.fna&oh=03_Q7cD1gE-IRosOQT7rsinr7ol_0Ul6pkO0cmfVk1Z2xLab0K5kA&oe=67D157E4"
-                alt="Home Icon" width="80px">
+            <img src="../../../assets/images/Logoweb.png" alt="Home Icon" width="80px">
         </a>
         <!-- กลุ่มไอคอนด้านซ้าย -->
         <div style="display: flex; flex-grow: 1; justify-content: center; align-items: center; text-align: center;">
@@ -26,7 +25,7 @@
                 </div>
 
                 <div style="display: flex; flex-direction: column; align-items: center;">
-                    <a href="#">
+                    <a [routerLink]="['/noti_addmin']" [queryParams]="{ id: userId }">
                         <i style="font-size: 40px; color: black;" class="fas fa-bell"></i>
                     </a>
                     <span class="itim-regular">การแจ้งเตือน</span>
@@ -64,7 +63,8 @@
 
     <div style="margin-top: 130px;" class="search-container2">
         <i class="fa-solid fa-magnifying-glass"></i>
-        <input type="text" class="search-input" placeholder="ค้นหา...">
+        <input type="text" class="search-input" placeholder="ค้นหา..." [(ngModel)]="searchQuery"
+            (input)="onSearchBannedUsers()" />
     </div>
 
     <!-- Tabs -->
@@ -79,19 +79,22 @@
 
     <!-- User List -->
     <div class="user-list">
-        <ng-container *ngFor="let user of users">
-            <div *ngIf="user.status === 0" class="user-card"
-                style="display: flex; justify-content: space-between; align-items: center;">
-                <div style="display: flex; align-items: center;">
-                    <img [src]="user.image_url ? user.image_url : 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'"
-                        class="user-avatar" style="object-fit: cover; width: 100px; height: 100px;">
-                    <div style="margin-top: -30px; margin-left: 10px;">
-                        <div class="user-name" style="font-size: 20px;">{{ user.username }}</div>
-                        <div class="user-email" style="font-size: 20px;">Email: {{ user.email }}</div>
-                        <div class="user-meta" style="font-size: 18px;">
-                            <span>โทรศัพท์: {{ user.phone }}</span>
+        <ng-container *ngFor="let user of isSearchPerformed ? filteredUsers : users">
+            <div *ngIf="user.status === 0" class="user-card" style="display: flex; justify-content: space-between; align-items: center;">
+                <div  [routerLink]="['/admin_profileuser']"
+                    [queryParams]="{ id: user.uid, adminId: userId }">
+                    <div style="display: flex; align-items: center;">
+                        <img [src]="user.image_url ? user.image_url : 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'"
+                            class="user-avatar" style="object-fit: cover; width: 100px; height: 100px;" />
+                        <div style="margin-top: -30px; margin-left: 10px;">
+                            <div class="user-name" style="font-size: 20px;">{{ user.username }}</div>
+                            <div class="user-email" style="font-size: 20px;">Email: {{ user.email }}</div>
+                            <div class="user-meta" style="font-size: 18px;">
+                                <span>โทรศัพท์: {{ user.phone }}</span>
+                            </div>
                         </div>
                     </div>
+
                 </div>
                 <button mat-flat-button style="background-color: green" (click)="toggleBan(user)">
                     ยกเลิกการระงับบัญชี

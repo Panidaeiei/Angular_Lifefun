@@ -232,5 +232,39 @@ export class ReactPostservice {
     return this.http.post(`${this.baseUrl}/report/send-report`, body);
   }
 
+  Noti_Like(uid: number): Observable<any> {
+    return this.http.get(`${this.baseUrl}/noti/notifications_like/${uid}`);
+  }
 
+  Noti_Likeread(lid: number): Observable<any> {
+    return this.http.put(`${this.baseUrl}/noti/notifications_like/read/${lid}`, {});
+  }
+
+  Noti_Follow(uid: number): Observable<any> {
+    return this.http.get(`${this.baseUrl}/noti/notifications_follow/${uid}`);
+  }
+
+  Noti_Followread(follow_id: number): Observable<any> {
+    return this.http.put(`${this.baseUrl}/noti/notifications_follow/read/${follow_id}`, {});
+  }
+
+  Noti_Shared(uid: number): Observable<any> {
+    return this.http.get(`${this.baseUrl}/noti/notifications_shared/${uid}`);
+  }
+
+  Noti_Sharedwread(shared_id: number): Observable<any> {
+    return this.http.put(`${this.baseUrl}/noti/notifications_shared/read/${shared_id}`, {});
+  }
+
+  Noti_Comment(uid: number): Observable<any> {
+    return this.http.get(`${this.baseUrl}/noti/notifications_comment/${uid}`);
+  }
+
+  Noti_Commentread(cid: number): Observable<any> {
+    return this.http.put(`${this.baseUrl}/noti/notifications_comment/read/${cid}`, {});
+  }
+
+  Noti_Reportaddmin(): Observable<any> {
+    return this.http.get(`${this.baseUrl}/noti/notifications_reports`);
+  }
 }

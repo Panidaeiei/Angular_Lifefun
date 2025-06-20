@@ -116,12 +116,12 @@ export class DetailPostComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result === true) {
-        console.log('รายงานถูกส่งแล้ว');
+        alert('ส่งรายงานสำเร็จแล้ว');
       }
     });
   }
 
-    openReportCommentDialog(cid: number) {
+  openReportCommentDialog(cid: number) {
     const dialogRef = this.dialog.open(ReportDialogComponent, {
       width: '400px',
       data: { cid }
@@ -306,6 +306,7 @@ export class DetailPostComponent implements OnInit {
     const totalMediaCount = (this.post?.images?.length || 0) + (this.post?.videos?.length || 0);
     return totalMediaCount > 1; // ถ้ามีมากกว่า 1 ให้แสดงปุ่มเลื่อน
   }
+  
   deletePost(postId: number): void {
     // เปิด dialog เพื่อยืนยันการลบโพสต์ โดยไม่มีการเคลื่อนไหว
     const dialogRef = this.dialog.open(ConfirmDeleteDialogComponent, {

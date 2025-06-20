@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, catchError, throwError } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { Ban } from '../models/ban.model';
+import { User } from '../models/register_model';
 
 @Injectable({
   providedIn: 'root',
@@ -10,7 +11,7 @@ import { Ban } from '../models/ban.model';
 export class AdminService {
   private baseUrl = environment.apiBaseUrl; // URL ของ Backend
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   // ฟังก์ชันระงับบัญชีผู้ใช้
   banUser(uid: number, reason: string, end_date: string): Observable<Ban> {
@@ -48,4 +49,10 @@ export class AdminService {
     }
     return throwError(errorMessage);
   }
+
+  searchBanUsers(username: string): Observable<User[]> {
+    return this.http.get<User[]>(`${this.baseUrl}/admin/search_banuser`, { params: { username } });
+  }
+
 }
+

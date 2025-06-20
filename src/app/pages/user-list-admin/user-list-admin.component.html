@@ -3,8 +3,7 @@
         style="background-color: rgb(233, 135, 135); height: 90px; display: flex; align-items: center; justify-content: space-between;">
 
         <a [routerLink]="['/HomepageAdmin']" [queryParams]="{ id: userId }">
-            <img src="../../../assets/images/Logoweb.png"
-                alt="Home Icon" width="80px">
+            <img src="../../../assets/images/Logoweb.png" alt="Home Icon" width="80px">
         </a>
         <!-- กลุ่มไอคอนด้านซ้าย -->
         <div style="display: flex; flex-grow: 1; justify-content: center; align-items: center; text-align: center;">
@@ -18,7 +17,8 @@
                 </div>
 
                 <div style="display: flex; flex-direction: column; align-items: center;">
-                    <a class="menu-item" routerLinkActive="active" [routerLink]="['/userlist']" [queryParams]="{ id: userId }">
+                    <a class="menu-item" routerLinkActive="active" [routerLink]="['/userlist']"
+                        [queryParams]="{ id: userId }">
                         <i style="font-size: 40px; color: black;" class="fas fa-users"></i>
                         <span class="itim-regular">ผู้ใช้งาน</span>
                     </a>
@@ -61,15 +61,17 @@
         </div>
     </mat-toolbar>
 
+    <!-- การค้นหา -->
     <div style="margin-top: 130px;" class="search-container2">
         <i class="fa-solid fa-magnifying-glass"></i>
-        <input type="text" class="search-input" placeholder="ค้นหา...">
+        <input type="text" class="search-input" placeholder="ค้นหา..." [(ngModel)]="searchQuery" (input)="onSearch()" />
     </div>
 
     <!-- Tabs -->
     <div class="tabs">
-        <a [routerLink]="['/userlist']" [queryParams]="{ id: userId }" class="active">ผู้ใช้งาน</a>
-        <a [routerLink]="['/userban']" [queryParams]="{ id: userId }" >ผู้ใช้งานที่ถูกระงับ</a>
+        <a [routerLink]="['/userlist']" [queryParams]="{ id: userId }" (click)="resetSearch()"
+            class="active">ผู้ใช้งาน</a>
+        <a [routerLink]="['/userban']" [queryParams]="{ id: userId }">ผู้ใช้งานที่ถูกระงับ</a>
     </div>
 
     <div style="margin-left: 150px; font-size: 100%; font-weight: bold; margin-left: 400px">
@@ -78,24 +80,26 @@
 
     <!-- User List -->
     <div class="user-list">
-        <div class="user-card" *ngFor="let user of users"
-            style="display: flex; justify-content: space-between; align-items: center;">
-            <div style="display: flex; align-items: center;">
-                <img [src]="user.image_url ? user.image_url : 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'" class="user-avatar"
-                    style="object-fit: cover; width: 100px; height: 100px;">
-                <div style="margin-top: -30px; margin-left: 10px;">
-                    <div class="user-name" style="font-size: 20px;">{{ user.username }}</div>
-                    <div class="user-email" style="font-size: 20px;">Email: {{ user.email }}</div>
-                    <div class="user-meta" style="font-size: 18px;">
-                        <span>โทรศัพท์: {{ user.phone }}</span>
+        <div class="user-card" *ngFor="let user of isSearchPerformed ? filteredUsers : users" style="display: flex; justify-content: space-between; align-items: center;">
+            <div [routerLink]="['/admin_profileuser']" [queryParams]="{ id: user.uid, adminId: userId }">
+                <div style="display: flex; align-items: center;">
+                    <img [src]="user.image_url ? user.image_url : 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'"
+                        class="user-avatar" style="object-fit: cover; width: 100px; height: 100px;">
+                    <div style="margin-top: -30px; margin-left: 10px;">
+                        <div class="user-name" style="font-size: 20px;">{{ user.username }}</div>
+                        <div class="user-email" style="font-size: 20px;">Email: {{ user.email }}</div>
+                        <div class="user-meta" style="font-size: 18px;">
+                            <span>โทรศัพท์: {{ user.phone }}</span>
                     </div>
                 </div>
             </div>
-            <button mat-flat-button [style.background-color]="user.status === 0 ? 'green' : 'rgb(216, 57, 57)'"
-                (click)="toggleBan(user)">
-                {{ user.status === 0 ? 'ยกเลิกการระงับบัญชี' : 'ระงับบัญชี' }}
-            </button>
         </div>
+        <button mat-flat-button [style.background-color]="user.status === 0 ? 'green' : 'rgb(216, 57, 57)'"
+            (click)="toggleBanlist(user)">
+            {{ user.status === 0 ? 'ยกเลิกการระงับบัญชี' : 'ระงับบัญชี' }}
+        </button>
+        </div>
+        
     </div>
 
     <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>

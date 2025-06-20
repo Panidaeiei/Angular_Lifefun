@@ -93,20 +93,19 @@
     <div class="drawer-notification" [class.open]="isNotiDrawerOpen">
         <div class="drawer-notification-content">
             <div style="position: relative; width: 100%; padding: 10px 0;">
-                <!-- ข้อความตรงกลาง -->
-                <div style="text-align: center;">
-                    <span class="fa-solid itim-regular" style="font-size: 30px; color: black;">
+                <div style="text-align: center; margin-top: 30px;">
+                    <span style="font-size: 35px; color: black; font-weight: 500; font-family: 'Itim', cursive;">
                         การแจ้งเตือน
                     </span>
                 </div>
 
-                <!-- ไอคอนชิดขวา -->
-                <div style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%);" (click)="toggleNotiDrawer()">
+                <div style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%);"
+                    (click)="toggleNotiDrawer()">
                     <i class="fa-solid fa-xmark" style="font-size: 22px; color: black; cursor: pointer;"></i>
                 </div>
             </div>
             <div class="noti-list">
-                <mat-card class="noti-card" (click)="selectCard(null)">
+                <mat-card class="noti-card" (click)="selectCard('system')">
                     <div class="card-content">
                         <img src="../../../assets/images/Logoweb.png" alt="avatar" class="avatar" />
                         <div class="text-content">
@@ -117,51 +116,91 @@
                     </div>
                 </mat-card>
 
-                <mat-card class="noti-card" (click)="selectCard(null)">
+                <hr class="divider" />
+
+                <mat-card class="noti-card" (click)="selectCard('follow')">
                     <div class="card-content">
                         <div class="avatar">
                             <i class="fa-solid fa-user-check" style="font-size: 22px; color: black;"></i>
                         </div>
                         <div class="text-content">
-                            <div class="title itim-regular">ผู้ติดตามใหม่</div>
-                            <div class="subtitle itim-regular">Noti เริ่มติดตามคุณ</div>
+                            <div class="title itim-regular">ติดตาม</div>
+                            <div class="subtitle itim-regular">
+                                {{ unreadFollowCount === 0 ? '' : unreadFollowCount === 1 ? latestFollowerName :
+                                latestFollowerName + ' ติดตามคุณ และอีก ' + (unreadFollowCount - 1) + ' คน' }}
+                            </div>
                         </div>
-                        <span matBadge="1" matBadgeColor="warn" matBadgeSize="small" class="badge">1</span>
+                        <span *ngIf="unreadFollowCount > 0" matBadge="{{ unreadFollowCount }}" matBadgeColor="warn"
+                            matBadgeSize="small" class="badge">
+                            {{ unreadFollowCount }}
+                        </span>
                     </div>
                 </mat-card>
 
-                <mat-card class="noti-card" (click)="selectCard(null)">
+                <hr class="divider" />
+
+                <mat-card class="noti-card" (click)="selectCard('like')">
                     <div class="card-content">
                         <i class="fa-solid fa-heart avatar" style="font-size: 32px; color: #e25555;"></i>
                         <div class="text-content">
                             <div class="title itim-regular">ถูกใจ</div>
-                            <div class="subtitle itim-regular">Noti ถูกใจโพสต์ของคุณ</div>
+                            <div class="subtitle itim-regular">{{ unreadLikeCount === 0 ? '' : unreadLikeCount === 1 ?
+                                latestLikerName : latestLikerName + ' กดถูกใจ' + ' และอีก ' + (unreadLikeCount - 1) + '
+                                คน' }}</div>
                         </div>
-                        <span matBadge="2" matBadgeColor="warn" matBadgeSize="small" class="badge">2</span>
+                        <span *ngIf="unreadLikeCount > 0" matBadge="{{ unreadLikeCount }}" matBadgeColor="warn"
+                            matBadgeSize="small" class="badge">{{ unreadLikeCount }}</span>
                     </div>
                 </mat-card>
 
-                <mat-card class="noti-card" (click)="selectCard(null)">
+                <hr class="divider" />
+
+                <mat-card class="noti-card" (click)="selectCard('share')">
                     <div class="card-content">
                         <i class="fa-solid fa-share avatar" style="font-size: 32px; color: black;"></i>
+
                         <div class="text-content">
                             <div class="title itim-regular">แชร์</div>
-                            <div class="subtitle itim-regular">Noti แชร์โพสตของคุณ</div>
+
+                            <div class="subtitle itim-regular">
+                                {{unreadShareCount === 0? '' : unreadShareCount === 1 ? latestSharedName + '
+                                แชร์โพสต์ของคุณ' : latestSharedName + ' แชร์ และอีก ' + (unreadShareCount - 1) + ' คน'}}
+                            </div>
                         </div>
-                        <span matBadge="3" matBadgeColor="warn" matBadgeSize="small" class="badge">3</span>
+
+                        <span *ngIf="unreadShareCount > 0" matBadge="{{ unreadShareCount }}" matBadgeColor="warn"
+                            matBadgeSize="small" class="badge">
+                            {{ unreadShareCount }}
+                        </span>
                     </div>
                 </mat-card>
 
-                <mat-card class="noti-card" (click)="selectCard(null)">
+                <hr class="divider" />
+
+                <mat-card class="noti-card" (click)="selectCard('comment')">
                     <div class="card-content">
-                        <i class="fa-solid fa-comment-dots avatar" style="font-size: 32px; color: black;"></i>
+                        <i class="fa-solid fa-comment avatar" style="font-size: 32px; color: black;"></i>
+
                         <div class="text-content">
-                            <div class="title itim-regular">ความคิดเห็น</div>
-                            <div class="subtitle itim-regular"> </div>
+                            <div>ความคิดเห็น</div>
+
+                            <div class="subtitle itim-regular">
+                                {{ unreadCommentCount === 0 ? '' : unreadCommentCount === 1 ? latestCommenterName + '
+                                แสดงความคิดเห็นบนโพสต์ของคุณ' : latestCommenterName + ' แสดงความคิดเห็น และอีก ' +
+                                (unreadCommentCount - 1) + ' คน' }}
+                            </div>
                         </div>
-                        <span matBadge="5" matBadgeColor="warn" matBadgeSize="small" class="badge">5</span>
+
+                        <span *ngIf="unreadCommentCount > 0" matBadge="{{ unreadCommentCount }}" matBadgeColor="warn"
+                            matBadgeSize="small" class="badge">
+                            {{ unreadCommentCount }}
+                        </span>
                     </div>
                 </mat-card>
+
+
+                <hr class="divider" />
+
             </div>
         </div>
     </div>
@@ -171,10 +210,134 @@
         <i class="fa-solid" [ngClass]="isNotiDrawerOpen ? 'fa-arrow-left' : 'fa-arrow-right'"></i>
     </div>
 
+    <div *ngIf="selectedCard === 'like'"
+        style="display: flex; flex-direction: column; align-items: center; padding: 20px; width: 100%;">
 
-    <div class="content-area" *ngIf="selectedCard">
-        <h2>{{ selectedCard.title }}</h2>
-        <p>{{ selectedCard.description }}</p>
+        <ng-container *ngIf="notifications && notifications.length > 0; else noNotifications">
+            <div *ngFor="let noti of notifications" class="noti-card2" [routerLink]="['/detail_post']"
+                [queryParams]="{ post_id: noti.post_id, user_id: currentUserId }"
+                [ngClass]="{'unread': noti.notify === 0, 'read': noti.notify !== 0}"
+                (click)="onLikeNotificationClick(noti)">
+                <div class="noti-content" style="display: flex; align-items: center; gap: 12px;">
+                    <img [src]="noti.image_url|| 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'"
+                        alt="User Image"
+                        style="width: 60px; height: 60px; object-fit: cover; border-radius: 50%; flex-shrink: 0;">
+                    <div>
+                        <div class="noti-text">
+                            <strong>{{ noti.username }}</strong> กดไลค์โพสต์
+                            <span>"{{ noti.post_caption }}"</span>
+                        </div>
+                        <div class="noti-date">{{ noti.date_time | date: 'short' }}</div>
+                    </div>
+                </div>
+                <div>
+                    <img *ngIf="noti.first_image_url" [src]="noti.first_image_url" alt="Image" class="img_use" />
+                    <video *ngIf="!noti.first_image_url && noti.first_video_url" controls  class="img_use">
+                        <source [src]="noti.first_video_url" type="video/mp4" />
+                    </video>
+                </div>
+            </div>
+        </ng-container>
+
+        <ng-template #noNotifications>
+            <p style="color: #888; font-size: 20px;">ยังไม่มีการแจ้งเตือน</p>
+        </ng-template>
+
     </div>
+
+    <div *ngIf="selectedCard === 'follow'"
+        style="display: flex; flex-direction: column; align-items: center; padding: 20px; width: 100%;">
+        <ng-container *ngIf="notificationsFollow.length > 0; else noFollowNotifications">
+            <div *ngFor="let noti of notificationsFollow" class="noti-card2"
+                [ngClass]="{'unread': noti.notify === 1, 'read': noti.notify === 0}"
+                (click)="onFollowNotificationClick(noti)">
+                <div class="noti-content" style="display: flex; align-items: center; gap: 12px;">
+                    <img [src]="noti.image_url || 'default.jpg'" alt="User Image"
+                        style="width: 60px; height: 60px; object-fit: cover; border-radius: 50%;">
+                    <div>
+                        <div class="noti-text">
+                            <strong>{{ noti.username }}</strong> ติดตามคุณแล้ว
+                        </div>
+                        <div class="noti-date">{{ noti.create_at | date: 'short' }}</div>
+                    </div>
+                </div>
+            </div>
+        </ng-container>
+
+        <ng-template #noFollowNotifications>
+            <p>ไม่มีการแจ้งเตือนติดตาม</p>
+        </ng-template>
+    </div>
+
+    <div *ngIf="selectedCard === 'share'"
+        style="display: flex; flex-direction: column; align-items: center; padding: 20px; width: 100%;">
+
+        <ng-container *ngIf="notificationsShare.length > 0; else noShareNotifications">
+            <div *ngFor="let noti of notificationsShare" class="noti-card2" [routerLink]="['/detail_post']"
+                [queryParams]="{ post_id: noti.post_id, user_id : currentUserId }"
+                [ngClass]="{'unread': noti.notify === 0, 'read': noti.notify === 1}"
+                (click)="onShareNotificationClick(noti)">
+
+                <div class="noti-content" style="display: flex; align-items: center; gap: 12px;">
+                    <img [src]="noti.image_url || 'default.jpg'" alt="User Image"
+                        style="width: 60px; height: 60px; object-fit: cover; border-radius: 50%;">
+
+                    <div>
+                        <div class="noti-text">
+                            <strong>{{ noti.username }}</strong> แชร์โพสต์ของคุณ
+                            <span>"{{ noti.post_caption }}"</span>
+                        </div>
+                        <div class="noti-date">{{ noti.date_time | date: 'short' }}</div>
+                    </div>
+                </div>
+                <div>
+                    <img *ngIf="noti.first_image_url" [src]="noti.first_image_url" alt="Image" class="img_use"/>
+                    <video *ngIf="!noti.first_image_url && noti.first_video_url" controls class="img_use">
+                        <source [src]="noti.first_video_url" type="video/mp4" />
+                    </video>
+                </div>
+            </div>
+        </ng-container>
+
+        <ng-template #noShareNotifications>
+            <p>ไม่มีการแจ้งเตือนการแชร์โพสต์</p>
+        </ng-template>
+    </div>
+
+    <div *ngIf="selectedCard === 'comment'"
+        style="display: flex; flex-direction: column; align-items: center; padding: 20px; width: 100%;">
+
+        <ng-container *ngIf="notificationsComment.length > 0; else noCommentNotifications">
+            <div *ngFor="let noti of notificationsComment" class="noti-card2" [routerLink]="['/detail_post']"
+                [queryParams]="{ post_id: noti.post_id, user_id: currentUserId}"
+                [ngClass]="{ 'unread': noti.notify === 0, 'read': noti.notify === 1 }"
+                (click)="onCommentNotificationClick(noti)">
+
+                <div class="noti-content" style="display: flex; align-items: center; gap: 12px;">
+                    <img [src]="noti.image_url || 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'"
+                        alt="User Image" style="width: 60px; height: 60px; object-fit: cover; border-radius: 50%;">
+
+                    <div>
+                        <div class="noti-text">
+                            <strong>{{ noti.username }}</strong> แสดงความคิดเห็น
+                            <span>"{{ noti.comment_title }}"</span>
+                        </div>
+                        <div class="noti-date">{{ noti.date_time | date: 'short' }}</div>
+                    </div>
+                </div>
+                <div>
+                    <img *ngIf="noti.first_image_url" [src]="noti.first_image_url" alt="Image" class="img_use" />
+                    <video *ngIf="!noti.first_image_url && noti.first_video_url" controls class="img_use">
+                        <source [src]="noti.first_video_url" type="video/mp4" />
+                    </video>
+                </div>
+            </div>
+        </ng-container>
+
+        <ng-template #noCommentNotifications>
+            <p>ไม่มีการแจ้งเตือนความคิดเห็น</p>
+        </ng-template>
+    </div>
+
 
 </div>

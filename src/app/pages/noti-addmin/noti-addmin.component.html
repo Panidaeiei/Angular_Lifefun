@@ -25,7 +25,8 @@
 
 
                 <div style="display: flex; flex-direction: column; align-items: center;">
-                    <a class="menu-item" routerLinkActive="active" [routerLink]="['/noti_addmin']" [queryParams]="{ id: userId }">
+                    <a class="menu-item" routerLinkActive="active" [routerLink]="['/noti_addmin']"
+                        [queryParams]="{ id: userId }">
                         <i style="font-size: 40px; color: black;" class="fa-solid fa-bell"></i>
                     </a>
                     <span class="itim-regular">การแจ้งเตือน</span>
@@ -75,68 +76,34 @@
                 </div>
 
                 <!-- ไอคอนชิดขวา -->
-                <div style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%);" (click)="toggleNotiDrawer()">
+                <div style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%);"
+                    (click)="toggleNotiDrawer()">
                     <i class="fa-solid fa-xmark" style="font-size: 22px; color: black; cursor: pointer;"></i>
                 </div>
             </div>
             <div class="noti-list">
-                <mat-card class="noti-card" (click)="selectCard(null)">
-                    <div class="card-content">
-                        <img src="../../../assets/images/Logoweb.png" alt="avatar" class="avatar" />
-                        <div class="text-content">
-                            <div class="title itim-regular">การแต้งเตือนของระบบ</div>
-                            <div class="subtitle itim-regular">รายงาน: อัปเดต</div>
-                        </div>
-                        <span matBadge="3" matBadgeColor="warn" matBadgeSize="small" class="badge">3</span>
-                    </div>
-                </mat-card>
-
-                <mat-card class="noti-card" (click)="selectCard(null)">
+                <mat-card class="noti-card" (click)="selectCard('report')">
                     <div class="card-content">
                         <div class="avatar">
-                            <i class="fa-solid fa-user-check" style="font-size: 22px; color: black;"></i>
+                            <i class="fa-solid fa-flag" style="font-size: 22px; color: black;"></i>
                         </div>
                         <div class="text-content">
-                            <div class="title itim-regular">ผู้ติดตามใหม่</div>
-                            <div class="subtitle itim-regular">Noti เริ่มติดตามคุณ</div>
+                            <div class="title itim-regular">รายงาน</div>
+                            <div class="subtitle itim-regular">
+                                {{ reportCount === 0 ? 'ไม่มีรายงาน' :
+                                reportCount === 1 ? latestReporterName + ' รายงานโพสต์' :
+                                latestReporterName + ' รายงาน และอีก ' + (reportCount - 1) + ' คน' }}
+                            </div>
                         </div>
-                        <span matBadge="1" matBadgeColor="warn" matBadgeSize="small" class="badge">1</span>
+                        <span *ngIf="reportCount > 0" [matBadge]="reportCount" matBadgeColor="warn" matBadgeSize="small"
+                            class="badge">
+                            {{ reportCount }}
+                        </span>
                     </div>
                 </mat-card>
 
-                <mat-card class="noti-card" (click)="selectCard(null)">
-                    <div class="card-content">
-                        <i class="fa-solid fa-heart avatar" style="font-size: 32px; color: #e25555;"></i>
-                        <div class="text-content">
-                            <div class="title itim-regular">ถูกใจ</div>
-                            <div class="subtitle itim-regular">Noti ถูกใจโพสต์ของคุณ</div>
-                        </div>
-                        <span matBadge="2" matBadgeColor="warn" matBadgeSize="small" class="badge">2</span>
-                    </div>
-                </mat-card>
-
-                <mat-card class="noti-card" (click)="selectCard(null)">
-                    <div class="card-content">
-                        <i class="fa-solid fa-share avatar" style="font-size: 32px; color: black;"></i>
-                        <div class="text-content">
-                            <div class="title itim-regular">แชร์</div>
-                            <div class="subtitle itim-regular">Noti แชร์โพสตของคุณ</div>
-                        </div>
-                        <span matBadge="3" matBadgeColor="warn" matBadgeSize="small" class="badge">3</span>
-                    </div>
-                </mat-card>
-
-                <mat-card class="noti-card" (click)="selectCard(null)">
-                    <div class="card-content">
-                        <i class="fa-solid fa-comment-dots avatar" style="font-size: 32px; color: black;"></i>
-                        <div class="text-content">
-                            <div class="title itim-regular">ความคิดเห็น</div>
-                            <div class="subtitle itim-regular"> </div>
-                        </div>
-                        <span matBadge="5" matBadgeColor="warn" matBadgeSize="small" class="badge">5</span>
-                    </div>
-                </mat-card>
             </div>
+
         </div>
     </div>
 
@@ -145,9 +112,47 @@
         <i class="fa-solid" [ngClass]="isNotiDrawerOpen ? 'fa-arrow-left' : 'fa-arrow-right'"></i>
     </div>
 
-
     <div class="content-area" *ngIf="selectedCard">
         <h2>{{ selectedCard.title }}</h2>
         <p>{{ selectedCard.description }}</p>
     </div>
+
+    <div style="margin-top: -70px;">
+        <div *ngIf="selectedCard === 'report'"
+            style="display: flex; flex-direction: column; align-items: center; padding: 20px; width: 100%;">
+            <ng-container *ngIf="reportNotifications && reportNotifications.length > 0; else noReports">
+                <div *ngFor="let report of reportNotifications" class="noti-card2" [routerLink]="['/detail_postadmin']"
+                    [queryParams]="{ post_id: report.post_id, user_id: userId, rid: report.rid }">
+                    <div class="noti-content" style="display: flex; align-items: center; gap: 12px;">
+                        <img [src]="report.image_url || 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'"
+                            alt="User Image"
+                            style="width: 60px; height: 60px; object-fit: cover; border-radius: 50%; flex-shrink: 0;">
+                        <div>
+                            <div class="noti-text">
+                                <strong>{{ report.username }}</strong> รายงานโพสต์ <strong>"{{ report.post_caption
+                                    }}"</strong>
+                            </div>
+                            <div class="noti-text">เหตุผล: {{ report.reason }}</div>
+                            <div class="noti-date">{{ report.date_time | date: 'short' }}</div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <img *ngIf="report.first_image_url" [src]="report.first_image_url" alt="Image"
+                            class="img_use" />
+                        <video *ngIf="!report.first_image_url && report.first_video_url" controls class="img_use">
+                            <source [src]="report.first_video_url" type="video/mp4" />
+                        </video>
+                    </div>
+                </div>
+            </ng-container>
+
+            <ng-template #noReports>
+                <p style="color: #888; font-size: 20px;">ยังไม่มีการรายงาน</p>
+            </ng-template>
+
+        </div>
+
+    </div>
+
 </div>

@@ -13,6 +13,7 @@ import { ProfileService } from '../../services/Profileservice';
 import { Postme } from '../../models/postme_model';
 import { Follow } from '../../models/follow.model';
 import { ReactPostservice } from '../../services/ReactPostservice';
+import { UserService } from '../../services/Userservice';
 
 @Component({
   selector: 'app-view-user',
@@ -27,7 +28,7 @@ import { ReactPostservice } from '../../services/ReactPostservice';
   styleUrls: ['./view-user.component.scss']
 })
 export class ViewUserComponent {
-  constructor(private route: ActivatedRoute, private profileService: ProfileService, private reactPostservice: ReactPostservice,) { }
+  constructor(private route: ActivatedRoute, private profileService: ProfileService, private reactPostservice: ReactPostservice,private userService: UserService,) { }
 
   userId: string = '';
   cid: string = '';
@@ -43,8 +44,15 @@ export class ViewUserComponent {
   isFollowing: boolean = false; // สถานะการติดตาม
   followersCount: number = 0;
   followingCount: number = 0;
+  currentUserId: string | null = null;
 
   ngOnInit(): void {
+
+     this.userService.getCurrentUserId().subscribe((userId) => {
+      this.currentUserId = userId;
+      console.log('Current User ID:', this.currentUserId);
+    });
+
     const storedUserId = sessionStorage.getItem('userId');
     if (storedUserId) {
       this.userId = storedUserId;  // ดึงค่า userId จาก sessionStorage
@@ -57,6 +65,7 @@ export class ViewUserComponent {
     this.route.paramMap.subscribe((params) => {
       this.userId = params.get('userId') || '';  // รับค่า userId จาก path parameter
       this.cid = params.get('cid') || '';  // ถ้ามี cid ก็จะดึงมา
+
 
       if (this.userId) {
         this.loadUserProfile();
