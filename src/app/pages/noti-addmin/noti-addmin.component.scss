@@ -78,6 +78,7 @@ body {
   transition: color 0.3s ease, text-decoration 0.3s ease;
   /* ทำให้เปลี่ยนสไตล์นุ่มนวล */
 }
+
 /* เอฟเฟกต์เมื่อ hover */
 /* เอฟเฟกต์เมื่อ hover */
 .hover-link:hover {
@@ -193,11 +194,12 @@ body {
   justify-content: center;
 }
 
-.avatar .item{
+.avatar .item {
   align-items: center;
   justify-content: center;
 
 }
+
 .text-content {
   flex: 1;
 }
@@ -302,9 +304,10 @@ body {
   }
 
   .noti-card:active {
-  background-color: #e5e3d5;
+    background-color: #e5e3d5;
+  }
 }
-}
+
 .noti-card2 {
   display: flex;
   padding: 12px 16px;

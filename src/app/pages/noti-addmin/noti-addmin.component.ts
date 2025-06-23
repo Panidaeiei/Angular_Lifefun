@@ -20,7 +20,7 @@ export class NotiAddminComponent {
 
   userId: string = '';
   isDrawerOpen: boolean = false;
-  selectedCard: any = null;
+  selectedCard: any = null; 
   isNotiDrawerOpen = true;
   reportNotifications: any[] = [];
   reportCount: number = 0;

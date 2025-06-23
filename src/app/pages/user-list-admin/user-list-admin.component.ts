@@ -97,7 +97,7 @@ export class UserListAdminComponent {
     } else {
       // แจ้งเตือนก่อนทำการระงับบัญชี
       if (window.confirm(`คุณแน่ใจหรือไม่ว่าต้องการระงับบัญชีของ ${user.username}?`)) {
-        this.adminservice.banUser(user.uid, 'ยังไม่ระบุ', '2025-12-31').subscribe({
+        this.adminservice.banUser(user.uid, 'โพสต์เนื้อหาที่ไม่เหมาะสม', '2025-12-31').subscribe({
           next: (response) => {
             user.status = 0;  // เปลี่ยนสถานะผู้ใช้เป็นระงับ
             console.log('บัญชีผู้ใช้ถูกระงับ:', response);

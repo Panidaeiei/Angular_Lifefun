@@ -16,10 +16,10 @@ import { UserService } from '../../services/Userservice';
 export class LoginComponent {
   identifier: string = ''; // ตัวแปรสำหรับเก็บ Email หรือ Username
   password: string = '';   // ตัวแปรสำหรับเก็บ Password
-  errorMessage: string = ''; 
+  errorMessage: string = '';
   isPasswordVisible: boolean = false;
 
-  constructor(private http: HttpClient, private router: Router,private userService: UserService, ) { }
+  constructor(private http: HttpClient, private router: Router, private userService: UserService,) { }
 
   login() {
     if (!this.identifier || !this.password) {
@@ -29,13 +29,13 @@ export class LoginComponent {
       });
       return;
     }
-  
+
     const payload = {
       email: this.isEmail(this.identifier) ? this.identifier : undefined,
       username: this.isEmail(this.identifier) ? undefined : this.identifier,
       password: this.password,
     };
-  
+
     this.http.post('http://localhost:3000/api/login', payload).subscribe(
       (response: any) => {
         // ตรวจสอบว่ามีสถานะของบัญชีและถูกระงับหรือไม่
@@ -47,19 +47,19 @@ export class LoginComponent {
           });
           return;
         }
-  
+
         // ถ้า login สำเร็จให้บันทึก token
         localStorage.setItem('token', response.token);
         sessionStorage.setItem('token', response.token);
-  
+
         localStorage.setItem('userId', response.id);
         sessionStorage.setItem('userId', response.id);
-  
+
         localStorage.setItem('userRole', response.role);
         sessionStorage.setItem('userRole', response.role);
-  
+
         this.userService.setCurrentUserId(response.id);
-  
+
         // นำทางไปยังหน้า Home ตาม role
         if (response.role === 'admin') {
           this.router.navigate(['/HomepageAdmin'], { queryParams: { id: response.id } });
@@ -71,25 +71,36 @@ export class LoginComponent {
         console.log("เกิดข้อผิดพลาด:", error); // 🔍 ตรวจสอบค่าที่ API ส่งกลับมา
         console.log("error.error:", error.error); // ดูค่าที่อยู่ใน error.error
         console.log("error.error.status:", error.error?.status); // ดูค่าที่ API ส่งมา
-      
-        if (error.status === 403) {
-          Swal.fire({
-            icon: 'warning',
-            title: 'บัญชีถูกระงับ',
-            text: 'บัญชีของคุณถูกระงับเนื่องจากทำผิดกฏของชุมชนเรา',
-          });
-        } else {
-          Swal.fire({
-            icon: 'error',
-            text: 'อีเมลหรือรหัสผ่านไม่ถูกต้อง!',
-          });
+
+        if (error.status === 403 && error.error.end_date) {
+          const endDate = new Date(error.error.end_date);
+          const now = new Date();
+          const diff = endDate.getTime() - now.getTime();
+
+          if (diff > 0) {
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            const minutes = Math.floor((diff / (1000 * 60)) % 60);
+
+            Swal.fire({
+              icon: 'warning',
+              title: 'บัญชีถูกระงับ',         
+              html: `เนื่องจากมีการโพสต์เนื้อหาที่ไม่เหมาะสม<br>บัญชีของคุณจึงถูกระงับถึงวันที่ <b>${endDate.toLocaleDateString()}</b><br>เหลือเวลาอีก <b>${days} วัน </b>`,
+            });
+          } else {
+            Swal.fire({
+              icon: 'warning',
+              title: 'บัญชีถูกระงับ',
+              text: 'บัญชีของคุณยังไม่ได้ปลดระงับ แต่กำหนดเวลาได้สิ้นสุดแล้ว กรุณาติดต่อแอดมิน',
+            });
+          }
         }
       }
-      
+
     );
   }
-  
-  
+
+
   togglePasswordVisibility() {
     this.isPasswordVisible = !this.isPasswordVisible;
   }

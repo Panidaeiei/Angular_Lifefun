@@ -267,4 +267,9 @@ export class ReactPostservice {
   Noti_Reportaddmin(): Observable<any> {
     return this.http.get(`${this.baseUrl}/noti/notifications_reports`);
   }
+
+  Noti_Unban(uid: number): Observable<any> {
+    return this.http.get(`${this.baseUrl}/noti/notifications_unban/${uid}`, {});
+  }
+
 }

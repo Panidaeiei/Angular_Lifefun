@@ -34,17 +34,46 @@ body {
   /* สีพื้นหลังเหมือนกัน */
 }
 
-.login-link {
-  background: none; /* ไม่มีสีพื้นหลัง */
-  border: none; /* ไม่มีเส้นขอบ */
-  outline: none; /* ไม่มีเส้นขอบเมื่อคลิก */
-  transition: box-shadow 0.3s ease; 
-  cursor: pointer;
+/* สไตล์พื้นฐานของ Drawer */
+.drawer {
+  position: fixed;
+  top: 0;
+  right: -300px;
+  /* ซ่อน Drawer ทางขวา */
+  width: 300px;
+  height: 100%;
+  background-color: white;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
+  transition: right 0.3s ease;
+  /* เพิ่ม Transition */
+  z-index: 1000;
 }
 
-.login-link:hover {
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* เงาเมื่อเอาเมาส์เข้า */
+/* Drawer เปิด */
+.drawer.open {
+  right: 0;
+  /* แสดง Drawer */
 }
+
+/* สไตล์เนื้อหาใน Drawer */
+.drawer-content {
+  padding: 20px;
+}
+
+.drawer-content h3 {
+  margin-top: 0;
+}
+
+.drawer-content ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.drawer-content ul li {
+  margin: 10px 0;
+}
+
+
 .fixed-toolbar {
   position: fixed;
   top: 0;
@@ -55,7 +84,6 @@ body {
   z-index: 1;
   /* Ensure it is above other content */
 }
-
 .cardpost {
   background-color: white;
   width: auto;

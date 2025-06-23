@@ -42,6 +42,8 @@ export class NotificationUserComponent {
   latestCommenterName: string = '';
   showCommentBox: boolean = false;
   currentUserId: string | null = null;
+  notificationsUnban: any[] = [];
+  unreadUnbanCount: number = 0;
 
   constructor(private route: ActivatedRoute, private notificationService: ReactPostservice, private userService: UserService, private router: Router) { }
 
@@ -60,12 +62,13 @@ export class NotificationUserComponent {
         this.loadNotifications_follow();
         this.loadNotifications_share();
         this.loadNotifications_comment();
+        this.loadNotificationsUnban();
       } else {
         console.error('User ID not found in query parameters.');
       }
     });
   }
-  
+
 
   toggleHeart(): void {
     this.isLiked = !this.isLiked; // สลับสถานะ isLiked เมื่อคลิก
@@ -92,6 +95,8 @@ export class NotificationUserComponent {
       this.loadNotifications_share();
     } else if (cardType === 'comment') {
       this.loadNotifications_comment();
+    } else if (cardType === 'unban') {
+      this.loadNotificationsUnban();
     }
   }
 
@@ -292,6 +297,23 @@ export class NotificationUserComponent {
 
   updateUnreadCommentCount(): void {
     this.unreadCommentCount = this.notificationsComment.filter(noti => noti.notify === 0).length;
+  }
+
+  loadNotificationsUnban(): void {
+    this.notificationService.Noti_Unban(Number(this.userId)).subscribe(
+      res => {
+        console.log('Unban notifications:', res);
+        this.notificationsUnban = res.unban;
+
+        // นับเฉพาะแจ้งเตือนที่ยังไม่อ่าน (notify === 1)
+        this.unreadUnbanCount = this.notificationsUnban.filter(n => n.status === "1").length;
+      },
+      err => {
+        console.error('Error loading unban notifications:', err);
+        this.notificationsUnban = [];
+        this.unreadUnbanCount = 0;
+      }
+    );
   }
 
 }

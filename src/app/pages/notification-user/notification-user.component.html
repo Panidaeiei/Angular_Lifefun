@@ -105,14 +105,17 @@
                 </div>
             </div>
             <div class="noti-list">
-                <mat-card class="noti-card" (click)="selectCard('system')">
+                <mat-card class="noti-card" (click)="selectCard('unban')">
                     <div class="card-content">
                         <img src="../../../assets/images/Logoweb.png" alt="avatar" class="avatar" />
                         <div class="text-content">
                             <div class="title itim-regular">การแต้งเตือนของระบบ</div>
-                            <div class="subtitle itim-regular">รายงาน: อัปเดต</div>
                         </div>
-                        <span matBadge="3" matBadgeColor="warn" matBadgeSize="small" class="badge">3</span>
+                        <span *ngIf="unreadUnbanCount > 0" matBadge="{{ unreadUnbanCount }}" matBadgeColor="warn"
+                            matBadgeSize="small" class="badge">
+                            {{ unreadUnbanCount }}
+                        </span>
+
                     </div>
                 </mat-card>
 
@@ -232,7 +235,7 @@
                 </div>
                 <div>
                     <img *ngIf="noti.first_image_url" [src]="noti.first_image_url" alt="Image" class="img_use" />
-                    <video *ngIf="!noti.first_image_url && noti.first_video_url" controls  class="img_use">
+                    <video *ngIf="!noti.first_image_url && noti.first_video_url" controls class="img_use">
                         <source [src]="noti.first_video_url" type="video/mp4" />
                     </video>
                 </div>
@@ -252,7 +255,7 @@
                 [ngClass]="{'unread': noti.notify === 1, 'read': noti.notify === 0}"
                 (click)="onFollowNotificationClick(noti)">
                 <div class="noti-content" style="display: flex; align-items: center; gap: 12px;">
-                    <img [src]="noti.image_url || 'default.jpg'" alt="User Image"
+                    <img [src]="noti.image_url || 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'" alt="User Image"
                         style="width: 60px; height: 60px; object-fit: cover; border-radius: 50%;">
                     <div>
                         <div class="noti-text">
@@ -279,7 +282,7 @@
                 (click)="onShareNotificationClick(noti)">
 
                 <div class="noti-content" style="display: flex; align-items: center; gap: 12px;">
-                    <img [src]="noti.image_url || 'default.jpg'" alt="User Image"
+                    <img [src]="noti.image_url || 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'" alt="User Image"
                         style="width: 60px; height: 60px; object-fit: cover; border-radius: 50%;">
 
                     <div>
@@ -291,7 +294,7 @@
                     </div>
                 </div>
                 <div>
-                    <img *ngIf="noti.first_image_url" [src]="noti.first_image_url" alt="Image" class="img_use"/>
+                    <img *ngIf="noti.first_image_url" [src]="noti.first_image_url" alt="Image" class="img_use" />
                     <video *ngIf="!noti.first_image_url && noti.first_video_url" controls class="img_use">
                         <source [src]="noti.first_video_url" type="video/mp4" />
                     </video>
@@ -339,5 +342,41 @@
         </ng-template>
     </div>
 
+    <div *ngIf="selectedCard === 'unban'"
+        style="display: flex; flex-direction: column; align-items: center; padding: 20px; width: 100%;">
+
+        <ng-container *ngIf="notificationsUnban.length > 0; else noUnbanNotifications">
+
+            <div *ngFor="let noti of notificationsUnban" class="noti-card3">
+
+                <div class="noti-content" style="display: flex; align-items: center; gap: 12px;">
+                    <img src="../../../assets/images/Logoweb.png" alt="System Logo"
+                        style="width: 60px; height: 60px; object-fit: cover; border-radius: 50%;">
+
+                    <div>
+                        <div class="noti-text">
+                            <strong>ระบบแจ้งเตือน</strong> - บัญชีของคุณถูกปลดระงับแล้ว
+                        </div>
+                        <div class="noti-reason">
+                            สาเหตุ: {{ noti.reason }}
+                        </div>
+                        <div class="noti-date">
+                            วันที่ระงับ: {{ noti.status_date | date: 'short' }}
+                        </div>
+                        <div class="noti-date">
+                            วันที่ปลดระงับ: {{ noti.end_date | date: 'shortDate' }}
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </ng-container>
+
+        <ng-template #noUnbanNotifications>
+            <p>ไม่มีการแจ้งเตือนการปลดระงับบัญชี</p>
+        </ng-template>
+
+    </div>
 
 </div>

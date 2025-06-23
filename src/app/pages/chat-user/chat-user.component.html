@@ -1,65 +1,67 @@
 <div class="background-div">
     <mat-toolbar class="fixed-toolbar">
-
         <!-- Logo ด้านซ้าย -->
-        <a >
-            <img src="https://shorturl.asia/2pOd3" alt="Home Icon" width="80px">
+        <a [routerLink]="['/HomepageUser']" [queryParams]="{ id: userId }">
+            <img src="../../../assets/images/Logoweb.png" alt="Home Icon" width="80px">
         </a>
-        <div style="width: 15%;"></div>
+        <div style="width: 5%;"></div>
         <!-- เมนูตรงกลาง -->
         <div style="display: flex; flex-grow: 1; justify-content: center; align-items: center;">
             <div style="display: flex; justify-content: center; align-items: center; gap: 50px;">
 
                 <div style="display: flex; flex-direction: column; align-items: center;">
-                    <a >
+                    <a [routerLink]="['/HomepageUser']" [queryParams]="{ id: userId }">
                         <i style="font-size: 40px; color: black;" class="fa-solid fa-house"></i>
                     </a>
                     <span class="itim-regular">หน้าหลัก</span>
                 </div>
 
                 <div style="display: flex; flex-direction: column; align-items: center;">
-                    <a >
+                    <a [routerLink]="['/Homepagefollow']" [queryParams]="{ id: userId }">
                         <i style="font-size: 40px; color: black;" class="fa-solid fa-users"></i>
                     </a>
                     <span class="itim-regular">ติดตาม</span>
                 </div>
 
                 <div>
-                    <a ><img
-                            src="https://scontent.fbkk10-1.fna.fbcdn.net/v/t1.15752-9/465505200_630347202693129_7507803564120503230_n.png?_nc_cat=107&ccb=1-7&_nc_sid=9f807c&_nc_ohc=DJIwEq0Dzw0Q7kNvgEqLS7u&_nc_zt=23&_nc_ht=scontent.fbkk10-1.fna&oh=03_Q7cD1gGDgXF2I13SrHWdmuiFc5AlVfULXTA9MvkjeMjETEJkow&oe=67C3DCBC" alt="" width="60px"></a>
+                    <a [routerLink]="['/CreatePost']" [queryParams]="{ id: userId }"><img
+                            src="../../../assets/images/Addpost.png" alt="" width="60px"></a>
                 </div>
 
                 <!-- การแจ้งเตือน -->
                 <div style="display: flex; flex-direction: column; align-items: center;">
-                    <a >
+                    <a [routerLink]="['/Notification_user']" [queryParams]="{ id: userId }">
                         <i style="font-size: 40px; color: black;" class="fa-solid fa-bell"></i>
                     </a>
                     <span class="itim-regular">การแจ้งเตือน</span>
                 </div>
 
                 <!-- โปรไฟล์ -->
-                <div class="menu-item" routerLinkActive="active">
-                    <i style="font-size: 40px; color: black;" class="fa-solid fa-user"></i>
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <a [routerLink]="['/ProfileUser']" [queryParams]="{ id: userId }">
+                        <i style="font-size: 40px; color: black;" class="fa-solid fa-user"></i>
+                    </a>
                     <span class="itim-regular">โปรไฟล์</span>
                 </div>
             </div>
         </div>
 
-        <!-- ช่องค้นหา -->
-        <div class="search-container">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" class="search-input" placeholder="ค้นหา...">
+        <!-- ค้นหา -->
+        <div style="display: flex; flex-direction: column; align-items: center;">
+            <a [routerLink]="['/search_users']" [queryParams]="{ id: userId }">
+                <i style="font-size: 40px; color: black;" class="fa-solid fa-search"></i>
+            </a>
         </div>
 
         <!-- ไอคอนเมนู -->
-        <div style="display: flex; flex-direction: column; align-items: center; margin-left: 20px;">
-            <a href="javascript:void(0)" >
+        <div style="display: flex; flex-direction: column; align-items: center; margin-left: 30px;">
+            <a href="javascript:void(0)" (click)="toggleDrawer()">
                 <i style="font-size: 40px; color: black;" class="fa-solid fa-bars"></i>
             </a>
         </div>
 
         <!-- Drawer -->
-        <div class="drawer" [class.open]="">
+        <div class="drawer" [class.open]="isDrawerOpen">
             <div class="drawer-content">
                 <h3 style="font-weight: 500; font-size: 30px;">MENU</h3>
                 <ul style="list-style: none; padding: 0;">
@@ -67,7 +69,7 @@
                     <li
                         style="border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; align-items: center; gap: 10px;">
                         <i class="fa fa-list" style="font-size: 20px; color: black;"></i>
-                        <a 
+                        <a [routerLink]="['/category']" [queryParams]="{ id: userId }"
                             style="text-decoration: none; color: black;">
                             <span class="itim-regular">หมวดหมู่</span>
                         </a>
@@ -76,52 +78,94 @@
                     <li
                         style="border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; align-items: center; gap: 10px;">
                         <i class="fa fa-sign-out" style="font-size: 20px; color: black;"></i>
-                        <a href="/login" style="text-decoration: none; color: black;">
+                        <a href="" style="text-decoration: none; color: black;">
                             <span class="itim-regular">ออกจากระบบ</span>
                         </a>
                     </li>
                 </ul>
-                
+                <button mat-flat-button style="background-color: rgb(226, 124, 150); width: 100px;"
+                    (click)="toggleDrawer()">ปิด</button>
             </div>
         </div>
     </mat-toolbar>
-    <div class="chat-container" style="margin-top: 90px;">
-        <!-- รายชื่อผู้ใช้ -->
-        <div class="user-list">
-          <div class="search-user">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" placeholder="ค้นหา..." />
-          </div>
-          <div class="user-item selected">
-            <img src="https://i.imgur.com/QrKdv2k.png" />
-            <div>
-              <strong>วาสันต์</strong><br />
-              <small>วาสันต์ ส่งรูปภาพ</small>
+</div>
+<div >
+    <div class="drawer-notification" [class.open]="isNotiDrawerOpen">
+        <div class="drawer-notification-content">
+            <div style="position: relative; width: 100%; padding: 10px 0;">
+                <!-- ข้อความตรงกลาง -->
+                <div style="text-align: center;">
+                    <span class="fa-solid itim-regular" style="font-size: 30px; color: black; margin-top: 30px;">
+                        แชท
+                    </span>
+                </div>
+
+                <!-- ไอคอนชิดขวา -->
+                <div style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%);"
+                    (click)="toggleNotiDrawer()">
+                    <i class="fa-solid fa-xmark" style="font-size: 22px; color: black; cursor: pointer;"></i>
+                </div>
             </div>
-          </div>
-        </div>
-      
-        <!-- แชต -->
-        <div class="chat-area">
-          <div class="chat-header">
-            <img src="https://i.imgur.com/QrKdv2k.png" />
-            <strong>วาสันต์</strong>
-          </div>
-      
-          <div class="chat-messages">
-            <div class="message right">สวัสดี</div>
-            <div class="message right">น้ำตกที่คุณไปดีหรือเปล่า</div>
-            <div class="message left">
-              <img src="https://www.w3schools.com/w3images/falls2.jpg" width="200" />
-              <div class="bubble">ที่นี่หรอ ดีมากเลยล่ะ</div>
+            <div class="noti-list">
+                <mat-card class="noti-card" (click)="selectCard('chat1')">
+                    <div class="card-content">
+                        <div class="avatar">
+                            <img src="https://i.pinimg.com/736x/5c/d7/49/5cd74978de75254f1af5f1c32ac92e19.jpg" alt=""
+                                style="width: 60px; height: 60px; border-radius: 50%;">
+                        </div>
+                        <div class="text-content">
+                            <div class="title itim-regular">วาสันต์</div>
+                        </div>
+                    </div>
+                </mat-card>
+
             </div>
-          </div>
-      
-          <div class="chat-input">
-            <i class="fa-regular fa-image"></i>
-            <input type="text" />
-            <i class="fa-solid fa-paper-plane"></i>
-          </div>
+
         </div>
+    </div>
+
+    <!-- ปุ่ม Toggle -->
+    <div class="drawer-toggle" [class.open]="isNotiDrawerOpen" (click)="toggleNotiDrawer()">
+        <i class="fa-solid" [ngClass]="isNotiDrawerOpen ? 'fa-arrow-left' : 'fa-arrow-right'"></i>
+    </div>
+
+    <div class="content-area" *ngIf="selectedCard">
+        <h2>{{ selectedCard.title }}</h2>
+        <p>{{ selectedCard.description }}</p>
+    </div>
+
+
+    <div >
+        <div class="chat-header">
+                <img [src]="selectedChatUser.image" alt="avatar"
+                    style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover; margin-right: 10px;">
+                <strong style="font-size: 20px;">{{ selectedChatUser.name }}</strong>
+            </div>
+        <!-- เงื่อนไขแสดงกล่องแชทเมื่อเลือกผู้ใช้แล้ว -->
+        <div class="chat-area" *ngIf="selectedChatUser">
+            <!-- Header -->
+        
+            <!-- กล่องข้อความ -->
+            <div class="chat-messages">
+                <div class="message right">สวัสดีครับ</div>
+                <div class="message left">สวัสดีค่ะ</div>
+                <div class="message left">
+                    <img src="https://www.w3schools.com/w3images/falls2.jpg"
+                        style="width: 200px; height: 150px; border-radius: 10px; object-fit: cover;">
+
+                </div>
+            </div>
+
+            <!-- ช่องป้อนข้อความ -->
+            <div class="chat-input"
+                style="display: flex; align-items: center; padding: 10px; background-color: #fff4e3; border-top: 1px solid #ccc;">
+                <i class="fa-regular fa-image" style="font-size: 24px; margin-right: 10px; cursor: pointer;"></i>
+                <input type="text" placeholder="พิมพ์ข้อความ..."
+                    style="flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 20px;">
+                <i class="fa-solid fa-paper-plane" style="font-size: 24px; margin-left: 10px; cursor: pointer;"></i>
+            </div>
+        </div>
+
+    </div>
 
 </div>
