@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { ActivatedRoute, RouterModule } from '@angular/router';
@@ -17,6 +17,8 @@ import { User } from '../../models/register_model';
 import { PostService } from '../../services/Postservice';
 import * as L from 'leaflet';
 import 'leaflet-control-geocoder';
+import { Location } from '@angular/common';
+import { MatSelectModule } from '@angular/material/select';
 
 declare module 'leaflet' {
   namespace Control {
@@ -35,11 +37,12 @@ declare module 'leaflet' {
     MatChipsModule,
     MatMenuModule,
     MatButtonModule,
+    MatSelectModule
   ],
   templateUrl: './create-post.component.html',
   styleUrl: './create-post.component.scss',
 })
-export class CreatePostComponent {
+export class CreatePostComponent implements OnInit {
   userId: string = '';
   categories: Category[] = []; // Use the Category model
   currentIndex: number = 0; // ดัชนีปัจจุบัน
@@ -50,6 +53,7 @@ export class CreatePostComponent {
   isDrawerOpen: boolean = false; // เริ่มต้น Drawer ปิด
   map: any;
   isMapOpen: boolean = false;
+  isMobile = false;
 
 
   postData: Post = {
@@ -65,7 +69,8 @@ export class CreatePostComponent {
     private route: ActivatedRoute,
     private postService: PostService,
     private userService: UserService,  // Inject UserService
-    private router: Router
+    private router: Router,
+    private location: Location
   ) { }
 
   openMapDialog() {
@@ -89,13 +94,15 @@ export class CreatePostComponent {
         attribution: '© OpenStreetMap contributors'
       }).addTo(this.map);
   
+      let geocoderControl: any;
+      
       // ✅ ใส่ Geocoder แบบ try-catch เพื่อกัน crash
       try {
         const geocoderService = L.Control.Geocoder.nominatim({
           geocodingQueryParams: { 'accept-language': 'th' }
         });
   
-        const geocoderControl = L.Control.geocoder({
+        geocoderControl = L.Control.geocoder({
           geocoder: geocoderService,
           defaultMarkGeocode: true
         })
@@ -112,7 +119,24 @@ export class CreatePostComponent {
         geocoderControl.addTo(this.map);
       } catch (error) {
         console.error('Geocoder error:', error);
+        return;
       }
+  
+      setTimeout(() => {
+        const input = document.querySelector('.leaflet-control-geocoder-form input');
+        if (input && geocoderControl) {
+          // The geocoder control handles input automatically
+          // We just need to listen for the markgeocode event
+          geocoderControl.on('markgeocode', (e: any) => {
+            const center = e.geocode.center;
+            const name = e.geocode.name;
+            L.marker(center).addTo(this.map);
+            this.map.setView(center, 13);
+            this.postData.location = name;
+            this.closeMapDialog();
+          });
+        }
+      }, 500);
   
     }, 100); // รอให้ DOM สร้าง #map เสร็จก่อน
   }
@@ -144,6 +168,16 @@ export class CreatePostComponent {
     });
 
     this.loadCategories();
+    this.checkScreenSize();
+  }
+
+  @HostListener('window:resize')
+  onResize() {
+    this.checkScreenSize();
+  }
+
+  checkScreenSize() {
+    this.isMobile = window.innerWidth <= 600;
   }
 
   loadUserData(userId: string): void {
@@ -325,5 +359,9 @@ export class CreatePostComponent {
 
   logout(): void {
     this.router.navigate(['/login']);
+  }
+
+  close() {
+    this.location.back();
   }
 }

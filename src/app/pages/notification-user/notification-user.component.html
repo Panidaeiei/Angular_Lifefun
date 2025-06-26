@@ -1,85 +1,125 @@
 <div class="background-div">
     <mat-toolbar class="fixed-toolbar">
-
         <!-- Logo ด้านซ้าย -->
-        <a [routerLink]="['/HomepageUser']" [queryParams]="{ id: userId }">
+        <a [routerLink]="['/HomepageUser']" [queryParams]="{ id: this.currentUserId }">
             <img src="../../../assets/images/Logoweb.png" alt="Home Icon" width="80px">
         </a>
         <div style="width: 5%;"></div>
         <!-- เมนูตรงกลาง -->
-        <div style="display: flex; flex-grow: 1; justify-content: center; align-items: center;">
-            <div style="display: flex; justify-content: center; align-items: center; gap: 50px;">
-
-                <div style="display: flex; flex-direction: column; align-items: center;">
-                    <a [routerLink]="['/HomepageUser']" [queryParams]="{ id: userId }">
-                        <i style="font-size: 40px; color: black;" class="fa-solid fa-house"></i>
-                    </a>
-                    <span class="itim-regular">หน้าหลัก</span>
-                </div>
-
-                <div style="display: flex; flex-direction: column; align-items: center;">
-                    <a [routerLink]="['/Homepagefollow']" [queryParams]="{ id: userId }">
-                        <i style="font-size: 40px; color: black;" class="fa-solid fa-users"></i>
-                    </a>
-                    <span class="itim-regular">ติดตาม</span>
-                </div>
-
-                <div>
-                    <a [routerLink]="['/CreatePost']" [queryParams]="{ id: userId }"><img
-                            src="../../../assets/images/Addpost.png" alt="" width="60px"></a>
-                </div>
-
-                <!-- การแจ้งเตือน -->
-
-                <div class="menu-item" routerLinkActive="active" [routerLink]="['/Notification_user']"
-                    [queryParams]="{ id: userId }">
-                    <i style="font-size: 40px; color: black;" class="fa-solid fa-bell"></i>
-                    <span class="itim-regular">การแจ้งเตือน</span>
-                </div>
-
-                <!-- โปรไฟล์ -->
-                <div style="display: flex; flex-direction: column; align-items: center;">
-                    <a [routerLink]="['/ProfileUser']" [queryParams]="{ id: userId }">
-                        <i style="font-size: 40px; color: black;" class="fa-solid fa-user"></i>
-                    </a>
-                    <span class="itim-regular">โปรไฟล์</span>
-                </div>
+        <div class="center-menu"
+            style="display: flex; flex-grow: 1; justify-content: center; align-items: center; gap: 50px;">
+            <div style="display: flex; flex-direction: column; align-items: center;">
+                <a [routerLink]="['/HomepageUser']" [queryParams]="{ id: this.currentUserId }">
+                    <i style="font-size: 40px; color: black;" class="fa-solid fa-house"></i>
+                </a>
+                <span class="itim-regular">หน้าหลัก</span>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: center;">
+                <a [routerLink]="['/Homepagefollow']" [queryParams]="{ id: this.currentUserId}">
+                    <i style="font-size: 40px; color: black;" class="fa-solid fa-users"></i>
+                </a>
+                <span class="itim-regular">ติดตาม</span>
+            </div>
+            <div style="margin-left: 20px;">
+                <a [routerLink]="['/CreatePost']" [queryParams]="{ id: this.currentUserId}"><img
+                        src="../../../assets/images/Addpost.png" alt="" width="60px"></a>
+            </div>
+            <div class="menu-item" routerLinkActive="active" [routerLink]="['/Notification_user']"
+                [queryParams]="{ id: userId }">
+                <i style="font-size: 40px; color: black;" class="fa-solid fa-bell"></i>
+                <span class="itim-regular">การแจ้งเตือน</span>
+            </div>
+            <div style="display: flex; flex-direction: column; align-items: center;">
+                <a [routerLink]="['/ProfileUser']" [queryParams]="{ id: this.currentUserId }">
+                    <i style="font-size: 40px; color: black;" class="fa-solid fa-user"></i>
+                </a>
+                <span class="itim-regular">โปรไฟล์</span>
             </div>
         </div>
-
-        <!-- ค้นหา -->
-        <div style="display: flex; flex-direction: column; align-items: center;">
-            <a [routerLink]="['/search_users']" [queryParams]="{ id: userId }">
-                <i style="font-size: 40px; color: black;" class="fa-solid fa-search"></i>
-            </a>
+        <!-- เมนูขวาสุด -->
+        <div class="toolbar-actions" style="display: flex; align-items: center; gap: 16px;">
+            <!-- ค้นหา -->
+            <div style="display: flex; flex-direction: column; align-items: center;">
+                <a [routerLink]="['/search_users']" [queryParams]="{ id: this.currentUserId }">
+                    <i style="font-size: 30px; color: black;" class="fa-solid fa-search"></i>
+                </a>
+            </div>
+            <!-- ไอคอนเมนู -->
+            <div style="display: flex; flex-direction: column; align-items: center; margin-left: 10px;">
+                <a href="javascript:void(0)" (click)="toggleDrawer()">
+                    <i style="font-size: 30px; color: black; margin-right: 10px;" class="fa-solid fa-bars"></i>
+                </a>
+            </div>
         </div>
-
-        <!-- ไอคอนเมนู -->
-        <div style="display: flex; flex-direction: column; align-items: center; margin-left: 20px;">
-            <a href="javascript:void(0)" (click)="toggleDrawer()">
-                <i style="font-size: 40px; color: black;" class="fa-solid fa-bars"></i>
-            </a>
-        </div>
-
         <!-- Drawer -->
         <div class="drawer" [class.open]="isDrawerOpen">
             <div class="drawer-content">
                 <h3 style="font-weight: 500; font-size: 30px;">MENU</h3>
                 <ul style="list-style: none; padding: 0;">
+                    <!-- เมนูหลัก (ซ้ำกับ center-menu เพื่อรองรับจอเล็ก) -->
+                    <li
+                        style="border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; align-items: center; gap: 10px;">
+                        <i class="fa-solid fa-house" style="font-size: 20px; color: black;"></i>
+                        <a [routerLink]="['/HomepageUser']" [queryParams]="{ id: this.currentUserId }"
+                            style="text-decoration: none; color: black;">
+                            <span class="itim-regular">หน้าหลัก</span>
+                        </a>
+                    </li>
+                    <li
+                        style="border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; align-items: center; gap: 10px;">
+                        <i class="fa-solid fa-users" style="font-size: 20px; color: black;"></i>
+                        <a [routerLink]="['/Homepagefollow']" [queryParams]="{ id: this.currentUserId }"
+                            style="text-decoration: none; color: black;">
+                            <span class="itim-regular">ติดตาม</span>
+                        </a>
+                    </li>
+                    <li
+                        style="border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; align-items: center; gap: 10px;">
+                        <i class="fa-solid fa-plus" style="font-size: 20px; color: black;"></i>
+                        <a [routerLink]="['/CreatePost']" [queryParams]="{ id: this.currentUserId }"
+                            style="text-decoration: none; color: black;">
+                            <span class="itim-regular">สร้างโพสต์</span>
+                        </a>
+                    </li>
+                    <li
+                        style="border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; align-items: center; gap: 10px;">
+                        <i class="fa-solid fa-bell" style="font-size: 20px; color: black;"></i>
+                        <a [routerLink]="['/Notification_user']" [queryParams]="{ id: this.currentUserId }"
+                            style="text-decoration: none; color: black;">
+                            <span class="itim-regular">การแจ้งเตือน</span>
+                        </a>
+                    </li>
+                    <li
+                        style="border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; align-items: center; gap: 10px;">
+                        <i class="fa-solid fa-user" style="font-size: 20px; color: black;"></i>
+                        <a [routerLink]="['/ProfileUser']" [queryParams]="{ id: this.currentUserId }"
+                            style="text-decoration: none; color: black;">
+                            <span class="itim-regular">โปรไฟล์</span>
+                        </a>
+                    </li>
                     <!-- หมวดหมู่ -->
                     <li
                         style="border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; align-items: center; gap: 10px;">
                         <i class="fa fa-list" style="font-size: 20px; color: black;"></i>
-                        <a [routerLink]="['/category']" [queryParams]="{ id: userId }"
+                        <a [routerLink]="['/category']" [queryParams]="{ id: this.currentUserId }"
                             style="text-decoration: none; color: black;">
                             <span class="itim-regular">หมวดหมู่</span>
+                        </a>
+                    </li>
+                    <!-- แชท -->
+                    <li
+                        style="border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; align-items: center; gap: 10px;">
+                        <i class="fa fa-comments" style="font-size: 20px; color: black;"></i>
+                        <a [routerLink]="['/chat']" [queryParams]="{ id: this.currentUserId }"
+                            style="text-decoration: none; color: black;">
+                            <span class="itim-regular">แชท</span>
                         </a>
                     </li>
                     <!-- ออกจากระบบ -->
                     <li
                         style="border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; align-items: center; gap: 10px;">
                         <i class="fa fa-sign-out" style="font-size: 20px; color: black;"></i>
-                        <a href="" style="text-decoration: none; color: black;">
+                        <a href="/" style="text-decoration: none; color: black;">
                             <span class="itim-regular">ออกจากระบบ</span>
                         </a>
                     </li>
@@ -89,6 +129,7 @@
             </div>
         </div>
     </mat-toolbar>
+
     <!-- Drawer -->
     <div class="drawer-notification" [class.open]="isNotiDrawerOpen">
         <div class="drawer-notification-content">
@@ -121,7 +162,7 @@
 
                 <hr class="divider" />
 
-                <mat-card class="noti-card" (click)="selectCard('follow')">
+                <mat-card  class="noti-card" (click)="selectCard('follow')">
                     <div class="card-content">
                         <div class="avatar">
                             <i class="fa-solid fa-user-check" style="font-size: 22px; color: black;"></i>
@@ -214,7 +255,7 @@
     </div>
 
     <div *ngIf="selectedCard === 'like'"
-        style="display: flex; flex-direction: column; align-items: center; padding: 20px; width: 100%;">
+        style="display: flex; flex-direction: column; align-items: center; padding: 20px; width: 100%; margin-top: 70px;">
 
         <ng-container *ngIf="notifications && notifications.length > 0; else noNotifications">
             <div *ngFor="let noti of notifications" class="noti-card2" [routerLink]="['/detail_post']"
@@ -248,15 +289,15 @@
 
     </div>
 
-    <div *ngIf="selectedCard === 'follow'"
-        style="display: flex; flex-direction: column; align-items: center; padding: 20px; width: 100%;">
+    <div  *ngIf="selectedCard === 'follow'"
+        style="display: flex; flex-direction: column; align-items: center; padding: 20px; width: 100%; margin-top: 70px;">
         <ng-container *ngIf="notificationsFollow.length > 0; else noFollowNotifications">
             <div *ngFor="let noti of notificationsFollow" class="noti-card2"
                 [ngClass]="{'unread': noti.notify === 1, 'read': noti.notify === 0}"
                 (click)="onFollowNotificationClick(noti)">
                 <div class="noti-content" style="display: flex; align-items: center; gap: 12px;">
-                    <img [src]="noti.image_url || 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'" alt="User Image"
-                        style="width: 60px; height: 60px; object-fit: cover; border-radius: 50%;">
+                    <img [src]="noti.image_url || 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'"
+                        alt="User Image" style="width: 60px; height: 60px; object-fit: cover; border-radius: 50%;">
                     <div>
                         <div class="noti-text">
                             <strong>{{ noti.username }}</strong> ติดตามคุณแล้ว
@@ -273,7 +314,7 @@
     </div>
 
     <div *ngIf="selectedCard === 'share'"
-        style="display: flex; flex-direction: column; align-items: center; padding: 20px; width: 100%;">
+        style="display: flex; flex-direction: column; align-items: center; padding: 20px; width: 100%; margin-top: 70px;">
 
         <ng-container *ngIf="notificationsShare.length > 0; else noShareNotifications">
             <div *ngFor="let noti of notificationsShare" class="noti-card2" [routerLink]="['/detail_post']"
@@ -282,8 +323,8 @@
                 (click)="onShareNotificationClick(noti)">
 
                 <div class="noti-content" style="display: flex; align-items: center; gap: 12px;">
-                    <img [src]="noti.image_url || 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'" alt="User Image"
-                        style="width: 60px; height: 60px; object-fit: cover; border-radius: 50%;">
+                    <img [src]="noti.image_url || 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'"
+                        alt="User Image" style="width: 60px; height: 60px; object-fit: cover; border-radius: 50%;">
 
                     <div>
                         <div class="noti-text">
@@ -308,7 +349,7 @@
     </div>
 
     <div *ngIf="selectedCard === 'comment'"
-        style="display: flex; flex-direction: column; align-items: center; padding: 20px; width: 100%;">
+        style="display: flex; flex-direction: column; align-items: center; padding: 20px; width: 100%; margin-top: 70px;">
 
         <ng-container *ngIf="notificationsComment.length > 0; else noCommentNotifications">
             <div *ngFor="let noti of notificationsComment" class="noti-card2" [routerLink]="['/detail_post']"
@@ -343,7 +384,7 @@
     </div>
 
     <div *ngIf="selectedCard === 'unban'"
-        style="display: flex; flex-direction: column; align-items: center; padding: 20px; width: 100%;">
+        style="display: flex; flex-direction: column; align-items: center; padding: 20px; width: 100%; margin-top: 70px;">
 
         <ng-container *ngIf="notificationsUnban.length > 0; else noUnbanNotifications">
 

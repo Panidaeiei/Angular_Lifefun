@@ -3,8 +3,7 @@
 
         <!-- Logo ด้านซ้าย -->
         <a [routerLink]="['/HomepageUser']" [queryParams]="{ id: userId }">
-            <img src="../../../assets/images/Logoweb.png"
-                alt="Home Icon" width="80px">
+            <img src="../../../assets/images/Logoweb.png" alt="Home Icon" width="80px">
         </a>
         <div style="width: 5%;"></div>
         <!-- เมนูตรงกลาง -->
@@ -27,8 +26,7 @@
 
                 <div>
                     <a [routerLink]="['/CreatePost']" [queryParams]="{ id: userId }"><img
-                        src="../../../assets/images/Addpost.png"
-                            alt="" width="60px"></a>
+                            src="../../../assets/images/Addpost.png" alt="" width="60px"></a>
                 </div>
 
                 <!-- การแจ้งเตือน -->
@@ -74,6 +72,15 @@
                         <a [routerLink]="['/category']" [queryParams]="{ id: userId }"
                             style="text-decoration: none; color: black;">
                             <span class="itim-regular">หมวดหมู่</span>
+                        </a>
+                    </li>
+                    <!-- แชท -->
+                    <li
+                        style="border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; align-items: center; gap: 10px;">
+                        <i class="fa fa-comments" style="font-size: 20px; color: black;"></i>
+                        <a [routerLink]="['/chat']" [queryParams]="{ id: userId }"
+                            style="text-decoration: none; color: black;">
+                            <span class="itim-regular">แชท</span>
                         </a>
                     </li>
                     <!-- ออกจากระบบ -->

@@ -1,57 +1,47 @@
+<link href="https://fonts.googleapis.com/css2?family=Itim&display=swap" rel="stylesheet">
+
 <body>
-  <div style="margin-top: 50px;">
-    <span class="itim-regular" style="font-size: 1.5cm; margin-left: 42cm;">เข้าสู่ระบบ</span>
+  <div class="login-title-row">
+    <span class="itim-regular login-title">เข้าสู่ระบบ</span>
   </div>
-  <div style="display: flex; height: 100vh; margin: 0; padding: 0;">
+  <div class="login-main-container">
     <!-- กล่องซ้าย -->
-    <div
-      style="width: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; margin-right: 150px; margin-top: -300px;">
-      <p class="itim-regular2" style="font-size: 40px; margin: 0; margin-top: -220px;">ยินดีตอนรับเข้าสู่ระบบ</p>
-      <a href=""> <img
-          src="../../../assets/images/Logoweb.png"
-          alt="Logo" style="margin-top: 70px;" width="250"></a>
-      <span class="itim-regular" style="font-size: 25px; margin-top: 70px;">เว็บไซต์ที่ทำให้คุณเพลิดเพลิน
-        กับการแลกเปลี่ยนทริคความรู้</span>
-      <span class="itim-regular" style="font-size: 25px; margin-top: -20;">แชร์ประสบการณ์ กับผู้คนมากมาย</span>
+    <div class="login-left-box">
+      <p class="itim-regular2 login-welcome" *ngIf="!isMobile">ยินดีตอนรับเข้าสู่ระบบ</p>
+      <div style="width: 40%;">
+
+        <a href=""> <img style="width: 100%;" src="../../../assets/images/Logoweb.png" alt="Logo" class="login-logo"></a>
+      </div>
+      <span class="itim-regular login-desc" *ngIf="!isMobile">เว็บไซต์ที่ทำให้คุณเพลิดเพลิน กับการแลกเปลี่ยนทริคความรู้</span>
+      <span class="itim-regular login-desc" *ngIf="!isMobile">แชร์ประสบการณ์ กับผู้คนมากมาย</span>
     </div>
-
     <!-- กล่องขวา -->
-    <div
-      style="width: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; margin-left: 5%;">
-      <form (ngSubmit)="login()" style="width: 80%; text-align: left;">
+    <div class="login-right-box">
+      <form (ngSubmit)="login()" class="login-form">
         <div>
-          <span class="itim-regular" style="font-size: 35px;">อีเมล/ชื่อผู้ใช้(E-mail/Username)</span>
-          <div class="input-container" style="margin-top: 10px;">
-            <input type="text" [(ngModel)]="identifier" name="identifier" placeholder="กรอกอีเมล หรือ ชื่อผู้ใช้"
-              required />
+          <span class="itim-regular login-label">อีเมล/ชื่อผู้ใช้(E-mail/Username)</span>
+          <div class="input-container password-container">
+            <input type="text" [(ngModel)]="identifier" name="identifier" placeholder="กรอกอีเมล หรือ ชื่อผู้ใช้" required />
           </div>
         </div>
-        <div style="margin-top: 50px;">
-          <span class="itim-regular" style="font-size: 35px;">รหัสผ่าน (Password)</span>
-          <div class="input-container" style="margin-top: 10px; position: relative; width: 100%;">
-            <input [type]="isPasswordVisible ? 'text' : 'password'" [(ngModel)]="password" name="password"
-              placeholder="กรอกรหัสผ่าน" required />
-            <!-- ปุ่มเปิด/ปิดรหัสผ่าน -->
-            <div style="margin-left: 480px; margin-top: -50px;">
-              <button type="button" (click)="togglePasswordVisibility()"
-                style="background: none; border: none; cursor: pointer;">
-                <i [class]="isPasswordVisible ? 'fa fa-eye' : 'fa fa-eye-slash'"></i>
-              </button>
-            </div>
-
+        <div class="login-password-row">
+          <span class="itim-regular login-label">รหัสผ่าน (Password)</span>
+          <div class="input-container password-container">
+            <input [type]="isPasswordVisible ? 'text' : 'password'" [(ngModel)]="password" name="password" placeholder="กรอกรหัสผ่าน" required />
+            <button type="button" (click)="togglePasswordVisibility()" class="toggle-password-btn">
+              <i [class]="isPasswordVisible ? 'fa fa-eye' : 'fa fa-eye-slash'"></i>
+            </button>
           </div>
         </div>
-
-        <div style="display: flex; flex-direction: row; margin-top: 60px; margin-left: 80px;">
-          <span class="itim-regular" style="font-size: 20px;">ยังไม่มีบัญชีผู้ใช้ใช่หรือไม่?</span>
-          <a href="/register" class="itim-regular"
-            style="color: rgb(189, 35, 35); font-size: 20px; margin-left: 10px;">สมัครสมาชิก</a>
+        <div class="login-register-row">
+          <span class="itim-regular">ยังไม่มีบัญชีผู้ใช้ใช่หรือไม่?</span>
+          <a href="/register" class="itim-regular login-register-link">สมัครสมาชิก</a>
         </div>
         <button class="styled-button" type="submit">
           <span class="itim-regular">เข้าสู่ระบบ</span>
         </button>
       </form>
-      <!-- จบ Form -->
     </div>
   </div>
 </body>
+

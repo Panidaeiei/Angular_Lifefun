@@ -1,28 +1,32 @@
-
-
 :host,
 html,
 body {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgb(249, 241, 239); /* สีพื้นหลัง */
-    box-sizing: border-box; /* คำนวณขนาดไม่เกินขอบ */
-    overflow-x: hidden; /* ปิดการเลื่อนแนวนอน */
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgb(249, 241, 239);
+  /* สีพื้นหลัง */
+  box-sizing: border-box;
+  /* คำนวณขนาดไม่เกินขอบ */
+  overflow-x: hidden;
+  /* ปิดการเลื่อนแนวนอน */
 }
 
 :host {
-    display: block;
-    min-height: 100vh; /* ครอบคลุมความสูงเต็มหน้าจอ */
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
+  display: block;
+  min-height: 100vh;
+  /* ครอบคลุมความสูงเต็มหน้าจอ */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 body {
-    overflow-y: auto; /* เปิดใช้งานการเลื่อนแนวตั้ง */
-    background-color: rgb(249, 241, 239); /* สีพื้นหลังเหมือนกัน */
+  overflow-y: auto;
+  /* เปิดใช้งานการเลื่อนแนวตั้ง */
+  background-color: rgb(249, 241, 239);
+  /* สีพื้นหลังเหมือนกัน */
 }
 
 
@@ -30,18 +34,21 @@ body {
 .drawer {
   position: fixed;
   top: 0;
-  right: -300px; /* ซ่อน Drawer ทางขวา */
+  right: -300px;
+  /* ซ่อน Drawer ทางขวา */
   width: 300px;
   height: 100%;
   background-color: white;
   box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
-  transition: right 0.3s ease; /* เพิ่ม Transition */
+  transition: right 0.3s ease;
+  /* เพิ่ม Transition */
   z-index: 1000;
 }
 
 /* Drawer เปิด */
 .drawer.open {
-  right: 0; /* แสดง Drawer */
+  right: 0;
+  /* แสดง Drawer */
 }
 
 /* สไตล์เนื้อหาใน Drawer */
@@ -67,13 +74,92 @@ body {
   position: fixed;
   top: 0;
   left: 0;
-  background-color: rgb(233, 135, 135); 
+  width: 100vw;
+  background-color: rgb(233, 135, 135);
   height: 90px;
-  width: 100%;
-  z-index: 1; /* Ensure it is above other content */
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  box-sizing: border-box;
+
+  img {
+    width: 80px;
+    height: auto;
+  }
+
+  .fa-solid,
+  .fa {
+    font-size: 40px;
+  }
 }
 
-.cardpost{
+// Tablet
+@media (max-width: 1024px) {
+  .fixed-toolbar {
+    height: 90px;
+    padding: 0 12px;
+
+    img {
+      width: 60px;
+    }
+
+    .fa-solid,
+    .fa {
+      font-size: 32px;
+    }
+  }
+
+  .center-menu {
+    gap: 20px !important;
+  }
+}
+
+// Mobile
+@media (max-width: 600px) {
+  .fixed-toolbar {
+    height: 80px;
+    padding: 0 6px;
+
+    img {
+      width: 65px;
+    }
+
+    .fa-solid,
+    .fa {
+      font-size: 22px;
+    }
+
+    .itim-regular {
+      font-size: 10px;
+    }
+
+    .center-menu {
+      display: none !important;
+    }
+  }
+}
+
+/* ✅ เมนูกลาง (ปุ่มหลัก) — ซ่อนไปเมื่อจอแคบ */
+@media (max-width: 767px) {
+  .center-menu {
+    display: none;
+  }
+}
+
+/* ✅ สำหรับ desktop/tablet */
+@media (min-width: 768px) {
+  .center-menu {
+    display: flex;
+    gap: 50px;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+  }
+}
+
+.cardpost {
   background-color: white;
   width: auto;
   height: 450px;
@@ -98,137 +184,125 @@ button {
   position: fixed;
   top: 0;
   left: 0;
-  background-color: rgb(233, 135, 135); 
+  background-color: rgb(233, 135, 135);
   height: 90px;
   width: 100%;
-  z-index: 100; /* Ensure it is above other content */
-  
+  z-index: 100;
+  /* Ensure it is above other content */
+
 }
 
 .content {
-  margin-top: 64px; /* Adjust this value based on the height of your toolbar */
+  margin-top: 64px;
+  /* Adjust this value based on the height of your toolbar */
 }
 
 .mat-menu-panel {
-    background-color: white !important; /* บังคับใช้สีขาว */
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }  
-
-  ::ng-deep .mat-menu-panel {
-    background-color: white !important; /* เปลี่ยนพื้นหลัง */
-    border-radius: 8px; /* เพิ่มความโค้ง */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* เพิ่มเงา */
-    border: 1px solid #e0e0e0;
-  }
-  
-  .loading-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(255, 255, 255, 0.8); /* ความทึบแสงที่เหมาะสม */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 10; /* ลด z-index ถ้าไม่จำเป็น */
+  background-color: white !important;
+  /* บังคับใช้สีขาว */
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
-  
-  .spinner {
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid #3498db;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    animation: spin 1s linear infinite;
+
+::ng-deep .mat-menu-panel {
+  background-color: white !important;
+  /* เปลี่ยนพื้นหลัง */
+  border-radius: 8px;
+  /* เพิ่มความโค้ง */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  /* เพิ่มเงา */
+  border: 1px solid #e0e0e0;
+}
+
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.8);
+  /* ความทึบแสงที่เหมาะสม */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+  /* ลด z-index ถ้าไม่จำเป็น */
+}
+
+.spinner {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3498db;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
   }
-  
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+
+  100% {
+    transform: rotate(360deg);
   }
-  
+}
+
 //font
 .itim-regular {
-    margin-top: 5px;
-    font-family: "Itim", serif;
-    font-weight: 400;
-    font-style: normal;
+  margin-top: 5px;
+  font-family: "Itim", serif;
+  font-weight: 400;
+  font-style: normal;
 }
 
-.itim-regular2{
-    margin-top: 5px;
-    font-family: "Itim", serif;
-    font-weight: 400;
-    font-style: normal;
-    font-size: 30px;
+.itim-regular2 {
+  margin-top: 5px;
+  font-family: "Itim", serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 30px;
 }
 
-.search-container {
-    display: flex;
-    align-items: center;
-    background-color: rgb(230, 200, 211);
-    /* สีพื้นหลังของช่องค้นหา */
-    border-radius: 30px;
-    /* ขอบมน */
-    padding: 10px 10px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    height: 30px;
-    width: 220px;
-    /* ความกว้างของช่องค้นหา */
-}
-
-.search-container i {
-    font-size: 16px;
-    color: black;
-    /* สีไอคอน */
-    margin-right: 10px;
-    /* ระยะห่างระหว่างไอคอนกับช่อง */
-}
-
-.search-input {
-    border: none;
-    outline: none;
-    /* ซ่อนขอบตอนคลิก */
-    font-size: 16px;
-    width: 100%;
-    background: transparent;
-    /* พื้นหลังโปร่งใส */
-}
 
 .menu-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-decoration: none;
-    position: relative;
-  }
-  
-  .menu-item.active {
-    color: #ff0000; /* สีเมื่อ active */
-  }
-  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  position: relative;
+}
+
+.menu-item.active {
+  color: #ff0000;
+  /* สีเมื่อ active */
+}
+
 
 .menu-item span {
-    font-size: 14px;
-    margin-top: 5px;
+  font-size: 14px;
+  margin-top: 5px;
 }
 
 .menu-item.active i,
 .menu-item.active span {
-    color: #000000; /* เปลี่ยนสีเมื่อ active */
+  color: #000000;
+  /* เปลี่ยนสีเมื่อ active */
 }
 
 .menu-item.active::after {
-    content: '';
-    position: absolute;
-    bottom: -12px;
-    left: 100%; /* เริ่มที่กึ่งกลางของเมนู */
-    transform: translateX(-50%); /* ดันกลับมาครึ่งหนึ่งของความกว้าง */
-    height: 4px;
-    background-color: #000000; /* สีขีดล่าง */
-    width: 70px; /* ความกว้างของขีด */
+  content: '';
+  position: absolute;
+  bottom: -12px;
+  left: 100%;
+  /* เริ่มที่กึ่งกลางของเมนู */
+  transform: translateX(-50%);
+  /* ดันกลับมาครึ่งหนึ่งของความกว้าง */
+  height: 4px;
+  background-color: #000000;
+  /* สีขีดล่าง */
+  width: 70px;
+  /* ความกว้างของขีด */
 }
 
 .dialog-overlay {
@@ -258,4 +332,582 @@ button {
   width: 100%;
   height: 500px;
   border-radius: 10px;
+}
+
+// Responsive for create-post main content
+@media (max-width: 1200px) {
+  .background-div>div>.post-container {
+    padding: 50px 8vw;
+    max-width: 100vw;
+  }
+}
+
+@media (max-width: 900px) {
+  .background-div>div>.post-container {
+    padding: 30px 2vw;
+    margin-top: 60px;
+    max-width: 100vw;
+  }
+
+  mat-card {
+    min-width: 0;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  mat-card-header {
+    flex-direction: column !important;
+    padding: 10px !important;
+  }
+
+  mat-card-content {
+    padding: 10px !important;
+    height: auto !important;
+    min-height: 350px;
+  }
+
+  .imgpost,
+  img,
+  video {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .background-div>div>.post-container {
+    padding: 0 !important;
+    margin-top: 56px !important;
+    max-width: 100vw !important;
+    width: 100vw !important;
+  }
+
+  mat-card {
+    min-width: 0 !important;
+    width: 100vw !important;
+    box-sizing: border-box !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+  }
+
+  mat-card-header {
+    flex-direction: column !important;
+    padding: 6px !important;
+  }
+
+  mat-card-content {
+    padding: 6px !important;
+    height: auto !important;
+    min-height: 200px;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .imgpost,
+  img,
+  video {
+    max-width: 100vw !important;
+    height: auto !important;
+    border-radius: 0 !important;
+  }
+
+  textarea {
+    font-size: 14px !important;
+    height: 60px !important;
+    padding: 6px !important;
+  }
+
+  mat-card-footer {
+    height: auto !important;
+    padding: 6px !important;
+    border-radius: 0 !important;
+  }
+
+  .itim-regular2 {
+    font-size: 18px !important;
+  }
+
+  .spinner {
+    width: 30px !important;
+    height: 30px !important;
+  }
+
+  .profile-avatar {
+    width: 56px; // ความกว้างบนมือถือ
+    height: 56px; // ความสูงบนมือถือ
+    border-radius: 50%; // ทำให้เป็นวงกลมบนมือถือด้วย
+    object-fit: cover;
+  }
+
+  .mobile-user-row {
+    width: 100vw;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    padding: 0 30px 8px 8px;
+    box-sizing: border-box;
+    overflow-x: auto;
+  }
+
+  .mobile-avatar {
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 50% !important;
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+
+  .mobile-location {
+    flex: 1 1 0;
+    min-width: 0;
+    border: 1px solid #eee;
+    border-radius: 20px;
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+
+  .map-btn {
+    background: none;
+    border: none;
+    padding: 0 4px;
+    flex-shrink: 0;
+  }
+
+  .mobile-category-select {
+    margin-left: 4px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+  }
+
+  .file-count-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: #e28c96;
+    color: #fff;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: bold;
+    z-index: 10;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+  }
+
+  .add-file-btn {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    width: 40px;
+    height: 40px;
+    font-size: 28px;
+    background: #fff;
+    border: 2px solid #e28c96;
+    border-radius: 50%;
+    color: #e28c96;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+  }
+
+  .file-count-number {
+    background: #e28c96;
+    color: #fff;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    z-index: 3;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+  }
+
+  .media-preview img,
+  .media-preview video {
+    width: 100%;
+    max-height: 220px;
+    object-fit: cover;
+    border-radius: 12px;
+  }
+
+  .remove-file-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: #e28c96;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    font-size: 20px;
+    z-index: 2;
+  }
+
+  .mobile-textarea {
+    width: 100%;
+    min-height: 100px;
+    border: 1px solid #eee;
+    border-radius: 12px;
+    padding: 12px;
+    font-size: 16px;
+    margin-bottom: 16px;
+    resize: none;
+  }
+
+  .mobile-post-btn {
+    width: 100%;
+    padding: 16px 0;
+    background: #e28c96;
+    color: #fff;
+    font-size: 18px;
+    border: none;
+    border-radius: 12px;
+    font-weight: bold;
+    box-shadow: 0 2px 8px rgba(226, 140, 150, 0.15);
+  }
+
+  .mobile-category-select-full {
+    width: 100vw;
+    padding: 0 40px 8px 8px;
+    box-sizing: border-box;
+    margin-bottom: 8px;
+  }
+
+  .full-width-category {
+    width: 100%;
+    background: #fff;
+    border-radius: 12px;
+  }
+
+  ::ng-deep .mat-form-field-flex {
+    background: #fff;
+    border-radius: 12px;
+  }
+}
+
+// iPad/Tablet portrait
+@media (min-width: 601px) and (max-width: 1024px) and (orientation: portrait) {
+  .background-div>div>.post-container {
+    padding: 30px 10vw !important;
+    margin-top: 70px !important;
+  }
+
+  mat-card {
+    min-width: 0;
+    width: 100%;
+    box-sizing: border-box;
+  }
+}
+
+// iPad/Tablet landscape
+@media (min-width: 601px) and (max-width: 1366px) and (orientation: landscape) {
+  .background-div>div>.post-container {
+    padding: 30px 15vw !important;
+    margin-top: 70px !important;
+  }
+
+  mat-card {
+    min-width: 0;
+    width: 100%;
+    box-sizing: border-box;
+  }
+}
+
+.background-div>div>.post-container {
+  margin: 80px auto 0 auto;
+  padding: 50px 30rem;
+  max-width: 900px;
+}
+
+.file-upload-container {
+  position: relative;
+  width: 100%;
+  min-height: 700px; // หรือสูงกว่านี้ตามต้องการ
+  background: #fff;
+  border-radius: 8px;
+}
+
+.add-file-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: #d1d2d3;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 50px;
+  font-size: 24px;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 600px) {
+  .file-upload-container {
+    min-height: 300px;
+  }
+
+  .add-file-btn {
+    padding: 8px 16px;
+    font-size: 22px;
+    top: 8px;
+    right: 8px;
+  }
+}
+
+.media-preview {
+  width: 100%;
+  height: 680px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.media-preview img,
+.media-preview video {
+  width: 100%;
+  height: 680px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+@media (max-width: 600px) {
+  .media-preview {
+    border-radius: 0;
+    min-height: 220px;
+    max-height: 350px;
+  }
+
+  .media-preview img,
+  .media-preview video {
+    border-radius: 0;
+    min-height: 350px;
+  }
+}
+
+@media (min-width: 601px) and (max-width: 1020px) {
+
+  .media-preview,
+  .media-preview img,
+  .media-preview video {
+    height: 420px;
+    min-height: 420px;
+    max-height: 700px;
+    border-radius: 8px;
+  }
+
+  .file-upload-container {
+    position: relative;
+    width: 100%;
+    min-height: 400px; // หรือสูงกว่านี้ตามต้องการ
+    background: #fff;
+    border-radius: 8px;
+  }
+
+  .profile-avatar {
+    width: 100px;
+    height: 100px !important; // ความกว้างบนมือถือ       // ความสูงบนมือถือ
+    border-radius: 100% !important; // ทำให้เป็นวงกลมบนมือถือด้วย
+    object-fit: cover !important;
+  }
+}
+
+// ===================== รูปโปรไฟล์ (Profile Avatar) =====================
+// กำหนดขนาดและรูปร่างของรูปโปรไฟล์ (avatar) สำหรับ desktop/tablet
+.profile-avatar {
+  width: 80px; // ความกว้างปกติ
+  height: 80px; // ความสูงปกติ
+  border-radius: 50%; // ทำให้เป็นวงกลม
+  object-fit: cover; // ครอบรูปให้อยู่ในกรอบวงกลม
+}
+
+
+@media (max-width: 600px) {
+  .mobile-post-container {
+    width: 100vw;
+    min-height: 100vh;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    box-sizing: border-box;
+    margin-top: 90px !important;
+  }
+
+  .mobile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 12px;
+  }
+
+  .close-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #888;
+  }
+
+  .mobile-user-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .mobile-avatar {
+    width: 60px !important;
+    height: 60px !important;
+    border-radius: 50% !important;
+    object-fit: cover;
+  }
+
+  .mobile-location {
+    flex: 1;
+    border: 1px solid #929292;
+    border-radius: 20px;
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+
+  .map-btn {
+    background: none;
+    border: none;
+    padding: 0;
+  }
+
+  .mobile-file-upload {
+    position: relative;
+    margin-bottom: 12px;
+    width: 100%;
+    min-height: 180px;
+    background: #faddd9;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .add-file-btn {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    width: 40px;
+    height: 40px;
+    font-size: 28px;
+    background: #fff;
+    border: 2px solid #e28c96;
+    border-radius: 50%;
+    color: #e28c96;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+  }
+
+  .file-count-number {
+    background: #e28c96;
+    color: #fff;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    z-index: 3;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+  }
+
+  .media-preview img,
+  .media-preview video {
+    width: 100%;
+    max-height: 220px;
+    object-fit: cover;
+    border-radius: 12px;
+  }
+
+  .remove-file-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: #e28c96;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    font-size: 20px;
+    z-index: 2;
+  }
+
+  .mobile-textarea {
+    width: 100%;
+    min-height: 100px;
+    border: 1px solid #eee;
+    border-radius: 12px;
+    padding: 12px;
+    font-size: 16px;
+    margin-bottom: 16px;
+    resize: none;
+  }
+
+  .mobile-post-btn {
+    width: 100%;
+    padding: 16px 0;
+    background: #e28c96;
+    color: #fff;
+    font-size: 18px;
+    border: none;
+    border-radius: 12px;
+    font-weight: bold;
+    box-shadow: 0 2px 8px rgba(226, 140, 150, 0.15);
+  }
+}
+
+.file-count-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #e28c96;
+  color: #fff;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: bold;
+  z-index: 10;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
 }

@@ -1,15 +1,16 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import Swal from 'sweetalert2';
 import { UserService } from '../../services/Userservice';
 import { User } from '../../models/register_model';
 import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [FormsModule, HttpClientModule],
+  imports: [FormsModule, HttpClientModule, CommonModule],
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss'],
 })
@@ -28,8 +29,21 @@ export class RegisterComponent {
 
   isPasswordVisible: boolean = false;
   isConfirmPasswordVisible: boolean = false;
-
+  isMobile = false;
   constructor(private userService: UserService, private router: Router) { }
+
+  ngOnInit(): void {
+    this.checkScreenSize();
+  }
+
+  @HostListener('window:resize')
+  onResize() {
+    this.checkScreenSize();
+  }
+
+  checkScreenSize() {
+    this.isMobile = window.innerWidth <= 600;
+  }
 
   // ฟังก์ชันจัดการการเลือกไฟล์
   onFileSelected(event: Event): void {

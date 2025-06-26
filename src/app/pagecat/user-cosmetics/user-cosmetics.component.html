@@ -107,11 +107,11 @@
                         <a (click)="viewPost(post.post_id.toString())">
                             <ng-container *ngIf="post.media_type === 'image'; else videoTemplate">
                                 <img [src]="post.media_url || 'https://via.placeholder.com/360x300'"
-                                    style="width: 390px; height: 350px; object-fit: cover;" alt="รูปที่โพสต์">
+                                    class="imgpost " alt="รูปที่โพสต์">
                             </ng-container>
                             <ng-template #videoTemplate>
                                 <video [src]="post.media_url" controls
-                                    style="width: 390px; height: 350px; object-fit: cover;">
+                                    class="imgpost">
                                 </video>
                             </ng-template>
                         </a>

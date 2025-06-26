@@ -5,7 +5,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { MatBadgeModule } from '@angular/material/badge';
 
 @Component({
@@ -27,7 +27,18 @@ export class ChatUserComponent {
   image: 'https://i.imgur.com/QrKdv2k.png'
 };
 
+constructor(private route: ActivatedRoute) { }
+
   @Input() userData: any; // หรือกำหนด type ให้ละเอียดก็ได้
+
+    ngOnInit() {
+    this.route.queryParams.subscribe(params => {
+      this.userId = params['id']; // ดึง ID จาก Query Parameters
+      console.log('User ID:', this.userId);
+
+    });
+    
+  }
 
   toggleDrawer(): void {
     this.isDrawerOpen = !this.isDrawerOpen; // สลับสถานะเปิด/ปิด

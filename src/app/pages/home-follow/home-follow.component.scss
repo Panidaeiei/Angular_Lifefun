@@ -73,16 +73,71 @@ body {
   margin: 10px 0;
 }
 
-
 .fixed-toolbar {
   position: fixed;
   top: 0;
   left: 0;
+  width: 100vw;
   background-color: rgb(233, 135, 135);
   height: 90px;
-  width: 100%;
-  z-index: 1;
-  /* Ensure it is above other content */
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  box-sizing: border-box;
+
+  img {
+    width: 80px;
+    height: auto;
+  }
+  .fa-solid, .fa {
+    font-size: 40px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .fixed-toolbar {
+    height: 90px;
+    padding: 0 12px;
+    img { width: 60px; }
+    .fa-solid, .fa { font-size: 32px; }
+  }
+  .center-menu {
+    gap: 25px !important;
+  }
+}
+
+// Mobile
+@media (max-width: 600px) {
+  .fixed-toolbar {
+    height: 80px;
+    padding: 0 6px;
+    img { width: 65px; }
+    .fa-solid, .fa { font-size: 22px; }
+    .itim-regular { font-size: 10px; }
+    .center-menu {
+      display: none !important;
+    }
+  }
+}
+
+/* ✅ เมนูกลาง (ปุ่มหลัก) — ซ่อนไปเมื่อจอแคบ */
+@media (max-width: 767px) {
+  .center-menu {
+    display: none;
+  }
+}
+
+/* ✅ สำหรับ desktop/tablet */
+@media (min-width: 768px) {
+  .center-menu {
+    display: flex;
+    gap: 50px;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+  }
 }
 
 .cardpost {
@@ -162,18 +217,228 @@ body {
   max-width: 2000px;  /* กำหนดความกว้างสูงสุดของการ์ด */
 }
 
-/* สำหรับอุปกรณ์ที่มีความกว้างไม่เกิน 768px (Tablet) */
 @media (max-width: 768px) {
   .card-container {
-    grid-template-columns: repeat(2, 1fr);  /* กำหนดให้แถวมี 2 คอลัมน์ */
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .imgpost {
+    width: 330px !important;
+    height: 330px !important;
+    object-fit: cover;
+  }
+
+  .card-wrapper {
+    width: 330px !important;
+    padding: 5px;
+  }
+
+  .cardpost {
+    height: 490px !important;
   }
 }
 
 /* สำหรับอุปกรณ์ที่มีความกว้างไม่เกิน 480px (Mobile) */
 @media (max-width: 480px) {
   .card-container {
-    grid-template-columns: 1fr;  /* กำหนดให้แถวมี 1 คอลัมน์ */
+    grid-template-columns: 1fr;
+    /* กำหนดให้แถวมี 1 คอลัมน์ */
   }
+
+  .imgpost {
+    width: 350px !important;
+    height: 350px !important;
+    object-fit: cover;
+  }
+
+  .card-wrapper {
+    width: 350px !important;
+    padding: 5px;
+  }
+
+  .cardpost {
+    height: 500px !important;
+  }
+
+} 
+
+/* สำหรับอุปกรณ์ที่มีความกว้างไม่เกิน 480px (Mobile) */
+@media (max-width: 390px) {
+  .card-container {
+    grid-template-columns: 1fr;
+    /* กำหนดให้แถวมี 1 คอลัมน์ */
+  }
+
+  .imgpost {
+    width: 330px !important;
+    height: 340px !important;
+    object-fit: cover;
+  }
+
+  .card-wrapper {
+    width: 330px !important;
+    padding: 5px;
+  }
+
+  .cardpost {
+    height: 490px !important;
+  }
+
+} 
+
+/* ✅ iPad แนวตั้ง (iPad Gen 9, Air 4, ใกล้เคียง) */
+@media screen and (min-width: 800px) and (max-width: 850px) and (orientation: portrait) {
+  .card-container {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 50px !important;
+    padding: 0 20px !important;
+    box-sizing: border-box;
+  }
+
+  .imgpost {
+    width: 300px !important;
+    height: 300px !important;
+    object-fit: cover;
+  }
+
+  .card-wrapper {
+    width: 300px !important;
+    padding: 5px;
+  }
+
+  .cardpost {
+    height: 450px !important;
+  }
+}
+
+
+/* ✅ iPad Air 4 แนวตั้ง (เฉพาะ device-width: 820px) */
+@media screen and (device-width: 820px) and (orientation: portrait) {
+  .card-container {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 50px !important;
+    padding: 0 20px !important;
+    box-sizing: border-box;
+  }
+
+  .imgpost {
+    width: 300px !important;
+    height: 300px !important;
+    object-fit: cover;
+  }
+
+  .card-wrapper {
+    width: 300px !important;
+    padding: 5px;
+  }
+
+  .cardpost {
+    height: 450px !important;
+  }
+}
+
+/* ✅ iPad แนวนอน (iPad Gen 9, Air 4, ใกล้เคียง) */
+@media screen and (min-width: 1024px) and (max-width: 1194px) and (orientation: landscape) {
+  .card-container {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 50px !important;
+    padding: 0 20px !important;
+    box-sizing: border-box;
+  }
+
+  .imgpost {
+    width: 300px !important;
+    height: 300px !important;
+    object-fit: cover;
+  }
+
+  .card-wrapper {
+    width: 300px !important;
+    padding: 5px;
+  }
+
+  .cardpost {
+    height: 450px !important;
+  }
+}
+
+/* ✅ iPad Air 4 แนวนอน (เฉพาะ device-width: 1180px) */
+@media screen and (device-width: 1180px) and (orientation: landscape) {
+  .card-container {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 50px !important;
+    padding: 0 20px !important;
+    box-sizing: border-box;
+  }
+
+  .imgpost {
+    width: 300px !important;
+    height: 300px !important;
+    object-fit: cover;
+  }
+
+  .card-wrapper {
+    width: 300px !important;
+    padding: 5px;
+  }
+
+  .cardpost {
+    height: 450px !important;
+  }
+}
+
+
+/* สำหรับอุปกรณ์ที่มีความกว้างไม่เกิน 480px (Mobile) */
+@media (min-width: 769px) and (max-width: 1030px) {
+  .card-container {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .imgpost {
+    width: 300px !important;
+    height: 300px !important;
+    object-fit: cover;
+  }
+
+  .card-wrapper {
+    width: 300px !important;
+    padding: 5px;
+  }
+
+  .cardpost {
+    height: 460px !important;
+  }
+}
+
+/* สำหรับอุปกรณ์ที่มีความกว้างไม่เกิน 480px (Mobile) */
+@media (min-width: 1200px) and (max-width: 1300px) {
+  .card-container {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px !important;
+  }
+
+  .imgpost {
+    width: 300px !important;
+    height: 300px !important;
+    object-fit: cover;
+  }
+
+  .card-wrapper {
+    width: 300px !important;
+    padding: 5px;
+
+  }
+
+  .cardpost {
+    height: 460px !important;
+
+  }
+}
+
+.imgpost {
+  width: 390px;
+  height: 350px;
+  object-fit: cover;
 }
 
 .card-wrapper {

@@ -1,50 +1,34 @@
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-<mat-toolbar class="fixed-toolbar"
-    style="background-color: rgb(233, 135, 135); height: 90px; display: flex; align-items: center; justify-content: space-between;">
-
-    <a [routerLink]="['']">
-        <img src="../../../assets/images/Logoweb.png" alt="Home Icon" width="80px">
+<mat-toolbar class="fixed-toolbar">
+    <a [routerLink]="['']" class="toolbar-logo">
+        <img src="../../../assets/images/Logoweb.png" alt="Home Icon" />
     </a>
-
-    <div style="display: flex; flex-grow: 1; justify-content: center; align-items: center;  margin-left: 120px;">
-        <div style="display: flex; justify-content: center; align-items: center; gap: 60px;">
-
-
-            <a class="menu-item" routerLinkActive="active" [routerLink]="['']">
-                <i style="font-size: 40px; color: black;" class="fa-solid fa-house"></i>
-                <span style="font-size: 22px;">หน้าหลัก</span>
-            </a>
-
-
-            <div style="display: flex; flex-direction: column; align-items: center;">
-                <a [routerLink]="['/search_main']">
-                    <i style="font-size: 40px; color: black;" class="fa-solid fa-magnifying-glass"></i>
-                </a>
-                <span class="itim-regular">ค้นหา</span>
-            </div>
-
-            <div style="display: flex; flex-direction: column; align-items: center;">
-                <a [routerLink]="['/category_main']">
-                    <i style="font-size: 40px; color: black;" class="fa-solid fa-bars"></i>
-                </a>
-                <span class="itim-regular">หมวดหมู่</span>
-            </div>
-        </div>
+    <div class="toolbar-center-menu" *ngIf="!isMobile">
+        <a class="menu-item" routerLinkActive="active" [routerLink]="['']">
+            <i class="fa-solid fa-house"></i>
+            <span>หน้าหลัก</span>
+        </a>
+        <a class="menu-item" [routerLink]="['/search_main']">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span style="color: black;">ค้นหา</span>
+        </a>
+        <a class="menu-item" [routerLink]="['/category_main']">
+            <i class="fa-solid fa-bars"></i>
+            <span style="color: black;">หมวดหมู่</span>
+        </a>
     </div>
-
-    <button routerLink="/login" class="login-link"
-        style="text-decoration: none; color: black; background: none; border: none; outline: none;">
-        <div style="display: flex; flex-direction: row; align-items: center; justify-content: center;">
-            <i class="material-icons" st>login</i>
-            <span style="margin-left: 10px; font-size: 17px;">เข้าสู่ระบบ/สมัครสมาชิก</span>
-        </div>
+    <button routerLink="/login" class="login-link" *ngIf="!isMobile">
+        <i class="material-icons">login</i>
+        <span>เข้าสู่ระบบ/สมัครสมาชิก</span>
     </button>
-
+    <button class="toolbar-hamburger" (click)="toggleDrawer()" aria-label="เมนู" *ngIf="isMobile">
+        <i class="fa-solid fa-bars"></i>
+    </button>
 </mat-toolbar>
 
 <div class="background-div">
-    <div style="display: flex; margin-top: 130px; justify-content: center; margin-bottom: 30px; font-size: 25px;">
+    <div style="display: flex; margin-top: 120px; justify-content: center; margin-bottom: 30px; font-size: 25px;">
         <span>สำหรับคุณ</span>
     </div>
 
@@ -58,11 +42,11 @@
                         <a (click)="onHeartClick()">
                             <ng-container *ngIf="post.media_type === 'image'; else videoTemplate">
                                 <img [src]="post.media_url || 'https://via.placeholder.com/360x300'"
-                                    style="width: 390px; height: 350px; object-fit: cover;" alt="รูปที่โพสต์">
+                                    class="imgpost" alt="รูปที่โพสต์">
                             </ng-container>
                             <ng-template #videoTemplate>
                                 <video [src]="post.media_url" controls
-                                    style="width: 390px; height: 350px; object-fit: cover;">
+                                    class="imgpost">
                                 </video>
                             </ng-template>
                         </a>
@@ -129,4 +113,38 @@
         </div>
     </div>
     <div style="height: 30px;"></div>
+</div>
+
+<!-- Drawer สำหรับ mobile -->
+<div class="drawer" [class.open]="isDrawerOpen">
+    <div class="drawer-content">
+        <h3 style="font-weight: 500; font-size: 30px;">MENU</h3>
+        <ul style="list-style: none; padding: 0;">
+            <li style="border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; align-items: center; gap: 10px;">
+                <i class="fa-solid fa-house" style="font-size: 20px; color: black;"></i>
+                <a [routerLink]="['/']" style="text-decoration: none; color: black;">
+                    <span>หน้าหลัก</span>
+                </a>
+            </li>
+            <li style="border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; align-items: center; gap: 10px;">
+                <i class="fa-solid fa-magnifying-glass" style="font-size: 20px; color: black;"></i>
+                <a [routerLink]="['/search_main']" style="text-decoration: none; color: black;">
+                    <span>ค้นหา</span>
+                </a>
+            </li>
+            <li style="border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; align-items: center; gap: 10px;">
+                <i class="fa-solid fa-bars" style="font-size: 20px; color: black;"></i>
+                <a [routerLink]="['/category_main']" style="text-decoration: none; color: black;">
+                    <span>หมวดหมู่</span>
+                </a>
+            </li>
+            <li style="border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; align-items: center; gap: 10px;">
+                <i class="material-icons" style="font-size: 20px; color: black;">login</i>
+                <a [routerLink]="['/login']" style="text-decoration: none; color: black;">
+                    <span>เข้าสู่ระบบ/สมัครสมาชิก</span>
+                </a>
+            </li>
+        </ul>
+        <button mat-flat-button style="background-color: rgb(226, 124, 150); width: 100px;" (click)="toggleDrawer()">ปิด</button>
+    </div>
 </div>

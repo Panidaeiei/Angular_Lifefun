@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Itim&display=swap');
-
 :host, html, body {
     margin: 0;
     padding: 0;
@@ -59,7 +57,7 @@
     }
 
     .styled-button {
-      margin-left: 20%;
+
       margin-top: 25%;
       background-color: #fff8dc; /* สีครีม */
       color: black;
@@ -83,5 +81,194 @@
         display: none;
     }
     
-    
+    .login-title-row {
+      display: flex;
+      justify-content: center;
+      margin-top: 40px;
+    }
+    .login-title {
+      font-size: 2.5rem;
+    }
+    .login-main-container {
+      display: flex;
+      flex-direction: row;
+      min-height: 80vh;
+      width: 100%;
+      justify-content: center;
+      align-items: center;
+      gap: 40px;
+    }
+    .login-left-box {
+      width: 50%;
+      min-width: 300px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+    }
+    .login-logo {
+      width: 200px;
+      margin: 32px 0 0 0;
+    }
+    .login-welcome {
+      font-size: 2rem;
+      margin: 0;
+    }
+    .login-desc {
+      font-size: 1.2rem;
+      margin-top: 12px;
+      text-align: center;
+    }
+    .login-right-box {
+      width: 50%;
+      min-width: 300px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .login-form {
+      width: 100%;
+      max-width: 400px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      padding: 32px 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .login-label {
+      font-size: 1.3rem;
+    }
+    .input-container {
+      margin-top: 10px;
+      width: 100%;
+      position: relative;
+    }
+    .password-container {
+      display: flex;
+      align-items: center;
+    }
+    .toggle-password-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1.2rem;
+      color: #888;
+    }
+    .login-register-row {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 10px;
+      margin-top: 20px;
+      justify-content: center;
+    }
+    .login-register-link {
+      color: rgb(189, 35, 35);
+      font-size: 1rem;
+      text-decoration: underline;
+    }
+    .styled-button {
+      width: 100%;
+      padding: 12px 0;
+      background: #e28c96;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin-top: 16px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .styled-button:hover {
+      background: #d65580;
+    }
+    @media (max-width: 900px) {
+      .input-container input {
+        width: 100%;
+        height: 30px;
+        padding: 15px;
+        margin-top: 5px;
+        border: none;
+        border-radius: 50px; /* มุมโค้งมน */
+        background-color: #fff8dc; /* สีครีม */
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* เงาเบาๆ */
+        font-size: 18px;
+      }
+  
+      .login-main-container {
+        flex-direction: column;
+        gap: 0;
+        min-height: unset;
+      }
+      .login-left-box {
+        width: 100%;
+        min-width: unset;
+        padding: 0 16px;
+      }
+      .login-right-box {
+        width: 80%;
+        min-width: unset;
+        padding: 0 8px;
+      }
+      .login-form {
+        max-width: 100%;
+        width: 100%;
+        padding: 24px 16px;
+      }
+      .login-logo {
+        width: 150px;
+      }
+    }
+    @media (max-width: 600px) {
+      .login-title {
+        font-size: 2rem;
+      }
+      .login-main-container {
+        flex-direction: column;
+        gap: 0;
+        min-height: unset;
+        padding: 0 0 32px 0;
+      }
+      .login-left-box {
+        width: 100%;
+        min-width: unset;
+        padding: 0 8px;
+      }
+      .login-right-box {
+        width: 80%;
+        min-width: unset;
+        padding: 0 8px;
+      }
+      .login-form {
+        max-width: 100%;
+        width: 100%;
+        padding: 24px 16px;
+      }
+      .login-logo {
+        width: 100px;
+      }
+      .login-welcome {
+        font-size: 1.2rem;
+      }
+      .login-desc {
+        font-size: 1rem;
+      }
+      .login-label {
+        font-size: 1rem;
+      }
+      .styled-button {
+        font-size: 1rem;
+        padding: 10px 0;
+      }
+    }
   

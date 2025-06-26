@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterModule } from '@angular/router';
@@ -34,12 +34,17 @@ export class HomepageMainComponent {
   isDialogOpen = false;
   userResults: SearchUser[] = [];
   searchQuery: string = '';
+  isMobile = false;
 
 
   constructor(private postService: PostService, private router: Router) { }
 
+  @HostListener('window:resize')
+  onResize() { this.isMobile = window.innerWidth <= 600; }
+
   ngOnInit(): void {
     this.fetchPosts();
+    this.isMobile = window.innerWidth <= 600;
   }
 
   fetchPosts(): void {
@@ -114,5 +119,7 @@ export class HomepageMainComponent {
       error: (err) => console.error('Error updating view count:', err)
     });
   }
+
+  toggleDrawer() { this.isDrawerOpen = !this.isDrawerOpen; }
 
 }

@@ -1,26 +1,40 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import Swal from 'sweetalert2';
 import { UserService } from '../../services/Userservice';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-login',
   standalone: true,
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
-  imports: [FormsModule, HttpClientModule]
+  imports: [FormsModule, HttpClientModule, CommonModule]
 })
 export class LoginComponent {
   identifier: string = ''; // ตัวแปรสำหรับเก็บ Email หรือ Username
   password: string = '';   // ตัวแปรสำหรับเก็บ Password
   errorMessage: string = '';
   isPasswordVisible: boolean = false;
+  isMobile = false;
 
   constructor(private http: HttpClient, private router: Router, private userService: UserService,) { }
 
+  @HostListener('window:resize')
+  onResize() {
+    this.checkScreenSize();
+  }
+
+  ngOnInit() {
+    this.checkScreenSize();
+  }
+
+  checkScreenSize() {
+    this.isMobile = window.innerWidth <= 900;
+  }
   login() {
     if (!this.identifier || !this.password) {
       Swal.fire({

@@ -1,14 +1,27 @@
+<link href="https://fonts.googleapis.com/css2?family=Itim&display=swap" rel="stylesheet">
+
 <div style="margin-top: 50px;">
     <span class="itim-regular" style="font-size: 1.5cm; margin-left: 42cm;">สมัครสมาชิก</span>
 </div>
 <div style="display: flex; flex-direction: row; height: 100vh;">
-    <div style="display: flex; flex-direction: column; width: 50%;"></div>
+    <div style="display: flex; flex-direction: column; width: 50%;">
+        <div class="login-left-box">
+            <p class="itim-regular2 login-welcome" *ngIf="!isMobile">ยินดีตอนรับเข้าสู่ระบบ</p>
+            <div style="width: 40%;">
+      
+              <a href=""> <img style="width: 100%;" src="../../../assets/images/Logoweb.png" alt="Logo" class="login-logo"></a>
+            </div>
+            <span class="itim-regular login-desc" *ngIf="!isMobile">เว็บไซต์ที่ทำให้คุณเพลิดเพลิน กับการแลกเปลี่ยนทริคความรู้</span>
+            <span class="itim-regular login-desc" *ngIf="!isMobile">แชร์ประสบการณ์ กับผู้คนมากมาย</span>
+          </div>
+    </div>
     <div
         style="display: flex; align-items: center; flex-direction: column; width: 50%; margin-top: 30px; margin-right: 30px;">
         <!-- อัปโหลดรูปภาพ -->
         <label for="file-upload" style="cursor: pointer;">
             <img [src]="previewImage" alt="Profile Picture" class="profile-image" />
         </label>
+        
         <input type="file" id="file-upload" accept="image/*" (change)="onFileSelected($event)" hidden />
 
         <form (ngSubmit)="register()" style="display: flex; flex-direction: column; align-items: center; width: 100%;">
