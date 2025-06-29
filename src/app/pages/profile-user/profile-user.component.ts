@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterModule } from '@angular/router';
@@ -42,6 +42,7 @@ export class ProfileUserComponent implements OnInit {
   followersCount: number = 0;
   followingCount: number = 0;
   followedId: string = '';
+  isMobile: boolean = false;
 
   constructor(private route: ActivatedRoute, private profileService: ProfileService, private reactPostservice: ReactPostservice,) { }
 
@@ -64,6 +65,16 @@ export class ProfileUserComponent implements OnInit {
         console.warn('User ID not found in query parameters.');
       }
     });
+    this.checkMobile();
+  }
+
+  @HostListener('window:resize')
+  onResize() {
+    this.checkMobile();
+  }
+
+  checkMobile() {
+    this.isMobile = window.innerWidth <= 600;
   }
 
   // ดึงข้อมูลโปรไฟล์ผู้ใช้
@@ -150,6 +161,5 @@ export class ProfileUserComponent implements OnInit {
       }
     );
   }
-
 
 }

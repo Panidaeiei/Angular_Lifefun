@@ -51,6 +51,10 @@ export class DetailPostComponent implements OnInit {
   isSave: boolean = false;
   currentUserId: string | null = null;
   viewerId: string = '';
+  touchStartX = 0;
+  touchEndX = 0;
+  touchStartY = 0;
+  touchEndY = 0;
 
   @ViewChild('commentInput') commentInput!: ElementRef;
   @ViewChildren(MatMenuTrigger) menuTriggers!: QueryList<MatMenuTrigger>;
@@ -183,6 +187,11 @@ export class DetailPostComponent implements OnInit {
         this.title = this.post.title;  // ตั้งค่า title ที่จะใช้ในการแก้ไข
         this.currentMediaIndex = 0;
         console.log('Fetched post details:', this.post);
+        
+        // ตรวจสอบว่ามีรูปหรือวิดีโอหรือไม่
+        const totalMedia = (this.post.images?.length || 0) + (this.post.videos?.length || 0);
+        console.log('Total media found:', totalMedia);
+        
         this.updateCurrentMedia(); // เรียกอัปเดต media หลังจากโหลดโพสต์
       },
       (error) => {
@@ -237,21 +246,37 @@ export class DetailPostComponent implements OnInit {
         ...this.post?.images.map((url) => ({ type: 'image', url })),
         ...this.post?.videos.map((url) => ({ type: 'video', url }))
       ];
+      
+      // ตรวจสอบว่า currentMediaIndex อยู่ในช่วงที่ถูกต้อง
+      if (this.currentMediaIndex >= 0 && this.currentMediaIndex < allMedia.length) {
       this.currentMedia = allMedia[this.currentMediaIndex];
+        console.log('Updated current media:', this.currentMedia);
+      } else {
+        console.error('Invalid media index:', this.currentMediaIndex, 'Total media:', allMedia.length);
+        // รีเซ็ตเป็นรูปแรกถ้าดัชนีไม่ถูกต้อง
+        if (allMedia.length > 0) {
+          this.currentMediaIndex = 0;
+          this.currentMedia = allMedia[0];
+        }
+      }
     }
   }
 
   nextMedia(): void {
     if (this.post && (this.post.images.length + this.post.videos.length) > 1) {  // ตรวจสอบ post ว่ามีข้อมูลและมีหลาย media
-      this.currentMediaIndex = (this.currentMediaIndex + 1) % (this.post.images.length + this.post.videos.length);
+      const totalMedia = this.post.images.length + this.post.videos.length;
+      this.currentMediaIndex = (this.currentMediaIndex + 1) % totalMedia;
       this.updateCurrentMedia();
+      console.log('Next media - Index:', this.currentMediaIndex, 'Total:', totalMedia);
     }
   }
 
   prevMedia(): void {
     if (this.post && (this.post.images.length + this.post.videos.length) > 1) {  // ตรวจสอบ post ว่ามีข้อมูลและมีหลาย media
-      this.currentMediaIndex = (this.currentMediaIndex - 1 + (this.post.images.length + this.post.videos.length)) % (this.post.images.length + this.post.videos.length);
+      const totalMedia = this.post.images.length + this.post.videos.length;
+      this.currentMediaIndex = (this.currentMediaIndex - 1 + totalMedia) % totalMedia;
       this.updateCurrentMedia();
+      console.log('Previous media - Index:', this.currentMediaIndex, 'Total:', totalMedia);
     }
   }
 
@@ -478,6 +503,66 @@ export class DetailPostComponent implements OnInit {
       // ผู้ใช้กดยกเลิกการยืนยัน
       console.log('การดำเนินการถูกยกเลิกโดยผู้ใช้');
     }
+  }
+
+  onTouchStart(event: TouchEvent) {
+    // ตรวจสอบว่ามีรูปหรือวิดีโอหลายรูปหรือไม่
+    if (!this.post || (this.post.images.length + this.post.videos.length) <= 1) {
+      return;
+    }
+    
+    // ป้องกันการเลื่อนหน้าจอเมื่อเริ่มแตะ
+    event.preventDefault();
+    this.touchStartX = event.changedTouches[0].screenX;
+    this.touchStartY = event.changedTouches[0].screenY;
+    console.log('Touch start:', this.touchStartX, this.touchStartY);
+  }
+  
+  onTouchMove(event: TouchEvent) {
+    // ตรวจสอบว่ามีรูปหรือวิดีโอหลายรูปหรือไม่
+    if (!this.post || (this.post.images.length + this.post.videos.length) <= 1) {
+      return;
+    }
+    
+    // ป้องกันการเลื่อนหน้าจอเมื่อเลื่อนนิ้ว
+    event.preventDefault();
+    this.touchEndX = event.changedTouches[0].screenX;
+    this.touchEndY = event.changedTouches[0].screenY;
+  }
+  
+  onTouchEnd(event: TouchEvent) {
+    // ตรวจสอบว่ามีรูปหรือวิดีโอหลายรูปหรือไม่
+    if (!this.post || (this.post.images.length + this.post.videos.length) <= 1) {
+      return;
+    }
+    
+    // คำนวณระยะทางที่เลื่อน
+    const deltaX = this.touchStartX - this.touchEndX;
+    const deltaY = this.touchStartY - this.touchEndY;
+    
+    console.log('Touch end - Delta X:', deltaX, 'Delta Y:', deltaY);
+    
+    // ตรวจสอบว่าเป็นการเลื่อนแนวนอนหรือแนวตั้ง
+    const isHorizontalSwipe = Math.abs(deltaX) > Math.abs(deltaY);
+    
+    // ถ้าเป็นการเลื่อนแนวนอนและมีระยะทางมากกว่า 50px
+    if (isHorizontalSwipe && Math.abs(deltaX) > 50) {
+      if (deltaX > 0) {
+        // เลื่อนไปทางขวา (รูปถัดไป)
+        console.log('Swiping right - Next media');
+        this.nextMedia();
+      } else {
+        // เลื่อนไปทางซ้าย (รูปก่อนหน้า)
+        console.log('Swiping left - Previous media');
+        this.prevMedia();
+      }
+    }
+    
+    // รีเซ็ตค่า
+    this.touchStartX = 0;
+    this.touchEndX = 0;
+    this.touchStartY = 0;
+    this.touchEndY = 0;
   }
 
 }

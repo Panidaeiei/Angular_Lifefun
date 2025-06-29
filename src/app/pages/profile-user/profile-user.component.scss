@@ -1,5 +1,3 @@
-
-
 :host,
 html,
 body {
@@ -104,11 +102,113 @@ body {
   position: fixed;
   top: 0;
   left: 0;
+  width: 100vw;
   background-color: rgb(233, 135, 135);
   height: 90px;
-  width: 100%;
-  z-index: 100;
-  /* Ensure it is above other content */
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  box-sizing: border-box;
+
+  img {
+    width: 80px;
+    height: auto;
+  }
+  .fa-solid, .fa {
+    font-size: 40px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .fixed-toolbar {
+    height: 90px;
+    padding: 0 12px;
+    img { width: 60px; }
+    .fa-solid, .fa { font-size: 32px; }
+  }
+  .center-menu {
+    gap: 25px !important;
+  }
+  .post-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    padding: 10px 2px 0 2px;
+  }
+  .post-item {
+    aspect-ratio: 1/1;
+    min-width: 0;
+    min-height: 0;
+    border-radius: 0;
+    overflow: hidden;
+  }
+  .post-image, .post-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    aspect-ratio: 1/1;
+    display: block;
+    border-radius: 0;
+  }
+}
+
+// Mobile
+@media (max-width: 600px) {
+  .fixed-toolbar {
+    height: 80px;
+    padding: 0 6px;
+    img { width: 65px; }
+    .fa-solid, .fa { font-size: 22px; }
+    .itim-regular { font-size: 10px; }
+    .center-menu {
+      display: none !important;
+    }
+  }
+}
+
+/* ✅ เมนูกลาง (ปุ่มหลัก) — ซ่อนไปเมื่อจอแคบ */
+@media (max-width: 767px) {
+  .center-menu {
+    display: none;
+  }
+}
+
+/* ✅ สำหรับ desktop/tablet */
+@media (min-width: 768px) {
+  .center-menu {
+    display: flex;
+    gap: 50px;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+  }
+}
+
+.add-post-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: #fff;
+  color: #e27c96;
+  font-size: 32px;
+  box-shadow: none;
+  border: none;
+  transition: background 0.2s, color 0.2s;
+  text-decoration: none;
+  outline: none;
+
+  &:hover, &:focus {
+    background: #ffe6ee;
+    color: #d14b72;
+  }
+  &:active {
+    background: #f9c5d1;
+    color: #b03a5b;
+  }
 }
 
 
@@ -218,31 +318,326 @@ body {
 
 .post-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, 300px); /* ความกว้างของแต่ละโพสต์ถูกกำหนดเป็น 300px */
-  gap: 10px; /* ระยะห่างระหว่างโพสต์ */
-  padding: 40px; /* ระยะห่างจากขอบ */
-  justify-content: center;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  padding: 16px;
 }
 
 .post-item {
-  width: 300px; /* กำหนดความกว้างเฉพาะโพสต์ */
   position: relative;
-  margin-top: -15px; 
+  width: 100%;
+  aspect-ratio: 1/1;
+  overflow: hidden;
+  /* border-radius: 8px; */
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.post-image,
-.post-video {
-  width: 300px; /* ความกว้างของสื่อ */
-  height: 300px; /* ความสูงของสื่อ */
+.post-image, .post-video {
+  width: 100%;
+  height: 100%;
   object-fit: cover;
-  border-radius: 0px; /* ไม่มีความมน */
+  aspect-ratio: 1/1;
+  display: block;
 }
-
 
 .multiple-media-icon {
-  top: 10px;
-  right: 10px;
-  padding: 5px;
+  position: absolute;
+  z-index: 2;
+  background: rgba(0,0,0,0.25);
   border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: 6px;
+  right: 6px;
+  padding: 2px;
+  font-size: 30px;
 }
+
+.add-post-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: #fff;
+  color: #e27c96;
+  font-size: 32px;
+  box-shadow: none;
+  border: none;
+  transition: background 0.2s, color 0.2s;
+  text-decoration: none;
+  outline: none;
+
+  &:hover, &:focus {
+    background: #ffe6ee;
+    color: #d14b72;
+  }
+  &:active {
+    background: #f9c5d1;
+    color: #b03a5b;
+  }
+}
+
+@media (max-width: 600px) {
+  .add-post-btn {
+    width: 44px;
+    height: 44px;
+    font-size: 26px;
+  }
+}
+
+.material-icons-outlined {
+  font-family: 'Material Icons Outlined';
+  font-size: 32px;
+  color: #222;
+  transition: color 0.2s;
+  vertical-align: middle;
+}
+a:hover .material-icons-outlined,
+a:focus .material-icons-outlined {
+  color: #e27c96;
+}
+@media (max-width: 600px) {
+  .material-icons-outlined {
+    font-size: 24px;
+  }
+}
+
+.profile-header-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-bottom: 48px;
+  padding: 0 8px;
+}
+
+.profile-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 100px;
+  width: 100%;
+  max-width: 1300px;
+  margin: 0 auto;
+  flex-wrap: nowrap;
+}
+
+.profile-avatar {
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 6px solid #fff;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+
+.profile-info {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.profile-username-row {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.profile-username {
+  font-size: 40px;
+}
+
+.profile-stats {
+  display: flex;
+  flex-direction: row;
+  gap: 40px;
+  justify-content: flex-start;
+  margin-bottom: 18px;
+}
+
+.profile-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.profile-stat-number {
+  font-size: 28px;
+  font-weight: ถ00;
+}
+
+.profile-stat-label {
+  font-size: 18px;
+}
+
+.profile-description {
+  font-size: 22px;
+  margin-top: 18px;
+  margin-bottom: 18px;
+}
+
+/* Tablet */
+@media (max-width: 1024px) and (min-width: 601px) {
+  .profile-header {
+    gap: 40px;
+    max-width: 98vw;
+  }
+  .profile-avatar {
+    width: 140px;
+    height: 140px;
+  }
+  .profile-info {
+    gap: 20px;
+  }
+  .profile-username-row {
+    gap: 16px;
+    margin-bottom: 10px;
+  }
+  .profile-username {
+    font-size: 28px;
+  }
+  .profile-stats {
+    gap: 24px;
+    margin-bottom: 10px;
+  }
+  .profile-stat-number {
+    font-size: 20px;
+  }
+  .profile-stat-label {
+    font-size: 14px;
+  }
+  .profile-description {
+    font-size: 15px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+  .buttonEdit {
+    width: 120px;
+    height: 38px;
+    font-size: 15px;
+  }
+}
+
+
+@media (max-width: 600px) {
+  .profile-header-mobile {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 18px;
+    padding: 24px 0px 0 0px;
+    width: 100%;
+    margin-top: -40px;
+    align-items: center;
+    justify-content: center;
+  }
+  .profile-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    flex-shrink: 0;
+  }
+  .profile-info-mobile {
+    flex: 1 1 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+  }
+  .profile-row-mobile {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+    flex-wrap: wrap;
+  }
+  .profile-username-mobile {
+    font-size: 18px;
+    font-weight: 600;
+    margin-right: 8px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 120px;
+  }
+  .buttonEdit-mobile {
+    padding: 4px 14px;
+    font-size: 13px;
+    border-radius: 8px;
+    background: #f0d9db;
+    border: none;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .profile-stats-mobile {
+    display: flex;
+    flex-direction: row;
+    gap: 18px;
+    width: 100%;
+    justify-content: flex-start;
+    margin-top: 4px;
+    margin-bottom: 2px;
+  }
+  .profile-stat-mobile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 50px;
+  }
+  .profile-stat-number-mobile {
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1.1;
+  }
+  .profile-stat-label-mobile {
+    font-size: 11px;
+    color: #444;
+    line-height: 1.1;
+  }
+  
+  .profile-description-mobile {
+    padding: 4px 0 0 0;
+    font-size: 13px;
+    color: #222;
+    text-align: left;
+    word-break: break-word;
+    max-width: 100%;
+  }
+  .post-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    padding: 10px 2px 0 2px;
+  }
+  
+}
+
+@media (max-width: 1024px) {
+  .multiple-media-icon {
+    top: 4px;
+    right: 4px;
+    padding: 1.5px;
+    font-size: 22px;
+  }
+}
+@media (max-width: 600px) {
+  .multiple-media-icon {
+    top: -3px;
+    right: -4px;
+    padding: 0.5px;
+    font-size: 10px !important;
+  }
+}
+
 

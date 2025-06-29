@@ -1,10 +1,10 @@
 :host,
 html,
 body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
   background-color: rgb(249, 241, 239);
   /* สีพื้นหลัง */
   box-sizing: border-box;
@@ -14,12 +14,12 @@ body {
 }
 
 :host {
-  display: block;
+    display: block;
   min-height: 100vh;
   /* ครอบคลุมความสูงเต็มหน้าจอ */
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 body {
@@ -184,12 +184,12 @@ button {
   position: fixed;
   top: 0;
   left: 0;
-  background-color: rgb(233, 135, 135);
+  background-color: rgb(233, 135, 135); 
   height: 90px;
   width: 100%;
   z-index: 100;
   /* Ensure it is above other content */
-
+  
 }
 
 .content {
@@ -200,45 +200,45 @@ button {
 .mat-menu-panel {
   background-color: white !important;
   /* บังคับใช้สีขาว */
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }  
 
-::ng-deep .mat-menu-panel {
+  ::ng-deep .mat-menu-panel {
   background-color: white !important;
   /* เปลี่ยนพื้นหลัง */
   border-radius: 8px;
   /* เพิ่มความโค้ง */
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   /* เพิ่มเงา */
-  border: 1px solid #e0e0e0;
-}
-
-.loading-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+    border: 1px solid #e0e0e0;
+  }
+  
+  .loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
   background-color: rgba(255, 255, 255, 0.8);
   /* ความทึบแสงที่เหมาะสม */
-  display: flex;
-  justify-content: center;
-  align-items: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   z-index: 10;
   /* ลด z-index ถ้าไม่จำเป็น */
 }
-
-.spinner {
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #3498db;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
+  
+  .spinner {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #3498db;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
   0% {
     transform: rotate(0deg);
   }
@@ -246,42 +246,42 @@ button {
   100% {
     transform: rotate(360deg);
   }
-}
-
+  }
+  
 //font
 .itim-regular {
-  margin-top: 5px;
-  font-family: "Itim", serif;
-  font-weight: 400;
-  font-style: normal;
+    margin-top: 5px;
+    font-family: "Itim", serif;
+    font-weight: 400;
+    font-style: normal;
 }
 
 .itim-regular2 {
-  margin-top: 5px;
-  font-family: "Itim", serif;
-  font-weight: 400;
-  font-style: normal;
-  font-size: 30px;
+    margin-top: 5px;
+    font-family: "Itim", serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 30px;
 }
 
 
 .menu-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-decoration: none;
-  position: relative;
-}
-
-.menu-item.active {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    position: relative;
+  }
+  
+  .menu-item.active {
   color: #ff0000;
   /* สีเมื่อ active */
-}
-
+  }
+  
 
 .menu-item span {
-  font-size: 14px;
-  margin-top: 5px;
+    font-size: 14px;
+    margin-top: 5px;
 }
 
 .menu-item.active i,
@@ -291,14 +291,14 @@ button {
 }
 
 .menu-item.active::after {
-  content: '';
-  position: absolute;
-  bottom: -12px;
+    content: '';
+    position: absolute;
+    bottom: -12px;
   left: 100%;
   /* เริ่มที่กึ่งกลางของเมนู */
   transform: translateX(-50%);
   /* ดันกลับมาครึ่งหนึ่งของความกว้าง */
-  height: 4px;
+    height: 4px;
   background-color: #000000;
   /* สีขีดล่าง */
   width: 70px;
@@ -326,12 +326,14 @@ button {
   width: 90%;
   position: relative;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 10000;
 }
 
 #map {
   width: 100%;
   height: 500px;
   border-radius: 10px;
+  z-index: 1;
 }
 
 // Responsive for create-post main content
@@ -910,4 +912,87 @@ button {
   font-weight: bold;
   z-index: 10;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+.custom-geocoder-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  width: 100%;
+}
+.custom-geocoder-input {
+  flex: 1 1 0;
+  width: 100%;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+.custom-geocoder-btn {
+  margin-left: 8px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background: #fff;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.custom-geocoder-dropdown {
+  position: absolute;
+  top: 38px;
+  left: 0;
+  right: 0;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 10002;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+.custom-geocoder-dropdown li {
+  padding: 8px;
+  cursor: pointer;
+}
+.custom-geocoder-dropdown li:hover {
+  background: #f0f0f0;
+}
+
+.add-post-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: #fff;
+  color: #e27c96;
+  font-size: 32px;
+  box-shadow: none;
+  border: none;
+  transition: background 0.2s, color 0.2s;
+  text-decoration: none;
+  outline: none;
+
+  &:hover, &:focus {
+    background: #ffe6ee;
+    color: #d14b72;
+  }
+  &:active {
+    background: #f9c5d1;
+    color: #b03a5b;
+  }
+}
+
+@media (max-width: 600px) {
+  .add-post-btn {
+    width: 44px;
+    height: 44px;
+    font-size: 26px;
+  }
 }

@@ -1,0 +1,13 @@
+{
+  "/nominatim": {
+    "target": "https://nominatim.openstreetmap.org",
+    "secure": true,
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/nominatim": ""
+    },
+    "headers": {
+      "User-Agent": "Mozilla/5.0"
+    }
+  }
+} 

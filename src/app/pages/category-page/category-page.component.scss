@@ -5,7 +5,7 @@ body {
   padding: 0;
   width: 100%;
   height: 100%;
-  background-color: rgb(249, 241, 239);
+  background: linear-gradient(135deg, #fff5f5 0%, #ffb1b7 100%);
   /* สีพื้นหลัง */
   box-sizing: border-box;
   /* คำนวณขนาดไม่เกินขอบ */
@@ -19,7 +19,7 @@ body {
   align-items: center;
   justify-content: center;
   /* ครอบคลุมความสูงเต็มหน้าจอ */
-  background-color: rgb(249, 241, 239);
+  background: linear-gradient(135deg, #fff5f5 0%, #f8babf 100%);
   /* สีพื้นหลัง */
   background-size: cover;
   background-position: center;
@@ -29,7 +29,7 @@ body {
 body {
   overflow-y: auto;
   /* เปิดใช้งานการเลื่อนแนวตั้ง */
-  background-color: rgb(249, 241, 239);
+  background: linear-gradient(135deg, #fff5f5 0%, #ffe0e6 100%);
   /* สีพื้นหลังเหมือนกัน */
 }
 
@@ -37,13 +37,94 @@ body {
   position: fixed;
   top: 0;
   left: 0;
+  width: 100vw;
   background-color: rgb(233, 135, 135);
   height: 90px;
-  width: 100%;
-  z-index: 1;
-  /* Ensure it is above other content */
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  box-sizing: border-box;
+
+  img {
+    width: 80px;
+    height: auto;
+  }
+  .fa-solid, .fa {
+    font-size: 40px;
+  }
 }
 
+@media (max-width: 1024px) {
+  .fixed-toolbar {
+    height: 90px;
+    padding: 0 12px;
+    img { width: 60px; }
+    .fa-solid, .fa { font-size: 32px; }
+  }
+  .center-menu {
+    gap: 25px !important;
+  }
+}
+
+// Mobile
+@media (max-width: 600px) {
+  .fixed-toolbar {
+    height: 80px;
+    padding: 0 6px;
+    img { width: 65px; }
+    .fa-solid, .fa { font-size: 22px; }
+    .itim-regular { font-size: 10px; }
+    .center-menu {
+      display: none !important;
+    }
+  }
+}
+
+/* ✅ เมนูกลาง (ปุ่มหลัก) — ซ่อนไปเมื่อจอแคบ */
+@media (max-width: 767px) {
+  .center-menu {
+    display: none;
+  }
+}
+
+/* ✅ สำหรับ desktop/tablet */
+@media (min-width: 768px) {
+  .center-menu {
+    display: flex;
+    gap: 50px;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+  }
+}
+
+.add-post-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: #fff;
+  color: #e27c96;
+  font-size: 32px;
+  box-shadow: none;
+  border: none;
+  transition: background 0.2s, color 0.2s;
+  text-decoration: none;
+  outline: none;
+
+  &:hover, &:focus {
+    background: #ffe6ee;
+    color: #d14b72;
+  }
+  &:active {
+    background: #f9c5d1;
+    color: #b03a5b;
+  }
+}
 
 .drawer {
   position: fixed;
@@ -82,18 +163,206 @@ body {
 .drawer-content ul li {
   margin: 10px 0;
 }
-
-/* ในไฟล์ CSS หรือใน styles */
-.hover-img {
-  border-radius: 50%;
-  width: 300px;
-  height: 300px;
-  object-fit: cover;
-  transition: transform 0.3s, border 0.3s;
+/* หน้าเนื้อหาหลัก */
+.page-content {
+  margin-top: 100px;
+  padding: 20px;
+  min-height: calc(100vh - 130px);
 }
 
-.hover-img:hover {
-  transform: scale(1.05);
-  border: 4px solid #e98072;
-  cursor: pointer;
+/* หัวข้อหลัก */
+.page-title {
+  text-align: center;
+  margin-bottom: 50px;
+  margin-top: 30px;
+  
+  span {
+    font-size: 24px;
+    font-weight: 600;
+    color: #2c3e50;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    position: relative;
+    padding: 0 20px;
+    
+    &::before {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 3px;
+      background: linear-gradient(90deg, #e98072, #ee7c85);
+      border-radius: 2px;
+    }
+  }
+}
+
+/* คอนเทนเนอร์หลัก */
+.category-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 40px;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.category-row {
+  display: flex;
+  flex-direction: row;
+  gap: 80px;
+  justify-content: center;
+  margin-bottom: 50px;
+  width: 100%;
+}
+
+.category-row-bottom {
+  display: flex;
+  flex-direction: row;
+  gap: 80px;
+  justify-content: center;
+  margin-top: ๅ0px;
+  width: 100%;
+}
+
+.category-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-5px);
+  }
+}
+
+.category-label {
+  font-size: 20px;
+  margin-top: 16px;
+  font-weight: 500;
+  color: #34495e;
+  text-align: center;
+  transition: color 0.3s ease;
+}
+
+.hover-img {
+  border-radius: 50%;
+  width: 280px;
+  height: 280px;
+  object-fit: cover;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+  border: 4px solid rgba(255,255,255,0.8);
+  
+  &:hover {
+    transform: scale(1.08);
+    box-shadow: 0 15px 35px rgba(233, 128, 114, 0.3);
+    border-color: #e98072;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .category-row, .category-row-bottom {
+    gap: 50px;
+  }
+  
+  .hover-img {
+    width: 220px;
+    height: 220px;
+  }
+  
+  .category-label {
+    font-size: 18px;
+  }
+  
+  .page-title span {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 768px) {
+  .category-row, .category-row-bottom {
+    gap: 30px;
+  }
+  
+  .hover-img {
+    width: 180px;
+    height: 180px;
+  }
+  
+  .category-label {
+    font-size: 16px;
+  }
+  
+  .page-title span {
+    font-size: 22px;
+  }
+}
+
+@media (max-width: 600px) {
+  .page-content {
+    margin-top: 100px;
+    padding: 15px;
+  }
+  
+  .category-row, .category-row-bottom {
+    flex-direction: column;
+    gap: 30px;
+    justify-content: center;
+    margin-bottom: 30px;
+    margin-top: 30px;
+    align-items: center;
+  }
+  
+  .category-col {
+    width: 100%;
+    max-width: 280px;
+    margin-bottom: 20px;
+  }
+  
+  .hover-img {
+    width: 200px;
+    height: 200px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+  }
+  
+  .category-label {
+    font-size: 18px;
+    margin-top: 12px;
+  }
+  
+  .page-title span {
+    font-size: 20px;
+    
+    &::before {
+      width: 50px;
+      height: 2px;
+    }
+  }
+}
+
+/* Animation สำหรับการโหลด */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.category-col {
+  animation: fadeInUp 0.6s ease forwards;
+  
+  &:nth-child(1) { animation-delay: 0.1s; }
+  &:nth-child(2) { animation-delay: 0.2s; }
+  &:nth-child(3) { animation-delay: 0.3s; }
+  &:nth-child(4) { animation-delay: 0.4s; }
+  &:nth-child(5) { animation-delay: 0.5s; }
+  &:nth-child(6) { animation-delay: 0.6s; }
 }

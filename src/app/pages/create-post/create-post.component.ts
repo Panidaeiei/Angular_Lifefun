@@ -54,7 +54,9 @@ export class CreatePostComponent implements OnInit {
   map: any;
   isMapOpen: boolean = false;
   isMobile = false;
-
+  customSearch: string = '';
+  customResults: any[] = [];
+  customGeocoderTimeout: any = null;
 
   postData: Post = {
     title: '',
@@ -75,69 +77,26 @@ export class CreatePostComponent implements OnInit {
 
   openMapDialog() {
     this.isMapOpen = true;
-  
+
     setTimeout(() => {
       const mapElement = document.getElementById('map');
       if (!mapElement) {
         console.error('Map div ยังไม่ถูกโหลด');
         return;
       }
-  
+
       if (this.map) {
         this.map.remove();
       }
-  
+
       // ✅ สร้างแผนที่ใหม่
       this.map = L.map(mapElement).setView([13.736717, 100.523186], 6);
-  
+
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© OpenStreetMap contributors'
       }).addTo(this.map);
-  
-      let geocoderControl: any;
-      
-      // ✅ ใส่ Geocoder แบบ try-catch เพื่อกัน crash
-      try {
-        const geocoderService = L.Control.Geocoder.nominatim({
-          geocodingQueryParams: { 'accept-language': 'th' }
-        });
-  
-        geocoderControl = L.Control.geocoder({
-          geocoder: geocoderService,
-          defaultMarkGeocode: true
-        })
-        .on('markgeocode', (e: any) => {
-          const center = e.geocode.center;
-          const name = e.geocode.name;
-  
-          L.marker(center).addTo(this.map);
-          this.map.setView(center, 13);
-          this.postData.location = name;
-          this.closeMapDialog();
-        });
-  
-        geocoderControl.addTo(this.map);
-      } catch (error) {
-        console.error('Geocoder error:', error);
-        return;
-      }
-  
-      setTimeout(() => {
-        const input = document.querySelector('.leaflet-control-geocoder-form input');
-        if (input && geocoderControl) {
-          // The geocoder control handles input automatically
-          // We just need to listen for the markgeocode event
-          geocoderControl.on('markgeocode', (e: any) => {
-            const center = e.geocode.center;
-            const name = e.geocode.name;
-            L.marker(center).addTo(this.map);
-            this.map.setView(center, 13);
-            this.postData.location = name;
-            this.closeMapDialog();
-          });
-        }
-      }, 500);
-  
+
+      // ไม่ต้องมี geocoderControl อีกต่อไป
     }, 100); // รอให้ DOM สร้าง #map เสร็จก่อน
   }
   
@@ -363,5 +322,48 @@ export class CreatePostComponent implements OnInit {
 
   close() {
     this.location.back();
+  }
+
+  onCustomInput() {
+    // Debounce
+    clearTimeout(this.customGeocoderTimeout);
+    this.customGeocoderTimeout = setTimeout(() => {
+      if (this.customSearch.length > 1) {
+        this.fetchCustomGeocode(this.customSearch);
+      } else {
+        this.customResults = [];
+      }
+    }, 400);
+  }
+
+  onCustomSearch() {
+    if (this.customSearch.length > 1) {
+      this.fetchCustomGeocode(this.customSearch);
+    }
+  }
+
+  fetchCustomGeocode(query: string) {
+    fetch(
+      window.location.origin +
+        `/nominatim/search?q=${encodeURIComponent(query)}&format=json&addressdetails=1&accept-language=th`
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        this.customResults = data;
+      });
+  }
+
+  selectCustomResult(result: any) {
+    // Center map and add marker
+    if (this.map) {
+      const lat = parseFloat(result.lat);
+      const lon = parseFloat(result.lon);
+      L.marker([lat, lon]).addTo(this.map);
+      this.map.setView([lat, lon], 13);
+      this.postData.location = result.display_name;
+      this.customResults = [];
+      this.customSearch = result.display_name;
+      this.closeMapDialog();
+    }
   }
 }

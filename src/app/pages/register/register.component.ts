@@ -6,6 +6,7 @@ import { UserService } from '../../services/Userservice';
 import { User } from '../../models/register_model';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-register',
@@ -30,7 +31,7 @@ export class RegisterComponent {
   isPasswordVisible: boolean = false;
   isConfirmPasswordVisible: boolean = false;
   isMobile = false;
-  constructor(private userService: UserService, private router: Router) { }
+  constructor(private userService: UserService, private router: Router, private location: Location) { }
 
   ngOnInit(): void {
     this.checkScreenSize();
@@ -190,6 +191,7 @@ export class RegisterComponent {
     );
   }
   
-
-
+  goBack() {
+    this.location.back();
+  }
 }

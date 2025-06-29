@@ -5,7 +5,7 @@ body {
   padding: 0;
   width: 100%;
   height: 100%;
-  background-color: rgb(249, 241, 239);
+  background: #faf6f3;
   /* สีพื้นหลัง */
   box-sizing: border-box;
   /* คำนวณขนาดไม่เกินขอบ */
@@ -31,47 +31,275 @@ body {
   /* สีพื้นหลังเหมือนกัน */
 }
   
-  .profile-wrapper {
-    position: relative;
-    text-align: center;
-    margin-top: 20px;
-  }
-  
+.profile-wrapper {
+  position: relative;
+  text-align: center;
+  margin-top: 24px;
+}
+
+.profile-title {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 24px;
+  color: #222;
+  letter-spacing: 0.5px;
+}
+
+.profile-container {
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px 20px 20px 20px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  transition: box-shadow 0.2s;
+}
+
+.profile-header {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.back-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  position: absolute;
+  left: 12px;
+  top: 12px;
+  z-index: 2;
+  padding: 0;
+}
+
+.profile-image-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.image-container {
+  position: relative;
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+  background: #f7f7f7;
+}
+.image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+.edit-icon {
+  position: absolute;
+  bottom: 6px;
+  right: 6px;
+  background: #fff;
+  border: none;
+  border-radius: 50%;
+  padding: 7px;
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+.edit-icon i {
+  font-size: 16px;
+  color: #888;
+}
+.edit-icon:hover {
+  background: #f0f0f0;
+}
+
+.profile-form {
+  margin-top: 10px;
+}
+.form-group,
+.form-group > div,
+input,
+textarea,
+.form-group input,
+.form-group textarea,
+.form-group input[type='password'] {
+  width: 100% !important;
+  box-sizing: border-box;
+}
+label {
+  font-size: 1rem;
+  font-weight: 500;
+  margin-bottom: 6px;
+  color: #444;
+  text-align: left;
+  width: 100%;
+  padding-left: 2px;
+}
+input, textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 7px;
+  font-size: 1rem;
+  background: #fafafa;
+  color: #222;
+  transition: border 0.2s;
+  outline: none;
+  box-sizing: border-box;
+}
+input:focus, textarea:focus {
+  border: 1.5px solid #e27c96;
+  background: #fff;
+}
+textarea {
+  resize: vertical;
+  min-height: 60px;
+  max-height: 180px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 18px;
+  width: 100%;
+}
+.cancel-button, .save-button {
+  width: 48%;
+  min-width: 120px;
+  max-width: 220px;
+  padding: 10px 0;
+  font-size: 1rem;
+  border-radius: 7px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  box-sizing: border-box;
+}
+.cancel-button {
+  background: #f7b2b2;
+  color: #fff;
+}
+.save-button {
+  background: #e27c96;
+  color: #fff;
+}
+.cancel-button:hover, .save-button:hover {
+  opacity: 0.85;
+}
+
+.loading-overlay {
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  background: rgba(255,255,255,0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+.spinner {
+  border: 6px solid #f3f3f3;
+  border-top: 6px solid #e27c96;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Password field group (minimal) */
+.form-group[style*="position: relative"] > div {
+  width: 100% !important;
+  max-width: 100%;
+}
+.form-group input[type="password"],
+.form-group input[type="text"] {
+  font-size: 1rem;
+}
+.form-group button[type="button"] {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #888;
+  font-size: 1.1rem;
+  padding: 0 6px;
+  transition: color 0.2s;
+}
+.form-group button[type="button"]:hover {
+  color: #e27c96;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .profile-container {
+      width: auto;
+      max-width: calc(100vw - 40px); /* ถ้า margin 20px */
+      margin: 0 20px;
+      box-sizing: border-box;
+      padding: 12px 12px;
+      border-radius: 8px;
+    }
+
   .profile-title {
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 30px;
-    color: #0c0b0b;
+    font-size: 1.3rem;
+    margin-bottom: 18px;
   }
-  
-  .profile-container {
-    width: 90%;
-    max-width: 600px;
-    margin: 0 auto;
-    background-color: #fce8e4;
-    border-radius: 15px;
-    padding: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  .image-container {
+    width: 80px;
+    height: 80px;
   }
-  
-  .profile-header {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
+  .edit-icon {
+    padding: 5px;
+    bottom: 2px;
+    right: 2px;
   }
-
-
-  
-  .back-button,
-  .delete-button {
-    background-color: transparent;
-    border: none;
-    color: #ff6161;
-    font-size: 50px;
-    cursor: pointer;
-    margin-left: 20px;
-    margin-top: 20px;
+  .form-group {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    margin-bottom: 10px !important;
+    gap: 0.5rem !important;
+    width: 100% !important;
+    position: relative;
   }
+  label {
+    font-size: 0.98rem;
+    padding-left: 0 !important;
+    margin-bottom: 4px !important;
+    text-align: left !important;
+    width: 100% !important;
+    font-weight: 500;
+  }
+  input, textarea {
+    width: 100% !important;
+    font-size: 0.98rem;
+    padding: 8px 8px;
+    border-radius: 6px;
+    box-sizing: border-box;
+  }
+  .form-actions {
+    gap: 8px;
+    margin-top: 10px;
+    width: 100%;
+  }
+  .cancel-button, .save-button {
+    font-size: 0.98rem;
+    padding: 8px 0;
+    width: 48%;
+    min-width: 90px;
+    max-width: 100%;
+    border-radius: 6px;
+  }
+}
   
   .profile-content {
     margin-top: 20px;

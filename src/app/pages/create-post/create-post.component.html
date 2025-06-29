@@ -23,8 +23,9 @@
             <span class="itim-regular">ติดตาม</span>
         </div>
         <div style="margin-left: 20px;">
-            <a [routerLink]="['/CreatePost']" [queryParams]="{ id: userId }"><img
-                    src="../../../assets/images/Addpost.png" alt="" width="60px"></a>
+            <a [routerLink]="['/CreatePost']" [queryParams]="{ id: userId }" class="add-post-btn" aria-label="สร้างโพสต์">
+                <i class="fa-solid fa-plus"></i>
+            </a>
         </div>
         <!-- การแจ้งเตือน -->
         <div style="display: flex; flex-direction: column; align-items: center;">
@@ -171,6 +172,24 @@
                                 <div *ngIf="isMapOpen" class="dialog-overlay" (click)="closeMapDialog()">
                                     <div class="dialog-box" (click)="$event.stopPropagation()">
                                         <button class="close-button" (click)="closeMapDialog()">×</button>
+                                        <div class="custom-geocoder-container">
+                                            <input
+                                                type="text"
+                                                [(ngModel)]="customSearch"
+                                                (input)="onCustomInput()"
+                                                placeholder="ค้นหาสถานที่"
+                                                class="custom-geocoder-input"
+                                                autocomplete="off"
+                                            />
+                                            <button (click)="onCustomSearch()" class="custom-geocoder-btn">
+                                                <i class="fa fa-search"></i>
+                                            </button>
+                                            <ul *ngIf="customResults.length > 0" class="custom-geocoder-dropdown">
+                                                <li *ngFor="let result of customResults" (click)="selectCustomResult(result)">
+                                                    {{ result.display_name }}
+                                                </li>
+                                            </ul>
+                                        </div>
                                         <div id="map" style="height: 400px;"></div>
                                     </div>
                                 </div>
@@ -309,6 +328,24 @@
     <div *ngIf="isMapOpen" class="dialog-overlay" (click)="closeMapDialog()">
         <div class="dialog-box" (click)="$event.stopPropagation()">
             <button class="close-button" (click)="closeMapDialog()">×</button>
+            <div class="custom-geocoder-container">
+                <input
+                    type="text"
+                    [(ngModel)]="customSearch"
+                    (input)="onCustomInput()"
+                    placeholder="ค้นหาสถานที่"
+                    class="custom-geocoder-input"
+                    autocomplete="off"
+                />
+                <button (click)="onCustomSearch()" class="custom-geocoder-btn">
+                    <i class="fa fa-search"></i>
+                </button>
+                <ul *ngIf="customResults.length > 0" class="custom-geocoder-dropdown">
+                    <li *ngFor="let result of customResults" (click)="selectCustomResult(result)">
+                        {{ result.display_name }}
+                    </li>
+                </ul>
+            </div>
             <div id="map" style="height: 400px;"></div>
         </div>
     </div>

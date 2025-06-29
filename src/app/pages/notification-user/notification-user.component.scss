@@ -1,5 +1,3 @@
-
-
 :host,
 html,
 body {
@@ -511,4 +509,38 @@ body {
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
+}
+
+.add-post-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: #fff;
+  color: #e27c96;
+  font-size: 32px;
+  box-shadow: none;
+  border: none;
+  transition: background 0.2s, color 0.2s;
+  text-decoration: none;
+  outline: none;
+
+  &:hover, &:focus {
+    background: #ffe6ee;
+    color: #d14b72;
+  }
+  &:active {
+    background: #f9c5d1;
+    color: #b03a5b;
+  }
+}
+
+@media (max-width: 600px) {
+  .add-post-btn {
+    width: 44px;
+    height: 44px;
+    font-size: 26px;
+  }
 }

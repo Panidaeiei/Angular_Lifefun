@@ -7,51 +7,51 @@
         <div style="width: 5%;"></div>
         <!-- เมนูตรงกลาง -->
         <div class="center-menu" style="display: flex; flex-grow: 1; justify-content: center; align-items: center; gap: 50px;">
-            <div style="display: flex; flex-direction: column; align-items: center;">
-                <a [routerLink]="['/HomepageUser']" [queryParams]="{ id: userId }">
-                    <i style="font-size: 40px; color: black;" class="fa-solid fa-house"></i>
-                </a>
-                <span class="itim-regular">หน้าหลัก</span>
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <a [routerLink]="['/HomepageUser']" [queryParams]="{ id: userId }">
+                        <i style="font-size: 40px; color: black;" class="fa-solid fa-house"></i>
+                    </a>
+                    <span class="itim-regular">หน้าหลัก</span>
+                </div>
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <a [routerLink]="['/Homepagefollow']" [queryParams]="{ id: userId }">
+                        <i style="font-size: 40px; color: black;" class="fa-solid fa-users"></i>
+                    </a>
+                    <span class="itim-regular">ติดตาม</span>
+                </div>
+                <div>
+                    <a [routerLink]="['/CreatePost']" [queryParams]="{ id: userId }"><img
+                            src="../../../assets/images/Addpost.png" alt="" width="60px"></a>
+                </div>
+                <!-- การแจ้งเตือน -->
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <a [routerLink]="['/Notification_user']" [queryParams]="{ id: userId }">
+                        <i style="font-size: 40px; color: black;" class="fa-solid fa-bell"></i>
+                    </a>
+                    <span class="itim-regular">การแจ้งเตือน</span>
+                </div>
+                <!-- โปรไฟล์ -->
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <a [routerLink]="['/ProfileUser']" [queryParams]="{ id: userId }">
+                        <i style="font-size: 40px; color: black;" class="fa-solid fa-user"></i>
+                    </a>
+                    <span class="itim-regular">โปรไฟล์</span>
+                </div>
             </div>
-            <div style="display: flex; flex-direction: column; align-items: center;">
-                <a [routerLink]="['/Homepagefollow']" [queryParams]="{ id: userId }">
-                    <i style="font-size: 40px; color: black;" class="fa-solid fa-users"></i>
-                </a>
-                <span class="itim-regular">ติดตาม</span>
-            </div>
-            <div>
-                <a [routerLink]="['/CreatePost']" [queryParams]="{ id: userId }"><img
-                        src="../../../assets/images/Addpost.png" alt="" width="60px"></a>
-            </div>
-            <!-- การแจ้งเตือน -->
-            <div style="display: flex; flex-direction: column; align-items: center;">
-                <a [routerLink]="['/Notification_user']" [queryParams]="{ id: userId }">
-                    <i style="font-size: 40px; color: black;" class="fa-solid fa-bell"></i>
-                </a>
-                <span class="itim-regular">การแจ้งเตือน</span>
-            </div>
-            <!-- โปรไฟล์ -->
-            <div style="display: flex; flex-direction: column; align-items: center;">
-                <a [routerLink]="['/ProfileUser']" [queryParams]="{ id: userId }">
-                    <i style="font-size: 40px; color: black;" class="fa-solid fa-user"></i>
-                </a>
-                <span class="itim-regular">โปรไฟล์</span>
-            </div>
-        </div>
         <!-- เมนูขวาสุด -->
         <div class="toolbar-actions" style="display: flex; align-items: center; gap: 16px;">
-            <!-- ค้นหา -->
-            <div style="display: flex; flex-direction: column; align-items: center;">
-                <a [routerLink]="['/search_users']" [queryParams]="{ id: userId }">
-                    <i style="font-size: 40px; color: black;" class="fa-solid fa-search"></i>
-                </a>
-            </div>
-            <!-- ไอคอนเมนู -->
+        <!-- ค้นหา -->
+        <div style="display: flex; flex-direction: column; align-items: center;">
+            <a [routerLink]="['/search_users']" [queryParams]="{ id: userId }">
+                <i style="font-size: 40px; color: black;" class="fa-solid fa-search"></i>
+            </a>
+        </div>
+        <!-- ไอคอนเมนู -->
             <div style="display: flex; flex-direction: column; align-items: center; margin-left: 10px;">
-                <a href="javascript:void(0)" (click)="toggleDrawer()">
-                    <i style="font-size: 40px; color: black;" class="fa-solid fa-bars"></i>
-                </a>
-            </div>
+            <a href="javascript:void(0)" (click)="toggleDrawer()">
+                <i style="font-size: 40px; color: black;" class="fa-solid fa-bars"></i>
+            </a>
+        </div>
         </div>
         <!-- Drawer -->
         <div class="drawer" [class.open]="isDrawerOpen">
@@ -107,85 +107,78 @@
                 <button mat-flat-button style="background-color: rgb(226, 124, 150); width: 100px;" (click)="toggleDrawer()">ปิด</button>
             </div>
         </div>
+        <ng-content select="[toolbar-content]"></ng-content>
     </mat-toolbar>
-</div>
-<div >
-    <div class="drawer-notification" [class.open]="isNotiDrawerOpen">
-        <div class="drawer-notification-content">
-            <div style="position: relative; width: 100%; padding: 10px 0;">
-                <!-- ข้อความตรงกลาง -->
-                <div style="text-align: center;">
-                    <span class="fa-solid itim-regular" style="font-size: 30px; color: black; margin-top: 30px;">
-                        แชท
-                    </span>
                 </div>
 
-                <!-- ไอคอนชิดขวา -->
-                <div style="position: absolute; right: 20px; top: 50%; transform: translateY(-50%);"
-                    (click)="toggleNotiDrawer()">
-                    <i class="fa-solid fa-xmark" style="font-size: 22px; color: black; cursor: pointer;"></i>
+<div class="chat-layout">
+    <!-- Drawer รายชื่อแชท (มือถือ) -->
+    <div *ngIf="isMobile" class="mobile-drawer-overlay" [class.open]="isDrawerOpenMobile" (click)="closeMobileDrawer()">
+        <aside class="mobile-drawer" (click)="$event.stopPropagation()">
+            <div class="chat-sidebar-header">
+                <div class="search-container">
+                    <input type="text" placeholder="ค้นหา..." class="chat-search" [(ngModel)]="searchQuery" (keydown.enter)="searchChats()" />
+                    <button class="search-btn" (click)="searchChats()">
+                        <i class="fa-solid fa-search"></i>
+                    </button>
                 </div>
             </div>
-            <div class="noti-list">
-                <mat-card class="noti-card" (click)="selectCard('chat1')">
-                    <div class="card-content">
-                        <div class="avatar">
-                            <img src="https://i.pinimg.com/736x/5c/d7/49/5cd74978de75254f1af5f1c32ac92e19.jpg" alt=""
-                                style="width: 60px; height: 60px; border-radius: 50%;">
-                        </div>
-                        <div class="text-content">
-                            <div class="title itim-regular">วาสันต์</div>
-                        </div>
+            <div class="chat-list">
+                <div class="chat-list-item" *ngFor="let chat of chatList" (click)="selectChat(chat); closeMobileDrawer()">
+                    <img [src]="chat.avatar" alt="avatar" />
+                    <div class="chat-list-info">
+                        <span class="chat-list-name">{{ chat.name }}</span>
+                        <span class="chat-list-last">{{ chat.lastMessage }}</span>
                     </div>
-                </mat-card>
-
-            </div>
-
-        </div>
-    </div>
-
-    <!-- ปุ่ม Toggle -->
-    <div class="drawer-toggle" [class.open]="isNotiDrawerOpen" (click)="toggleNotiDrawer()">
-        <i class="fa-solid" [ngClass]="isNotiDrawerOpen ? 'fa-arrow-left' : 'fa-arrow-right'"></i>
-    </div>
-
-    <div class="content-area" *ngIf="selectedCard">
-        <h2>{{ selectedCard.title }}</h2>
-        <p>{{ selectedCard.description }}</p>
-    </div>
-
-
-    <div >
-        <div class="chat-header">
-                <img [src]="selectedChatUser.image" alt="avatar"
-                    style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover; margin-right: 10px;">
-                <strong style="font-size: 20px;">{{ selectedChatUser.name }}</strong>
-            </div>
-        <!-- เงื่อนไขแสดงกล่องแชทเมื่อเลือกผู้ใช้แล้ว -->
-        <div class="chat-area" *ngIf="selectedChatUser">
-            <!-- Header -->
-        
-            <!-- กล่องข้อความ -->
-            <div class="chat-messages">
-                <div class="message right">สวัสดีครับ</div>
-                <div class="message left">สวัสดีค่ะ</div>
-                <div class="message left">
-                    <img src="https://www.w3schools.com/w3images/falls2.jpg"
-                        style="width: 200px; height: 150px; border-radius: 10px; object-fit: cover;">
-
                 </div>
             </div>
-
-            <!-- ช่องป้อนข้อความ -->
-            <div class="chat-input"
-                style="display: flex; align-items: center; padding: 10px; background-color: #fff4e3; border-top: 1px solid #ccc;">
-                <i class="fa-regular fa-image" style="font-size: 24px; margin-right: 10px; cursor: pointer;"></i>
-                <input type="text" placeholder="พิมพ์ข้อความ..."
-                    style="flex: 1; padding: 10px; border: 1px solid #ccc; border-radius: 20px;">
-                <i class="fa-solid fa-paper-plane" style="font-size: 24px; margin-left: 10px; cursor: pointer;"></i>
+        </aside>
+    </div>
+    <!-- Sidebar รายชื่อ (desktop/tablet) -->
+    <aside class="chat-sidebar" *ngIf="!isMobile">
+        <div class="chat-sidebar-header">
+            <div class="search-container">
+                <input type="text" placeholder="ค้นหา..." class="chat-search" [(ngModel)]="searchQuery" (keydown.enter)="searchChats()" />
+                <button class="search-btn" (click)="searchChats()">
+                    <i class="fa-solid fa-search"></i>
+                </button>
             </div>
         </div>
+        <div class="chat-list">
+            <div class="chat-list-item" *ngFor="let chat of chatList" (click)="selectChat(chat)">
+                <img [src]="chat.avatar" alt="avatar" />
+                <div class="chat-list-info">
+                    <span class="chat-list-name">{{ chat.name }}</span>
+                    <span class="chat-list-last">{{ chat.lastMessage }}</span>
+                </div>
+            </div>
+        </div>
+    </aside>
 
+    <!-- Main Chat -->
+    <main class="chat-main">
+        <div class="chat-header" *ngIf="selectedChat" >
+            <!-- ปุ่มเมนูเปิด Drawer เฉพาะมือถือ -->
+            <button *ngIf="isMobile" class="drawer-btn" (click)="openMobileDrawer()"><i class="fa fa-bars"></i></button>
+            <img [src]="selectedChat.avatar" alt="avatar" />
+            <strong>{{ selectedChat.name }}</strong>
+        </div>
+        <div class="chat-messages">
+            <div *ngFor="let msg of selectedChat?.messages" [ngClass]="{'message': true, 'right': msg.isMine, 'left': !msg.isMine}">
+                <span *ngIf="msg.text">{{ msg.text }}</span>
+                <img *ngIf="msg.image" [src]="msg.image" />
+                <video *ngIf="msg.video" [src]="msg.video" controls style="max-width:180px; border-radius:10px; margin-top:5px;"></video>
+            </div>
+        </div>
+        <div class="chat-input">
+            <!-- input file ซ่อนไว้ -->
+            <input type="file" #fileInput accept="image/*,video/*" style="display:none" (change)="onFileSelected($event)" />
+            <i class="fa-regular fa-image" (click)="fileInput.click()"></i>
+            <input type="text" placeholder="พิมพ์ข้อความ..." [(ngModel)]="newMessage" (keydown.enter)="sendMessage()" />
+            <i class="fa-solid fa-paper-plane" (click)="sendMessage()"></i>
     </div>
-
+    </main>
 </div>
+
+
+

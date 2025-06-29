@@ -1,26 +1,22 @@
-
-
 :host,
 html,
 body {
+  min-height: 100vh;
+  height: auto;
+  background-color: rgb(249, 241, 239);
+  width: 100%;
   margin: 0;
   padding: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgb(249, 241, 239);
-  /* สีพื้นหลัง */
   box-sizing: border-box;
   /* คำนวณขนาดไม่เกินขอบ */
-  overflow-x: hidden;
-  /* ปิดการเลื่อนแนวนอน */
 }
 
 :host {
   display: block;
-  min-height: 100vh;
-  /* ครอบคลุมความสูงเต็มหน้าจอ */
+  /* min-height: 100vh; */
+  /* height: 100vh; */
+  height: auto;
   background-color: rgb(249, 241, 239);
-  /* สีพื้นหลัง */
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -28,7 +24,6 @@ body {
 
 body {
   overflow-y: auto;
-  /* เปิดใช้งานการเลื่อนแนวตั้ง */
   background-color: rgb(249, 241, 239);
   /* สีพื้นหลังเหมือนกัน */
 }
@@ -72,16 +67,71 @@ body {
   margin: 10px 0;
 }
 
-
 .fixed-toolbar {
   position: fixed;
   top: 0;
   left: 0;
+  width: 100vw;
   background-color: rgb(233, 135, 135);
   height: 90px;
-  width: 100%;
-  z-index: 100;
-  /* Ensure it is above other content */
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  box-sizing: border-box;
+
+  img {
+    width: 80px;
+    height: auto;
+  }
+  .fa-solid, .fa {
+    font-size: 40px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .fixed-toolbar {
+    height: 90px;
+    padding: 0 12px;
+    img { width: 60px; }
+    .fa-solid, .fa { font-size: 32px; }
+  }
+  .center-menu {
+    gap: 25px !important;
+  }
+}
+
+// Mobile
+@media (max-width: 600px) {
+  .fixed-toolbar {
+    height: 80px;
+    padding: 0 6px;
+    img { width: 65px; }
+    .fa-solid, .fa { font-size: 22px; }
+    .itim-regular { font-size: 10px; }
+    .center-menu {
+      display: none !important;
+    }
+  }
+}
+
+/* ✅ เมนูกลาง (ปุ่มหลัก) — ซ่อนไปเมื่อจอแคบ */
+@media (max-width: 767px) {
+  .center-menu {
+    display: none;
+  }
+}
+
+/* ✅ สำหรับ desktop/tablet */
+@media (min-width: 768px) {
+  .center-menu {
+    display: flex;
+    gap: 50px;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+  }
 }
 
 .cardpost {
@@ -177,6 +227,7 @@ body {
   height: auto;
   margin-top: 150px;
   background-color: white;
+  padding: 0 20px;
 }
 
 a.mat-button {
@@ -202,6 +253,8 @@ mat-icon {
 
 .media-container {
   position: relative;
+  /* เพิ่ม touch-action เพื่อให้ touch events ทำงานได้ดีขึ้น */
+  touch-action: pan-y pinch-zoom;
 }
 
 .slider-controls {
@@ -211,6 +264,8 @@ mat-icon {
   transform: translate(-50%, -50%);
   display: none;
   /* ซ่อนปุ่มเลื่อนโดยปกติ */
+  z-index: 10;
+  /* เพิ่ม z-index เพื่อให้ปุ่มอยู่ด้านบน */
 }
 
 /* เมื่อเมาส์อยู่บน media container หรือเมื่อปุ่มต้องการแสดง */
@@ -229,12 +284,56 @@ mat-icon {
   font-size: 24px;
   cursor: pointer;
   border-radius: 5px;
+  /* เพิ่ม touch-action เพื่อให้ปุ่มตอบสนองได้ดีขึ้น */
+  touch-action: manipulation;
+  transition: all 0.3s ease;
 }
 
 .prev-btn:hover,
 .next-btn:hover {
   background: rgba(112, 109, 109, 0.7);
   /* เพิ่มความเข้มเมื่อ hover */
+}
+
+.prev-btn:disabled,
+.next-btn:disabled {
+  background-color: rgba(134, 134, 134, 0.2);
+  color: rgba(255, 255, 255, 0.5);
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* Media Indicator */
+.media-indicator {
+  position: absolute;
+  bottom: 25px;
+  right: 10px;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 15px;
+  font-size: 14px;
+  z-index: 5;
+}
+
+.indicator-text {
+  font-weight: 500;
+  font-family: "Itim", serif;
+}
+
+@media (max-width: 600px) {
+  .media-indicator {
+    bottom: 24px;
+    right: 8px;
+    padding: 4px 8px;
+    font-size: 12px;
+  }
+  
+  .prev-btn,
+  .next-btn {
+    font-size: 18px !important;
+    padding: 8px !important;
+  }
 }
 
 .location {
@@ -259,6 +358,824 @@ mat-icon {
 
 .not-saved {
   color: #111111; 
+}
+
+.add-post-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: #fff;
+  color: #e27c96;
+  font-size: 32px;
+  box-shadow: none;
+  border: none;
+  transition: background 0.2s, color 0.2s;
+  text-decoration: none;
+  outline: none;
+
+  &:hover, &:focus {
+    background: #ffe6ee;
+    color: #d14b72;
+  }
+  &:active {
+    background: #f9c5d1;
+    color: #b03a5b;
+  }
+}
+/* ========== RESPONSIVE MEDIA QUERIES ========== */
+
+/* Large Desktop (1200px+) */
+@media (min-width: 1200px) {
+  .divpost {
+    max-width: 900px;
+    margin: 150px auto 70px auto;
+    padding: 0 20px;
+  }
+  
+  /* ปรับขนาดรูปภาพสำหรับหน้าจอใหญ่ */
+  .media-slider img,
+  .media-slider video {
+    width: 860px !important;
+    height: 700px !important;
+  }
+  
+  /* ปรับ slider controls gap */
+  .slider-controls.visible {
+    gap: 740px;
+  }
+}
+
+/* Desktop (1024px - 1199px) */
+@media (max-width: 1199px) and (min-width: 1025px) {
+  .divpost {
+    max-width: 90vw;
+    margin: 150px auto 70px auto;
+    padding: 0 20px;
+  }
+  
+  .media-slider img,
+  .media-slider video {
+    width: calc(90vw - 40px) !important;
+    max-width: 800px !important;
+    height: 550px !important;
+  }
+  
+  .slider-controls.visible {
+    gap: calc(90vw - 160px);
+    max-width: 680px;
+  }
+}
+
+/* Tablet Landscape (768px - 1024px) */
+@media (max-width: 1024px) and (min-width: 769px) {
+  .divpost {
+    max-width: 95vw;
+    margin: 120px auto 60px auto;
+    padding: 0 16px;
+  }
+  
+  /* ปรับขนาดรูปภาพสำหรับแท็บเล็ต */
+  .media-slider img,
+  .media-slider video {
+    width: calc(95vw - 32px) !important;
+    max-width: calc(95vw - 32px) !important;
+    height: 450px !important;
+  }
+  
+  /* ปรับ slider controls */
+  .slider-controls.visible {
+    gap: calc(95vw - 152px);
+  }
+  
+  /* ปรับขนาดฟอนต์และ spacing */
+  .divpost span[style*="font-size: 30px"] {
+    font-size: 24px !important;
+  }
+  
+  .divpost span[style*="font-size: 22px"] {
+    font-size: 18px !important;
+  }
+  
+  .divpost span[style*="font-size: 25px"] {
+    font-size: 20px !important;
+  }
+  
+  /* ปรับขนาดไอคอน */
+  .divpost i[style*="font-size: 40px"] {
+    font-size: 32px !important;
+  }
+  
+  .divpost i[style*="font-size: 30px"] {
+    font-size: 24px !important;
+  }
+}
+
+/* Tablet Portrait (601px - 768px) */
+@media (max-width: 768px) and (min-width: 602px) {
+  .divpost {
+    max-width: 95vw;
+    margin: 110px auto 50px auto;
+    padding: 0 12px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  
+  /* ปรับขนาดรูปภาพสำหรับแท็บเล็ตแนวตั้ง */
+  .media-slider img,
+  .media-slider video {
+    width: calc(95vw - 24px) !important;
+    height: 320px !important;
+    border-radius: 6px !important;
+  }
+  
+  .slider-controls.visible {
+    gap: calc(95vw - 144px);
+  }
+  
+  /* ปรับขนาดฟอนต์ */
+  .divpost span[style*="font-size: 30px"] {
+    font-size: 20px !important;
+  }
+  
+  .divpost span[style*="font-size: 22px"] {
+    font-size: 16px !important;
+  }
+  
+  .divpost span[style*="font-size: 25px"] {
+    font-size: 18px !important;
+  }
+  
+  /* ปรับขนาดไอคอน */
+  .divpost i[style*="font-size: 40px"] {
+    font-size: 28px !important;
+  }
+  
+  .divpost i[style*="font-size: 30px"] {
+    font-size: 20px !important;
+  }
+  
+  /* ปรับขนาดรูปโปรไฟล์ */
+  .divpost img[style*="width: 100px"] {
+    width: 60px !important;
+    height: 60px !important;
+  }
+  
+  .divpost img[style*="width: 60px"] {
+    width: 45px !important;
+    height: 45px !important;
+  }
+}
+
+/* Mobile (≤ 600px) */
+@media (max-width: 600px) {
+  .divpost {
+    max-width: 92vw;
+    margin: 90px auto 20px auto;
+    padding: 0 8px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  }
+  
+  /* ปรับขนาดรูปภาพสำหรับมือถือ */
+  .media-slider img,
+  .media-slider video {
+    width: 100%;
+    height: 350px !important;
+    object-fit: cover;
+    border-radius: 8px;
+    max-width: 100vw;
+    display: block;
+    /* เพิ่ม touch-action เพื่อให้สามารถเลื่อนได้ */
+    touch-action: pan-y pinch-zoom;
+  }
+  
+  .slider-controls.visible {
+    gap: calc(92vw - 136px);
+  }
+  
+  .slider-controls .prev-btn,
+  .slider-controls .next-btn {
+    font-size: 18px !important;
+    padding: 8px !important;
+    /* เพิ่ม touch-action สำหรับปุ่ม */
+    touch-action: manipulation;
+  }
+  
+  /* ปรับขนาดฟอนต์ */
+  .divpost span[style*="font-size: 30px"] {
+    font-size: 18px !important;
+  }
+  
+  .divpost span[style*="font-size: 22px"] {
+    font-size: 15px !important;
+  }
+  
+  .divpost span[style*="font-size: 25px"] {
+    font-size: 16px !important;
+  }
+  
+  .divpost span[style*="font-size: 20px"] {
+    font-size: 15px !important;
+  }
+  
+  /* ปรับขนาดไอคอน */
+  .divpost i[style*="font-size: 40px"] {
+    font-size: 24px !important;
+  }
+  
+  .divpost i[style*="font-size: 30px"] {
+    font-size: 18px !important;
+  }
+  
+  /* ปรับขนาดรูปโปรไฟล์ */
+  .divpost img[style*="width: 100px"] {
+    width: 48px !important;
+    height: 48px !important;
+  }
+  
+  .divpost img[style*="width: 60px"] {
+    width: 36px !important;
+    height: 36px !important;
+  }
+  
+  /* ปรับ input comment */
+  .divpost input[style*="height: 50px"] {
+    height: 36px !important;
+    font-size: 15px !important;
+  }
+  
+  .divpost input[style*="font-size: 20px"] {
+    font-size: 15px !important;
+  }
+  
+  /* ปรับปุ่มส่ง */
+  .divpost button[style*="font-size: 30px"] {
+    font-size: 22px !important;
+  }
+  
+  /* ปรับ textarea แก้ไข */
+  .divpost textarea[style*="font-size: 18px"] {
+    font-size: 16px !important;
+  }
+  
+  /* ปรับปุ่มบันทึก/ยกเลิก */
+  .divpost button[style*="font-size: 18px"] {
+    font-size: 16px !important;
+  }
+  
+  .divpost button[style*="font-size: 16px"] {
+    font-size: 14px !important;
+  }
+}
+
+/* iPad Specific Styles */
+/* iPad Gen 9/10 (820px - 834px) */
+@media (min-width: 820px) and (max-width: 834px) {
+  .divpost {
+    padding: 0 14px;
+  }
+  
+  .media-slider img,
+  .media-slider video {
+    width: calc(95vw - 28px) !important;
+    height: 380px !important;
+  }
+}
+
+/* iPad Air (768px - 820px) */
+@media (min-width: 768px) and (max-width: 819px) {
+  .divpost {
+    padding: 0 12px;
+  }
+  
+  .media-slider img,
+  .media-slider video {
+    width: calc(95vw - 24px) !important;
+    height: 360px !important;
+  }
+}
+
+/* iPad Mini (768px - 810px) */
+@media (min-width: 768px) and (max-width: 810px) {
+  .divpost {
+    padding: 0 12px;
+  }
+  
+  .media-slider img,
+  .media-slider video {
+    width: calc(95vw - 24px) !important;
+    height: 340px !important;
+  }
+}
+
+/* iPad Pro (1024px - 1366px) */
+@media (min-width: 1024px) and (max-width: 1366px) {
+  .divpost {
+    padding: 0 18px;
+  }
+  
+  .media-slider img,
+  .media-slider video {
+    width: calc(95vw - 36px) !important;
+    height: 550px !important;
+  }
+}
+
+/* Orientation Specific */
+@media (orientation: landscape) and (max-height: 600px) {
+  .divpost {
+    margin-top: 80px;
+    padding: 0 10px;
+  }
+  
+  .media-slider img,
+  .media-slider video {
+    height: 180px !important;
+  }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+  .divpost {
+    background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
+    border-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  .divpost span[style*="font-size: 30px"] {
+    color: #f7fafc !important;
+  }
+  
+  .divpost span[style*="font-size: 22px"] {
+    color: #e2e8f0 !important;
+  }
+  
+  .divpost input[style*="height: 50px"] {
+    background: rgba(45, 55, 72, 0.8) !important;
+    color: #f7fafc !important;
+    
+    &:focus {
+      background: rgba(45, 55, 72, 0.95) !important;
+    }
+  }
+}
+
+/* High DPI Displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .divpost {
+    border-width: 0.5px;
+  }
+  
+  .divpost img {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .divpost {
+    box-shadow: none;
+    border: 1px solid #000;
+    background: white;
+    margin: 20px auto;
+    padding: 0 20px;
+  }
+  
+  .slider-controls,
+  .divpost button {
+    display: none !important;
+  }
+}
+
+/* Smooth Scrolling */
+@media (prefers-reduced-motion: no-preference) {
+  .divpost {
+    scroll-behavior: smooth;
+  }
+  
+  .divpost * {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
+/* Accessibility Improvements */
+@media (prefers-reduced-motion: reduce) {
+  .divpost * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* Focus Styles for Accessibility */
+.divpost button:focus,
+.divpost input:focus,
+.divpost textarea:focus {
+  outline: 2px solid #667eea;
+  outline-offset: 2px;
+}
+
+.media-slider {
+  padding: 0;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  /* เพิ่ม touch-action เพื่อให้สามารถเลื่อนได้ */
+  touch-action: pan-y pinch-zoom;
+}
+
+.media-slider img,
+.media-slider video {
+  width: 100%;
+  max-width: 100%;
+  display: block;
+  border-radius: 8px;
+  object-fit: cover;
+  box-shadow: none;
+  /* เพิ่ม touch-action เพื่อให้สามารถเลื่อนได้ */
+  touch-action: pan-y pinch-zoom;
+}
+
+@media (max-width: 1024px) {
+  .divpost {
+    padding: 0 16px;
+  }
+  .media-slider img,
+  .media-slider video {
+    border-radius: 8px;
+  }
+}
+@media (max-width: 768px) {
+  .divpost {
+    padding: 0 12px;
+  }
+  .media-slider img,
+  .media-slider video {
+    border-radius: 6px;
+  }
+}
+@media (max-width: 600px) {
+  .divpost {
+    padding: 0 8px;
+  }
+  .media-slider img,
+  .media-slider video {
+    border-radius: 6px;
+  }
+}
+
+.profile-section {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+  flex-wrap: nowrap;
+  margin-bottom: 20px;
+  margin-top: 20px;
+  margin-left: 15px;
+}
+
+.profile-info {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.profile-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  background: #eee;
+  cursor: pointer;
+}
+
+.profile-details {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+}
+
+.profile-name {
+  font-size: 18px;
+  font-weight: 500;
+  margin-left: 8px;
+}
+
+.profile-time {
+  color: #7e7776;
+  font-size: 13px;
+  margin-left: 12px;
+  margin-bottom: 2px;
+}
+
+.profile-menu-btn {
+  flex-shrink: 0;
+  min-width: 32px;
+  min-height: 32px;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+@media (min-width: 601px) {
+  .profile-avatar {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  .profile-name {
+    font-size: 24px;
+    margin-left: 20px;
+  }
+  .profile-time {
+    font-size: 16px;
+    margin-left: 25px;
+  }
+}
+
+.profile-location {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2px;
+  font-size: 16px;
+  color: #e23f5b;
+  word-break: break-all;
+  a.location {
+    color: #000000;
+    font-size: 15px;
+    overflow-wrap: anywhere;
+    word-break: break-all;
+  }
+  i {
+    font-size: 16px;
+    color: #e23f5b;
+  }
+}
+
+.mobile-location { display: none; }
+.desktop-location { display: flex; }
+
+@media (max-width: 600px) {
+  .mobile-location { display: flex !important; }
+  .desktop-location { display: none !important; }
+  .profile-location {
+    font-size: 13px;
+    margin-left: 0;
+    margin-top: 2px;
+    a.location { font-size: 12px; }
+    i { font-size: 15px; }
+  }
+}
+
+.post-content {
+  width: 100%;
+  max-width: 760px;
+  padding: 0 20px;
+  font-size: 22px;
+  margin-bottom: 20px;
+  word-break: break-word;
+  box-sizing: border-box;
+}
+
+@media (max-width: 1024px) {
+  .post-content {
+    max-width: 98vw;
+    padding: 0 12px;
+    font-size: 20px;
+    margin-bottom: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .post-content {
+    max-width: 100vw;
+    padding: 0 8px;
+    font-size: 18px;
+    margin-bottom: 12px;
+  }
+}
+
+@media (max-width: 600px) {
+  .post-content {
+    max-width: 100vw;
+    padding: 0 6px;
+    font-size: 15px;
+    margin-bottom: 10px;
+  }
+  .profile-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+}
+
+.edit-textarea {
+  width: 100%;
+  font-size: 18px;
+  padding: 10px;
+  box-sizing: border-box;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  resize: vertical;
+}
+
+@media (max-width: 1024px) {
+  .edit-textarea {
+    font-size: 16px;
+    padding: 8px;
+  }
+}
+@media (max-width: 600px) {
+  .edit-textarea {
+    font-size: 15px;
+    padding: 6px;
+  }
+}
+
+.comment-input-box {
+  margin-left: 8px;
+  margin-right: 8px;
+  margin-bottom: 12px;
+}
+@media (max-width: 600px) {
+  .comment-input-box {
+    margin-left: 4px;
+    margin-right: 4px;
+    margin-bottom: 8px;
+  }
+}
+
+.comment-content {
+  display: flex;
+  gap: 8px;
+  margin: 0 2px;
+  justify-content: space-between;
+  align-items: flex-start;
+  min-width: 0;
+}
+
+.comment-menu-btn {
+  flex-shrink: 0;
+  min-width: 28px;
+  min-height: 28px;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin-left: 2px;
+  position: relative;
+  z-index: 2;
+}
+
+@media (max-width: 600px) {
+  .comment-content {
+    gap: 4px;
+    margin: 0 1px;
+  }
+  .comment-menu-btn {
+    margin-left: auto !important;
+    min-width: 24px;
+    min-height: 24px;
+  }
+}
+
+.comment-details {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  word-break: break-word;
+}
+
+/* No Media Placeholder */
+.no-media-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 400px;
+  background-color: #f8f9fa;
+  border: 2px dashed #dee2e6;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+@media (max-width: 600px) {
+  .no-media-placeholder {
+    height: 300px;
+  }
+}
+
+@media (max-width: 768px) {
+  .no-media-placeholder {
+    height: 350px;
+  }
+}
+
+/* Media Indicator */
+.media-indicator {
+  position: absolute;
+  bottom: 30px;
+  right: 10px;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 15px;
+  font-size: 14px;
+  z-index: 5;
+}
+
+/* ปุ่มเลื่อนแบบถาวรสำหรับมือถือ */
+@media (max-width: 600px) {
+  .slider-controls {
+    display: flex !important;
+    gap: calc(100vw - 120px) !important;
+    opacity: 0.8;
+  }
+  
+  .slider-controls .prev-btn,
+  .slider-controls .next-btn {
+    background-color: rgba(0, 0, 0, 0.6);
+    font-size: 16px !important;
+    padding: 6px !important;
+    min-width: 32px;
+    min-height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+  }
+  
+  .slider-controls .prev-btn:hover,
+  .slider-controls .next-btn:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+  }
+  
+  .slider-controls .prev-btn:disabled,
+  .slider-controls .next-btn:disabled {
+    background-color: rgba(0, 0, 0, 0.3);
+    opacity: 0.3;
+  }
+}
+
+/* สำหรับแท็บเล็ต */
+@media (min-width: 601px) and (max-width: 1024px) {
+  .slider-controls {
+    display: flex !important;
+    gap: calc(95vw - 120px);
+  }
+  
+  .slider-controls .prev-btn,
+  .slider-controls .next-btn {
+    background-color: rgba(0, 0, 0, 0.5);
+    font-size: 20px !important;
+    padding: 8px !important;
+    transition: all 0.3s ease;
+  }
+  
+  .slider-controls .prev-btn:hover,
+  .slider-controls .next-btn:hover {
+    background-color: rgba(0, 0, 0, 0.7);
+  }
+}
+
+/* สำหรับเดสก์ท็อป - แสดงปุ่มเมื่อ hover */
+@media (min-width: 1025px) {
+  .slider-controls {
+    display: none;
+  }
+  
+  .media-slider:hover .slider-controls {
+    display: flex !important;
+    gap: 740px;
+  }
+  
+  .slider-controls .prev-btn,
+  .slider-controls .next-btn {
+    background-color: rgba(0, 0, 0, 0.5);
+    font-size: 24px !important;
+    padding: 10px !important;
+    transition: all 0.3s ease;
+  }
+  
+  .slider-controls .prev-btn:hover,
+  .slider-controls .next-btn:hover {
+    background-color: rgba(0, 0, 0, 0.7);
+  }
 }
 
 

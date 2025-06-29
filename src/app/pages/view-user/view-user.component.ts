@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterModule } from '@angular/router';
@@ -27,8 +27,8 @@ import { UserService } from '../../services/Userservice';
   templateUrl: './view-user.component.html',
   styleUrls: ['./view-user.component.scss']
 })
-export class ViewUserComponent {
-  constructor(private route: ActivatedRoute, private profileService: ProfileService, private reactPostservice: ReactPostservice,private userService: UserService,) { }
+export class ViewUserComponent implements OnInit, OnDestroy {
+  constructor(private route: ActivatedRoute, private profileService: ProfileService, private reactPostservice: ReactPostservice,private userService: UserService, private cdr: ChangeDetectorRef) { }
 
   userId: string = '';
   cid: string = '';
@@ -45,10 +45,10 @@ export class ViewUserComponent {
   followersCount: number = 0;
   followingCount: number = 0;
   currentUserId: string | null = null;
+  isMobile: boolean = false;
 
   ngOnInit(): void {
-
-     this.userService.getCurrentUserId().subscribe((userId) => {
+    this.userService.getCurrentUserId().subscribe((userId) => {
       this.currentUserId = userId;
       console.log('Current User ID:', this.currentUserId);
     });
@@ -66,7 +66,6 @@ export class ViewUserComponent {
       this.userId = params.get('userId') || '';  // รับค่า userId จาก path parameter
       this.cid = params.get('cid') || '';  // ถ้ามี cid ก็จะดึงมา
 
-
       if (this.userId) {
         this.loadUserProfile();
         this.loadUserPosts();
@@ -75,14 +74,12 @@ export class ViewUserComponent {
       }
     });
 
-
     this.route.paramMap.subscribe((params) => {
       this.cid = params.get('cid') || '';
 
       if (params.get('userId')) {
         this.followedId = params.get('userId') || '';  // ให้ followedId เป็น userId ของโปรไฟล์ที่กำลังดู
         console.log('Followed ID (โปรไฟล์ที่กำลังดูอยู่):', this.followedId);
-
       }
     });
 
@@ -107,6 +104,18 @@ export class ViewUserComponent {
         this.loadUserPosts();
       }
     });
+
+    this.checkScreen();
+    window.addEventListener('resize', this.checkScreen.bind(this));
+  }
+
+  ngOnDestroy(): void {
+    window.removeEventListener('resize', this.checkScreen.bind(this));
+  }
+
+  checkScreen() {
+    this.isMobile = window.innerWidth <= 600;
+    this.cdr.detectChanges();
   }
 
   loadUserProfile(): void {
@@ -142,7 +151,6 @@ export class ViewUserComponent {
       );
     }
   }
-
 
   toggleFollow(): void {
     if (!this.followedId) {

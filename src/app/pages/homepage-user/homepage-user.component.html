@@ -21,8 +21,9 @@
       <span class="itim-regular">ติดตาม</span>
     </div>
     <div style="margin-left: 20px;">
-      <a [routerLink]="['/CreatePost']" [queryParams]="{ id: this.currentUserId}"><img
-          src="../../../assets/images/Addpost.png" alt="" width="60px"></a>
+      <a class="add-post-btn"  [routerLink]="['/CreatePost']" [queryParams]="{ id: this.currentUserId}">
+        <i class="fa-solid fa-plus"></i>
+      </a>
     </div>
     <div style="display: flex; flex-direction: column; align-items: center;">
       <a [routerLink]="['/Notification_user']" [queryParams]="{ id: this.currentUserId }">
