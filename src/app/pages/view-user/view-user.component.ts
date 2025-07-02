@@ -14,6 +14,8 @@ import { Postme } from '../../models/postme_model';
 import { Follow } from '../../models/follow.model';
 import { ReactPostservice } from '../../services/ReactPostservice';
 import { UserService } from '../../services/Userservice';
+import { ChatService } from '../../services/chat.service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-view-user',
@@ -23,12 +25,13 @@ import { UserService } from '../../services/Userservice';
     MatTabsModule,
     MatCardModule,
     MatButtonModule,
-    MatIconModule],
+    MatIconModule,
+    FormsModule],
   templateUrl: './view-user.component.html',
   styleUrls: ['./view-user.component.scss']
 })
 export class ViewUserComponent implements OnInit, OnDestroy {
-  constructor(private route: ActivatedRoute, private profileService: ProfileService, private reactPostservice: ReactPostservice,private userService: UserService, private cdr: ChangeDetectorRef) { }
+  constructor(private route: ActivatedRoute, private profileService: ProfileService, private reactPostservice: ReactPostservice,private userService: UserService, private cdr: ChangeDetectorRef, private chatService: ChatService) { }
 
   userId: string = '';
   cid: string = '';
@@ -46,11 +49,27 @@ export class ViewUserComponent implements OnInit, OnDestroy {
   followingCount: number = 0;
   currentUserId: string | null = null;
   isMobile: boolean = false;
+  messages: any[] = [];
+  chatText: string = '';
+  chatImage: File | null = null;
+  chatVideo: File | null = null;
+  chatId: string = '';
+  currentUserProfile: User | null = null;
+  isChatBoxOpen: boolean = false;
+  previewUrl: string | null = null;
+  previewType: 'image' | 'video' | null = null;
+  hoveredMsgIndex: number | null = null;
 
   ngOnInit(): void {
+    this.userService.loadCurrentUserId(); // โหลด userId จาก localStorage เข้า BehaviorSubject
     this.userService.getCurrentUserId().subscribe((userId) => {
       this.currentUserId = userId;
       console.log('Current User ID:', this.currentUserId);
+      if (userId) {
+        this.userService.getUserById(userId).subscribe(user => {
+          this.currentUserProfile = user;
+        });
+      }
     });
 
     const storedUserId = sessionStorage.getItem('userId');
@@ -212,5 +231,150 @@ export class ViewUserComponent implements OnInit, OnDestroy {
 
   toggleDrawer(): void {
     this.isDrawerOpen = !this.isDrawerOpen;
+  }
+
+  getChatId(): string {
+    // ใช้ id ของ user ปัจจุบันและเจ้าของโปรไฟล์ (เรียงลำดับเพื่อไม่ให้ซ้ำ)
+    if (!this.currentUserId || !this.Profileuser) return '';
+    return [this.currentUserId, this.Profileuser].sort().join('_');
+  }
+
+  toggleChatBox() {
+    console.log('currentUserId:', this.currentUserId, 'Profileuser:', this.Profileuser);
+    if (!this.currentUserId || !this.Profileuser) {
+      alert('ไม่สามารถเปิดแชทได้: ไม่พบข้อมูลผู้ใช้');
+      return;
+    }
+    this.isChatBoxOpen = !this.isChatBoxOpen;
+    if (this.isChatBoxOpen) {
+      this.initializeChat();
+    }
+  }
+
+  initializeChat() {
+    // รอให้ currentUserId และ Profileuser ถูกเซ็ตก่อน
+    if (this.currentUserId && this.Profileuser) {
+      this.chatId = this.getChatId();
+      console.log('Chat ID:', this.chatId);
+      
+      if (this.chatId) {
+        // เพิ่ม users เข้า chat index เมื่อเปิดแชทครั้งแรก
+        if (this.currentUserProfile && this.userProfile) {
+          this.chatService.addUserToChat(
+            this.chatId,
+            {
+              user_id: this.currentUserId,
+              username: this.currentUserProfile.username || '',
+              image_url: this.currentUserProfile.image_url || ''
+            },
+            {
+              user_id: this.Profileuser,
+              username: this.userProfile.username || '',
+              image_url: this.userProfile.image_url || ''
+            }
+          );
+        }
+
+        this.chatService.listenMessages(this.chatId, (msgs) => {
+          this.messages = msgs;
+          this.cdr.detectChanges();
+          console.log('Messages updated:', this.messages);
+        });
+      }
+    } else {
+      console.warn('Cannot initialize chat: missing user IDs');
+    }
+  }
+
+  onChatFileSelected(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      if (file.type.startsWith('image/')) {
+        this.chatImage = file;
+        this.chatVideo = null;
+        this.previewType = 'image';
+        this.previewUrl = URL.createObjectURL(file);
+      } else if (file.type.startsWith('video/')) {
+        this.chatVideo = file;
+        this.chatImage = null;
+        this.previewType = 'video';
+        this.previewUrl = URL.createObjectURL(file);
+      }
+    }
+  }
+
+  clearPreview() {
+    this.chatImage = null;
+    this.chatVideo = null;
+    this.previewUrl = null;
+    this.previewType = null;
+  }
+
+  async sendChatMessage() {
+    if (!this.currentUserId || !this.Profileuser || !this.chatId) {
+      console.error('Cannot send message: missing required data');
+      return;
+    }
+    
+    if (!this.chatText.trim() && !this.chatImage && !this.chatVideo) {
+      console.warn('No message content to send');
+      return;
+    }
+
+    let pendingMsg: any = null;
+    if (this.chatImage) {
+      pendingMsg = {
+        uid: this.currentUserId,
+        text: this.chatText,
+        image_url: this.previewUrl,
+        video_url: '',
+        type: 2,
+        create_at: new Date().toISOString(),
+        pending: true
+      };
+      this.messages = [...this.messages, pendingMsg];
+      this.cdr.detectChanges();
+    }
+
+    try {
+      let imageUrl = '';
+      let videoUrl = '';
+      if (this.chatImage) {
+        imageUrl = await this.chatService.uploadImage(this.chatImage, this.chatId, this.currentUserId);
+      }
+      if (this.chatVideo) {
+        videoUrl = await this.chatService.uploadVideo(this.chatVideo, this.chatId, this.currentUserId);
+      }
+      await this.chatService.sendMessage(
+        this.chatId,
+        this.currentUserId,
+        this.chatText,
+        imageUrl,
+        videoUrl
+      );
+      // ลบ pending message ออก (ถ้ามี)
+      if (pendingMsg) {
+        this.messages = this.messages.filter(m => m !== pendingMsg);
+      }
+      this.chatText = '';
+      this.chatImage = null;
+      this.chatVideo = null;
+      this.previewUrl = null;
+      this.previewType = null;
+      console.log('Message sent successfully');
+    } catch (error) {
+      console.error('Error sending message:', error);
+    }
+  }
+
+  shouldShowTime(index: number): boolean {
+    if (index === 0) return true;
+    const prev = this.messages[index - 1];
+    const curr = this.messages[index];
+    if (!prev || !curr) return true;
+    // แสดงเวลาถ้าห่างกันเกิน 5 นาที
+    const prevTime = new Date(prev.create_at).getTime();
+    const currTime = new Date(curr.create_at).getTime();
+    return (currTime - prevTime) > 5 * 60 * 1000;
   }
 }

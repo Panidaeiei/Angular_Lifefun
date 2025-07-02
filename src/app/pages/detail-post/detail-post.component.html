@@ -24,8 +24,8 @@
                 <span class="itim-regular">ติดตาม</span>
             </div>
             <div style="margin-left: 20px;">
-                <a class="add-post-btn"  [routerLink]="['/CreatePost']" [queryParams]="{ id: this.currentUserId}">
-                  <i class="fa-solid fa-plus"></i>
+                <a class="add-post-btn" [routerLink]="['/CreatePost']" [queryParams]="{ id: this.currentUserId}">
+                    <i class="fa-solid fa-plus"></i>
                 </a>
             </div>
             <div class="menu-item" routerLinkActive="active" [routerLink]="['/Notification_user']"
@@ -139,8 +139,7 @@
             <div class="profile-info">
                 <img class="profile-avatar"
                     [src]="post.user_profile_image || 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'"
-                    alt="รูปโปรไฟล์"
-                    (click)="goToProfile(post.user_uid.toString())">
+                    alt="รูปโปรไฟล์" (click)="goToProfile(post.user_uid.toString())">
                 <div class="profile-details">
                     <span class="profile-name">{{post.user_name}}</span>
                     <span class="profile-time">{{post.post_time | timeAgo}}</span>
@@ -151,7 +150,8 @@
                             <span>
                                 Location:
                                 <a class="location" [href]="post.location" target="_blank">
-                                    {{ post.location.length > 20 ? (post.location.substring(0, 20) + '...') : post.location }}
+                                    {{ post.location.length > 20 ? (post.location.substring(0, 20) + '...') :
+                                    post.location }}
                                 </a>
                             </span>
                         </div>
@@ -161,7 +161,8 @@
                             <span>
                                 Location:
                                 <a class="location" [href]="post.location" target="_blank">
-                                    {{ post.location.length > 30 ? (post.location.substring(0, 30) + '...') : post.location }}
+                                    {{ post.location.length > 30 ? (post.location.substring(0, 30) + '...') :
+                                    post.location }}
                                 </a>
                             </span>
                         </div>
@@ -193,10 +194,9 @@
             </mat-menu>
         </div>
 
-        <div *ngIf="post" class="media-slider"
-             (mouseenter)="showControls()" (mouseleave)="hideControls()"
-             (touchstart)="onTouchStart($event)" (touchmove)="onTouchMove($event)" (touchend)="onTouchEnd($event)"
-             style="touch-action: pan-y pinch-zoom;">
+        <div *ngIf="post" class="media-slider" (mouseenter)="showControls()" (mouseleave)="hideControls()"
+            (touchstart)="onTouchStart($event)" (touchmove)="onTouchMove($event)" (touchend)="onTouchEnd($event)"
+            style="touch-action: pan-y pinch-zoom;">
             <div class="media-container" style="position: relative;">
                 <ng-container *ngIf="post.images.length || post.videos.length; else noMedia">
                     <div *ngIf="currentMediaIndex >= 0 && currentMedia">
@@ -210,26 +210,26 @@
                         </ng-template>
                     </div>
                 </ng-container>
-                
+
                 <ng-template #noMedia>
                     <div class="no-media-placeholder">
                         <i class="fa fa-image" style="font-size: 48px; color: #ccc;"></i>
                         <p style="color: #999; margin-top: 10px;">ไม่มีรูปภาพหรือวิดีโอ</p>
                     </div>
                 </ng-template>
-                
+
                 <!-- ปุ่มเลื่อน (Previous/Next) -->
-                <div class="slider-controls"
-                     *ngIf="(post.images.length + post.videos.length) > 1">
-                    <button (click)="prevMedia()" class="prev-btn" style="touch-action: manipulation;" 
-                            [disabled]="currentMediaIndex === 0">❮</button>
+                <div class="slider-controls" *ngIf="(post.images.length + post.videos.length) > 1">
+                    <button (click)="prevMedia()" class="prev-btn" style="touch-action: manipulation;"
+                        [disabled]="currentMediaIndex === 0">❮</button>
                     <button (click)="nextMedia()" class="next-btn" style="touch-action: manipulation;"
-                            [disabled]="currentMediaIndex === (post.images.length + post.videos.length - 1)">❯</button>
+                        [disabled]="currentMediaIndex === (post.images.length + post.videos.length - 1)">❯</button>
                 </div>
-                
+
                 <!-- แสดงสถานะการเลื่อน (จำนวนรูป/วิดีโอ) -->
                 <div class="media-indicator" *ngIf="(post.images.length + post.videos.length) > 1">
-                    <span class="indicator-text">{{ currentMediaIndex + 1 }} / {{ post.images.length + post.videos.length }}</span>
+                    <span class="indicator-text">{{ currentMediaIndex + 1 }} / {{ post.images.length +
+                        post.videos.length }}</span>
                 </div>
             </div>
         </div>
@@ -268,9 +268,12 @@
         <!-- ฟอร์มแก้ไข -->
         <div *ngIf="isEditing" style="margin-top: 15px;">
             <textarea [(ngModel)]="title" rows="4" cols="50" class="edit-textarea"></textarea>
-            <div style="display: flex; justify-content: flex-end; margin-top: 10px; gap: 10px; margin-bottom: 15px; margin-right: 10px;">
-                <button mat-button style="color: rgb(33, 135, 224); font-size: 18px;" (click)="saveEditedPost()">บันทึก</button>
-                <button mat-button style="font-size: 16px; background-color: rgb(204, 60, 60); color: aliceblue;" (click)="cancelEdit()">ยกเลิก</button>
+            <div
+                style="display: flex; justify-content: flex-end; margin-top: 10px; gap: 10px; margin-bottom: 15px; margin-right: 10px;">
+                <button mat-button style="color: rgb(33, 135, 224); font-size: 18px;"
+                    (click)="saveEditedPost()">บันทึก</button>
+                <button mat-button style="font-size: 16px; background-color: rgb(204, 60, 60); color: aliceblue;"
+                    (click)="cancelEdit()">ยกเลิก</button>
             </div>
         </div>
 
@@ -302,7 +305,8 @@
                             class="fa-solid fa-trash"></i>
                         ลบ
                     </button>
-                    <button mat-menu-item *ngIf="comment.uid !== +userId" (click)="openReportCommentDialog(comment.cid)">
+                    <button mat-menu-item *ngIf="comment.uid !== +userId"
+                        (click)="openReportCommentDialog(comment.cid)">
                         <i style="margin-right: 5px; font-size: 20px; color: rgb(87, 73, 75);" class="fa fa-flag"></i>
                         <span style="font-size: 15px;">รายงานความคิดเห็น</span>
                     </button>

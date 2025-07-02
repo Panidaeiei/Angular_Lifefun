@@ -6,52 +6,54 @@
         </a>
         <div style="width: 5%;"></div>
         <!-- เมนูตรงกลาง -->
-        <div class="center-menu" style="display: flex; flex-grow: 1; justify-content: center; align-items: center; gap: 50px;">
-                <div style="display: flex; flex-direction: column; align-items: center;">
-                    <a [routerLink]="['/HomepageUser']" [queryParams]="{ id: userId }">
-                        <i style="font-size: 40px; color: black;" class="fa-solid fa-house"></i>
-                    </a>
-                    <span class="itim-regular">หน้าหลัก</span>
-                </div>
-                <div style="display: flex; flex-direction: column; align-items: center;">
-                    <a [routerLink]="['/Homepagefollow']" [queryParams]="{ id: userId }">
-                        <i style="font-size: 40px; color: black;" class="fa-solid fa-users"></i>
-                    </a>
-                    <span class="itim-regular">ติดตาม</span>
-                </div>
-                <div>
-                    <a [routerLink]="['/CreatePost']" [queryParams]="{ id: userId }"><img
-                            src="../../../assets/images/Addpost.png" alt="" width="60px"></a>
-                </div>
-                <!-- การแจ้งเตือน -->
-                <div style="display: flex; flex-direction: column; align-items: center;">
-                    <a [routerLink]="['/Notification_user']" [queryParams]="{ id: userId }">
-                        <i style="font-size: 40px; color: black;" class="fa-solid fa-bell"></i>
-                    </a>
-                    <span class="itim-regular">การแจ้งเตือน</span>
-                </div>
-                <!-- โปรไฟล์ -->
-                <div style="display: flex; flex-direction: column; align-items: center;">
-                    <a [routerLink]="['/ProfileUser']" [queryParams]="{ id: userId }">
-                        <i style="font-size: 40px; color: black;" class="fa-solid fa-user"></i>
-                    </a>
-                    <span class="itim-regular">โปรไฟล์</span>
-                </div>
+        <div class="center-menu"
+            style="display: flex; flex-grow: 1; justify-content: center; align-items: center; gap: 50px;">
+            <div style="display: flex; flex-direction: column; align-items: center;">
+                <a [routerLink]="['/HomepageUser']" [queryParams]="{ id: userId }">
+                    <i style="font-size: 40px; color: black;" class="fa-solid fa-house"></i>
+                </a>
+                <span class="itim-regular">หน้าหลัก</span>
             </div>
+            <div style="display: flex; flex-direction: column; align-items: center;">
+                <a [routerLink]="['/Homepagefollow']" [queryParams]="{ id: userId }">
+                    <i style="font-size: 40px; color: black;" class="fa-solid fa-users"></i>
+                </a>
+                <span class="itim-regular">ติดตาม</span>
+            </div>
+            <div style="margin-left: 20px;">
+                <a [routerLink]="['/CreatePost']" [queryParams]="{ id: userId }" class="add-post-btn" aria-label="สร้างโพสต์">
+                    <i class="fa-solid fa-plus"></i>
+                </a>
+            </div>
+            <!-- การแจ้งเตือน -->
+            <div style="display: flex; flex-direction: column; align-items: center;">
+                <a [routerLink]="['/Notification_user']" [queryParams]="{ id: userId }">
+                    <i style="font-size: 40px; color: black;" class="fa-solid fa-bell"></i>
+                </a>
+                <span class="itim-regular">การแจ้งเตือน</span>
+            </div>
+            <!-- โปรไฟล์ -->
+            <div style="display: flex; flex-direction: column; align-items: center;">
+                <a [routerLink]="['/ProfileUser']" [queryParams]="{ id: userId }">
+                    <i style="font-size: 40px; color: black;" class="fa-solid fa-user"></i>
+                </a>
+                <span class="itim-regular">โปรไฟล์</span>
+            </div>
+        </div>
         <!-- เมนูขวาสุด -->
         <div class="toolbar-actions" style="display: flex; align-items: center; gap: 16px;">
-        <!-- ค้นหา -->
-        <div style="display: flex; flex-direction: column; align-items: center;">
-            <a [routerLink]="['/search_users']" [queryParams]="{ id: userId }">
-                <i style="font-size: 40px; color: black;" class="fa-solid fa-search"></i>
-            </a>
-        </div>
-        <!-- ไอคอนเมนู -->
+            <!-- ค้นหา -->
+            <div style="display: flex; flex-direction: column; align-items: center;">
+                <a [routerLink]="['/search_users']" [queryParams]="{ id: userId }">
+                    <i style="font-size: 40px; color: black;" class="fa-solid fa-search"></i>
+                </a>
+            </div>
+            <!-- ไอคอนเมนู -->
             <div style="display: flex; flex-direction: column; align-items: center; margin-left: 10px;">
-            <a href="javascript:void(0)" (click)="toggleDrawer()">
-                <i style="font-size: 40px; color: black;" class="fa-solid fa-bars"></i>
-            </a>
-        </div>
+                <a href="javascript:void(0)" (click)="toggleDrawer()">
+                    <i style="font-size: 40px; color: black;" class="fa-solid fa-bars"></i>
+                </a>
+            </div>
         </div>
         <!-- Drawer -->
         <div class="drawer" [class.open]="isDrawerOpen">
@@ -59,57 +61,71 @@
                 <h3 style="font-weight: 500; font-size: 30px;">MENU</h3>
                 <ul style="list-style: none; padding: 0;">
                     <!-- เมนูหลัก (ซ้ำกับ center-menu เพื่อรองรับจอเล็ก) -->
-                    <li style="border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; align-items: center; gap: 10px;">
+                    <li
+                        style="border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; align-items: center; gap: 10px;">
                         <i class="fa-solid fa-house" style="font-size: 20px; color: black;"></i>
-                        <a [routerLink]="['/HomepageUser']" [queryParams]="{ id: userId }" style="text-decoration: none; color: black;">
+                        <a [routerLink]="['/HomepageUser']" [queryParams]="{ id: userId }"
+                            style="text-decoration: none; color: black;">
                             <span class="itim-regular">หน้าหลัก</span>
                         </a>
                     </li>
-                    <li style="border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; align-items: center; gap: 10px;">
+                    <li
+                        style="border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; align-items: center; gap: 10px;">
                         <i class="fa-solid fa-users" style="font-size: 20px; color: black;"></i>
-                        <a [routerLink]="['/Homepagefollow']" [queryParams]="{ id: userId }" style="text-decoration: none; color: black;">
+                        <a [routerLink]="['/Homepagefollow']" [queryParams]="{ id: userId }"
+                            style="text-decoration: none; color: black;">
                             <span class="itim-regular">ติดตาม</span>
                         </a>
                     </li>
-                    <li style="border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; align-items: center; gap: 10px;">
+                    <li
+                        style="border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; align-items: center; gap: 10px;">
                         <i class="fa-solid fa-plus" style="font-size: 20px; color: black;"></i>
-                        <a [routerLink]="['/CreatePost']" [queryParams]="{ id: userId }" style="text-decoration: none; color: black;">
+                        <a [routerLink]="['/CreatePost']" [queryParams]="{ id: userId }"
+                            style="text-decoration: none; color: black;">
                             <span class="itim-regular">สร้างโพสต์</span>
                         </a>
                     </li>
-                    <li style="border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; align-items: center; gap: 10px;">
+                    <li
+                        style="border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; align-items: center; gap: 10px;">
                         <i class="fa-solid fa-bell" style="font-size: 20px; color: black;"></i>
-                        <a [routerLink]="['/Notification_user']" [queryParams]="{ id: userId }" style="text-decoration: none; color: black;">
+                        <a [routerLink]="['/Notification_user']" [queryParams]="{ id: userId }"
+                            style="text-decoration: none; color: black;">
                             <span class="itim-regular">การแจ้งเตือน</span>
                         </a>
                     </li>
-                    <li style="border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; align-items: center; gap: 10px;">
+                    <li
+                        style="border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; align-items: center; gap: 10px;">
                         <i class="fa-solid fa-user" style="font-size: 20px; color: black;"></i>
-                        <a [routerLink]="['/ProfileUser']" [queryParams]="{ id: userId }" style="text-decoration: none; color: black;">
+                        <a [routerLink]="['/ProfileUser']" [queryParams]="{ id: userId }"
+                            style="text-decoration: none; color: black;">
                             <span class="itim-regular">โปรไฟล์</span>
                         </a>
                     </li>
                     <!-- หมวดหมู่ -->
-                    <li style="border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; align-items: center; gap: 10px;">
+                    <li
+                        style="border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; align-items: center; gap: 10px;">
                         <i class="fa fa-list" style="font-size: 20px; color: black;"></i>
-                        <a [routerLink]="['/category']" [queryParams]="{ id: userId }" style="text-decoration: none; color: black;">
+                        <a [routerLink]="['/category']" [queryParams]="{ id: userId }"
+                            style="text-decoration: none; color: black;">
                             <span class="itim-regular">หมวดหมู่</span>
                         </a>
                     </li>
                     <!-- ออกจากระบบ -->
-                    <li style="border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; align-items: center; gap: 10px;">
+                    <li
+                        style="border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; align-items: center; gap: 10px;">
                         <i class="fa fa-sign-out" style="font-size: 20px; color: black;"></i>
                         <a href="" style="text-decoration: none; color: black;">
                             <span class="itim-regular">ออกจากระบบ</span>
                         </a>
                     </li>
                 </ul>
-                <button mat-flat-button style="background-color: rgb(226, 124, 150); width: 100px;" (click)="toggleDrawer()">ปิด</button>
+                <button mat-flat-button style="background-color: rgb(226, 124, 150); width: 100px;"
+                    (click)="toggleDrawer()">ปิด</button>
             </div>
         </div>
         <ng-content select="[toolbar-content]"></ng-content>
     </mat-toolbar>
-                </div>
+</div>
 
 <div class="chat-layout">
     <!-- Drawer รายชื่อแชท (มือถือ) -->
@@ -117,14 +133,16 @@
         <aside class="mobile-drawer" (click)="$event.stopPropagation()">
             <div class="chat-sidebar-header">
                 <div class="search-container">
-                    <input type="text" placeholder="ค้นหา..." class="chat-search" [(ngModel)]="searchQuery" (keydown.enter)="searchChats()" />
+                    <input type="text" placeholder="ค้นหา..." class="chat-search" [(ngModel)]="searchQuery"
+                        (keydown.enter)="searchChats()" />
                     <button class="search-btn" (click)="searchChats()">
                         <i class="fa-solid fa-search"></i>
                     </button>
                 </div>
             </div>
             <div class="chat-list">
-                <div class="chat-list-item" *ngFor="let chat of chatList" (click)="selectChat(chat); closeMobileDrawer()">
+                <div class="chat-list-item" *ngFor="let chat of chatList"
+                    (click)="selectChat(chat); closeMobileDrawer()">
                     <img [src]="chat.avatar" alt="avatar" />
                     <div class="chat-list-info">
                         <span class="chat-list-name">{{ chat.name }}</span>
@@ -138,7 +156,8 @@
     <aside class="chat-sidebar" *ngIf="!isMobile">
         <div class="chat-sidebar-header">
             <div class="search-container">
-                <input type="text" placeholder="ค้นหา..." class="chat-search" [(ngModel)]="searchQuery" (keydown.enter)="searchChats()" />
+                <input type="text" placeholder="ค้นหา..." class="chat-search" [(ngModel)]="searchQuery"
+                    (keydown.enter)="searchChats()" />
                 <button class="search-btn" (click)="searchChats()">
                     <i class="fa-solid fa-search"></i>
                 </button>
@@ -157,28 +176,65 @@
 
     <!-- Main Chat -->
     <main class="chat-main">
-        <div class="chat-header" *ngIf="selectedChat" >
+        <div class="chat-header" *ngIf="selectedChat">
             <!-- ปุ่มเมนูเปิด Drawer เฉพาะมือถือ -->
             <button *ngIf="isMobile" class="drawer-btn" (click)="openMobileDrawer()"><i class="fa fa-bars"></i></button>
             <img [src]="selectedChat.avatar" alt="avatar" />
             <strong>{{ selectedChat.name }}</strong>
         </div>
         <div class="chat-messages">
-            <div *ngFor="let msg of selectedChat?.messages" [ngClass]="{'message': true, 'right': msg.isMine, 'left': !msg.isMine}">
-                <span *ngIf="msg.text">{{ msg.text }}</span>
-                <img *ngIf="msg.image" [src]="msg.image" />
-                <video *ngIf="msg.video" [src]="msg.video" controls style="max-width:180px; border-radius:10px; margin-top:5px;"></video>
+            <div *ngFor="let msg of currentChatMessages; let i = index"
+                [ngClass]="{'message': true, 'right': msg.uid === userId, 'left': msg.uid !== userId}"
+                (mouseenter)="hoveredMsgIndex = i"
+                (mouseleave)="hoveredMsgIndex = null">
+                <div class="message-content">
+                    <span *ngIf="msg.text">{{ msg.text }}</span>
+                    <div class="media-wrapper" *ngIf="msg.image_url || msg.video_url" style="position: relative; display: inline-block;">
+                        <img *ngIf="msg.image_url" [src]="msg.image_url" />
+                        <video *ngIf="msg.video_url" [src]="msg.video_url" controls></video>
+                    </div>
+                </div>
+                <div class="bubble-datetime-mobile">
+                    {{ msg.create_at | date:'d MMM  HH:mm':'':'th' }}
+                </div>
+                <div *ngIf="msg.pending" class="pending-overlay">
+                    <i class="fa fa-spinner fa-spin"></i>
+                    <span>กำลังส่ง...</span>
+                </div>
             </div>
         </div>
         <div class="chat-input">
             <!-- input file ซ่อนไว้ -->
-            <input type="file" #fileInput accept="image/*,video/*" style="display:none" (change)="onFileSelected($event)" />
-            <i class="fa-regular fa-image" (click)="fileInput.click()"></i>
+            <input type="file" #fileInput accept="image/*,video/*" style="display:none"
+                (change)="onChatFileSelected($event)" />
+            
+            <!-- ปุ่มเลือกไฟล์ (รูป/วิดีโอ) -->
+            <button class="icon-btn" (click)="fileInput.click()" title="ส่งรูปภาพหรือวิดีโอ">
+                <i class="fa fa-image"></i>
+            </button>
+            
+            <!-- ช่องพิมพ์ข้อความ -->
             <input type="text" placeholder="พิมพ์ข้อความ..." [(ngModel)]="newMessage" (keydown.enter)="sendMessage()" />
-            <i class="fa-solid fa-paper-plane" (click)="sendMessage()"></i>
-    </div>
+            
+            <!-- ปุ่มส่งข้อความ -->
+            <button class="icon-btn" (click)="sendMessage()" title="ส่งข้อความ">
+                <i class="fa fa-paper-plane"></i>
+            </button>
+        </div>
+        
+        <!-- Preview bar สำหรับไฟล์ที่เลือก -->
+        <div *ngIf="selectedFilePreview" class="file-preview-bar">
+            <div class="file-preview-content">
+                <img *ngIf="chatImage" [src]="selectedFilePreview" alt="Preview" class="file-preview-image" />
+                <video *ngIf="chatVideo" [src]="selectedFilePreview" controls class="file-preview-video"></video>
+                <div class="file-preview-info">
+                    <span class="file-name">{{ (chatImage || chatVideo)?.name }}</span>
+                    <span class="file-size">{{ getFileSize() }}</span>
+                </div>
+            </div>
+            <button class="remove-file-btn" (click)="removeSelectedFile()" title="ลบไฟล์">
+                <i class="fa fa-times"></i>
+            </button>
+        </div>
     </main>
 </div>
-
-
-

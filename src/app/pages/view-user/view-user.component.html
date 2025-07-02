@@ -144,13 +144,7 @@
                         <button class="buttonEdit-mobile" (click)="toggleFollow()">{{ isFollowing ? 'เลิกติดตาม' : 'ติดตาม' }}</button>
                         <button *ngIf="userProfile"
                             class="buttonsend buttonEdit-mobile"
-                            [routerLink]="['/chat']"
-                            [queryParams]="{
-                              toId: userProfile.id,
-                              name: userProfile.username,
-                              avatar: userProfile.image_url,
-                              fromId: userId
-                            }">
+                            (click)="toggleChatBox()">
                             <i class="fa-solid fa-envelope" style="font-size: 16px;"></i>
                         </button>
                     </div>
@@ -189,13 +183,7 @@
                                     </button>
                                     <button *ngIf="userProfile"
                                         class="buttonsend"
-                                        [routerLink]="['/chat']"
-                                        [queryParams]="{
-                                          toId: userProfile.id,
-                                          name: userProfile.username,
-                                          avatar: userProfile.image_url,
-                                          fromId: userId
-                                        }">
+                                        (click)="toggleChatBox()">
                                         <i class="fa-solid fa-envelope" style="font-size: 20px;"></i>
                                     </button>
                                 </div>
@@ -292,6 +280,76 @@
                     </div>
                 </mat-tab>
             </mat-tab-group>
+        </div>
+        <div *ngIf="isChatBoxOpen" class="chat-section">
+            <div class="chat-header">
+                <span>แชทกับ {{ userProfile?.username }}</span>
+                <button class="close-chat-btn" (click)="toggleChatBox()">
+                    <i class="fa-solid fa-times"></i>
+                </button>
+            </div>
+            <div class="chat-messages">
+                <div *ngFor="let msg of messages; let i = index"
+                    [ngClass]="{
+                        'my-message-row': msg.uid === currentUserId,
+                        'other-message-row': msg.uid !== currentUserId
+                    }"
+                    class="message-row"
+                >
+                    <img
+                        *ngIf="msg.uid !== currentUserId"
+                        class="chat-avatar"
+                        [src]="userProfile?.image_url || 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'"
+                        alt="avatar"
+                    />
+                    <div
+                        [ngClass]="{
+                            'my-message': msg.uid === currentUserId,
+                            'other-message': msg.uid !== currentUserId
+                        }"
+                        class="chat-bubble"
+                        (mouseenter)="hoveredMsgIndex = i"
+                        (mouseleave)="hoveredMsgIndex = null"
+                        (click)="hoveredMsgIndex = hoveredMsgIndex === i ? null : i"
+                    >
+                        <div class="bubble-content">
+                            <ng-container [ngSwitch]="msg.type">
+                                <span *ngSwitchCase="1">{{ msg.text }}</span>
+                                <img *ngSwitchCase="2" [src]="msg.image_url" alt="image" />
+                                <video *ngSwitchCase="3" [src]="msg.video_url" controls class="chat-video"></video>
+                            </ng-container>
+                            <div *ngIf="msg.pending" class="pending-overlay">
+                                <i class="fa fa-spinner fa-spin"></i> กำลังส่ง...
+                            </div>
+                        </div>
+                        <div *ngIf="hoveredMsgIndex === i" class="bubble-datetime">
+                            {{ msg.create_at | date:'d MMM HH:mm':'':'th' }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="chat-input-area">
+              <div *ngIf="previewUrl" class="chat-preview-bar">
+                <button class="preview-close-btn" (click)="clearPreview()">×</button>
+                <img *ngIf="previewType === 'image'" [src]="previewUrl" class="preview-img" />
+                <video *ngIf="previewType === 'video'" [src]="previewUrl" class="preview-video" controls></video>
+              </div>
+              <div class="chat-input-row">
+                <!-- ปุ่มเลือกไฟล์ (รูป/วิดีโอ) -->
+                <button class="icon-btn" (click)="fileInput.click()" title="ส่งรูปภาพหรือวิดีโอ">
+                  <i class="fa fa-image"></i>
+                </button>
+                <input #fileInput type="file" (change)="onChatFileSelected($event)" accept="image/*,video/*" style="display: none;" />
+
+                <!-- ช่องพิมพ์ข้อความ -->
+                <input type="text" [(ngModel)]="chatText" placeholder="Aa" (keyup.enter)="sendChatMessage()" />
+
+                <!-- ปุ่มส่ง -->
+                <button class="icon-btn send-btn" (click)="sendChatMessage()" title="ส่งข้อความ">
+                  <i class="fa fa-paper-plane"></i>
+                </button>
+              </div>
+            </div>
         </div>
     </div>
 </div>

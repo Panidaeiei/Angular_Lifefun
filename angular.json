@@ -57,14 +57,18 @@
                 {
                   "type": "initial",
                   "maximumWarning": "2MB",
-                  "maximumError": "2MB"
+                  "maximumError": "4MB"
                 },
                 {
                   "type": "anyComponentStyle",
                   "maximumWarning": "10kb",
-                  "maximumError": "15kb"
+                  "maximumError": "25kb"
                 }
               ],
+              "allowedCommonJsDependencies": [
+                "sweetalert2",
+                "leaflet"
+              ],  
               "outputHashing": "all"
             },
             "development": {

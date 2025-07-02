@@ -351,6 +351,12 @@ button {
     max-width: 100vw;
   }
 
+  .profile-avatar {
+    width: 90px !important; // ความกว้างบนมือถือ/ ความสูงบนมือถือ
+    border-radius: 50%; // ทำให้เป็นวงกลมบนมือถือด้วย
+    object-fit: cover;
+  }
+
   mat-card {
     min-width: 0;
     width: 100%;

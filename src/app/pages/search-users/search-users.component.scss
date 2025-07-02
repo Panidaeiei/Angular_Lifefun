@@ -1,5 +1,3 @@
-
-
 :host,
 html,
 body {
@@ -74,16 +72,119 @@ body {
   margin: 10px 0;
 }
 
+.add-post-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: #fff;
+  color: #e27c96;
+  font-size: 32px;
+  box-shadow: none;
+  border: none;
+  transition: background 0.2s, color 0.2s;
+  text-decoration: none;
+  outline: none;
+
+  &:hover, &:focus {
+    background: #ffe6ee;
+    color: #d14b72;
+  }
+  &:active {
+    background: #f9c5d1;
+    color: #b03a5b;
+  }
+}
 
 .fixed-toolbar {
   position: fixed;
   top: 0;
   left: 0;
+  width: 100vw;
   background-color: rgb(233, 135, 135);
   height: 90px;
-  width: 100%;
-  z-index: 1;
-  /* Ensure it is above other content */
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  box-sizing: border-box;
+
+  img {
+    width: 80px;
+    height: auto;
+  }
+
+  .fa-solid,
+  .fa {
+    font-size: 40px;
+  }
+}
+
+// Tablet
+@media (max-width: 1024px) {
+  .fixed-toolbar {
+    height: 90px;
+    padding: 0 12px;
+
+    img {
+      width: 60px;
+    }
+
+    .fa-solid,
+    .fa {
+      font-size: 32px;
+    }
+  }
+
+  .center-menu {
+    gap: 20px !important;
+  }
+}
+
+// Mobile
+@media (max-width: 600px) {
+  .fixed-toolbar {
+    height: 80px;
+    padding: 0 6px;
+
+    img {
+      width: 65px;
+    }
+
+    .fa-solid,
+    .fa {
+      font-size: 22px;
+    }
+
+    .itim-regular {
+      font-size: 10px;
+    }
+
+    .center-menu {
+      display: none !important;
+    }
+  }
+}
+
+/* ✅ เมนูกลาง (ปุ่มหลัก) — ซ่อนไปเมื่อจอแคบ */
+@media (max-width: 767px) {
+  .center-menu {
+    display: none;
+  }
+}
+
+/* ✅ สำหรับ desktop/tablet */
+@media (min-width: 768px) {
+  .center-menu {
+    display: flex;
+    gap: 50px;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+  }
 }
 
 .cardpost {
@@ -177,33 +278,107 @@ body {
 }
 
 .user-list {
-    max-width: 650px;
-    margin: 40px;
-    display: flex;
-    flex-direction: column;
-    margin-left: 630px;
+  width: 100%;
+  max-width: 480px;
+  margin: 24px auto 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 0 2vw;
 }
 
 .user-card {
-    display: flex;
-    align-items: center;
-    background-color: rgb(255, 255, 255);
-    padding: 15px;
-    margin-bottom: 15px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  background: #fff;
+  /* border-radius: 0; // ขอบเหลี่ยม */
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  padding: 12px 14px;
+  gap: 14px;
+  cursor: pointer;
+  border: 1px solid #f0eaea;
+  transition: box-shadow 0.18s, transform 0.18s, background 0.18s, border-color 0.18s;
+}
+.user-card:hover, .user-card:focus {
+  background: #fff0f6;
+  box-shadow: 0 6px 24px rgba(226, 124, 150, 0.13);
+  border-color: #e27c96;
+  outline: none;
+}
+.user-card:active {
+  box-shadow: 0 4px 18px rgba(0,0,0,0.12);
+  transform: scale(0.98);
 }
 
 .user-avatar {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    margin-right: 15px;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #f7f7f7;
+  flex-shrink: 0;
+  border: 1.5px solid #f3eaea;
 }
 
+.user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  flex: 1;
+}
 
 .user-name {
-    font-weight: bold;
-    
+  font-weight: 700;
+  font-size: 1.08rem;
+  color: #222;
+  margin-bottom: 1px;
+  word-break: break-all;
+}
+
+.user-desc {
+  color: #666;
+  font-size: 0.97rem;
+  margin-bottom: 2px;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.user-stats {
+  display: flex;
+  gap: 8px;
+  font-size: 0.95rem;
+  color: #888;
+  align-items: center;
+}
+
+.no-results {
+  text-align: center;
+  font-size: 1.08rem;
+  color: #888;
+  margin-top: 18px;
+}
+
+/* Responsive for very small screens */
+@media (max-width: 400px) {
+  .user-list {
+    max-width: 99vw;
+    padding: 0 1vw;
+  }
+  .user-card {
+    padding: 8px 4px;
+    gap: 8px;
+  }
+  .user-avatar {
+    width: 40px;
+    height: 40px;
+  }
+  .user-name, .user-desc, .user-stats {
+    font-size: 0.93rem;
+  }
 }
 
 .user-email {

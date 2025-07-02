@@ -1,171 +1,220 @@
 :host,
 html,
 body {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgb(249, 241, 239);
-    /* สีพื้นหลัง */
-    box-sizing: border-box;
-    /* คำนวณขนาดไม่เกินขอบ */
-    overflow-x: hidden;
-    /* ปิดการเลื่อนแนวนอน */
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgb(249, 241, 239);
+  /* สีพื้นหลัง */
+  box-sizing: border-box;
+  /* คำนวณขนาดไม่เกินขอบ */
+  overflow-x: hidden;
+  /* ปิดการเลื่อนแนวนอน */
 }
 
 :host {
-    display: block;
-    min-height: 100vh;
-    align-items: center;
-    justify-content: center;
-    /* ครอบคลุมความสูงเต็มหน้าจอ */
-    background-color: rgb(249, 241, 239);
-    /* สีพื้นหลัง */
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
+  display: block;
+  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
+  /* ครอบคลุมความสูงเต็มหน้าจอ */
+  background-color: rgb(249, 241, 239);
+  /* สีพื้นหลัง */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 body {
-    overflow-y: auto;
-    /* เปิดใช้งานการเลื่อนแนวตั้ง */
-    background-color: rgb(249, 241, 239);
-    /* สีพื้นหลังเหมือนกัน */
+  overflow-y: auto;
+  /* เปิดใช้งานการเลื่อนแนวตั้ง */
+  background-color: rgb(249, 241, 239);
+  /* สีพื้นหลังเหมือนกัน */
 }
 
-.fixed-toolbar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    background-color: rgb(233, 135, 135);
-    height: 90px;
-    width: 100%;
-    z-index: 1;
-    /* Ensure it is above other content */
-}
-
-
+/* สไตล์พื้นฐานของ Drawer */
 .drawer {
-    position: fixed;
-    top: 0;
-    right: -300px;
-    /* ซ่อน Drawer ทางขวา */
-    width: 300px;
-    height: 100%;
-    background-color: white;
-    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
-    transition: right 0.3s ease;
-    /* เพิ่ม Transition */
-    z-index: 1000;
+  position: fixed;
+  top: 0;
+  right: -300px;
+  /* ซ่อน Drawer ทางขวา */
+  width: 300px;
+  height: 100%;
+  background-color: white;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
+  transition: right 0.3s ease;
+  /* เพิ่ม Transition */
+  z-index: 1000;
 }
 
 /* Drawer เปิด */
 .drawer.open {
-    right: 0;
-    /* แสดง Drawer */
+  right: 0;
+  /* แสดง Drawer */
 }
 
 /* สไตล์เนื้อหาใน Drawer */
 .drawer-content {
-    padding: 20px;
+  padding: 20px;
 }
 
 .drawer-content h3 {
-    margin-top: 0;
+  margin-top: 0;
 }
 
 .drawer-content ul {
-    list-style-type: none;
-    padding: 0;
+  list-style-type: none;
+  padding: 0;
 }
 
 .drawer-content ul li {
-    margin: 10px 0;
+  margin: 10px 0;
+}
+
+.fixed-toolbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  background-color: rgb(233, 135, 135);
+  height: 90px;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  box-sizing: border-box;
+
+  img {
+    width: 80px;
+    height: auto;
+  }
+  .fa-solid, .fa {
+    font-size: 40px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .fixed-toolbar {
+    height: 90px;
+    padding: 0 12px;
+    img { width: 60px; }
+    .fa-solid, .fa { font-size: 32px; }
+  }
+  .center-menu {
+    gap: 25px !important;
+  }
+}
+
+// Mobile
+@media (max-width: 600px) {
+  .fixed-toolbar {
+    height: 80px;
+    padding: 0 6px;
+    img { width: 65px; }
+    .fa-solid, .fa { font-size: 22px; }
+    .itim-regular { font-size: 10px; }
+    .center-menu {
+      display: none !important;
+    }
+  }
+}
+
+/* ✅ เมนูกลาง (ปุ่มหลัก) — ซ่อนไปเมื่อจอแคบ */
+@media (max-width: 767px) {
+  .center-menu {
+    display: none;
+  }
+}
+
+/* ✅ สำหรับ desktop/tablet */
+@media (min-width: 768px) {
+  .center-menu {
+    display: flex;
+    gap: 50px;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+  }
 }
 
 .cardpost {
-    background-color: white;
-    width: auto;
-    height: 450px;
+  background-color: white;
+  width: auto;
+  height: 450px;
 }
 
 .heart-icon {
-    color: gray;
-    transition: color 0.3s ease;
+  color: gray;
+  transition: color 0.3s ease;
 }
 
 .heart-icon.liked {
-    color: rgb(224, 67, 67);
+  color: rgb(224, 67, 67);
 }
 
 
 //font
 .itim-regular {
-    margin-top: 5px;
-    font-family: "Itim", serif;
-    font-weight: 400;
-    font-style: normal;
+  margin-top: 5px;
+  font-family: "Itim", serif;
+  font-weight: 400;
+  font-style: normal;
 }
 
 .menu-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-decoration: none;
-    position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  position: relative;
 }
 
 .menu-item.active {
-    color: #ff0000;
-    /* สีเมื่อ active */
+  color: #ff0000;
+  /* สีเมื่อ active */
 }
 
 
 .menu-item span {
-    font-size: 14px;
-    margin-top: 5px;
+  font-size: 14px;
+  margin-top: 5px;
 }
 
 .menu-item.active i,
 .menu-item.active span {
-    color: #000000;
-    /* เปลี่ยนสีเมื่อ active */
+  color: #000000;
+  /* เปลี่ยนสีเมื่อ active */
 }
 
 .menu-item.active::after {
-    content: '';
-    position: absolute;
-    bottom: -10px;
-    left: 50%;
-    /* เริ่มที่กึ่งกลางของเมนู */
-    transform: translateX(-50%);
-    /* ดันกลับมาครึ่งหนึ่งของความกว้าง */
-    height: 5px;
-    background-color: #000000;
-    /* สีขีดล่าง */
-    width: 80px;
-    /* ความกว้างของขีด */
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  /* เริ่มที่กึ่งกลางของเมนู */
+  transform: translateX(-50%);
+  /* ดันกลับมาครึ่งหนึ่งของความกว้าง */
+  height: 5px;
+  background-color: #000000;
+  /* สีขีดล่าง */
+  width: 80px;
+  /* ความกว้างของขีด */
 }
 
 .card-container-wrapper {
-    display: flex;
-    justify-content: center;
-    /* จัดกลุ่มการ์ดให้อยู่กลาง */
-    width: 100%;
-    /* ทำให้ wrapper ใช้ความกว้างทั้งหมด */
+  display: flex;
+  justify-content: center; /* จัดกลุ่มการ์ดให้อยู่กลาง */
+  width: 100%; /* ทำให้ wrapper ใช้ความกว้างทั้งหมด */
 }
 
 .card-container {
-    display: grid;
-    /* ใช้ CSS Grid */
-    grid-template-columns: repeat(4, 1fr);
-    /* กำหนดให้แถวมี 4 คอลัมน์ */
-    gap: 20px;
-    /* ระยะห่างระหว่างการ์ด */
-    max-width: 2000px;
-    /* กำหนดความกว้างสูงสุดของการ์ด */
+  display: grid;  /* ใช้ CSS Grid */
+  grid-template-columns: repeat(4, 1fr);  /* กำหนดให้แถวมี 4 คอลัมน์ */
+  gap: 20px;  /* ระยะห่างระหว่างการ์ด */
+  max-width: 2000px;  /* กำหนดความกว้างสูงสุดของการ์ด */
 }
-
 
 @media (max-width: 768px) {
   .card-container {
@@ -261,6 +310,7 @@ body {
   }
 }
 
+
 /* ✅ iPad Air 4 แนวตั้ง (เฉพาะ device-width: 820px) */
 @media screen and (device-width: 820px) and (orientation: portrait) {
   .card-container {
@@ -336,21 +386,19 @@ body {
   }
 }
 
-
-/* สำหรับอุปกรณ์ที่มีความกว้างไม่เกิน 480px (Mobile) */
 @media (min-width: 769px) and (max-width: 1030px) {
   .card-container {
     grid-template-columns: repeat(3, 1fr);
   }
 
   .imgpost {
-    width: 300px !important;
-    height: 300px !important;
+    width: 280px !important;
+    height: 280px !important;
     object-fit: cover;
   }
 
   .card-wrapper {
-    width: 300px !important;
+    width: 280px !important;
     padding: 5px;
   }
 
@@ -358,6 +406,7 @@ body {
     height: 460px !important;
   }
 }
+
 
 /* สำหรับอุปกรณ์ที่มีความกว้างไม่เกิน 480px (Mobile) */
 @media (min-width: 1200px) and (max-width: 1300px) {
@@ -391,51 +440,81 @@ body {
 }
 
 .card-wrapper {
-    width: 390px;
-    /* ใช้ความกว้างเต็มในแต่ละคอลัมน์ */
-    cursor: pointer;
-    padding: 5px;
-    display: flex;
-    justify-content: flex-start;
-    align-items: flex-start;
+  width: 390px; /* ใช้ความกว้างเต็มในแต่ละคอลัมน์ */
+  cursor: pointer;
+  padding: 5px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
 }
 
 .cardpost {
-    background-color: white;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border-radius: 0px;
-    overflow: hidden;
-    height: 500px;
-    width: 100%;
-    /* กำหนดให้การ์ดใช้ความกว้างทั้งหมด */
+  background-color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 0px;
+  overflow: hidden;
+  height: 500px;
+  width: 100%; /* กำหนดให้การ์ดใช้ความกว้างทั้งหมด */
 }
 
 .cardpost:hover {
-    transform: scale(1.02);
-    /* ขยายการ์ดเล็กน้อยเมื่อ hover */
-    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
-    /* เพิ่มเงา */
+  transform: scale(1.02); /* ขยายการ์ดเล็กน้อยเมื่อ hover */
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2); /* เพิ่มเงา */
 }
 
 
 .hover-link {
-    transition: color 0.3s ease, text-decoration 0.3s ease;
-    /* ทำให้เปลี่ยนสไตล์นุ่มนวล */
+  transition: color 0.3s ease, text-decoration 0.3s ease;
+  /* ทำให้เปลี่ยนสไตล์นุ่มนวล */
 }
 
 /* เอฟเฟกต์เมื่อ hover */
 .hover-link:hover {
-    color: #007BFF;
-    /* เปลี่ยนสีเป็นสีน้ำเงิน */
-    text-decoration: underline;
-    /* เพิ่มเส้นใต้ */
-    font-weight: bold;
-    /* ทำให้ข้อความหนาขึ้น */
+  color: #007BFF;
+  /* เปลี่ยนสีเป็นสีน้ำเงิน */
+  text-decoration: underline;
+  /* เพิ่มเส้นใต้ */
+  font-weight: bold;
+  /* ทำให้ข้อความหนาขึ้น */
 }
 
 .multiple-media-icon {
-    top: 10px;
-    right: 10px;
-    padding: 5px;
-    border-radius: 50%;
+  top: 10px;
+  right: 10px;
+  padding: 5px;
+  border-radius: 50%;
+}
+
+.add-post-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: #fff;
+  color: #e27c96;
+  font-size: 32px;
+  box-shadow: none;
+  border: none;
+  transition: background 0.2s, color 0.2s;
+  text-decoration: none;
+  outline: none;
+
+  &:hover, &:focus {
+    background: #ffe6ee;
+    color: #d14b72;
+  }
+  &:active {
+    background: #f9c5d1;
+    color: #b03a5b;
+  }
+}
+
+@media (max-width: 600px) {
+  .add-post-btn {
+    width: 44px;
+    height: 44px;
+    font-size: 26px;
+  }
 }

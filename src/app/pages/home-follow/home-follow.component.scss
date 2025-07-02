@@ -386,21 +386,19 @@ body {
   }
 }
 
-
-/* สำหรับอุปกรณ์ที่มีความกว้างไม่เกิน 480px (Mobile) */
 @media (min-width: 769px) and (max-width: 1030px) {
   .card-container {
     grid-template-columns: repeat(3, 1fr);
   }
 
   .imgpost {
-    width: 300px !important;
-    height: 300px !important;
+    width: 280px !important;
+    height: 280px !important;
     object-fit: cover;
   }
 
   .card-wrapper {
-    width: 300px !important;
+    width: 280px !important;
     padding: 5px;
   }
 
@@ -408,6 +406,7 @@ body {
     height: 460px !important;
   }
 }
+
 
 /* สำหรับอุปกรณ์ที่มีความกว้างไม่เกิน 480px (Mobile) */
 @media (min-width: 1200px) and (max-width: 1300px) {

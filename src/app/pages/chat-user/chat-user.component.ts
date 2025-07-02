@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, HostListener, OnInit } from '@angular/core';
+import { Component, Input, HostListener, OnInit, OnDestroy } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -9,6 +9,7 @@ import { ActivatedRoute, RouterModule, Params } from '@angular/router';
 import { MatBadgeModule } from '@angular/material/badge';
 import { FormsModule } from '@angular/forms';
 import { UserService } from '../../services/Userservice';
+import { ChatService } from '../../services/chat.service';
 
 @Component({
   selector: 'app-chat-user',
@@ -17,18 +18,18 @@ import { UserService } from '../../services/Userservice';
   templateUrl: './chat-user.component.html',
   styleUrl: './chat-user.component.scss'
 })
-export class ChatUserComponent implements OnInit {
+export class ChatUserComponent implements OnInit, OnDestroy {
   [x: string]: any;
   userId: string = '';
-  newMessage: any;
+  newMessage: string = '';
   searchQuery: string = '';
   isDrawerOpen: boolean = false;
   selectedCard: any = null; 
   isNotiDrawerOpen = true;
   selectedChatUser: any = {
-  name: 'วาสันต์',
-  image: 'https://i.imgur.com/QrKdv2k.png'
-};
+    name: 'วาสันต์',
+    image: 'https://i.imgur.com/QrKdv2k.png'
+  };
 
   isMobile = false;
   showSidebar = true;
@@ -39,51 +40,192 @@ export class ChatUserComponent implements OnInit {
     { image: 'https://randomuser.me/api/portraits/men/2.jpg', name: 'สตอรี่2' },
     { image: 'https://randomuser.me/api/portraits/women/3.jpg', name: 'สตอรี่3' }
   ];
-  chatList = [
-    {
-      avatar: 'https://randomuser.me/api/portraits/men/4.jpg',
-      name: 'A',
-      lastMessage: 'สวัสดี',
-      messages: [
-        { text: 'สวัสดี', isMine: false },
-        { text: 'ดีจ้า', isMine: true }
-      ],
-      status: 'ออนไลน์'
-    },
-    {
-      avatar: 'https://randomuser.me/api/portraits/women/5.jpg',
-      name: 'B',
-      lastMessage: 'Hello',
-      messages: [
-        { text: 'Hello', isMine: false },
-        { text: 'Hi!', isMine: true }
-      ],
-      status: 'ออฟไลน์'
-    }
-  ];
+  chatList: any[] = [];
   selectedChat: any = null;
   isDrawerOpenMobile: boolean = false;
   chatId: string = '';
   fromId: string = '';
+  currentChatMessages: any[] = [];
+  
+  // เพิ่มตัวแปรสำหรับไฟล์ที่เลือก
+  chatImage: File | null = null;
+  chatVideo: File | null = null;
+  selectedFilePreview: string | null = null;
 
-  @Input() userData: any; // หรือกำหนด type ให้ละเอียดก็ได้
+  // สำหรับ hover bubble
+  hoveredMsgIndex: number | null = null;
 
-  constructor(private route: ActivatedRoute,private userService: UserService) {}
+  @Input() userData: any;
+
+  constructor(private route: ActivatedRoute, private userService: UserService, private chatService: ChatService) {}
 
   ngOnInit() {
     this.route.queryParams.subscribe((params: Params) => {
-      this.userId = params['id']; // ดึง ID จาก Query Parameters
+      this.userId = params['id'];
+      this.fromId = this.userId;
       console.log('User ID:', this.userId);
-
+      
+      if (this.userId) {
+        this.loadUserChats();
+      }
     });
     
     this.checkScreenSize();
-    // เก็บรายการแชทต้นฉบับ
-    this.originalChatList = [...this.chatList];
-    // เลือกแชทแรกโดยอัตโนมัติ
-    if (this.chatList.length > 0) {
-      this.selectedChat = this.chatList[0];
+  }
+
+  ngOnDestroy() {
+    // Cleanup subscriptions if needed
+  }
+
+  loadUserChats() {
+    this.chatService.getUserChats(this.userId, (chats) => {
+      this.chatList = chats.map(chat => ({
+        avatar: chat.other_image_url,
+        name: chat.other_username,
+        lastMessage: chat.last_message || '',
+        chatId: chat.chatId,
+        lastMessageTime: chat.last_message_time,
+        ...chat
+      }));
+      this.originalChatList = [...this.chatList];
+      
+      // เลือกแชทแรกโดยอัตโนมัติ
+      if (this.chatList.length > 0 && !this.selectedChat) {
+        this.selectChat(this.chatList[0]);
+      }
+    });
+  }
+
+  selectChat(chat: any) {
+    this.selectedChat = chat;
+    this.chatId = chat.chatId;
+    
+    // ดึงข้อความจาก Firebase แบบ real-time
+    this.chatService.listenMessages(chat.chatId, (messages) => {
+      this.currentChatMessages = messages;
+      // อัปเดต lastMessage ใน chatList
+      if (messages.length > 0) {
+        const lastMsg = messages[messages.length - 1];
+        chat.lastMessage = lastMsg.text || (lastMsg.image_url ? 'ส่งรูปภาพ' : lastMsg.video_url ? 'ส่งวิดีโอ' : '');
+        chat.lastMessageTime = lastMsg.create_at;
+        // เรียงลำดับใหม่
+        this.chatList = this.chatList.sort((a, b) => 
+          new Date(b.lastMessageTime || 0).getTime() - new Date(a.lastMessageTime || 0).getTime()
+        );
+      }
+    });
+    
+    if (this.isMobile) {
+      this.showSidebar = false;
     }
+  }
+
+  async sendMessage() {
+    if ((!this.newMessage.trim() && !this.chatImage && !this.chatVideo) || !this.chatId) return;
+    
+    let pendingMsg: any = null;
+    if (this.chatImage) {
+      pendingMsg = {
+        uid: this.userId,
+        text: this.newMessage,
+        image_url: this.selectedFilePreview,
+        type: 2,
+        create_at: Date.now(),
+        pending: true
+      };
+      // เพิ่ม pending message ทันที
+      this.currentChatMessages.push(pendingMsg);
+    } else if (this.chatVideo) {
+      pendingMsg = {
+        uid: this.userId,
+        text: this.newMessage,
+        video_url: this.selectedFilePreview,
+        type: 3,
+        create_at: Date.now(),
+        pending: true
+      };
+      // เพิ่ม pending message ทันที
+      this.currentChatMessages.push(pendingMsg);
+    }
+    
+    try {
+      let imageUrl = '';
+      let videoUrl = '';
+      
+      // อัปโหลดไฟล์ถ้ามี
+      if (this.chatImage) {
+        imageUrl = await this.chatService.uploadImage(this.chatImage, this.chatId, this.userId);
+      }
+      if (this.chatVideo) {
+        videoUrl = await this.chatService.uploadVideo(this.chatVideo, this.chatId, this.userId);
+      }
+      
+      // ส่งข้อความพร้อมไฟล์
+      await this.chatService.sendMessage(this.chatId, this.userId, this.newMessage, imageUrl, videoUrl);
+      
+      // ลบ pending message ออก (เพราะ Firebase จะส่ง message จริงมาแล้ว)
+      if (pendingMsg) {
+        const index = this.currentChatMessages.findIndex(msg => msg.pending && msg.create_at === pendingMsg.create_at);
+        if (index !== -1) {
+          this.currentChatMessages.splice(index, 1);
+        }
+      }
+      
+      // รีเซ็ตตัวแปร
+      this.newMessage = '';
+      this.chatImage = null;
+      this.chatVideo = null;
+      this.selectedFilePreview = null;
+    } catch (error) {
+      console.error('Error sending message:', error);
+      // ถ้าเกิด error ให้ลบ pending message ออก
+      if (pendingMsg) {
+        const index = this.currentChatMessages.findIndex(msg => msg.pending && msg.create_at === pendingMsg.create_at);
+        if (index !== -1) {
+          this.currentChatMessages.splice(index, 1);
+        }
+      }
+    }
+  }
+
+  onChatFileSelected(event: any) {
+    const file: File = event.target.files[0];
+    if (!file) return;
+
+    // ลบไฟล์เก่า
+    this.chatImage = null;
+    this.chatVideo = null;
+    this.selectedFilePreview = null;
+
+    if (file.type.startsWith('image/')) {
+      this.chatImage = file;
+      this.createFilePreview(file);
+    } else if (file.type.startsWith('video/')) {
+      this.chatVideo = file;
+      this.createFilePreview(file);
+    }
+  }
+
+  createFilePreview(file: File) {
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+      this.selectedFilePreview = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  removeSelectedFile() {
+    this.chatImage = null;
+    this.chatVideo = null;
+    this.selectedFilePreview = null;
+  }
+
+  getFileSize(): string {
+    const file = this.chatImage || this.chatVideo;
+    if (file && file.size) {
+      return (file.size / 1024 / 1024).toFixed(2) + ' MB';
+    }
+    return '0 MB';
   }
 
   @HostListener('window:resize')
@@ -92,7 +234,7 @@ export class ChatUserComponent implements OnInit {
   }
 
   checkScreenSize() {
-    this.isMobile = window.innerWidth <=910;
+    this.isMobile = window.innerWidth <= 910;
     if (this.isMobile) {
       this.showSidebar = true;
       this.showUserInfo = false;
@@ -103,45 +245,21 @@ export class ChatUserComponent implements OnInit {
   }
 
   toggleDrawer(): void {
-    this.isDrawerOpen = !this.isDrawerOpen; // สลับสถานะเปิด/ปิด
+    this.isDrawerOpen = !this.isDrawerOpen;
   }
 
   selectCard(cardData: any) {
     this.selectedCard = cardData;
     this.isNotiDrawerOpen = false;
-
-  }
-
-  selectChat(chat: any) {
-    this.selectedChat = chat;
-    if (this.isMobile) {
-      this.showSidebar = false;
-    }
-  }
-
-  sendMessage() {
-    if (!this.newMessage.trim()) return;
-    const formData = new FormData();
-    formData.append('chatId', this.chatId);
-    formData.append('uid', this.fromId);
-    formData.append('text', this.newMessage);
-    formData.append('type', '1'); // 1 = ข้อความ, 2 = รูป
-
-    this.userService.sendMessage(formData).subscribe(res => {
-      this.newMessage = '';
-      // ไม่ต้องโหลดใหม่ เพราะ subscribe ข้อความอยู่แล้ว
-    });
   }
 
   searchChats() {
     if (!this.searchQuery.trim()) {
-      // ถ้าไม่มีคำค้นหา ให้แสดงรายการทั้งหมด
       this.chatList = [...this.originalChatList];
     } else {
-      // ค้นหาจากชื่อหรือข้อความล่าสุด
       this.chatList = this.originalChatList.filter(chat => 
         chat.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-        chat.lastMessage.toLowerCase().includes(this.searchQuery.toLowerCase())
+        (chat.lastMessage && chat.lastMessage.toLowerCase().includes(this.searchQuery.toLowerCase()))
       );
     }
   }
@@ -156,19 +274,5 @@ export class ChatUserComponent implements OnInit {
 
   closeMobileDrawer() {
     this.isDrawerOpenMobile = false;
-  }
-
-  onFileSelected(event: any) {
-    const file: File = event.target.files[0];
-    if (!file) return;
-    const formData = new FormData();
-    formData.append('chatId', this.chatId);
-    formData.append('uid', this.fromId);
-    formData.append('type', '2'); // 2 = รูป
-    formData.append('image', file);
-
-    this.userService.sendMessage(formData).subscribe(res => {
-      // ไม่ต้องโหลดใหม่ เพราะ subscribe ข้อความอยู่แล้ว
-    });
   }
 }
