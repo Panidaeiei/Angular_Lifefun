@@ -257,6 +257,7 @@ export class CreatePostComponent implements OnInit {
     this.isLoading = true; // เปิดสถานะการโหลด
     console.log('Request Body:', this.postData);
     console.log('Files:', this.files);
+    console.log('Form Data:', formData);
 
     this.postService.addPost(formData).subscribe(
       (response) => {

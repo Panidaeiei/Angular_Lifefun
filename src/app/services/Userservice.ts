@@ -3,7 +3,6 @@ import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http
 import { BehaviorSubject, catchError, Observable, tap, throwError } from 'rxjs';
 import { User } from '../models/register_model';
 import { environment } from '../../environments/environment';
-import { EditUser } from '../models/edit-user.model';
 import { SearchUser } from '../models/search-user.model';
 
 @Injectable({
@@ -46,7 +45,7 @@ export class UserService {
 
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
 
-    return this.http.get<User[]>(`${this.baseUrl}/view_users`, { headers }).pipe(
+    return this.http.get<User[]>(`http://projectnodejs.thammadalok.com/lifefunproject/view_users`, { headers }).pipe(
       catchError(error => {
         console.error('Error fetching users:', error);
         return throwError(() => new Error(error.message || 'Failed to fetch users'));
@@ -64,33 +63,14 @@ export class UserService {
     }
 
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-    return this.http.get<User>(`${this.baseUrl}/view_users/${userId}`, { headers });
+    return this.http.get<User>(`http://projectnodejs.thammadalok.com/lifefunproject/view_users/${userId}`, { headers });
   }
 
   // ลงทะเบียนผู้ใช้
   registerUser(formData: FormData): Observable<any> {
-    return this.http.post(`${this.baseUrl}/register`, formData);
+    return this.http.post(`http://projectnodejs.thammadalok.com/lifefunproject/register`, formData);
   }
 
-  // เข้าสู่ระบบ
-  login(data: { email?: string; username?: string; password: string }): Observable<any> {
-    return this.http.post(`${this.baseUrl}/login`, data).pipe(
-      tap((response: any) => {
-        if (response && response.userId) {
-          this.setCurrentUserId(response.userId); // อัปเดตค่า currentUserId
-          localStorage.setItem('token', response.token); // เก็บ Token ลง LocalStorage
-          console.log('Login successful, User ID set:', response.userId);
-        } else {
-          console.warn('Login response does not include userId');
-        }
-      }),
-      catchError((error) => {
-        console.error('Login failed:', error);
-        return throwError(() => new Error(error.message));
-      })
-    );
-  }
-  
 
   // อัปเดตข้อมูลผู้ใช้
   updateUser(formData: FormData): Observable<any> {
@@ -103,10 +83,21 @@ export class UserService {
     const headers = new HttpHeaders({
       Authorization: `Bearer ${token}`,
     });
+
+    // Debug: แสดงข้อมูลที่ส่งไป
+    console.log('📤 Sending FormData to backend:');
+    formData.forEach((value, key) => {
+      console.log(`📤 ${key}:`, value);
+    });
   
-    return this.http.put(`${this.baseUrl}/edit_user`, formData, { headers, responseType: 'json' }).pipe(
+    return this.http.put(`http://projectnodejs.thammadalok.com/lifefunproject/edit_user`, formData, { headers, responseType: 'json' }).pipe(
+      tap((response) => {
+        console.log('📥 Raw response from backend:', response);
+      }),
       catchError((error: HttpErrorResponse) => {
         console.error('❌ Error in updateUser:', error);
+        console.log('📌 Error status:', error.status);
+        console.log('📌 Error statusText:', error.statusText);
         console.log('📌 Full raw error response:', error);
         console.log('📌 Parsed error object:', error.error);
   
@@ -129,7 +120,7 @@ export class UserService {
       Authorization: `Bearer ${token}`,
     });
 
-    const url = `${this.baseUrl}/deleteUser/${userId}`;
+    const url = `http://projectnodejs.thammadalok.com/lifefunproject/deleteUser/${userId}`;
     return this.http.delete(url, { headers }).pipe(
       catchError((error) => {
         console.error('Error in deleteUser:', error);
@@ -146,7 +137,7 @@ export class UserService {
 
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
 
-    return this.http.get<SearchUser[]>(`${this.baseUrl}/search_user?username=${username}`, { headers }).pipe(
+    return this.http.get<SearchUser[]>(`http://projectnodejs.thammadalok.com/lifefunproject/search_user?username=${username}`, { headers }).pipe(
       catchError(error => {
         console.error('Error fetching searched users:', error);
         return throwError(() => new Error(error.message || 'Failed to search users'));
@@ -154,7 +145,4 @@ export class UserService {
     );
   }
 
-  sendMessage(formData: FormData): Observable<any> {
-    return this.http.post(`${this.baseUrl}/send`, formData);
-  }
 }

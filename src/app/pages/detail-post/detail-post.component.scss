@@ -1127,33 +1127,7 @@ mat-icon {
 /* ปุ่มเลื่อนแบบถาวรสำหรับมือถือ */
 @media (max-width: 600px) {
   .slider-controls {
-    display: flex !important;
-    gap: calc(100vw - 120px) !important;
-    opacity: 0.8;
-  }
-  
-  .slider-controls .prev-btn,
-  .slider-controls .next-btn {
-    background-color: rgba(0, 0, 0, 0.6);
-    font-size: 16px !important;
-    padding: 6px !important;
-    min-width: 32px;
-    min-height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-  }
-  
-  .slider-controls .prev-btn:hover,
-  .slider-controls .next-btn:hover {
-    background-color: rgba(0, 0, 0, 0.8);
-  }
-  
-  .slider-controls .prev-btn:disabled,
-  .slider-controls .next-btn:disabled {
-    background-color: rgba(0, 0, 0, 0.3);
-    opacity: 0.3;
+    display: none !important;
   }
 }
 
@@ -1200,6 +1174,32 @@ mat-icon {
   .slider-controls .prev-btn:hover,
   .slider-controls .next-btn:hover {
     background-color: rgba(0, 0, 0, 0.7);
+  }
+}
+
+.media-dots {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+  gap: 8px;
+}
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #ddd;
+  display: inline-block;
+  transition: background 0.2s, border 0.2s;
+}
+.dot.active {
+  background: #fff;
+  border: 2px solid #e27c96;
+}
+
+@media (max-width: 600px) {
+  .media-dots {
+    margin-bottom: 10px;
   }
 }
 

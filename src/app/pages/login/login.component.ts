@@ -50,7 +50,7 @@ export class LoginComponent {
       password: this.password,
     };
 
-    this.http.post('http://localhost:3000/api/login', payload).subscribe(
+    this.http.post('http://projectnodejs.thammadalok.com/lifefunproject/login', payload).subscribe(
       (response: any) => {
         // ตรวจสอบว่ามีสถานะของบัญชีและถูกระงับหรือไม่
         if (response.status === 0) {

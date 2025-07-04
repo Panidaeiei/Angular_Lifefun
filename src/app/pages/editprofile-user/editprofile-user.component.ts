@@ -133,32 +133,31 @@ export class EditprofileUserComponent implements OnInit {
   onSaveProfile(): void {
     const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/; // ต้องมีตัวอักษรและตัวเลขอย่างน้อย 1 ตัว ความยาว ≥ 8
 
-    // ตรวจสอบว่ามีการเปลี่ยนรหัสผ่านหรือไม่
-    // ✅ ถ้าผู้ใช้ต้องการเปลี่ยนรหัสผ่าน ต้องกรอกให้ครบทั้ง 3 ช่อง
-    if (this.newPassword || this.confirmPassword || this.currentPassword) {
+    const isChangingPassword = this.newPassword || this.confirmPassword;
+
+    // ถ้าไม่ได้ตั้งใจเปลี่ยนรหัสผ่าน (newPassword, confirmPassword ว่าง) ให้ clear currentPassword
+    if (!isChangingPassword) {
+      this.currentPassword = '';
+    }
+
+    // ถ้ากรอก newPassword หรือ confirmPassword ต้องกรอกครบทั้ง 3 ช่อง
+    if (isChangingPassword) {
       if (!this.currentPassword || !this.newPassword || !this.confirmPassword) {
         alert('กรุณากรอกรหัสผ่านให้ครบทุกช่อง');
         return;
       }
-
-      // ✅ เช็ครหัสผ่านใหม่ว่าตรงกับรหัสผ่านเดิมหรือไม่
       if (this.newPassword === this.currentPassword) {
         alert('คุณกรอกรหัสผ่านเดิม กรุณาใช้รหัสผ่านใหม่');
         return;
       }
-
-      // ✅ ตรวจสอบความแข็งแรงของรหัสผ่าน
       if (!passwordRegex.test(this.newPassword)) {
         alert('รหัสผ่านต้องประกอบด้วย:\n- ตัวอักษร (A-Z, a-z)\n- ตัวเลข (0-9)\n- หรือตัวอักษรพิเศษ เช่น @$!%*?&\n- ความยาวอย่างน้อย 8 ตัวอักษร');
         return;
       }
-
-      // ✅ ตรวจสอบว่ารหัสผ่านใหม่และรหัสผ่านยืนยันตรงกันหรือไม่
       if (this.newPassword !== this.confirmPassword) {
         alert('รหัสผ่านไม่ตรงกัน');
         return;
       }
-
     }
 
     this.isLoading = true;
@@ -190,13 +189,31 @@ export class EditprofileUserComponent implements OnInit {
 
     this.userService.updateUser(formData).subscribe({
       next: (response) => {
+        console.log('✅ Success response:', response);
+        console.log('✅ Response type:', typeof response);
+        console.log('✅ Response message:', response.message);
+        
+        // ตรวจสอบว่า response มี error หรือไม่
+        if (response.error || response.errors) {
+          console.error('❌ Backend returned error in success response:', response);
+          let errorMessage = response.error || 'เกิดข้อผิดพลาดในการอัปเดตข้อมูล';
+          if (response.errors) {
+            errorMessage = Object.values(response.errors).join('\n');
+          }
+          alert(errorMessage);
+          this.isLoading = false;
+          return;
+        }
+        this.user = response.user;
         alert(response.message || 'อัปเดตข้อมูลสำเร็จ');
-        this.router.navigate(['/ProfileUser'], { queryParams: { id: this.userId } }); //ยังคงไปหน้าข้อมูลโปรไฟล์เมื่อลงทะเบียนสำเร็จ
-
+        this.router.navigate(['/ProfileUser'], { queryParams: { id: this.userId } });
       },
       error: (error) => {
         console.error('❌ Error updating user:', error);
         console.log('📌 Full error object:', error);
+        console.log('📌 Error status:', error.status);
+        console.log('📌 Error message:', error.message);
+        console.log('📌 Error error:', error.error);
     
         let errorMessage = 'รหัสผ่านเดิมไม่ถูกต้อง!';
     
@@ -226,7 +243,6 @@ export class EditprofileUserComponent implements OnInit {
     
         alert(errorMessage.trim()); // ✅ แจ้งเตือนข้อผิดพลาด และให้ผู้ใช้แก้ไขข้อมูล
         this.isLoading = false;
-
       }
     });    
     

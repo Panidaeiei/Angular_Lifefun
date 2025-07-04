@@ -64,7 +64,7 @@ export class PostService {
       .set('uid', uid || '');  // ส่ง uid ของผู้ใช้ใน header
 
     // ส่งคำขอ GET ไปที่ API พร้อม Token และ uid
-    return this.http.get<ShowPost[]>(`${this.baseUrl}/posts/getPosts`, { headers }).pipe(
+    return this.http.get<ShowPost[]>(`http://projectnodejs.thammadalok.com/lifefunproject/posts/getPosts`, { headers }).pipe(
       tap((response) => {
         console.log('Response from API:', response);  // ตรวจสอบข้อมูลที่ได้รับจาก API
 
@@ -91,7 +91,7 @@ export class PostService {
       .set('uid', uid || '');  // ส่ง uid ของผู้ใช้ใน header
 
     // ส่งคำขอ GET ไปที่ API พร้อม Token และ uid
-    return this.http.get<ShowPost[]>(`${this.baseUrl}/posts/getPosts_interests`, { headers }).pipe(
+    return this.http.get<ShowPost[]>(`http://projectnodejs.thammadalok.com/lifefunproject/getPosts_interests`, { headers }).pipe(
       tap((response) => {
         console.log('Response from API:', response);  // ตรวจสอบข้อมูลที่ได้รับจาก API
 
