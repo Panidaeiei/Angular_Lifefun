@@ -1,134 +1,142 @@
-<mat-toolbar class="fixed-toolbar"
-    style="background-color: rgb(233, 135, 135); height: 90px; display: flex; align-items: center; justify-content: space-between;">
-
-    <a [routerLink]="['']">
-        <img src="../../../assets/images/Logoweb.png" alt="Home Icon" width="80px">
-    </a>
-
-    <div style="display: flex; flex-grow: 1; justify-content: center; align-items: center;  margin-left: 120px;">
-        <div style="display: flex; justify-content: center; align-items: center; gap: 60px;">
-
-            <div style="display: flex; flex-direction: column; align-items: center;">
-                <a [routerLink]="['']">
-                    <i style="font-size: 40px; color: black;" class="fa-solid fa-house"></i>
+<div class="background-div">
+    <div class="background-div">
+        <mat-toolbar class="fixed-toolbar modern-toolbar">
+            <a [routerLink]="['']" class="toolbar-logo">
+                <img src="../../../assets/images/Logoweb.png" alt="Home Icon" style="width: 60px;" />
+            </a>
+            <div class="toolbar-center-menu" *ngIf="!isMobile">
+                <a class="menu-item" [routerLink]="['']">
+                    <i class="fa-solid fa-house"></i>
+                    <span>หน้าหลัก</span>
                 </a>
-                <span class="itim-regular">หน้าหลัก</span>
-            </div>
-
-            <div style="display: flex; flex-direction: column; align-items: center;">
-                <a class="menu-item" routerLinkActive="active" [routerLink]="['/searchpost_main']">
-                    <i style="font-size: 40px; color: black;" class="fa-solid fa-magnifying-glass"></i>
+                    <a class="menu-item" routerLinkActive="active" [routerLink]="['/searchpost_main']">
+                        <i style="color: black;" class="fa-solid fa-magnifying-glass"></i>
+                    <span style="color: black;">ค้นหา</span>
                 </a>
-                <span class="itim-regular">ค้นหา</span>
-            </div>
-
-            <div style="display: flex; flex-direction: column; align-items: center;">
-                <a [routerLink]="['/category_main']">
-                    <i style="font-size: 40px; color: black;" class="fa-solid fa-bars"></i>
+                <a class="menu-item" [routerLink]="['/category_main']">
+                    <i class="fa-solid fa-bars"></i>
+                    <span>หมวดหมู่</span>
                 </a>
-                <span class="itim-regular">หมวดหมู่</span>
             </div>
-        </div>
+            <button routerLink="/login" class="login-link modern-login" *ngIf="!isMobile">
+                <i class="material-icons">login</i>
+                <span>เข้าสู่ระบบ/สมัครสมาชิก</span>
+            </button>
+            <button class="toolbar-hamburger" (click)="toggleDrawer()" aria-label="เมนู" *ngIf="isMobile">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </mat-toolbar>
     </div>
 
-    <button routerLink="/login" class="login-link"
-        style="text-decoration: none; color: black; background: none; border: none; outline: none;">
-        <div style="display: flex; flex-direction: row; align-items: center; justify-content: center;">
-            <i class="material-icons" st>login</i>
-            <span style="margin-left: 10px; font-size: 17px;">เข้าสู่ระบบ/สมัครสมาชิก</span>
-        </div>
-    </button>
-</mat-toolbar>
-<div style="display: flex; flex-direction: column; align-items: center; margin-top: 120px;">
-
-    <div style="display: flex;  justify-content: center; margin-bottom: 30px;">
-        <div class="search-container">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" class="search-input" [(ngModel)]="searchQuery" (input)="onSearch()"
-                (keyup.enter)="onSearch()" placeholder="ค้นหาโพสต์...">
+    <!-- Drawer สำหรับ mobile -->
+    <div class="drawer" [class.open]="isDrawerOpen">
+        <div class="drawer-content">
+            <h3 style="font-weight: 500; font-size: 30px;">MENU</h3>
+            <ul style="list-style: none; padding: 0;">
+                <li
+                    style="border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; align-items: center; gap: 10px;">
+                    <i class="fa-solid fa-house" style="font-size: 20px; color: black;"></i>
+                    <a [routerLink]="['/']" style="text-decoration: none; color: black;">
+                        <span>หน้าหลัก</span>
+                    </a>
+                </li>
+                <li
+                    style="border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; align-items: center; gap: 10px;">
+                    <i class="fa-solid fa-magnifying-glass" style="font-size: 20px; color: black;"></i>
+                    <a [routerLink]="['/search_main']" style="text-decoration: none; color: black;">
+                        <span>ค้นหา</span>
+                    </a>
+                </li>
+                <li
+                    style="border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; align-items: center; gap: 10px;">
+                    <i class="fa-solid fa-bars" style="font-size: 20px; color: black;"></i>
+                    <a [routerLink]="['/category_main']" style="text-decoration: none; color: black;">
+                        <span>หมวดหมู่</span>
+                    </a>
+                </li>
+                <li
+                    style="border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; align-items: center; gap: 10px;">
+                    <i class="material-icons" style="font-size: 20px; color: black;">login</i>
+                    <a [routerLink]="['/login']" style="text-decoration: none; color: black;">
+                        <span>เข้าสู่ระบบ/สมัครสมาชิก</span>
+                    </a>
+                </li>
+            </ul>
+            <button mat-flat-button style="background-color: rgb(226, 124, 150); width: 100px;"
+                (click)="toggleDrawer()">ปิด</button>
         </div>
     </div>
+    <div>
+        <!-- Search Container -->
+        <div style="display: flex; margin-top: 100px; justify-content: center; margin-bottom: 30px;">
+            <div class="search-container">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" class="search-input" [(ngModel)]="searchQuery" (input)="onSearch()"
+                    (keyup.enter)="onSearch()" placeholder="ค้นหาโพสต์...">
+            </div>
+        </div>
 
-    <!-- ปุ่มบัญชีผู้ใช้งาน -->
-    <div style="display: flex; justify-content: center; margin-bottom: 30px; gap: 30px;">
-        <a class="menu-item2" [routerLink]="['/search_main']"
-            style="text-decoration: none; color: black;">
-            <span style="font-size: 22px; ">บัญชีผู้ใช้งาน</span>
-        </a>
-        <a class="menu-item2" routerLinkActive="active" [routerLink]="['/searchpost_main']" style="text-decoration: none; color: black;">
-            <span style="font-size: 22px; font-weight: 600;">โพสต์</span>
-        </a>
-    </div>
+        <!-- Modern Tabs -->
+        <div class="modern-tabs">
+            <a class="tab" [routerLink]="['/search_main']" routerLinkActive="active">บัญชีผู้ใช้งาน</a>
+            <a class="tab" [routerLink]="['/searchpost_main']" routerLinkActive="active">โพสต์</a>
+        </div>
 
-    <div *ngIf="loading" class="loading">⏳ กำลังค้นหา...</div>
+        <!-- Main Container -->
+        <div class="main-container">
+            <!-- Loading State -->
+            <div *ngIf="loading" class="loading">⏳ กำลังค้นหา...</div>
 
-    <div style="margin-top: 30px;" *ngIf="posts.length > 0">
-        <div class="post-grid">
-            <div *ngFor="let post of posts" class="post-card" style="width: 350px; height: 560px;">
-      
-                <div style="display: flex; flex-direction: column;">
-                    <!-- ส่วนโปรไฟล์ -->
-                    <div style="display: flex; align-items: center; gap: 10px; margin-top: 10px;">
-                        <a (click)="goToProfile(post.user_uid.toString())" style="cursor: pointer;"><img style="border-radius: 50%; width: 70px; height: 70px; object-fit: cover; padding: 5px;"
-                            [src]="post.user_profile_image" alt=""></a>      
-                        <div style="display: flex; flex-direction: column; ">
-                            <span style="font-size: 20px;">{{ post.user_name }}</span>
-                            <span style="color: #7e7776; margin-top: 5px; margin-bottom: 10px;">{{post.post_time |
-                                timeAgo}}</span>
+            <!-- Posts Grid -->
+            <div *ngIf="posts.length > 0" class="post-grid">
+                <div *ngFor="let post of posts" class="post-card">
+                    <div class="profile-row">
+                        <img [src]="post.user_profile_image" alt="Profile Image">
+                        <div class="profile-info">
+                            <span class="user-name">{{ post.user_name }}</span>
+                            <span class="post-time">{{ post.post_time | timeAgo }}</span>
                         </div>
                     </div>
-
-                    <!-- Container ที่ครอบทั้งภาพ/วิดีโอ และไอคอน -->
-                    <div style="position: relative; width: 350px; height: 350px;">
-                        <!-- รูปภาพ -->
+                    <div class="media-container">
                         <a (click)="onloginClick()" style="cursor: pointer;">
-                            <img *ngIf="post.media_type === 'image'" [src]="post.media_url" alt="Post Image"
-                                style="width: 100%; height: 100%; object-fit: cover;">
+                            <img *ngIf="post.media_type === 'image'" [src]="post.media_url" alt="Post Image">
+                            <video *ngIf="post.media_type === 'video'" [src]="post.media_url" controls></video>
                         </a>
-
-                        <!-- วิดีโอ -->
-                        <a (click)="onloginClick()" style="cursor: pointer;">
-                            <video *ngIf="post.media_type === 'video'" [src]="post.media_url" controls
-                                style="width: 100%; height: 100%; object-fit: cover;"></video>
-                        </a>
-
-                        <!-- ไอคอนแสดงว่ามีหลายสื่อ -->
                         <div *ngIf="post.hasMultipleMedia" class="multiple-media-icon">
-                            <i class="fa fa-clone" style="font-size: 24px; color: white;
-                position: absolute; top: 10px; right: 10px; padding: 5px; border-radius: 50%;"></i>
+                            <i class="fa fa-clone" style="font-size: 24px; color: white;"></i>
                         </div>
                     </div>
-
-                    <div style="margin-top: 10px; margin-left: 10px;">
+                    <div class="like-row">
                         <span style="font-size: 25px;">♥️</span>
                         <span style="font-size: 20px; margin-left: 5px;">{{ post.likes_count != null ? post.likes_count
-                            : 0
-                            }}</span>
+                            : 0 }}</span>
                     </div>
-
-
-                    <!-- เนื้อหาหลังรูป -->
-                    <div style="text-align: left; padding: 10px; margin-top: -15px;">
-                        <h2 class="post-title" style="font-size: 19px;">{{ post.title | slice:0:40 }}{{
-                            post.title.length > 15 ?
-                            '...' : '' }}</h2>
+                    <div class="post-content">
+                        <p class="post-title">
+                            {{ showFull[post.post_id.toString()] ? post.title : (post.title | slice:0:90) +
+                            (post.title.length > 90 ? '...' : '') }}
+                        </p>
+                        <button *ngIf="post.title.length > 40" class="show-more-btn"
+                            (click)="toggleShowFull(post.post_id.toString())">
+                            {{ showFull[post.post_id.toString()] ? 'ย่อข้อความ' : 'อ่านเพิ่มเติม' }}
+                        </button>
                     </div>
                 </div>
             </div>
+
+            <!-- No Results -->
+            <div *ngIf="posts.length === 0 && searchQuery.trim() !== ''" class="no-results">
+                <p>ไม่พบโพสต์ที่เกี่ยวข้อง</p>
+            </div>
         </div>
     </div>
-    <div *ngIf="isDialogOpen" class="dialog-overlay" (click)="closeDialog()">
-            <div class="dialog-box" (click)="$event.stopPropagation()">
-                <button class="close-button" (click)="closeDialog()">×</button>
-                <img src="../../../assets/images/Logoweb.png"
-                alt="Home Icon" width="140px">
-                <h3>กรุณาเข้าสู่ระบบ/สมัครสมาชิก</h3>
-                <button class="button1" (click)="navigateToLogin()">เข้าสู่ระบบ</button>
-            </div>
-    </div>
 
-    <div *ngIf="posts.length === 0 && searchQuery.trim() !== ''" class="no-results">
-        <p> ไม่พบโพสต์ที่เกี่ยวข้อง</p>
+    <!-- Login Dialog -->
+    <div *ngIf="isDialogOpen" class="dialog-overlay" (click)="closeDialog()">
+        <div class="dialog-box" (click)="$event.stopPropagation()">
+            <button class="close-button" (click)="closeDialog()">×</button>
+            <img src="../../../assets/images/Logoweb.png" alt="Home Icon" width="140px">
+            <h3>กรุณาเข้าสู่ระบบ/สมัครสมาชิก</h3>
+            <button class="button1" (click)="navigateToLogin()">เข้าสู่ระบบ</button>
+        </div>
     </div>
-    <div style="height: 30px;"></div>
-</div>

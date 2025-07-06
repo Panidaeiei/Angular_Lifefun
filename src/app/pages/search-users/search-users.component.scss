@@ -88,10 +88,12 @@ body {
   text-decoration: none;
   outline: none;
 
-  &:hover, &:focus {
+  &:hover,
+  &:focus {
     background: #ffe6ee;
     color: #d14b72;
   }
+
   &:active {
     background: #f9c5d1;
     color: #b03a5b;
@@ -160,11 +162,25 @@ body {
     }
 
     .itim-regular {
-      font-size: 10px;
+      font-size: 20px;
     }
 
     .center-menu {
       display: none !important;
+    }
+
+    .drawer-content {
+      font-size: 1rem;
+    }
+
+    .drawer-content h3 {
+      font-size: 1.2rem;
+    }
+
+    .drawer-content ul li,
+    .drawer-content ul li span,
+    .drawer-content ul li a {
+      font-size: 0.98rem;
     }
   }
 }
@@ -209,7 +225,22 @@ body {
   font-family: "Itim", serif;
   font-weight: 400;
   font-style: normal;
+
 }
+
+.search-btn {
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0;
+  border-radius: 50%;
+  background: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+}
+
 
 .search-container {
   display: flex;
@@ -279,7 +310,7 @@ body {
 
 .user-list {
   width: 100%;
-  max-width: 480px;
+  max-width: 550px;
   margin: 24px auto 0 auto;
   display: flex;
   flex-direction: column;
@@ -293,21 +324,24 @@ body {
   align-items: flex-start;
   background: #fff;
   /* border-radius: 0; // ขอบเหลี่ยม */
-  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
   padding: 12px 14px;
   gap: 14px;
   cursor: pointer;
   border: 1px solid #f0eaea;
   transition: box-shadow 0.18s, transform 0.18s, background 0.18s, border-color 0.18s;
 }
-.user-card:hover, .user-card:focus {
+
+.user-card:hover,
+.user-card:focus {
   background: #fff0f6;
   box-shadow: 0 6px 24px rgba(226, 124, 150, 0.13);
   border-color: #e27c96;
   outline: none;
 }
+
 .user-card:active {
-  box-shadow: 0 4px 18px rgba(0,0,0,0.12);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.12);
   transform: scale(0.98);
 }
 
@@ -363,25 +397,65 @@ body {
 }
 
 /* Responsive for very small screens */
-@media (max-width: 400px) {
+@media (max-width: 600px) {
+
   .user-list {
-    max-width: 99vw;
-    padding: 0 1vw;
+    max-width: 480px;
+    margin: 20px auto 0 auto; // ตรงนี้จะทำให้กล่องอยู่ตรงกลางเสมอ
+    padding: 0 20px; // เพิ่ม padding ซ้ายขวา (เช่น 24px หรือมากกว่านั้น)
+    box-sizing: border-box; // สำคัญ! เพื่อให้ padding ไม่ดันเกิน max-width
   }
-  .user-card {
-    padding: 8px 4px;
-    gap: 8px;
-  }
+
   .user-avatar {
     width: 40px;
     height: 40px;
   }
-  .user-name, .user-desc, .user-stats {
+
+  .user-name,
+  .user-desc,
+  .user-stats {
     font-size: 0.93rem;
   }
 }
 
 .user-email {
-    color: gray;
+  color: gray;
 }
 
+.modern-tabs {
+  display: flex;
+  gap: 36px;
+  justify-content: center;
+  margin-bottom: 32px;
+}
+
+.tab {
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: #444;
+  padding: 8px 28px 8px 28px;
+  border-radius: 24px 24px 0 0;
+  background: transparent;
+  transition: background 0.18s, color 0.18s;
+  cursor: pointer;
+  position: relative;
+  text-decoration: none;
+}
+
+.tab:hover,
+.tab.active {
+  background: #fff;
+  color: #e27c96;
+}
+
+.tab.active::after {
+  content: '';
+  display: block;
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #e27c96 60%, #bfa48a 100%);
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  bottom: -8px;
+}

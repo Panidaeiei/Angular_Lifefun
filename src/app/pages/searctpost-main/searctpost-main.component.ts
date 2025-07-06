@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -16,22 +16,64 @@ import { TimeAgoPipe} from '../../pipes/time-ago.pipe';
   templateUrl: './searctpost-main.component.html',
   styleUrl: './searctpost-main.component.scss'
 })
-export class SearctpostMainComponent {
+export class SearctpostMainComponent implements OnInit {
 
-  constructor(private router : Router,private postService: PostService) {}
+  constructor(private router : Router,private postService: PostService) {
+    this.checkScreenSize();
+  }
 
   posts: ShowPost[] = [];
   searchQuery = '';
   errorMessage = '';
   loading = false;
   isDialogOpen = false; 
+  isMobile = false;
+  isDrawerOpen = false;
+  showFull: { [postId: string]: boolean } = {};
+  allPosts: ShowPost[] = [];
+
+  @HostListener('window:resize', ['$event'])
+  onResize() {
+    this.checkScreenSize();
+  }
+
+  checkScreenSize() {
+    this.isMobile = window.innerWidth <= 600;
+  }
+
+  toggleDrawer() {
+    this.isDrawerOpen = !this.isDrawerOpen;
+  }
+
+  closeDrawer() {
+    this.isDrawerOpen = false;
+  }
+
+  showFullTitle(post: ShowPost) {
+    // แสดงข้อความเต็มใน alert หรือ modal
+    alert(post.title);
+  }
   
+  ngOnInit() {
+    this.loading = true;
+    this.postService.getPosts().subscribe({
+      next: (data) => {
+        this.allPosts = data;
+        this.posts = data;
+        this.loading = false;
+      },
+      error: (error) => {
+        this.errorMessage = error.message;
+        this.loading = false;
+      }
+    });
+  }
+
   onSearch() {
     if (this.searchQuery.trim() === '') {
-      this.posts = [];
+      this.posts = this.allPosts;
       return;
     }
-
     this.loading = true;
     this.postService.searchPosts(this.searchQuery).subscribe({
       next: (data) => {
@@ -43,7 +85,6 @@ export class SearctpostMainComponent {
         this.loading = false;
       }
     });
-
   }
 
     onloginClick(): void {
@@ -82,5 +123,8 @@ export class SearctpostMainComponent {
     this.router.navigate(['/viewuser_main'], { queryParams: { Profileuser: userId } });
   }
 
+  toggleShowFull(postId: string) {
+    this.showFull[postId] = !this.showFull[postId];
+  }
 
 }

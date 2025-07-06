@@ -7,7 +7,10 @@
 <div class="profile-wrapper">
   <h2 class="profile-title">แก้ไขโปรไฟล์</h2>
   <div class="loading-overlay" *ngIf="isLoading">
-    <div class="spinner"></div>
+    <div class="loading-spinner">
+      <i class="fa fa-spinner fa-spin"></i>
+      <p>กำลังอัปเดตข้อมูล...</p>
+    </div>
   </div>
   <div class="profile-container"  [class.loading]="isLoading">
     <div class="profile-header">
@@ -112,8 +115,13 @@
 
     <!-- ปุ่ม ยกเลิก และ บันทึกข้อมูล -->
     <div class="form-actions">
-      <button type="button" class="cancel-button" (click)="onCancel()">ยกเลิก</button>
-      <button type="submit" class="save-button" (click)="onSaveProfile()">บันทึกข้อมูล</button>
+      <button type="button" class="cancel-button" (click)="onCancel()" [disabled]="isLoading">ยกเลิก</button>
+      <button type="submit" class="save-button" (click)="onSaveProfile()" [disabled]="isLoading">
+        <span *ngIf="!isLoading">บันทึกข้อมูล</span>
+        <span *ngIf="isLoading" class="loading-text">
+          <i class="fa fa-spinner fa-spin"></i> กำลังบันทึก...
+        </span>
+      </button>
     </div>
   </div>
 </div>

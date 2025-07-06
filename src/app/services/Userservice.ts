@@ -45,7 +45,7 @@ export class UserService {
 
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
 
-    return this.http.get<User[]>(`http://projectnodejs.thammadalok.com/lifefunproject/view_users`, { headers }).pipe(
+    return this.http.get<User[]>(`${this.baseUrl}/view_users`, { headers }).pipe(
       catchError(error => {
         console.error('Error fetching users:', error);
         return throwError(() => new Error(error.message || 'Failed to fetch users'));
@@ -63,12 +63,12 @@ export class UserService {
     }
 
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-    return this.http.get<User>(`http://projectnodejs.thammadalok.com/lifefunproject/view_users/${userId}`, { headers });
+    return this.http.get<User>(`${this.baseUrl}/view_users/${userId}`, { headers });
   }
 
   // ลงทะเบียนผู้ใช้
   registerUser(formData: FormData): Observable<any> {
-    return this.http.post(`http://projectnodejs.thammadalok.com/lifefunproject/register`, formData);
+    return this.http.post(`${this.baseUrl}/register`, formData);
   }
 
 
@@ -90,7 +90,7 @@ export class UserService {
       console.log(`📤 ${key}:`, value);
     });
   
-    return this.http.put(`http://projectnodejs.thammadalok.com/lifefunproject/edit_user`, formData, { headers, responseType: 'json' }).pipe(
+    return this.http.put(`${this.baseUrl}/edit_user`, formData, { headers, responseType: 'json' }).pipe(
       tap((response) => {
         console.log('📥 Raw response from backend:', response);
       }),
@@ -120,7 +120,7 @@ export class UserService {
       Authorization: `Bearer ${token}`,
     });
 
-    const url = `http://projectnodejs.thammadalok.com/lifefunproject/deleteUser/${userId}`;
+    const url = `${this.baseUrl}/deleteUser/${userId}`;
     return this.http.delete(url, { headers }).pipe(
       catchError((error) => {
         console.error('Error in deleteUser:', error);
@@ -137,7 +137,7 @@ export class UserService {
 
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
 
-    return this.http.get<SearchUser[]>(`http://projectnodejs.thammadalok.com/lifefunproject/search_user?username=${username}`, { headers }).pipe(
+    return this.http.get<SearchUser[]>(`${this.baseUrl}/search_user?username=${username}`, { headers }).pipe(
       catchError(error => {
         console.error('Error fetching searched users:', error);
         return throwError(() => new Error(error.message || 'Failed to search users'));

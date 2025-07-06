@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterModule } from '@angular/router';
@@ -27,6 +27,8 @@ export class CategoryMainComponent {
     6: 'ท่องเที่ยว'
   };
   categoryName: string = '';
+  isMobile = false;
+  isDrawerOpen = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -52,7 +54,23 @@ export class CategoryMainComponent {
         console.error('Error loading views:', err);
       }
     });
+
+    this.isMobile = window.innerWidth <= 600;
   }
+
+  @HostListener('window:resize', ['$event'])
+  onResize() {
+    this.isMobile = window.innerWidth <= 600;
+  }
+
+  toggleDrawer() {
+    this.isDrawerOpen = !this.isDrawerOpen;
+  }
+
+  closeDrawer() {
+    this.isDrawerOpen = false;
+  }
+
   getViewsForPost(postId: string): number {
     const postIdString = postId.toString();
 
@@ -62,6 +80,16 @@ export class CategoryMainComponent {
     // console.log('View Post ID:', postId, 'View Data:', view); 
 
     return view?.total_views ? parseInt(view.total_views) : 0;
+  }
+
+  onCardClick(event: Event) {
+    event.preventDefault(); // ป้องกันการเปลี่ยนหน้า
+    if (!this.isUserLoggedIn()) {
+      this.openDialog();
+    } else {
+      // logic สำหรับเปิดโพสต์จริง (ถ้ามี)
+      console.log('User is opening the post.');
+    }
   }
 
   onHeartClick() {
@@ -86,6 +114,17 @@ export class CategoryMainComponent {
 
   navigateToLogin() {
     this.router.navigate(['/login']); // ไปที่หน้า Login
+  }
+
+  goToProfile(userId: string): void {
+    console.log('Navigating to user profile:', userId);
+
+    if (!userId) {
+      console.error('User ID is missing! Navigation aborted.');
+      return;
+    }
+
+    this.router.navigate(['/viewuser_main'], { queryParams: { Profileuser: userId } });
   }
 
 }

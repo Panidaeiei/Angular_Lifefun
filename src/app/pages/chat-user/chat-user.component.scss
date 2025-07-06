@@ -499,6 +499,7 @@ body {
 }
 
 .chat-list-last {
+  margin-top: 5px;
   font-size: 13px;
   color: #888;
   white-space: nowrap;
@@ -987,4 +988,13 @@ body {
   margin-left: 0;
   margin-right: auto;
   text-align: left;
+}
+
+.media-wrapper img,
+.media-wrapper video {
+  width: 220px;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 12px;
+  background: #f3f3f3;
 }

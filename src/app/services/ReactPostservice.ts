@@ -39,7 +39,7 @@ export class ReactPostservice {
       notify: 0,
     };
 
-    return this.http.post(`http://projectnodejs.thammadalok.com/lifefunproject/like`, likePost, { headers }).pipe(
+    return this.http.post(`${this.baseUrl}/likepost/like`, likePost, { headers }).pipe(
       // เมื่อทำการไลค์โพสต์, เราจะเปลี่ยนแปลงสถานะของไลค์
       tap((response: any) => {
         if (response.isLiked !== undefined) {
@@ -61,7 +61,7 @@ export class ReactPostservice {
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
 
     // ส่ง HTTP GET request ไปที่ API ที่ตรวจสอบสถานะไลค์
-    return this.http.get(`http://projectnodejs.thammadalok.com/lifefunproject/check-like-status?post_id=${postId}`, { headers }).pipe(
+    return this.http.get(`${this.baseUrl}/likepost/check-like-status?post_id=${postId}`, { headers }).pipe(
       tap((response: any) => {
         // ใช้ข้อมูลที่ได้รับจาก API เพื่อตรวจสอบว่าไลค์หรือไม่
         this.likeStatusSubject.next(response.liked);
@@ -88,7 +88,7 @@ export class ReactPostservice {
       image_url: '',
     };
     console.log('เพิ่มความคิดเห็นเรียบร้อย');
-    return this.http.post(`http://projectnodejs.thammadalok.com/lifefunproject/add-comment`, comment, { headers });
+    return this.http.post(`${this.baseUrl}/comments/add-comment`, comment, { headers });
 
   }
 
@@ -105,7 +105,7 @@ export class ReactPostservice {
       'Pragma': 'no-cache'
     });
 
-    return this.http.get(`http://projectnodejs.thammadalok.com/lifefunproject/comment?post_id=${postId}`, { headers });
+    return this.http.get(`${this.baseUrl}/comments/comment?post_id=${postId}`, { headers });
   }
 
   deleteComment(commentId: string): Observable<any> {
@@ -118,7 +118,7 @@ export class ReactPostservice {
 
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
 
-    return this.http.delete(`http://projectnodejs.thammadalok.com/lifefunproject/Decomment?comment_id=${commentId}`, { headers });
+    return this.http.delete(`${this.baseUrl}/comments/Decomment?comment_id=${commentId}`, { headers });
   }
 
   sharePost(post: SharePostModel): Observable<any> {
@@ -130,7 +130,7 @@ export class ReactPostservice {
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
 
     // ส่งคำขอ POST พร้อมข้อมูล SharePostModel
-    return this.http.post(`http://projectnodejs.thammadalok.com/lifefunproject/share-or-unshare`, post, { headers }).pipe(
+    return this.http.post(`${this.baseUrl}/sharepost/share-or-unshare`, post, { headers }).pipe(
       tap((response) => {
         console.log('Response :', response); // Log response ที่ได้จาก API
       }),
@@ -150,7 +150,7 @@ export class ReactPostservice {
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
 
     return this.http.post<{ isShared: boolean }>(
-      `http://projectnodejs.thammadalok.com/lifefunproject/get-status`,
+      `${this.baseUrl}/sharepost/get-status`,
       data, // ส่ง object SharePostModel
       { headers }
     );
@@ -164,7 +164,7 @@ export class ReactPostservice {
 
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
     return this.http.post<{ message: string; isSave: boolean }>(
-      `http://projectnodejs.thammadalok.com/lifefunproject/save`,
+      `${this.baseUrl}/savepost/save`,
       data,
       { headers }).pipe(
         tap((response) => {
@@ -185,7 +185,7 @@ export class ReactPostservice {
 
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
     return this.http.post<{ isSave: boolean }>(
-      `http://projectnodejs.thammadalok.com/lifefunproject/get-save-status`,
+      `${this.baseUrl}/savepost/get-save-status`,
       { post_id },
       { headers }
     );
@@ -198,7 +198,7 @@ export class ReactPostservice {
     });
 
     return this.http.post(
-      `http://projectnodejs.thammadalok.com/lifefunproject/toggle-follow`,
+      `${this.baseUrl}/follows/toggle-follow`,
       follow,  // ส่งข้อมูลแบบ Follow model
       { headers }
     );
@@ -211,7 +211,7 @@ export class ReactPostservice {
     });
 
     return this.http.get<FollowStatus>(
-      `http://projectnodejs.thammadalok.com/lifefunproject/follow-status?following_id=${following_id}&followed_id=${followed_id}`, { headers }
+      `${this.baseUrl}/follows/follow-status?following_id=${following_id}&followed_id=${followed_id}`, { headers }
     );
   }
 
@@ -222,54 +222,54 @@ export class ReactPostservice {
     });
 
     return this.http.get<FollowCount>(
-      `http://projectnodejs.thammadalok.com/lifefunproject/follow-count?userId=${userId}`, { headers }
+      `${this.baseUrl}/follows/follow-count?userId=${userId}`, { headers }
 
     );
   }
 
   sendReport(reason: string, pid: number, uid: string | number): Observable<any> {
     const body = { reason, pid, uid: Number(uid) };
-    return this.http.post(`http://projectnodejs.thammadalok.com/lifefunproject/send-report`, body);
+    return this.http.post(`${this.baseUrl}/report/send-report`, body);
   }
 
   Noti_Like(uid: number): Observable<any> {
-    return this.http.get(`http://projectnodejs.thammadalok.com/lifefunproject/notifications_like/${uid}`);
+    return this.http.get(`${this.baseUrl}/noti/notifications_like/${uid}`);
   }
 
   Noti_Likeread(lid: number): Observable<any> {
-    return this.http.put(`http://projectnodejs.thammadalok.com/lifefunproject/notifications_like/read/${lid}`, {});
+    return this.http.put(`${this.baseUrl}/noti/notifications_like/read/${lid}`, {});
   }
 
   Noti_Follow(uid: number): Observable<any> {
-    return this.http.get(`http://projectnodejs.thammadalok.com/lifefunproject/notifications_follow/${uid}`);
+    return this.http.get(`${this.baseUrl}/noti/notifications_follow/${uid}`);
   }
 
   Noti_Followread(follow_id: number): Observable<any> {
-    return this.http.put(`http://projectnodejs.thammadalok.com/lifefunproject/notifications_follow/read/${follow_id}`, {});
+    return this.http.put(`${this.baseUrl}/noti/notifications_follow/read/${follow_id}`, {});
   }
 
   Noti_Shared(uid: number): Observable<any> {
-    return this.http.get(`http://projectnodejs.thammadalok.com/lifefunproject/notifications_shared/${uid}`);
+    return this.http.get(`${this.baseUrl}/noti/notifications_shared/${uid}`);
   }
 
   Noti_Sharedwread(shared_id: number): Observable<any> {
-    return this.http.put(`http://projectnodejs.thammadalok.com/lifefunproject/notifications_shared/read/${shared_id}`, {});
+    return this.http.put(`${this.baseUrl}/noti/notifications_shared/read/${shared_id}`, {});
   }
 
   Noti_Comment(uid: number): Observable<any> {
-    return this.http.get(`http://projectnodejs.thammadalok.com/lifefunproject/notifications_comment/${uid}`);
+    return this.http.get(`${this.baseUrl}/noti/notifications_comment/${uid}`);
   }
 
   Noti_Commentread(cid: number): Observable<any> {
-    return this.http.put(`http://projectnodejs.thammadalok.com/lifefunproject/notifications_comment/read/${cid}`, {});
+    return this.http.put(`${this.baseUrl}/noti/notifications_comment/read/${cid}`, {});
   }
 
   Noti_Reportaddmin(): Observable<any> {
-    return this.http.get(`http://projectnodejs.thammadalok.com/lifefunproject/notifications_reports`);
+    return this.http.get(`${this.baseUrl}/noti/notifications_reports`);
   }
 
   Noti_Unban(uid: number): Observable<any> {
-    return this.http.get(`http://projectnodejs.thammadalok.com/lifefunproject/notifications_unban/${uid}`, {});
+    return this.http.get(`${this.baseUrl}/noti/notifications_unban/${uid}`, {});
   }
 
 }

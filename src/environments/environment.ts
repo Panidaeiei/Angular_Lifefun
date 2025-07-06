@@ -1,6 +1,6 @@
 export const environment = {
     production: false,
-    apiBaseUrl: 'http://localhost:3000/api',  // กำหนด baseUrl สำหรับทุก service
+    apiBaseUrl: 'http://117.18.125.19:3000/api',  // กำหนด baseUrl สำหรับทุก service
     firebase: {
         apiKey: "AIzaSyAs29XyF3cVZxP3I1rdKSg7n_CT70Jn8V4",
         authDomain: "storage-49f90.firebaseapp.com",

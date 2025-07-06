@@ -101,26 +101,25 @@
     <div style="width: 760px; padding: 0px 20px; font-size: 22px; margin-bottom: 20px;">
       <span [innerHTML]="post.title | newlineToBr"></span>
     </div>
-    
-     <div *ngFor="let comment of (showAllComments ? comments : comments.slice(0, 2))" style="margin-bottom: 20px;">
-            <div style="display: flex; gap: 10px; margin-left: 20px; justify-content: space-between;">
-                <div style="display: flex; gap: 15px;">
-                    <img style="width: 60px; height: 60px; object-fit: cover; border-radius: 50%; cursor: pointer;"
-                        [src]="comment.image_url || 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'"
-                        alt="" >
-                    <div style="display: flex; flex-direction: column;  width: 450px; ">
-                        <div style="margin-bottom: 5px;">
-                            <span style="font-size: 20px; font-weight: 500;" title="username">{{ comment.username}}</span>
 
-                            <span style="margin-left: 10px; color: #949090;">{{ comment.date_time | timeAgo }}</span>
-                        </div>
-                        <span
-                            style="font-size: 20px; white-space: pre-line; word-wrap: break-word; word-break: break-word;"
-                            title="comment">{{ comment.title }}</span>
-                    </div>
-                </div>
-                
+    <div *ngFor="let comment of (showAllComments ? comments : comments.slice(0, 2))" style="margin-bottom: 20px;">
+      <div style="display: flex; gap: 10px; margin-left: 20px; justify-content: space-between;">
+        <div style="display: flex; gap: 15px;">
+          <img style="width: 60px; height: 60px; object-fit: cover; border-radius: 50%; cursor: pointer;"
+            [src]="comment.image_url || 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'"
+            alt="">
+          <div style="display: flex; flex-direction: column;  width: 450px; ">
+            <div style="margin-bottom: 5px;">
+              <span style="font-size: 20px; font-weight: 500;" title="username">{{ comment.username}}</span>
+
+              <span style="margin-left: 10px; color: #949090;">{{ comment.date_time | timeAgo }}</span>
             </div>
+            <span style="font-size: 20px; white-space: pre-line; word-wrap: break-word; word-break: break-word;"
+              title="comment">{{ comment.title }}</span>
+          </div>
         </div>
+
+      </div>
+    </div>
   </div>
 </div>

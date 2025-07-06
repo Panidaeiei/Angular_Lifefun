@@ -11,6 +11,7 @@ import { ReactPostservice } from '../../services/ReactPostservice';
 import { Postme } from '../../models/postme_model';
 import { User } from '../../models/register_model';
 import { MatIconModule } from '@angular/material/icon';
+import { HostListener } from '@angular/core';
 
 @Component({
   selector: 'app-viewuser-main',
@@ -43,6 +44,7 @@ export class ViewuserMainComponent {
     followersCount: number = 0;
     followingCount: number = 0;
     isDialogOpen = false; 
+    isMobile = false;
  
 
     ngOnInit(): void {
@@ -56,8 +58,21 @@ export class ViewuserMainComponent {
           this.loadFollowCount();
         }
       });
+      this.isMobile = window.innerWidth <= 600;
     }
     
+    @HostListener('window:resize', ['$event'])
+    onResize() {
+      this.isMobile = window.innerWidth <= 600;
+    }
+
+    toggleDrawer() {
+      this.isDrawerOpen = !this.isDrawerOpen;
+    }
+
+    closeDrawer() {
+      this.isDrawerOpen = false;
+    }
   
   loadUserProfile(): void {
     if (this.Profileuser) {

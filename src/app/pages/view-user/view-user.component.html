@@ -209,7 +209,7 @@
             </div>
         </div>
         <div style="display: flex; justify-content: center; align-items: center; margin-top: 50px; z-index: 1;">
-            <mat-tab-group style="width: 70%;">
+            <mat-tab-group [style.width.%]="isMobile ? 100 : 70">
                 <!-- โพสต์ของผู้ใช้ -->
                 <mat-tab>
                     <ng-template mat-tab-label>

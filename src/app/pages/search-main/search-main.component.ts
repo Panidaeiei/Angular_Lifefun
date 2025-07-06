@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterModule } from '@angular/router';
@@ -26,10 +26,21 @@ export class SearchMainComponent {
   followersCount: number = 0;
   isSearchPerformed: boolean = false; // ตรวจสอบว่ามีการค้นหาแล้วหรือไม่
 
+  isMobile = false;
+  isDrawerOpen = false;
+
   constructor(private route: ActivatedRoute,
     private userService: UserService,
-    private router: Router,) { }
+    private router: Router) { }
 
+  @HostListener('window:resize')
+  onResize() { this.isMobile = window.innerWidth <= 600; }
+
+  ngOnInit(): void {
+    this.isMobile = window.innerWidth <= 600;
+  }
+
+  toggleDrawer() { this.isDrawerOpen = !this.isDrawerOpen; }
 
   onSearch(): void {
     if (this.searchQuery.trim() === '') {

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterModule } from '@angular/router';
@@ -26,10 +26,12 @@ export class HomepageUserComponent {
   message: string = '';
   postId: string = '';
   viewPosts: any[] = [];
+  isMobile: boolean = false; // เพิ่มตัวแปรสำหรับตรวจสอบ mobile
 
   constructor(private route: ActivatedRoute, private userService: UserService, private postService: PostService, private likePostService: ReactPostservice, private router: Router,) { }
 
   ngOnInit(): void {
+    this.checkScreenSize(); // ตรวจสอบขนาดหน้าจอเมื่อเริ่มต้น
     this.userService.getCurrentUserId().subscribe((userId) => {
       this.currentUserId = userId;
       console.log('Current User ID:', this.currentUserId);
@@ -80,6 +82,16 @@ export class HomepageUserComponent {
       }
     });
   
+  }
+
+  // เพิ่มฟังก์ชันตรวจสอบขนาดหน้าจอ
+  @HostListener('window:resize', ['$event'])
+  onResize(event: any) {
+    this.checkScreenSize();
+  }
+
+  checkScreenSize() {
+    this.isMobile = window.innerWidth <= 600;
   }
 
   getViewsForPost(postId: string): number {

@@ -3,126 +3,109 @@
 <mat-toolbar class="fixed-toolbar">
   <!-- Logo ด้านซ้าย -->
   <a [routerLink]="['/HomepageUser']" [queryParams]="{ id: this.currentUserId }">
-    <img src="../../../assets/images/Logoweb.png" alt="Home Icon" width="80px">
+    <img src="../../../assets/images/Logoweb.png" alt="Home Icon">
   </a>
-  <div style="width: 5%;"></div>
+  
   <!-- เมนูตรงกลาง -->
-  <div class="center-menu"
-    style="display: flex; flex-grow: 1; justify-content: center; align-items: center; gap: 50px;">
+  <div class="center-menu" *ngIf="!isMobile">
     <a class="menu-item" routerLinkActive="active" [routerLink]="['/HomepageUser']"
       [queryParams]="{ id: this.currentUserId}">
-      <i style="font-size: 40px; color: black;" class="fa-solid fa-house"></i>
+      <i class="fa-solid fa-house"></i>
       <span class="itim-regular">หน้าหลัก</span>
     </a>
-    <div style="display: flex; flex-direction: column; align-items: center;">
-      <a [routerLink]="['/Homepagefollow']" [queryParams]="{ id: this.currentUserId}">
-        <i style="font-size: 40px; color: black;" class="fa-solid fa-users"></i>
-      </a>
+    <a class="menu-item" [routerLink]="['/Homepagefollow']" [queryParams]="{ id: this.currentUserId}">
+      <i class="fa-solid fa-users"></i>
       <span class="itim-regular">ติดตาม</span>
-    </div>
-    <div style="margin-left: 20px;">
-      <a class="add-post-btn" [routerLink]="['/CreatePost']" [queryParams]="{ id: this.currentUserId}">
-        <i class="fa-solid fa-plus"></i>
-      </a>
-    </div>
-    <div style="display: flex; flex-direction: column; align-items: center;">
-      <a [routerLink]="['/Notification_user']" [queryParams]="{ id: this.currentUserId }">
-        <i style="font-size: 40px; color: black;" class="fa-solid fa-bell"></i>
-      </a>
+    </a>
+    <a class="add-post-btn" [routerLink]="['/CreatePost']" [queryParams]="{ id: this.currentUserId}">
+      <i class="fa-solid fa-plus"></i>
+    </a>
+    <a class="menu-item" [routerLink]="['/Notification_user']" [queryParams]="{ id: this.currentUserId }">
+      <i class="fa-solid fa-bell"></i>
       <span class="itim-regular">การแจ้งเตือน</span>
-    </div>
-    <div style="display: flex; flex-direction: column; align-items: center;">
-      <a [routerLink]="['/ProfileUser']" [queryParams]="{ id: this.currentUserId }">
-        <i style="font-size: 40px; color: black;" class="fa-solid fa-user"></i>
-      </a>
+    </a>
+    <a class="menu-item" [routerLink]="['/ProfileUser']" [queryParams]="{ id: this.currentUserId }">
+      <i class="fa-solid fa-user"></i>
       <span class="itim-regular">โปรไฟล์</span>
-    </div>
+    </a>
   </div>
+  
   <!-- เมนูขวาสุด -->
-  <div class="toolbar-actions" style="display: flex; align-items: center; gap: 16px;">
+  <div class="toolbar-actions">
     <!-- ค้นหา -->
-    <div style="display: flex; flex-direction: column; align-items: center;">
-      <a [routerLink]="['/search_users']" [queryParams]="{ id: this.currentUserId }">
-        <i style="font-size: 30px; color: black;" class="fa-solid fa-search"></i>
-      </a>
-    </div>
-    <!-- ไอคอนเมนู -->
-    <div style="display: flex; flex-direction: column; align-items: center; margin-left: 10px;">
-      <a href="javascript:void(0)" (click)="toggleDrawer()">
-        <i style="font-size: 30px; color: black; margin-right: 10px;" class="fa-solid fa-bars"></i>
-      </a>
-    </div>
-  </div>
-  <!-- Drawer -->
-  <div class="drawer" [class.open]="isDrawerOpen">
-    <div class="drawer-content">
-      <h3 style="font-weight: 500; font-size: 30px;">MENU</h3>
-      <ul style="list-style: none; padding: 0;">
-        <!-- เมนูหลัก (ซ้ำกับ center-menu เพื่อรองรับจอเล็ก) -->
-        <li style="border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; align-items: center; gap: 10px;">
-          <i class="fa-solid fa-house" style="font-size: 20px; color: black;"></i>
-          <a [routerLink]="['/HomepageUser']" [queryParams]="{ id: this.currentUserId }"
-            style="text-decoration: none; color: black;">
-            <span class="itim-regular">หน้าหลัก</span>
-          </a>
-        </li>
-        <li style="border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; align-items: center; gap: 10px;">
-          <i class="fa-solid fa-users" style="font-size: 20px; color: black;"></i>
-          <a [routerLink]="['/Homepagefollow']" [queryParams]="{ id: this.currentUserId }"
-            style="text-decoration: none; color: black;">
-            <span class="itim-regular">ติดตาม</span>
-          </a>
-        </li>
-        <li style="border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; align-items: center; gap: 10px;">
-          <i class="fa-solid fa-plus" style="font-size: 20px; color: black;"></i>
-          <a [routerLink]="['/CreatePost']" [queryParams]="{ id: this.currentUserId }"
-            style="text-decoration: none; color: black;">
-            <span class="itim-regular">สร้างโพสต์</span>
-          </a>
-        </li>
-        <li style="border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; align-items: center; gap: 10px;">
-          <i class="fa-solid fa-bell" style="font-size: 20px; color: black;"></i>
-          <a [routerLink]="['/Notification_user']" [queryParams]="{ id: this.currentUserId }"
-            style="text-decoration: none; color: black;">
-            <span class="itim-regular">การแจ้งเตือน</span>
-          </a>
-        </li>
-        <li style="border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; align-items: center; gap: 10px;">
-          <i class="fa-solid fa-user" style="font-size: 20px; color: black;"></i>
-          <a [routerLink]="['/ProfileUser']" [queryParams]="{ id: this.currentUserId }"
-            style="text-decoration: none; color: black;">
-            <span class="itim-regular">โปรไฟล์</span>
-          </a>
-        </li>
-        <!-- หมวดหมู่ -->
-        <li style="border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; align-items: center; gap: 10px;">
-          <i class="fa fa-list" style="font-size: 20px; color: black;"></i>
-          <a [routerLink]="['/category']" [queryParams]="{ id: this.currentUserId }"
-            style="text-decoration: none; color: black;">
-            <span class="itim-regular">หมวดหมู่</span>
-          </a>
-        </li>
-        <!-- แชท -->
-        <li style="border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; align-items: center; gap: 10px;">
-          <i class="fa fa-comments" style="font-size: 20px; color: black;"></i>
-          <a [routerLink]="['/chat']" [queryParams]="{ id: this.currentUserId }"
-            style="text-decoration: none; color: black;">
-            <span class="itim-regular">แชท</span>
-          </a>
-        </li>
-        <!-- ออกจากระบบ -->
-        <li style="border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; align-items: center; gap: 10px;">
-          <i class="fa fa-sign-out" style="font-size: 20px; color: black;"></i>
-          <a href="/" style="text-decoration: none; color: black;">
-            <span class="itim-regular">ออกจากระบบ</span>
-          </a>
-        </li>
-      </ul>
-      <button mat-flat-button style="background-color: rgb(226, 124, 150); width: 100px;"
-        (click)="toggleDrawer()">ปิด</button>
-    </div>
+    <a [routerLink]="['/search_users']" [queryParams]="{ id: this.currentUserId }" *ngIf="!isMobile">
+      <i class="fa-solid fa-search"></i>
+    </a>
+    <!-- ไอคอนเมนู - แสดงในทุกขนาดหน้าจอ -->
+    <button class="toolbar-hamburger" (click)="toggleDrawer()" aria-label="เมนู">
+      <i class="fa-solid fa-bars"></i>
+    </button>
   </div>
 </mat-toolbar>
+
+<!-- Drawer -->
+<div class="drawer" [class.open]="isDrawerOpen">
+  <div class="drawer-content">
+    <h3>MENU</h3>
+    <ul>
+      <!-- เมนูหลัก (ซ้ำกับ center-menu เพื่อรองรับจอเล็ก) -->
+      <li>
+        <a [routerLink]="['/HomepageUser']" [queryParams]="{ id: this.currentUserId }">
+          <i class="fa-solid fa-house"></i>
+          <span class="itim-regular">หน้าหลัก</span>
+        </a>
+      </li>
+      <li>
+        <a [routerLink]="['/Homepagefollow']" [queryParams]="{ id: this.currentUserId }">
+          <i class="fa-solid fa-users"></i>
+          <span class="itim-regular">ติดตาม</span>
+        </a>
+      </li>
+      <li>
+        <a [routerLink]="['/CreatePost']" [queryParams]="{ id: this.currentUserId }">
+          <i class="fa-solid fa-plus"></i>
+          <span class="itim-regular">สร้างโพสต์</span>
+        </a>
+      </li>
+      <li>
+        <a [routerLink]="['/Notification_user']" [queryParams]="{ id: this.currentUserId }">
+          <i class="fa-solid fa-bell"></i>
+          <span class="itim-regular">การแจ้งเตือน</span>
+        </a>
+      </li>
+      <li>
+        <a [routerLink]="['/ProfileUser']" [queryParams]="{ id: this.currentUserId }">
+          <i class="fa-solid fa-user"></i>
+          <span class="itim-regular">โปรไฟล์</span>
+        </a>
+      </li>
+      <!-- หมวดหมู่ -->
+      <li>
+        <a [routerLink]="['/category']" [queryParams]="{ id: this.currentUserId }">
+          <i class="fa fa-list"></i>
+          <span class="itim-regular">หมวดหมู่</span>
+        </a>
+      </li>
+      <!-- แชท -->
+      <li>
+        <a [routerLink]="['/chat']" [queryParams]="{ id: this.currentUserId }">
+          <i class="fa fa-comments"></i>
+          <span class="itim-regular">แชท</span>
+        </a>
+      </li>
+      <!-- ออกจากระบบ -->
+      <li>
+        <a href="/">
+          <i class="fa fa-sign-out"></i>
+          <span class="itim-regular">ออกจากระบบ</span>
+        </a>
+      </li>
+      <li>
+        <button class="drawer-close-btn" (click)="toggleDrawer()">ปิด</button>
+      </li>
+    </ul>
+  </div>
+</div>
 
 <div class="background-div">
   <div style="display: flex; justify-content: center; margin-bottom: 30px; gap: 30px; margin-top: 120px;">

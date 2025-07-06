@@ -1,4 +1,11 @@
 <div class="background-div">
+    <!-- Loading overlay -->
+    <div *ngIf="isLoading" class="loading-overlay">
+        <div class="loading-spinner">
+            <i class="fa fa-spinner fa-spin"></i>
+            <p>กำลังโหลดข้อมูล...</p>
+        </div>
+    </div>
     <mat-toolbar class="fixed-toolbar">
         <!-- Logo ด้านซ้าย -->
         <a [routerLink]="['/HomepageUser']" [queryParams]="{ id: userId }">
@@ -200,7 +207,7 @@
             </div>
         </div>
         <div style="display: flex; justify-content: center; align-items: center; margin-top: 50px; z-index: 1;">
-            <mat-tab-group style="width: 70%;">
+            <mat-tab-group [style.width.%]="isMobile ? 100 : 70">
                 <!-- โพสต์ของผู้ใช้ -->
                 <mat-tab>
                     <ng-template mat-tab-label>

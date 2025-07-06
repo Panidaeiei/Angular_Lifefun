@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { initializeApp } from 'firebase/app';
-import { getDatabase, ref, push, set, onValue, DataSnapshot, update } from 'firebase/database';
+import { getDatabase, ref, push, set, onValue, DataSnapshot, update, get } from 'firebase/database';
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { environment } from '../../environments/environment';
 
@@ -27,7 +27,8 @@ export class ChatService {
   }
 
   // ส่งข้อความ (text, image, หรือ video)
-  async sendMessage(chatId: string, userId: string, text: string, imageUrl: string = '', videoUrl: string = ''): Promise<void> {
+  async sendMessage(chatId: string, userId: string, text: string = '', imageUrl: string = '', videoUrl: string = '', userName: string = ''): Promise<void> {
+    const userIdStr = String(userId);
     const messageRef = push(ref(this.db, `chats/${chatId}/messages`));
     
     let type = 1; // default เป็น text
@@ -38,7 +39,7 @@ export class ChatService {
     }
 
     await set(messageRef, {
-      uid: userId,
+      uid: userIdStr,
       text: text || '',
       image_url: imageUrl || '',
       video_url: videoUrl || '',
@@ -46,19 +47,39 @@ export class ChatService {
       create_at: new Date().toISOString()
     });
 
-    // Update last message ใน user_chats index
+    // Update last message ใน user_chats index ของทั้งสอง user (ใช้ get แทน onValue)
     let lastMessage = text;
     if (videoUrl) {
       lastMessage = '[วิดีโอ]';
     } else if (imageUrl) {
       lastMessage = '[รูปภาพ]';
     }
-    
-    const userChatsRef = ref(this.db, `user_chats/${userId}/${chatId}`);
-    await update(userChatsRef, {
-      last_message: lastMessage,
-      last_message_time: new Date().toISOString()
-    });
+
+    // ดึง users ในห้องแชทนี้ แบบ one-time
+    const chatUsersRef = ref(this.db, `chats/${chatId}/users`);
+    const snapshot = await get(chatUsersRef);
+    const users = snapshot.val();
+    // อัปเดต user_chats ของทั้งสอง user เสมอ
+    const chatUserIds = chatId.split('_'); // ["29", "35"]
+    for (const uid of chatUserIds) {
+      const userChatRef = ref(this.db, `user_chats/${uid}/${chatId}`);
+      await update(userChatRef, {
+        last_message: lastMessage,
+        last_message_time: new Date().toISOString(),
+        last_message_sender_id: userIdStr,
+        last_message_sender_name: userName || users?.[userIdStr]?.username || 'คุณ'
+      });
+      // DEBUG LOG
+      console.log('[DEBUG update user_chats]', {
+        chatId,
+        uid,
+        userChatRefPath: `user_chats/${uid}/${chatId}`,
+        last_message: lastMessage,
+        last_message_sender_id: userIdStr,
+        last_message_sender_name: userName || users?.[userIdStr]?.username || 'คุณ',
+        usersObj: users
+      });
+    }
   }
 
   // subscribe ดึงข้อความแชทแบบ real-time

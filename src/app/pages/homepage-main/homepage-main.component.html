@@ -1,8 +1,8 @@
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-<mat-toolbar class="fixed-toolbar">
+<mat-toolbar class="fixed-toolbar modern-toolbar">
     <a [routerLink]="['']" class="toolbar-logo">
-        <img src="../../../assets/images/Logoweb.png" alt="Home Icon" />
+        <img src="../../../assets/images/Logoweb.png" alt="Home Icon" style="width: 60px;" />
     </a>
     <div class="toolbar-center-menu" *ngIf="!isMobile">
         <a class="menu-item" routerLinkActive="active" [routerLink]="['']">
@@ -11,14 +11,14 @@
         </a>
         <a class="menu-item" [routerLink]="['/search_main']">
             <i class="fa-solid fa-magnifying-glass"></i>
-            <span style="color: black;">ค้นหา</span>
+            <span>ค้นหา</span>
         </a>
         <a class="menu-item" [routerLink]="['/category_main']">
             <i class="fa-solid fa-bars"></i>
-            <span style="color: black;">หมวดหมู่</span>
+            <span>หมวดหมู่</span>
         </a>
     </div>
-    <button routerLink="/login" class="login-link" *ngIf="!isMobile">
+    <button routerLink="/login" class="login-link modern-login" *ngIf="!isMobile">
         <i class="material-icons">login</i>
         <span>เข้าสู่ระบบ/สมัครสมาชิก</span>
     </button>

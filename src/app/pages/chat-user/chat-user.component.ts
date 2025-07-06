@@ -61,7 +61,7 @@ export class ChatUserComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.route.queryParams.subscribe((params: Params) => {
-      this.userId = params['id'];
+      this.userId = String(params['id']);
       this.fromId = this.userId;
       console.log('User ID:', this.userId);
       
@@ -79,14 +79,27 @@ export class ChatUserComponent implements OnInit, OnDestroy {
 
   loadUserChats() {
     this.chatService.getUserChats(this.userId, (chats) => {
-      this.chatList = chats.map(chat => ({
-        avatar: chat.other_image_url,
-        name: chat.other_username,
-        lastMessage: chat.last_message || '',
-        chatId: chat.chatId,
-        lastMessageTime: chat.last_message_time,
-        ...chat
-      }));
+      this.chatList = chats.map(chat => {
+        const mapped = {
+          avatar: chat.other_image_url,
+          name: chat.other_username,
+          lastMessage: chat.last_message || '',
+          chatId: chat.chatId,
+          lastMessageTime: chat.last_message_time,
+          lastMessageSenderId: String(chat.last_message_sender_id || ''),
+          lastMessageSenderName: chat.last_message_sender_name || chat.other_username,
+          ...chat
+        };
+        // DEBUG LOG
+        console.log('[DEBUG chatList]', {
+          userId: this.userId,
+          chatId: mapped.chatId,
+          lastMessage: mapped.lastMessage,
+          lastMessageSenderId: mapped.lastMessageSenderId,
+          lastMessageSenderName: mapped.lastMessageSenderName
+        });
+        return mapped;
+      });
       this.originalChatList = [...this.chatList];
       
       // เลือกแชทแรกโดยอัตโนมัติ
@@ -103,16 +116,6 @@ export class ChatUserComponent implements OnInit, OnDestroy {
     // ดึงข้อความจาก Firebase แบบ real-time
     this.chatService.listenMessages(chat.chatId, (messages) => {
       this.currentChatMessages = messages;
-      // อัปเดต lastMessage ใน chatList
-      if (messages.length > 0) {
-        const lastMsg = messages[messages.length - 1];
-        chat.lastMessage = lastMsg.text || (lastMsg.image_url ? 'ส่งรูปภาพ' : lastMsg.video_url ? 'ส่งวิดีโอ' : '');
-        chat.lastMessageTime = lastMsg.create_at;
-        // เรียงลำดับใหม่
-        this.chatList = this.chatList.sort((a, b) => 
-          new Date(b.lastMessageTime || 0).getTime() - new Date(a.lastMessageTime || 0).getTime()
-        );
-      }
     });
     
     if (this.isMobile) {
@@ -161,7 +164,16 @@ export class ChatUserComponent implements OnInit, OnDestroy {
       }
       
       // ส่งข้อความพร้อมไฟล์
-      await this.chatService.sendMessage(this.chatId, this.userId, this.newMessage, imageUrl, videoUrl);
+      await this.chatService.sendMessage(
+        this.chatId,
+        this.userId,
+        this.newMessage,
+        imageUrl,
+        videoUrl,
+        this.userData?.username || ''
+      );
+      // รีโหลด chat list หลังส่งข้อความใหม่
+      this.loadUserChats();
       
       // ลบ pending message ออก (เพราะ Firebase จะส่ง message จริงมาแล้ว)
       if (pendingMsg) {

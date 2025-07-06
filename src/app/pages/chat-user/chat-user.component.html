@@ -146,7 +146,19 @@
                     <img [src]="chat.avatar" alt="avatar" />
                     <div class="chat-list-info">
                         <span class="chat-list-name">{{ chat.name }}</span>
-                        <span class="chat-list-last">{{ chat.lastMessage }}</span>
+                        <span class="chat-list-last">
+                          <ng-container *ngIf="chat.lastMessage; else noMsg">
+                            <ng-container *ngIf="chat.lastMessageSenderId === userId; else otherSenderMobile">
+                              คุณ: {{ chat.lastMessage }}
+                            </ng-container>
+                            <ng-template #otherSenderMobile>
+                              {{ chat.lastMessageSenderName }}: {{ chat.lastMessage }}
+                            </ng-template>
+                          </ng-container>
+                          <ng-template #noMsg>
+                            <span style="color: #aaa;">ยังไม่มีข้อความ</span>
+                          </ng-template>
+                        </span>
                     </div>
                 </div>
             </div>
@@ -168,7 +180,19 @@
                 <img [src]="chat.avatar" alt="avatar" />
                 <div class="chat-list-info">
                     <span class="chat-list-name">{{ chat.name }}</span>
-                    <span class="chat-list-last">{{ chat.lastMessage }}</span>
+                    <span class="chat-list-last">
+                      <ng-container *ngIf="chat.lastMessage; else noMsg">
+                        <ng-container *ngIf="chat.lastMessageSenderId === userId; else otherSenderDesktop">
+                          คุณ: {{ chat.lastMessage }}
+                        </ng-container>
+                        <ng-template #otherSenderDesktop>
+                          {{ chat.lastMessageSenderName }}: {{ chat.lastMessage }}
+                        </ng-template>
+                      </ng-container>
+                      <ng-template #noMsg>
+                        <span style="color: #aaa;">ยังไม่มีข้อความ</span>
+                      </ng-template>
+                    </span>
                 </div>
             </div>
         </div>

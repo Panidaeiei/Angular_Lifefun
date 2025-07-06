@@ -1,46 +1,60 @@
-<div class="background-div">
-    <mat-toolbar class="fixed-toolbar"
-        style="background-color: rgb(233, 135, 135); height: 90px; display: flex; align-items: center; justify-content: space-between;">
+<mat-toolbar class="fixed-toolbar modern-toolbar">
+    <a [routerLink]="['']" class="toolbar-logo">
+        <img src="../../../assets/images/Logoweb.png" alt="Home Icon" style="width: 60px;" />
+    </a>
+    <div class="toolbar-center-menu" *ngIf="!isMobile">
+        <a class="menu-item" [routerLink]="['']">
 
-        <a [routerLink]="['']">
-            <img src="../../../assets/images/Logoweb.png" alt="Home Icon" width="80px">
+            <span>หน้าหลัก</span>
         </a>
-
-        <div style="display: flex; flex-grow: 1; justify-content: center; align-items: center;  margin-left: 120px;">
-            <div style="display: flex; justify-content: center; align-items: center; gap: 60px;">
-
-                <div style="display: flex; flex-direction: column; align-items: center;">
-                    <a [routerLink]="['']">
-                        <i style="font-size: 40px; color: black;" class="fa-solid fa-house"></i>
-                    </a>
-                    <span class="itim-regular">หน้าหลัก</span>
-                </div>
-
-                <div style="display: flex; flex-direction: column; align-items: center;">
-                    <a [routerLink]="['']">
-                        <i style="font-size: 40px; color: black;" class="fa-solid fa-magnifying-glass"></i>
-                    </a>
-                    <span class="itim-regular">ค้นหา</span>
-                </div>
-
-                <div style="display: flex; flex-direction: column; align-items: center;">
-                    <a class="menu-item" routerLinkActive="active" [routerLink]="['/category_main']">
-                        <i style="font-size: 40px; color: black;" class="fa-solid fa-bars"></i>
-                    </a>
-                    <span class="itim-regular">หมวดหมู่</span>
-                </div>
-            </div>
-        </div>
-
-        <button routerLink="/login" class="login-link"
-            style="text-decoration: none; color: black; background: none; border: none; outline: none;">
-            <div style="display: flex; flex-direction: row; align-items: center; justify-content: center;">
-                <i class="material-icons" st>login</i>
-                <span style="margin-left: 10px; font-size: 17px;">เข้าสู่ระบบ/สมัครสมาชิก</span>
-            </div>
-        </button>
-
-    </mat-toolbar>
+        <a class="menu-item" [routerLink]="['/search_main']">
+            <span style="color: black;">ค้นหา</span>
+        </a>
+        <a class="menu-item" routerLinkActive="active" [routerLink]="['/category_main']">
+            <span>หมวดหมู่</span>
+        </a>
+    </div>
+    <button routerLink="/login" class="login-link modern-login" *ngIf="!isMobile">
+        <i class="material-icons">login</i>
+        <span>เข้าสู่ระบบ/สมัครสมาชิก</span>
+    </button>
+    <button class="toolbar-hamburger" (click)="toggleDrawer()" aria-label="เมนู" *ngIf="isMobile">
+        <i class="fa-solid fa-bars"></i>
+    </button>
+</mat-toolbar>
+<!-- Drawer สำหรับ mobile -->
+<div class="drawer" [class.open]="isDrawerOpen">
+    <div class="drawer-content">
+        <h3 style="font-weight: 500; font-size: 30px;">MENU</h3>
+        <ul style="list-style: none; padding: 0;">
+            <li style="border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; align-items: center; gap: 10px;">
+                <i class="fa-solid fa-house" style="font-size: 20px; color: black;"></i>
+                <a [routerLink]="['/']" style="text-decoration: none; color: black;">
+                    <span>หน้าหลัก</span>
+                </a>
+            </li>
+            <li style="border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; align-items: center; gap: 10px;">
+                <i class="fa-solid fa-magnifying-glass" style="font-size: 20px; color: black;"></i>
+                <a [routerLink]="['/search_main']" style="text-decoration: none; color: black;">
+                    <span>ค้นหา</span>
+                </a>
+            </li>
+            <li style="border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; align-items: center; gap: 10px;">
+                <i class="fa-solid fa-bars" style="font-size: 20px; color: black;"></i>
+                <a [routerLink]="['/category_main']" style="text-decoration: none; color: black;">
+                    <span>หมวดหมู่</span>
+                </a>
+            </li>
+            <li style="border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; align-items: center; gap: 10px;">
+                <i class="material-icons" style="font-size: 20px; color: black;">login</i>
+                <a [routerLink]="['/login']" style="text-decoration: none; color: black;">
+                    <span>เข้าสู่ระบบ/สมัครสมาชิก</span>
+                </a>
+            </li>
+        </ul>
+        <button mat-flat-button style="background-color: rgb(226, 124, 150); width: 100px;"
+            (click)="toggleDrawer()">ปิด</button>
+    </div>
 </div>
 <div>
     <div style="display: flex; justify-content: center; margin-bottom: 30px; gap: 30px; margin-top: 120px;">
@@ -56,14 +70,13 @@
                     <div style="display: flex; flex-direction: column; position: relative;">
 
                         <!-- แสดงรูปภาพหรือวิดีโอ -->
-                        <a>
+                        <a (click)="onCardClick($event)">
                             <ng-container *ngIf="post.media_type === 'image'; else videoTemplate">
-                                <img [src]="post.media_url || 'https://via.placeholder.com/360x300'"
-                                    class="imgpost" alt="รูปที่โพสต์">
+                                <img [src]="post.media_url || 'https://via.placeholder.com/360x300'" class="imgpost"
+                                    alt="รูปที่โพสต์">
                             </ng-container>
                             <ng-template #videoTemplate>
-                                <video [src]="post.media_url" controls
-                                    class="imgpost">
+                                <video [src]="post.media_url" controls class="imgpost">
                                 </video>
                             </ng-template>
                         </a>
@@ -82,13 +95,12 @@
                             </span>
                             <div
                                 style="display: flex; align-items: center; justify-content: space-between; margin-right: 10px;">
-                                <a [routerLink]="['/detail_post']" [queryParams]="{ post_id: post.post_id}"
+                                <a [routerLink]="['/detail_post']" [queryParams]="{ post_id: post.post_id }"
                                     class="hover-link" style="color: #e96e7e; font-size: 20px; text-decoration: none;">
                                     View
                                 </a>
                                 <span style="margin-left: 5px; color: rgb(168, 168, 168); margin-top: 5px;">{{
                                     getViewsForPost(post.post_id.toString())}}</span>
-                                <!-- <span style="margin-left: 5px; ">👁️‍🗨️</span> -->
                             </div>
                         </div>
 
@@ -96,9 +108,11 @@
                         <div
                             style="display: flex; flex-direction: row; margin-left: 15px; margin-right: 15px; margin-top: 35px; gap: 10px; justify-content: space-between;">
                             <div style="display: flex; align-items: center; gap: 10px;">
-                                <img [src]="post.user_profile_image || 'https://via.placeholder.com/50'"
-                                    alt="รูปโปรไฟล์"
-                                    style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
+                                <a (click)="goToProfile(post.user_uid.toString())">
+                                    <img [src]="post.user_profile_image || 'https://via.placeholder.com/50'"
+                                        alt="รูปโปรไฟล์"
+                                        style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
+                                </a>
                                 <span style="font-weight: 600; font-size: 20px;">
                                     {{ post.user_name }}
                                 </span>

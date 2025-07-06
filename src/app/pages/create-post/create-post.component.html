@@ -131,10 +131,10 @@
     <div>
         <div class="post-container">
             <mat-card appearance="raised">
-                <div *ngIf="isLoading" class="loading-overlay">
+                <div *ngIf="isLoading" class="loading-overlay-desktop">
                     <div class="loading-spinner-container">
-                        <div class="spinner"></div>
-                        <p>กำลังโพสต์...</p>
+                        <i class="fa fa-spinner fa-spin"></i>
+                        <p>กำลังอัปโหลดโพสต์...</p>
                     </div>
                 </div>
 
@@ -268,17 +268,20 @@
                         placeholder="เขียนเรื่องราว..."></textarea>
                 </mat-card-footer>
 
-                <mat-card-footer *ngIf="!isLoading"
+                <mat-card-footer
                     style="background-color: #f2aea3; padding: 10px; height: 50px; display: flex; justify-content: center; align-items: center; cursor: pointer; border-radius: 8px;"
-                    (click)="submitPost()">
-                    <span class="itim-regular2" style="color: white;">โพสต์</span>
+                    (click)="!isLoading && submitPost()" [class.disabled]="isLoading">
+                    <span *ngIf="!isLoading" class="itim-regular2" style="color: white;">โพสต์</span>
+                    <span *ngIf="isLoading" class="itim-regular2" style="color: white; display: flex; align-items: center; gap: 8px;">
+                        <i class="fa fa-spinner fa-spin"></i> กำลังโพสต์...
+                    </span>
                 </mat-card-footer>
             </mat-card>
         </div>
     </div>
 </div>
 
-<div class="mobile-post-container" *ngIf="isMobile">
+<div class="mobile-post-container" *ngIf="isMobile" [class.loading]="isLoading">
     <div class="mobile-header">
         <span>สร้างโพสต์ใหม่</span>
         <button class="close-btn" (click)="close()">
@@ -324,7 +327,20 @@
         </div>
     </div>
     <textarea [(ngModel)]="postData.title" placeholder="เขียนเรื่องราว..." class="mobile-textarea"></textarea>
-    <button class="mobile-post-btn" (click)="submitPost()">โพสต์</button>
+    <button class="mobile-post-btn" (click)="submitPost()" [disabled]="isLoading">
+        <span *ngIf="!isLoading">โพสต์</span>
+        <span *ngIf="isLoading" class="loading-text">
+            <i class="fa fa-spinner fa-spin"></i> กำลังโพสต์...
+        </span>
+    </button>
+    
+    <!-- Loading overlay -->
+    <div *ngIf="isLoading" class="loading-overlay">
+        <div class="loading-spinner">
+            <i class="fa fa-spinner fa-spin"></i>
+            <p>กำลังอัปโหลดโพสต์...</p>
+        </div>
+    </div>
     <div *ngIf="isMapOpen" class="dialog-overlay" (click)="closeMapDialog()">
         <div class="dialog-box" (click)="$event.stopPropagation()">
             <button class="close-button" (click)="closeMapDialog()">×</button>

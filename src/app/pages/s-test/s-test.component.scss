@@ -33,107 +33,28 @@ body {
   /* สีพื้นหลังเหมือนกัน */
 }
 
-.post-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  /* กำหนดให้แสดง 4 คอลัมน์ในแต่ละแถว */
-  gap: 30px;
-  /* ช่องว่างระหว่างโพสต์ */
+
+// โทนสีหลัก
+:root {
+  --card-bg: #fffaf7;
+  --card-shadow: 0 4px 24px rgba(191, 164, 138, 0.13);
+  --card-border: #e7d7c9;
+  --accent: #bfa48a;
+  --text-main: #5a4633;
+  --text-secondary: #a08b6f;
 }
 
-.post-card {
-  background-color: #fff;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+// Container หลักสำหรับเนื้อหา
+.main-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-}
-
-.post-card img,
-.post-card video {
-  margin-bottom: 5px;
-  max-width: 100%;
-}
-
-.post-meta {
-  font-size: 14px;
-  color: #555;
-  margin-bottom: 10px;
-}
-
-
-.drawer {
-  position: fixed;
-  top: 0;
-  right: -300px;
-  /* ซ่อน Drawer ทางขวา */
-  width: 300px;
-  height: 100%;
-  background-color: white;
-  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
-  transition: right 0.3s ease;
-  /* เพิ่ม Transition */
-  z-index: 1000;
-}
-
-/* Drawer เปิด */
-.drawer.open {
-  right: 0;
-  /* แสดง Drawer */
-}
-
-/* สไตล์เนื้อหาใน Drawer */
-.drawer-content {
-  padding: 20px;
-}
-
-.drawer-content h3 {
-  margin-top: 0;
-}
-
-.drawer-content ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-.drawer-content ul li {
-  margin: 10px 0;
-}
-
-
-.fixed-toolbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  background-color: rgb(233, 135, 135);
-  height: 90px;
+  margin-top: 120px;
+  padding: 0 16px;
   width: 100%;
-  z-index: 1;
-  /* Ensure it is above other content */
-}
-
-.cardpost {
-  background-color: white;
-  width: auto;
-  height: 450px;
-}
-
-.heart-icon {
-  color: gray;
-  transition: color 0.3s ease;
-}
-
-.heart-icon.liked {
-  color: rgb(224, 67, 67);
-}
-
-
-//font
-.itim-regular {
-  margin-top: 5px;
-  font-family: "Itim", serif;
-  font-weight: 400;
-  font-style: normal;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .search-container {
@@ -168,19 +89,322 @@ body {
   /* พื้นหลังโปร่งใส */
 }
 
+// Modern tabs
+.modern-tabs {
+  display: flex;
+  gap: 36px;
+  justify-content: center;
+  margin-bottom: 32px;
+}
+
+.tab {
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: #444;
+  padding: 8px 28px;
+  border-radius: 24px 24px 0 0;
+  background: transparent;
+  transition: all 0.18s ease;
+  cursor: pointer;
+  position: relative;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.tab:hover, .tab.active {
+  background: #fff;
+  color: #e27c96;
+  transform: translateY(-2px);
+}
+
+.tab.active::after {
+  content: '';
+  display: block;
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #e27c96 60%, #bfa48a 100%);
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  bottom: -8px;
+}
+
+// Post grid
+.post-grid {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.post-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: var(--card-shadow);
+  border: 1.5px solid var(--card-border);
+  overflow: hidden;
+  transition: all 0.18s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.post-card:hover, .post-card:focus {
+  box-shadow: 0 8px 32px rgba(191, 164, 138, 0.18);
+  border-color: var(--accent);
+  transform: translateY(-2px) scale(1.01);
+}
+
+// ส่วนโปรไฟล์
+.post-card .profile-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 18px 18px 0 18px;
+}
+
+.post-card .profile-row img {
+  border-radius: 50%;
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  border: 2px solid var(--card-border);
+  background: #f3ede7;
+  flex-shrink: 0;
+}
+
+.post-card .profile-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+
+.post-card .profile-info .user-name {
+  font-size: 1.08rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.post-card .profile-info .post-time {
+  color: var(--text-secondary);
+  font-size: 0.97rem;
+  margin-top: 2px;
+  margin: 0;
+}
+
+// สื่อ
+.post-card .media-container {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1/1;
+  background: #f7f3ef;
+  margin-top: 14px;
+  overflow: hidden;
+}
+
+.post-card .media-container img,
+.post-card .media-container video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 0;
+  transition: transform 0.3s ease;
+}
+
+.post-card .media-container:hover img,
+.post-card .media-container:hover video {
+  transform: scale(1.02);
+}
+
+.post-card .multiple-media-icon {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: rgba(0,0,0,0.18);
+  border-radius: 50%;
+  padding: 6px;
+  z-index: 2;
+  backdrop-filter: blur(4px);
+}
+
+// หัวใจและยอดไลก์
+.post-card .like-row {
+  display: flex;
+  align-items: center;
+  margin: 12px 18px 0 18px;
+  font-size: 1.1rem;
+  color: var(--accent);
+  gap: 8px;
+}
+
+// เนื้อหาโพสต์
+.post-card .post-content {
+  text-align: left;
+  padding: 12px 18px 18px 18px;
+  margin-top: 0;
+}
+
+.post-card .post-title {
+  font-size: 1.08rem;
+  color: var(--text-main);
+  font-weight: 500;
+  margin: 0;
+  word-break: break-word;
+  line-height: 1.5;
+}
+
+.show-more-btn {
+  background: #e7d7c9;
+  color: #5a4633;
+  border: none;
+  border-radius: 16px;
+  padding: 6px 16px;
+  font-size: 0.9rem;
+  margin-top: 8px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  outline: none;
+  box-shadow: 0 1px 4px rgba(191, 164, 138, 0.08);
+  font-weight: 500;
+
+  &:hover, &:focus {
+    background: #bfa48a;
+    color: #fff;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(191, 164, 138, 0.2);
+  }
+}
+
+// Loading และ No results
+.loading, .no-results {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+}
+
+.no-results {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: var(--card-shadow);
+  border: 1px solid var(--card-border);
+  margin: 20px auto;
+  max-width: 400px;
+}
+
+// Drawer
+.drawer {
+  position: fixed;
+  top: 0;
+  right: -300px;
+  width: 300px;
+  height: 100%;
+  background-color: white;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
+  transition: right 0.3s ease;
+  z-index: 1000;
+}
+
+.drawer.open {
+  right: 0;
+}
+
+.drawer-content {
+  padding: 20px;
+}
+
+.drawer-content h3 {
+  margin-top: 0;
+}
+
+.drawer-content ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.drawer-content ul li {
+  margin: 10px 0;
+}
+
+// Add post button
+.add-post-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: #fff;
+  color: #e27c96;
+  font-size: 32px;
+  box-shadow: none;
+  border: none;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  outline: none;
+
+  &:hover, &:focus {
+    background: #ffe6ee;
+    color: #d14b72;
+    transform: scale(1.05);
+  }
+  &:active {
+    background: #f9c5d1;
+    color: #b03a5b;
+    transform: scale(0.95);
+  }
+}
+
+// Fixed toolbar
+.fixed-toolbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  background-color: rgb(233, 135, 135);
+  height: 90px;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  box-sizing: border-box;
+
+  img {
+    width: 80px;
+    height: auto;
+  }
+
+  .fa-solid,
+  .fa {
+    font-size: 40px;
+  }
+}
+
+// Menu items
 .menu-item {
   display: flex;
   flex-direction: column;
   align-items: center;
   text-decoration: none;
   position: relative;
+  transition: all 0.2s ease;
 }
 
 .menu-item.active {
   color: #ff0000;
-  /* สีเมื่อ active */
 }
-
 
 .menu-item span {
   font-size: 14px;
@@ -190,7 +414,6 @@ body {
 .menu-item.active i,
 .menu-item.active span {
   color: #000000;
-  /* เปลี่ยนสีเมื่อ active */
 }
 
 .menu-item.active::after {
@@ -198,23 +421,40 @@ body {
   position: absolute;
   bottom: -10px;
   left: 50%;
-  /* เริ่มที่กึ่งกลางของเมนู */
   transform: translateX(-50%);
-  /* ดันกลับมาครึ่งหนึ่งของความกว้าง */
   height: 4px;
   background-color: #000000;
-  /* สีขีดล่าง */
   width: 90px;
-  /* ความกว้างของขีด */
 }
 
-.multiple-media-icon {
-  top: 10px;
-  right: 10px;
-  padding: 5px;
-  border-radius: 50%;
+// Center menu
+.center-menu {
+  display: flex;
+  gap: 50px;
+  align-items: center;
+  justify-content: center;
+  flex-grow: 1;
 }
 
+// Font
+.itim-regular {
+  margin-top: 5px;
+  font-family: "Itim", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+// Heart icon
+.heart-icon {
+  color: gray;
+  transition: color 0.3s ease;
+}
+
+.heart-icon.liked {
+  color: rgb(224, 67, 67);
+}
+
+// User list
 .user-list {
   max-width: 650px;
   margin: 40px;
@@ -239,12 +479,293 @@ body {
   margin-right: 15px;
 }
 
-
 .user-name {
   font-weight: bold;
-
 }
 
 .user-email {
   color: gray;
+}
+
+// ===== RESPONSIVE BREAKPOINTS =====
+
+// Large Desktop (1200px+)
+@media (min-width: 1200px) {
+  .main-container {
+    max-width: 1400px;
+    padding: 0 24px;
+  }
+  
+  .post-grid {
+    max-width: 700px;
+  }
+  
+  .post-card {
+    max-width: 700px;
+  }
+
+  
+}
+
+// Desktop (1024px - 1199px)
+@media (max-width: 1199px) and (min-width: 1024px) {
+  .main-container {
+    max-width: 1000px;
+    padding: 0 20px;
+  }
+  
+  .post-grid {
+    max-width: 650px;
+  }
+  
+  .post-card {
+    max-width: 650px;
+  }
+  
+}
+
+// Tablet (768px - 1023px)
+@media (max-width: 1023px) and (min-width: 768px) {
+  .main-container {
+    max-width: 800px;
+    padding: 0 16px;
+    margin-top: 100px;
+  }
+  
+  .post-grid {
+    max-width: 600px;
+  }
+  
+  .post-card {
+    max-width: 600px;
+  }
+  
+  .post-card .profile-row img {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .post-card .profile-info .user-name {
+    font-size: 1rem;
+  }
+  
+  .post-card .post-title {
+    font-size: 1rem;
+  }
+
+}
+
+// Large Mobile (600px - 767px)
+@media (max-width: 767px) and (min-width: 600px) {
+  .main-container {
+    padding: 0 12px;
+    margin-top: 90px;
+  }
+  
+  .post-grid {
+    gap: 24px;
+  }
+  
+  .post-card {
+    border-radius: 8px;
+  }
+  
+  
+  .tab {
+    font-size: 1rem;
+    padding: 6px 16px;
+  }
+  
+  .tab.active::after {
+    left: 12px;
+    right: 12px;
+  }
+  
+
+  
+  .post-card .profile-row {
+    margin: 16px 16px 0 16px;
+    gap: 10px;
+  }
+  
+  .post-card .profile-row img {
+    width: 48px;
+    height: 48px;
+  }
+  
+  .post-card .profile-info .user-name {
+    font-size: 0.95rem;
+  }
+  
+  .post-card .profile-info .post-time {
+    font-size: 0.85rem;
+  }
+  
+  .post-card .post-content {
+    padding: 10px 16px 16px 16px;
+  }
+  
+  .post-card .post-title {
+    font-size: 0.95rem;
+  }
+  
+  .post-card .like-row {
+    margin: 10px 16px 0 16px;
+    font-size: 1rem;
+  }
+  
+  .show-more-btn {
+    font-size: 0.85rem;
+    padding: 5px 14px;
+  }
+
+  .search-container {
+    margin-top: 30px;
+  }
+}
+
+// Landscape orientation adjustments
+@media (max-height: 500px) and (orientation: landscape) {
+  .main-container {
+    margin-top: 70px;
+  }
+ 
+  
+  .post-grid {
+    gap: 16px;
+  }
+  
+  .post-card .profile-row {
+    margin: 10px 16px 0 16px;
+  }
+  
+  .post-card .media-container {
+    margin-top: 10px;
+  }
+
+}
+
+// High DPI displays
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .post-card {
+    border-width: 0.5px;
+  }
+  
+}
+
+// Reduced motion preferences
+@media (prefers-reduced-motion: reduce) {
+  .post-card,
+  .tab,
+  .add-post-btn,
+  .menu-item {
+    transition: none;
+  }
+  
+  .post-card:hover, .post-card:focus {
+    transform: none;
+  }
+}
+
+
+// Tablet
+@media (max-width: 1024px) {
+  .fixed-toolbar {
+    height: 90px;
+    padding: 0 12px;
+
+    img {
+      width: 60px;
+    }
+
+    .fa-solid,
+    .fa {
+      font-size: 32px;
+    }
+  }
+
+  .center-menu {
+    gap: 20px !important;
+  }
+}
+
+// Mobile
+@media (max-width: 600px) {
+  .fixed-toolbar {
+    height: 80px;
+    padding: 0 6px;
+
+    img {
+      width: 65px;
+    }
+
+    .fa-solid,
+    .fa {
+      font-size: 22px;
+    }
+
+    .itim-regular {
+      font-size: 20px;
+    }
+
+    .center-menu {
+      display: none !important;
+    }
+
+    .drawer-content {
+      font-size: 1rem;
+    }
+
+    .drawer-content h3 {
+      font-size: 1.2rem;
+    }
+
+    .drawer-content ul li,
+    .drawer-content ul li span,
+    .drawer-content ul li a {
+      font-size: 0.98rem;
+    }
+
+  }
+
+  .search-container {
+    margin-right: 40px;
+  }
+
+  .modern-tabs {
+    margin-right: 40px;
+  }
+
+  .post-card {
+    width: 90%;
+    box-sizing: border-box;
+    margin-right: 40px !important;
+  }
+}
+
+/* ✅ สำหรับ desktop/tablet */
+@media (min-width: 768px) {
+  .center-menu {
+    display: flex;
+    gap: 50px;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+  }
+}
+
+.search-icon-left {
+  display: inline-block;
+}
+
+
+.search-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-left: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
 }

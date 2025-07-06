@@ -21,10 +21,13 @@ export class STestComponent {
 
   userId: string = '';
   searchQuery = '';
-  posts: ShowPost[] = [];
+  allPosts: any[] = [];
+  posts: any[] = [];
   loading = false;
   errorMessage = '';
   isDrawerOpen: boolean = false; // เริ่มต้น Drawer ปิด
+  showFull: { [key: string]: boolean } = {};
+  activeTab: string = 'post';
 
   constructor(private postService: PostService, private router: ActivatedRoute,) { }
 
@@ -39,6 +42,11 @@ export class STestComponent {
 
       }
 
+    });
+
+    this.postService.getPosts().subscribe((data: any[]) => {
+      this.allPosts = data;
+      this.posts = data;
     });
   }
 
@@ -59,10 +67,13 @@ export class STestComponent {
         this.loading = false;
       }
     });
-
   }
 
   toggleDrawer(): void {
     this.isDrawerOpen = !this.isDrawerOpen; // สลับสถานะเปิด/ปิด
+  }
+
+  toggleShowFull(postId: string) {
+    this.showFull[postId] = !this.showFull[postId];
   }
 }

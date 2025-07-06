@@ -84,21 +84,6 @@ body {
     /* เปลี่ยนสีเมื่อ active */
   }
   
-  .menu-item.active::after {
-    content: '';
-    position: absolute;
-    bottom: -40px;
-    left: 50%;
-    /* เริ่มที่กึ่งกลางของเมนู */
-    transform: translateX(-50%);
-    /* ดันกลับมาครึ่งหนึ่งของความกว้าง */
-    height: 5px;
-    background-color: #000000;
-    /* สีขีดล่าง */
-    width: 85px;
-    /* ความกว้างของขีด */
-  }
-
   .menu-item2 {
     display: flex;
     flex-direction: column;
@@ -118,53 +103,109 @@ body {
     /* เปลี่ยนสีเมื่อ active */
   }
   
-  .menu-item2.active::after {
-    content: '';
-    position: absolute;
-    bottom: -10px;
-    left: 50%;
-    /* เริ่มที่กึ่งกลางของเมนู */
-    transform: translateX(-50%);
-    /* ดันกลับมาครึ่งหนึ่งของความกว้าง */
-    height: 4px;
-    background-color: #000000;
-    /* สีขีดล่าง */
-    width: 150px;
-    /* ความกว้างของขีด */
-  }
-  
   .user-list {
-    max-width: 650px;
-    margin: 40px;
+    width: 100%;
+    max-width: 550px;
+    margin: 24px auto 0 auto;
     display: flex;
     flex-direction: column;
-    margin-left: 630px;
-}
+    gap: 14px;
+    padding: 0 2vw;
+  }
 
 .user-card {
     display: flex;
-    align-items: center;
-    background-color: rgb(255, 255, 255);
-    padding: 15px;
-    margin-bottom: 15px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    flex-direction: row;
+    align-items: flex-start;
+    background: #fff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+    padding: 12px 14px;
+    gap: 14px;
+    cursor: pointer;
+    border: 1px solid #f0eaea;
+    transition: box-shadow 0.18s, transform 0.18s, background 0.18s, border-color 0.18s;
+}
+
+.user-card:hover,
+.user-card:focus {
+    background: #fff0f6;
+    box-shadow: 0 6px 24px rgba(226, 124, 150, 0.13);
+    border-color: #e27c96;
+    outline: none;
+}
+
+.user-card:active {
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.12);
+    transform: scale(0.98);
 }
 
 .user-avatar {
-    width: 50px;
-    height: 50px;
+    width: 54px;
+    height: 54px;
     border-radius: 50%;
-    margin-right: 15px;
+    object-fit: cover;
+    background: #f7f7f7;
+    flex-shrink: 0;
+    border: 1.5px solid #f3eaea;
 }
 
+.user-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+    flex: 1;
+}
 
 .user-name {
-    font-weight: bold;
-    
+    font-weight: 700;
+    font-size: 1.08rem;
+    color: #222;
+    margin-bottom: 1px;
+    word-break: break-all;
 }
 
-.user-email {
-    color: gray;
+.user-desc {
+    color: #666;
+    font-size: 0.97rem;
+    margin-bottom: 2px;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.user-stats {
+    display: flex;
+    gap: 8px;
+    font-size: 0.95rem;
+    color: #888;
+    align-items: center;
+}
+
+.no-results {
+    text-align: center;
+    font-size: 1.08rem;
+    color: #888;
+    margin-top: 18px;
+}
+
+@media (max-width: 600px) {
+    .user-list {
+        max-width: 480px;
+        margin: 20px auto 0 auto;
+        padding: 0 20px;
+        box-sizing: border-box;
+    }
+    .user-avatar {
+        width: 40px;
+        height: 40px;
+    }
+    .user-name,
+    .user-desc,
+    .user-stats {
+        font-size: 0.93rem;
+    }
 }
 
 .login-link {
@@ -209,4 +250,307 @@ body {
   width: 100%;
   background: transparent;
   /* พื้นหลังโปร่งใส */
+}
+
+/* Modern Toolbar & Drawer Responsive Styles (นำเข้าจาก homepage-main.component.scss) */
+.fixed-toolbar.modern-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  height: 70px;
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+  border-radius: 0 0 18px 18px;
+  padding: 0 18px;
+  position: fixed;
+  top: 0; left: 0; width: 100vw;
+  z-index: 1000;
+  transition: background 0.3s;
+}
+
+.toolbar-logo {
+  margin-right: 18px;
+  margin-left: 0;
+  display: flex;
+  align-items: center;
+}
+
+.toolbar-logo img {
+  width: 56px;
+  height: auto;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(233,135,135,0.12);
+}
+
+.toolbar-center-menu {
+  display: flex;
+  gap: 36px;
+  align-items: center;
+  justify-content: flex-start;
+  margin: 0;
+}
+
+.menu-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: 12px;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  color: #222;
+  text-decoration: none;
+  font-weight: 500;
+  i { font-size: 28px; margin-bottom: 2px; }
+  span { font-size: 15px; }
+}
+.menu-item:hover, .menu-item.active {
+  background: #ffe6ee;
+  color: #e27c96;
+  box-shadow: 0 2px 8px rgba(226, 140, 150, 0.10);
+}
+.menu-item.active i, .menu-item.active span {
+  color: #e27c96;
+}
+
+.login-link.modern-login {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  background: linear-gradient(90deg, #e27c96 60%, #faddd9 100%);
+  color: #fff;
+  font-weight: 600;
+  border: none;
+  border-radius: 18px;
+  padding: 8px 18px;
+  font-size: 16px;
+  box-shadow: 0 2px 8px rgba(226, 140, 150, 0.10);
+  transition: background 0.2s, box-shadow 0.2s;
+  .material-icons { font-size: 22px; margin-right: 6px; }
+}
+.login-link.modern-login:hover {
+  background: linear-gradient(90deg, #e27c96 80%, #faddd9 100%);
+  box-shadow: 0 4px 16px rgba(226, 140, 150, 0.18);
+}
+
+.toolbar-hamburger {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 32px;
+  color: #e27c96;
+  margin-left: 16px;
+  border-radius: 8px;
+  padding: 6px 10px;
+  transition: background 0.2s;
+}
+.toolbar-hamburger:active, .toolbar-hamburger:focus {
+  background: #ffe6ee;
+}
+
+/* Drawer Styles */
+.drawer {
+  position: fixed;
+  top: 0;
+  right: -300px;
+  width: 300px;
+  height: 100%;
+  background-color: white;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
+  transition: right 0.3s ease;
+  z-index: 1000;
+}
+.drawer.open {
+  right: 0;
+}
+.drawer-content {
+  padding: 20px;
+}
+.drawer-content h3 {
+  margin-top: 0;
+}
+.drawer-content ul {
+  list-style-type: none;
+  padding: 0;
+}
+.drawer-content ul li {
+  margin: 10px 0;
+}
+
+@media (max-width: 1024px) {
+  .fixed-toolbar.modern-toolbar {
+    height: 60px;
+    padding: 0 8px;
+  }
+  .toolbar-logo { margin-right: 8px; }
+  .toolbar-center-menu { gap: 18px; }
+  .menu-item i { font-size: 20px; }
+  .menu-item span { font-size: 12px; }
+}
+
+@media (max-width: 600px) {
+  .fixed-toolbar.modern-toolbar {
+    height: 80px;
+    padding: 0 4px;
+    border-radius: 0 0 10px 10px;
+  }
+  .toolbar-logo { margin-right: 4px; }
+  .toolbar-center-menu { display: none; }
+  .toolbar-hamburger {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+  }
+  .login-link span { display: none; }
+}
+
+/* Modern Tabs (เหมือน search-users) */
+.modern-tabs {
+  display: flex;
+  gap: 36px;
+  justify-content: center;
+  margin-bottom: 32px;
+}
+
+.tab {
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: #444;
+  padding: 8px 28px 8px 28px;
+  border-radius: 24px 24px 0 0;
+  background: transparent;
+  transition: background 0.18s, color 0.18s;
+  cursor: pointer;
+  position: relative;
+  text-decoration: none;
+}
+
+.tab:hover,
+.tab.active {
+  background: #fff;
+  color: #e27c96;
+}
+
+.tab.active::after {
+  content: '';
+  display: block;
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #e27c96 60%, #bfa48a 100%);
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  bottom: -8px;
+}
+
+@media (max-width: 600px) {
+  .modern-tabs {
+    gap: 30px;
+    margin-bottom: 18px;
+    margin-right: 30px;
+  }
+  .tab {
+    font-size: 1.01rem;
+    padding: 7px 10px 7px 10px;
+  }
+}
+
+.search-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: none;
+  color: #222;
+  border: none;
+  box-shadow: none;
+  font-size: 20px;
+  margin-left: 8px;
+  cursor: pointer;
+  transition: color 0.18s, transform 0.13s;
+}
+.search-btn i {
+  color: #222;
+  font-size: 22px;
+}
+.search-btn:hover, .search-btn:focus {
+  color: #111;
+  outline: none;
+  transform: scale(1.07);
+  background: none;
+}
+.search-btn:active {
+  color: #111;
+  transform: scale(0.97);
+  background: none;
+}
+
+/* Responsive styles for iPad/Tablet */
+@media (min-width: 601px) and (max-width: 1024px) {
+  .search-container {
+    width: 400px;
+    height: 45px;
+    padding: 12px 15px;
+  }
+  
+  .search-input {
+    font-size: 18px;
+  }
+  
+  .user-list {
+    max-width: 700px;
+    margin: 32px auto 0 auto;
+    padding: 0 4vw;
+  }
+  
+  .user-card {
+    padding: 16px 18px;
+    gap: 16px;
+  }
+  
+  .user-avatar {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .user-name {
+    font-size: 1.2rem;
+  }
+  
+  .user-desc {
+    font-size: 1.05rem;
+  }
+  
+  .user-stats {
+    font-size: 1rem;
+  }
+  
+  .modern-tabs {
+    gap: 40px;
+    margin-bottom: 40px;
+  }
+  
+  .tab {
+    font-size: 1.3rem;
+    padding: 10px 32px;
+  }
+}
+
+@media (max-width: 600px) {
+    .user-list {
+        max-width: 480px;
+        margin: 20px auto 0 auto;
+        padding: 0 20px;
+        box-sizing: border-box;
+    }
+    .user-avatar {
+        width: 40px;
+        height: 40px;
+    }
+    .user-name,
+    .user-desc,
+    .user-stats {
+        font-size: 0.93rem;
+    }
 }
