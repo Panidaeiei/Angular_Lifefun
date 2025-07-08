@@ -42,11 +42,12 @@ export class ProfileUserComponent implements OnInit {
   followersCount: number = 0;
   followingCount: number = 0;
   followedId: string = '';
-  isMobile: boolean = false;
+  isMobile: boolean = false; // เพิ่มตัวแปรนี้
 
   constructor(private route: ActivatedRoute, private profileService: ProfileService, private reactPostservice: ReactPostservice,) { }
 
   ngOnInit(): void {
+    this.checkScreenSize(); // ตรวจสอบขนาดหน้าจอเมื่อเริ่มต้น
     // ดึงข้อมูล User ID จาก Query Parameters
     this.route.queryParams.subscribe((params) => {
       if (params['id']) {
@@ -65,15 +66,14 @@ export class ProfileUserComponent implements OnInit {
         console.warn('User ID not found in query parameters.');
       }
     });
-    this.checkMobile();
   }
 
-  @HostListener('window:resize')
-  onResize() {
-    this.checkMobile();
+  @HostListener('window:resize', ['$event'])
+  onResize(event: any) {
+    this.checkScreenSize();
   }
 
-  checkMobile() {
+  checkScreenSize() {
     this.isMobile = window.innerWidth <= 600;
   }
 

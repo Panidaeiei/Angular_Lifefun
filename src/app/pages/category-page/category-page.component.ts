@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterModule } from '@angular/router';
@@ -13,14 +13,15 @@ import {MatButtonModule} from '@angular/material/button';
   templateUrl: './category-page.component.html',
   styleUrl: './category-page.component.scss'
 })
-export class CategoryPageComponent {
+export class CategoryPageComponent implements OnInit, OnDestroy {
   currentUserId: string | null = null;
   userId: string | null = null;
   isLiked: boolean = false;
   isDrawerOpen: boolean = false; 
   cat_id!: number;
+  isMobile: boolean = false;
 
-  constructor(private router: ActivatedRoute,) { }
+  constructor(private router: ActivatedRoute, private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     this.router.queryParams.subscribe((params: any) => {
@@ -33,6 +34,17 @@ export class CategoryPageComponent {
       }
     });
     
+    this.checkScreen();
+    window.addEventListener('resize', this.checkScreen.bind(this));
+  }
+
+  ngOnDestroy(): void {
+    window.removeEventListener('resize', this.checkScreen.bind(this));
+  }
+
+  checkScreen() {
+    this.isMobile = window.innerWidth <= 600;
+    this.cdr.detectChanges();
   }
 
   toggleDrawer(): void {

@@ -38,6 +38,7 @@ export class UserSkincareComponent {
   posts: ShowPost[] = [];
   message: string = '';
   postId: string = '';
+  isMobile: boolean = false;
   viewPosts: any[] = [];
 
   ngOnInit(): void {

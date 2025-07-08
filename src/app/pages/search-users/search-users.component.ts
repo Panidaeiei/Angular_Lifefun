@@ -22,6 +22,7 @@ export class SearchUsersComponent {
 
   userId: string = '';
   isDrawerOpen: boolean = false; // เริ่มต้น Drawer ปิด
+  isMobile: boolean = false;
   searchResults: SearchUser[] = [];
   searchQuery: string = '';
   Profileuser: string = '';
@@ -40,6 +41,8 @@ export class SearchUsersComponent {
   ) { }
 
   ngOnInit(): void {
+    this.checkScreenSize();
+    window.addEventListener('resize', () => this.checkScreenSize());
     this.routeron.queryParams.subscribe((params) => {
       if (params['id']) {
         this.userId = params['id'];
@@ -67,6 +70,10 @@ export class SearchUsersComponent {
 
   toggleDrawer(): void {
     this.isDrawerOpen = !this.isDrawerOpen; // สลับสถานะเปิด/ปิด
+  }
+
+  private checkScreenSize(): void {
+    this.isMobile = window.innerWidth <= 768;
   }
 
   onSearch(): void {

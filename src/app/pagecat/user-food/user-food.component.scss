@@ -1,134 +1,476 @@
 :host,
 html,
 body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgb(249, 241, 239);
-  /* สีพื้นหลัง */
-  box-sizing: border-box;
-  /* คำนวณขนาดไม่เกินขอบ */
-  overflow-x: hidden;
-  /* ปิดการเลื่อนแนวนอน */
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgb(249, 241, 239);
+    /* สีพื้นหลัง */
+    box-sizing: border-box;
+    /* คำนวณขนาดไม่เกินขอบ */
+    overflow-x: hidden;
+    /* ปิดการเลื่อนแนวนอน */
 }
 
 :host {
-  display: block;
-  min-height: 100vh;
-  align-items: center;
-  justify-content: center;
-  /* ครอบคลุมความสูงเต็มหน้าจอ */
-  background-color: rgb(249, 241, 239);
-  /* สีพื้นหลัง */
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+    display: block;
+    min-height: 100vh;
+    align-items: center;
+    justify-content: center;
+    /* ครอบคลุมความสูงเต็มหน้าจอ */
+    background-color: rgb(249, 241, 239);
+    /* สีพื้นหลัง */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 body {
-  overflow-y: auto;
-  /* เปิดใช้งานการเลื่อนแนวตั้ง */
-  background-color: rgb(249, 241, 239);
-  /* สีพื้นหลังเหมือนกัน */
+    overflow-y: auto;
+    /* เปิดใช้งานการเลื่อนแนวตั้ง */
+    background-color: rgb(249, 241, 239);
+    /* สีพื้นหลังเหมือนกัน */
 }
 
-/* สไตล์พื้นฐานของ Drawer */
 .drawer {
   position: fixed;
   top: 0;
   right: -300px;
-  /* ซ่อน Drawer ทางขวา */
   width: 300px;
   height: 100%;
-  background-color: white;
-  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(12px);
+  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
   transition: right 0.3s ease;
-  /* เพิ่ม Transition */
   z-index: 1000;
+  border-radius: 18px 0 0 18px;
 }
 
-/* Drawer เปิด */
 .drawer.open {
   right: 0;
-  /* แสดง Drawer */
 }
 
-/* สไตล์เนื้อหาใน Drawer */
+.drawer-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.drawer-overlay.open {
+  opacity: 1;
+  visibility: visible;
+}
+
 .drawer-content {
-  padding: 20px;
+  padding: 24px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
 }
 
 .drawer-content h3 {
   margin-top: 0;
+  margin-bottom: 24px;
+  color: #e27c96;
+  font-weight: 600;
+  text-align: center;
+  font-size: 28px;
 }
 
 .drawer-content ul {
   list-style-type: none;
   padding: 0;
+  flex-grow: 1;
 }
 
 .drawer-content ul li {
-  margin: 10px 0;
+  margin: 8px 0;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.drawer-content ul li:hover {
+  background: #ffe6ee;
+  transform: translateX(4px);
+}
+
+.drawer-content ul li a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  text-decoration: none;
+  color: #222;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.drawer-content ul li a:hover {
+  color: #e27c96;
+}
+
+.drawer-content ul li i {
+  font-size: 20px;
+  color: #e27c96;
+  width: 24px;
+  text-align: center;
+}
+
+.drawer-close-btn {
+  background: #e27c96;
+  color: #fff;
+  border: none;
+  border-radius: 18px;
+  padding: 12px 32px;
+  font-size: 15px;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(226, 140, 150, 0.15);
+  cursor: pointer;
+  width: 100%;
+  height: 40px;
+  margin: 18px auto 0 auto;
 }
 
 .fixed-toolbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  background-color: rgb(233, 135, 135);
-  height: 90px;
-  z-index: 1000;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 0 24px;
-  box-sizing: border-box;
+  justify-content: flex-start;
+  height: 70px;
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+  border-radius: 0 0 18px 18px;
+  padding: 0 18px;
+  position: fixed;
+  top: 0; left: 0; width: 100vw;
+  z-index: 1000;
+  transition: all 0.3s ease;
 
   img {
-    width: 80px;
+    width: 56px;
     height: auto;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(233,135,135,0.12);
+    transition: transform 0.2s ease;
   }
-  .fa-solid, .fa {
-    font-size: 40px;
+
+  img:hover {
+    transform: scale(1.05);
+  }
+}
+
+.center-menu {
+  display: flex;
+  gap: 36px;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  flex-grow: 1;
+  margin-left: 90px;
+}
+
+.menu-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 16px;
+  border-radius: 16px;
+  transition: all 0.3s ease;
+  color: #222;
+  text-decoration: none;
+  font-weight: 500;
+  position: relative;
+  overflow: hidden;
+  
+  i { 
+    font-size: 28px; 
+    margin-bottom: 4px; 
+    color: #222;
+    transition: all 0.3s ease;
+  }
+  
+  span { 
+    font-size: 15px; 
+    color: #222;
+    transition: all 0.3s ease;
+    font-weight: 500;
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(226, 140, 150, 0.1), transparent);
+    transition: left 0.5s ease;
+  }
+}
+
+.menu-item:hover {
+  background: #ffe6ee;
+  color: #e27c96;
+  box-shadow: 0 4px 12px rgba(226, 140, 150, 0.15);
+  transform: translateY(-2px);
+
+  &::before {
+    left: 100%;
+  }
+
+  i, span {
+    color: #e27c96;
+  }
+}
+
+.toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-left: auto;
+}
+
+.toolbar-actions a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  color: #222;
+  text-decoration: none;
+  
+  i {
+    font-size: 24px;
+    margin-bottom: 2px;
+    transition: all 0.3s ease;
+  }
+}
+
+.toolbar-actions a:hover {
+  background: #ffe6ee;
+  color: #e27c96;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(226, 140, 150, 0.15);
+
+  i {
+    color: #e27c96;
+    transform: scale(1.1);
+  }
+}
+
+.toolbar-hamburger {
+  display: flex;
+  background: none;
+  border: none;
+  font-size: 28px;
+  color: #e27c96;
+  margin-left: 16px;
+  border-radius: 12px;
+  padding: 8px 12px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  align-items: center;
+  justify-content: center;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(226, 140, 150, 0.1), transparent);
+    transition: left 0.5s ease;
+  }
+}
+
+.toolbar-hamburger:hover {
+  background: #ffe6ee;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(226, 140, 150, 0.15);
+
+  &::before {
+    left: 100%;
+  }
+}
+
+.toolbar-hamburger:active, .toolbar-hamburger:focus {
+  background: #ffe6ee;
+  transform: translateY(0);
+}
+
+@media (min-width: 1025px) {
+  .toolbar-hamburger {
+    font-size: 26px;
+    padding: 8px 12px;
+    margin-left: 20px;
   }
 }
 
 @media (max-width: 1024px) {
   .fixed-toolbar {
-    height: 90px;
-    padding: 0 12px;
-    img { width: 60px; }
-    .fa-solid, .fa { font-size: 32px; }
+    height: 60px;
+    padding: 0 8px;
   }
-  .center-menu {
-    gap: 25px !important;
+  
+  .center-menu { 
+    gap: 18px; 
+  }
+  
+  .menu-item i { 
+    font-size: 20px; 
+  }
+  
+  .menu-item span { 
+    font-size: 12px; 
+  }
+  
+  .toolbar-actions a i {
+    font-size: 20px;
+  }
+
+  .toolbar-hamburger {
+    font-size: 24px;
+    padding: 6px 10px;
   }
 }
 
-// Mobile
+@media screen and (min-width: 768px) and (max-width: 1024px) and (orientation: portrait) {
+  .fixed-toolbar {
+    height: 65px;
+    padding: 0 12px;
+  }
+  
+  .center-menu { 
+    gap: 24px; 
+    margin-top: 8px;
+  }
+  
+  .menu-item i { 
+    font-size: 24px; 
+  }
+  
+  .menu-item span { 
+    font-size: 13px; 
+  }
+  
+  .toolbar-actions a i {
+    font-size: 22px;
+  }
+
+  .toolbar-hamburger {
+    font-size: 26px;
+    padding: 7px 11px;
+  }
+}
+
+@media screen and (min-width: 1024px) and (max-width: 1366px) and (orientation: landscape) {
+  .fixed-toolbar {
+    height: 65px;
+    padding: 0 16px;
+  }
+  
+  .center-menu {
+    gap: 28px; 
+  }
+  
+  .menu-item i { 
+    font-size: 26px; 
+  }
+  
+  .menu-item span { 
+    font-size: 14px; 
+  }
+
+  .toolbar-hamburger {
+    font-size: 26px;
+    padding: 7px 11px;
+  }
+}
+
 @media (max-width: 600px) {
   .fixed-toolbar {
     height: 80px;
-    padding: 0 6px;
-    img { width: 65px; }
-    .fa-solid, .fa { font-size: 22px; }
-    .itim-regular { font-size: 10px; }
+    padding: 0 4px;
+    border-radius: 0 0 10px 10px;
+  }
+  
     .center-menu {
       display: none !important;
     }
+  
+  .toolbar-hamburger {
+    font-size: 30px;
+    padding: 8px 12px;
+    margin-left: auto;
+  }
+  
+  .toolbar-actions a i {
+    font-size: 18px;
+  }
+  
+  .toolbar-actions {
+    gap: 12px;
+  }
+  
+  .toolbar-actions a {
+    padding: 6px 10px;
+  }
+  
+  .drawer {
+    width: 100vw;
+    right: -100vw;
+    border-radius: 0;
+  }
+  
+  .drawer.open {
+    right: 0;
+  }
+  
+  .drawer-content {
+    padding: 20px;
+  }
+  
+  .drawer-content h3 {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  .drawer-content ul li a {
+    padding: 14px 16px;
+    font-size: 16px;
+  }
+  
+  .drawer-content ul li i {
+    font-size: 22px;
+  }
+  
+  .drawer-close-btn {
+    height: 44px;
+    font-size: 16px;
+    margin-top: 20px;
   }
 }
 
-/* ✅ เมนูกลาง (ปุ่มหลัก) — ซ่อนไปเมื่อจอแคบ */
 @media (max-width: 767px) {
   .center-menu {
     display: none;
   }
 }
 
-/* ✅ สำหรับ desktop/tablet */
 @media (min-width: 768px) {
   .center-menu {
     display: flex;
@@ -140,150 +482,122 @@ body {
 }
 
 .cardpost {
-  background-color: white;
-  width: auto;
-  height: 450px;
+    background-color: white;
+    width: auto;
+    height: 450px;
 }
 
 .heart-icon {
-  color: gray;
-  transition: color 0.3s ease;
+    color: gray;
+    transition: color 0.3s ease;
 }
 
 .heart-icon.liked {
-  color: rgb(224, 67, 67);
+    color: rgb(224, 67, 67);
 }
 
 
 //font
 .itim-regular {
-  margin-top: 5px;
-  font-family: "Itim", serif;
-  font-weight: 400;
-  font-style: normal;
+    margin-top: 5px;
+    font-family: "Itim", serif;
+    font-weight: 400;
+    font-style: normal;
 }
 
-.menu-item {
+.add-post-btn {
   display: flex;
-  flex-direction: column;
   align-items: center;
+  justify-content: center;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: #fff;
+  color: #e27c96;
+  font-size: 32px;
+  box-shadow: 0 2px 8px rgba(226, 140, 150, 0.15);
+  border: none;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
   text-decoration: none;
-  position: relative;
+  outline: none;
+
+  &:hover, &:focus {
+    background: #ffe6ee;
+    color: #d14b72;
+    box-shadow: 0 4px 12px rgba(226, 140, 150, 0.25);
+  }
+  &:active {
+    background: #f9c5d1;
+    color: #b03a5b;
+  }
 }
 
-.menu-item.active {
-  color: #ff0000;
-  /* สีเมื่อ active */
-}
-
-
-.menu-item span {
-  font-size: 14px;
-  margin-top: 5px;
-}
-
-.menu-item.active i,
-.menu-item.active span {
-  color: #000000;
-  /* เปลี่ยนสีเมื่อ active */
-}
-
-.menu-item.active::after {
-  content: '';
-  position: absolute;
-  bottom: -10px;
-  left: 50%;
-  /* เริ่มที่กึ่งกลางของเมนู */
-  transform: translateX(-50%);
-  /* ดันกลับมาครึ่งหนึ่งของความกว้าง */
-  height: 5px;
-  background-color: #000000;
-  /* สีขีดล่าง */
-  width: 80px;
-  /* ความกว้างของขีด */
+@media (max-width: 600px) {
+  .add-post-btn {
+    width: 44px;
+    height: 44px;
+    font-size: 26px;
+  }
 }
 
 .card-container-wrapper {
-  display: flex;
-  justify-content: center; /* จัดกลุ่มการ์ดให้อยู่กลาง */
-  width: 100%; /* ทำให้ wrapper ใช้ความกว้างทั้งหมด */
+    display: flex;
+    justify-content: center;
+    width: 100%;
 }
 
 .card-container {
-  display: grid;  /* ใช้ CSS Grid */
-  grid-template-columns: repeat(4, 1fr);  /* กำหนดให้แถวมี 4 คอลัมน์ */
-  gap: 20px;  /* ระยะห่างระหว่างการ์ด */
-  max-width: 2000px;  /* กำหนดความกว้างสูงสุดของการ์ด */
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    max-width: 2000px;
 }
 
+.card-wrapper {
+    width: 390px;
+    cursor: pointer;
+    padding: 5px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+.cardpost {
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 0px;
+    overflow: hidden;
+    height: 500px;
+    width: 100%;
+}
+
+.imgpost {
+    width: 390px;
+    height: 350px;
+    object-fit: cover;
+}
+
+/* Responsive */
 @media (max-width: 768px) {
   .card-container {
     grid-template-columns: repeat(2, 1fr);
   }
-
-  .imgpost {
-    width: 330px !important;
-    height: 330px !important;
-    object-fit: cover;
-  }
-
-  .card-wrapper {
-    width: 330px !important;
-    padding: 5px;
-  }
-
-  .cardpost {
-    height: 490px !important;
-  }
+  .imgpost, .card-wrapper { width: 330px !important; }
+  .imgpost { height: 330px !important; }
+  .cardpost { height: 490px !important; }
 }
-
-/* สำหรับอุปกรณ์ที่มีความกว้างไม่เกิน 480px (Mobile) */
 @media (max-width: 480px) {
-  .card-container {
-    grid-template-columns: 1fr;
-    /* กำหนดให้แถวมี 1 คอลัมน์ */
-  }
-
-  .imgpost {
-    width: 350px !important;
-    height: 350px !important;
-    object-fit: cover;
-  }
-
-  .card-wrapper {
-    width: 350px !important;
-    padding: 5px;
-  }
-
-  .cardpost {
-    height: 500px !important;
-  }
-
-} 
-
-/* สำหรับอุปกรณ์ที่มีความกว้างไม่เกิน 480px (Mobile) */
+  .card-container { grid-template-columns: 1fr; }
+  .imgpost, .card-wrapper { width: 350px !important; }
+  .imgpost { height: 350px !important; }
+  .cardpost { height: 500px !important; }
+}
 @media (max-width: 390px) {
-  .card-container {
-    grid-template-columns: 1fr;
-    /* กำหนดให้แถวมี 1 คอลัมน์ */
-  }
-
-  .imgpost {
-    width: 330px !important;
-    height: 340px !important;
-    object-fit: cover;
-  }
-
-  .card-wrapper {
-    width: 330px !important;
-    padding: 5px;
-  }
-
-  .cardpost {
-    height: 490px !important;
-  }
-
-} 
+  .card-container { grid-template-columns: 1fr; }
+  .imgpost, .card-wrapper { width: 330px !important; }
+  .imgpost { height: 340px !important; }
+  .cardpost { height: 490px !important; }
+}
 
 /* ✅ iPad แนวตั้ง (iPad Gen 9, Air 4, ใกล้เคียง) */
 @media screen and (min-width: 800px) and (max-width: 850px) and (orientation: portrait) {
@@ -309,7 +623,6 @@ body {
     height: 450px !important;
   }
 }
-
 
 /* ✅ iPad Air 4 แนวตั้ง (เฉพาะ device-width: 820px) */
 @media screen and (device-width: 820px) and (orientation: portrait) {
@@ -386,6 +699,8 @@ body {
   }
 }
 
+
+/* สำหรับอุปกรณ์ที่มีความกว้างไม่เกิน 480px (Mobile) */
 @media (min-width: 769px) and (max-width: 1030px) {
   .card-container {
     grid-template-columns: repeat(3, 1fr);
@@ -407,12 +722,12 @@ body {
   }
 }
 
-
 /* สำหรับอุปกรณ์ที่มีความกว้างไม่เกิน 480px (Mobile) */
 @media (min-width: 1200px) and (max-width: 1300px) {
   .card-container {
     grid-template-columns: repeat(3, 1fr);
     gap: 40px !important;
+
   }
 
   .imgpost {
@@ -433,88 +748,24 @@ body {
   }
 }
 
-.imgpost {
-  width: 390px;
-  height: 350px;
-  object-fit: cover;
-}
-
-.card-wrapper {
-  width: 390px; /* ใช้ความกว้างเต็มในแต่ละคอลัมน์ */
-  cursor: pointer;
-  padding: 5px;
-  display: flex;
-  justify-content: flex-start;
-  align-items: flex-start;
-}
-
-.cardpost {
-  background-color: white;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 0px;
-  overflow: hidden;
-  height: 500px;
-  width: 100%; /* กำหนดให้การ์ดใช้ความกว้างทั้งหมด */
-}
-
-.cardpost:hover {
-  transform: scale(1.02); /* ขยายการ์ดเล็กน้อยเมื่อ hover */
-  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2); /* เพิ่มเงา */
-}
-
-
 .hover-link {
-  transition: color 0.3s ease, text-decoration 0.3s ease;
-  /* ทำให้เปลี่ยนสไตล์นุ่มนวล */
+    transition: color 0.3s ease, text-decoration 0.3s ease;
+    /* ทำให้เปลี่ยนสไตล์นุ่มนวล */
 }
 
 /* เอฟเฟกต์เมื่อ hover */
 .hover-link:hover {
-  color: #007BFF;
-  /* เปลี่ยนสีเป็นสีน้ำเงิน */
-  text-decoration: underline;
-  /* เพิ่มเส้นใต้ */
-  font-weight: bold;
-  /* ทำให้ข้อความหนาขึ้น */
+    color: #007BFF;
+    /* เปลี่ยนสีเป็นสีน้ำเงิน */
+    text-decoration: underline;
+    /* เพิ่มเส้นใต้ */
+    font-weight: bold;
+    /* ทำให้ข้อความหนาขึ้น */
 }
 
 .multiple-media-icon {
-  top: 10px;
-  right: 10px;
-  padding: 5px;
-  border-radius: 50%;
-}
-
-.add-post-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 54px;
-  height: 54px;
-  border-radius: 50%;
-  background: #fff;
-  color: #e27c96;
-  font-size: 32px;
-  box-shadow: none;
-  border: none;
-  transition: background 0.2s, color 0.2s;
-  text-decoration: none;
-  outline: none;
-
-  &:hover, &:focus {
-    background: #ffe6ee;
-    color: #d14b72;
-  }
-  &:active {
-    background: #f9c5d1;
-    color: #b03a5b;
-  }
-}
-
-@media (max-width: 600px) {
-  .add-post-btn {
-    width: 44px;
-    height: 44px;
-    font-size: 26px;
-  }
+    top: 10px;
+    right: 10px;
+    padding: 5px;
+    border-radius: 50%;
 }

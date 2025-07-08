@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -35,12 +35,20 @@ export class UserCosmeticsComponent {
   userId: string = '';
   isLiked: boolean = false;
   isDrawerOpen: boolean = false;
+  isMobile: boolean = false;
   posts: ShowPost[] = [];
   message: string = '';
   postId: string = '';
   viewPosts: any[] = [];
 
+  @HostListener('window:resize', ['$event'])
+  onResize() {
+    this.checkScreenSize();
+  }
+
   ngOnInit(): void {
+    this.checkScreenSize();
+    
     this.userService.getCurrentUserId().subscribe((userId) => {
       this.currentUserId = userId;
       console.log('Current User ID:', this.currentUserId);
@@ -84,6 +92,10 @@ export class UserCosmeticsComponent {
         console.error('Error loading views:', err);
       }
     });
+  }
+
+  checkScreenSize(): void {
+    this.isMobile = window.innerWidth <= 768;
   }
 
   loadPosts(): void {

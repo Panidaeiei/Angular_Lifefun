@@ -28,6 +28,7 @@ export class STestComponent {
   isDrawerOpen: boolean = false; // เริ่มต้น Drawer ปิด
   showFull: { [key: string]: boolean } = {};
   activeTab: string = 'post';
+  isMobile: boolean = false; 
 
   constructor(private postService: PostService, private router: ActivatedRoute,) { }
 

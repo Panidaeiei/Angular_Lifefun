@@ -68,7 +68,7 @@ export class SearctpostMainComponent implements OnInit {
       }
     });
   }
-
+  
   onSearch() {
     if (this.searchQuery.trim() === '') {
       this.posts = this.allPosts;

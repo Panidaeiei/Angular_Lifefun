@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterModule } from '@angular/router';
@@ -44,10 +44,12 @@ export class NotificationUserComponent {
   currentUserId: string | null = null;
   notificationsUnban: any[] = [];
   unreadUnbanCount: number = 0;
+  isMobile: boolean = false; // เพิ่มตัวแปรนี้
 
   constructor(private route: ActivatedRoute, private notificationService: ReactPostservice, private userService: UserService, private router: Router) { }
 
   ngOnInit(): void {
+    this.checkScreenSize(); // ตรวจสอบขนาดหน้าจอเมื่อเริ่มต้น
     // ดึงค่าจาก Query Parameters
     this.userService.getCurrentUserId().subscribe((userId) => {
       this.currentUserId = userId;
@@ -69,6 +71,14 @@ export class NotificationUserComponent {
     });
   }
 
+  @HostListener('window:resize', ['$event'])
+  onResize(event: any) {
+    this.checkScreenSize();
+  }
+
+  checkScreenSize() {
+    this.isMobile = window.innerWidth <= 600;
+  }
 
   toggleHeart(): void {
     this.isLiked = !this.isLiked; // สลับสถานะ isLiked เมื่อคลิก

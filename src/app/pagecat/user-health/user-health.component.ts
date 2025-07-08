@@ -36,16 +36,20 @@ export class UserHealthComponent {
     userId: string = '';
     isLiked: boolean = false;
     isDrawerOpen: boolean = false;
+    isMobile: boolean = false;
     posts: ShowPost[] = [];
     message: string = '';
     postId: string = '';
     viewPosts: any[] = [];
   
-    ngOnInit(): void {
-      this.userService.getCurrentUserId().subscribe((userId) => {
-        this.currentUserId = userId;
-        console.log('Current User ID:', this.currentUserId);
-      });
+      ngOnInit(): void {
+    this.checkScreenSize();
+    window.addEventListener('resize', () => this.checkScreenSize());
+    
+    this.userService.getCurrentUserId().subscribe((userId) => {
+      this.currentUserId = userId;
+      console.log('Current User ID:', this.currentUserId);
+    });
       //ดึงค่าจาก Query Parameters
       this.route.queryParams.subscribe((params) => {
         this.postId = params['post_id'] || ''; // ดึง post_id
@@ -174,7 +178,11 @@ export class UserHealthComponent {
       );
     }
   
-    toggleDrawer(): void {
-      this.isDrawerOpen = !this.isDrawerOpen; // สลับสถานะเปิด/ปิด
-    }
+      toggleDrawer(): void {
+    this.isDrawerOpen = !this.isDrawerOpen; // สลับสถานะเปิด/ปิด
+  }
+
+  private checkScreenSize(): void {
+    this.isMobile = window.innerWidth <= 768;
+  }
 }

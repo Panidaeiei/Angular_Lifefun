@@ -40,6 +40,7 @@ export class UserFoodComponent {
   message: string = '';
   postId: string = '';
   viewPosts: any[] = [];
+  isMobile: boolean = false;
 
   ngOnInit(): void {
     this.userService.getCurrentUserId().subscribe((userId) => {
