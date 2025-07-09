@@ -314,11 +314,6 @@
                             class="fa-solid fa-trash"></i>
                         ลบ
                     </button>
-                    <button mat-menu-item *ngIf="comment.uid !== +userId"
-                        (click)="openReportCommentDialog(comment.cid)">
-                        <i style="margin-right: 5px; font-size: 20px; color: rgb(87, 73, 75);" class="fa fa-flag"></i>
-                        <span style="font-size: 15px;">รายงานความคิดเห็น</span>
-                    </button>
                 </mat-menu>
             </div>
         </div>

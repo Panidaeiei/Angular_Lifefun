@@ -22,7 +22,7 @@ import { TimeAgoPipe, NewlinePipe } from '../../pipes/time-ago.pipe';
 import { Comment } from '../../models/comment_model';
 import { SharePostModel } from '../../models/sharepost_model';
 import { SavePostModel } from '../../models/savepost_service';
-import { ReportDialogComponent } from '../../report-dialog/report-dialog.component';
+import { ReportDialogComponent } from '../report-dialog/report-dialog.component';
 
 @Component({
   selector: 'app-detail-post',
