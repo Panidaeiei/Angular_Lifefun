@@ -49,20 +49,16 @@ export class UserListAdminComponent {
   onSearch(): void {
     if (this.searchQuery.trim() === '') {
       this.isSearchPerformed = false;
+      this.filteredUsers = this.users;
       return;
     }
 
     this.isSearchPerformed = true;
-
-    this.userService.searchUsers(this.searchQuery).subscribe({
-      next: (users) => {
-        this.filteredUsers = users; // ไม่ต้องกรองด้วย status
-
-      },
-      error: (error) => {
-        console.error('Error searching users:', error);
-      },
-    });
+    const query = this.searchQuery.toLowerCase();
+    this.filteredUsers = this.users.filter(user =>
+      user.username.toLowerCase().includes(query) ||
+      (user.email && user.email.toLowerCase().includes(query))
+    );
   }
 
   resetSearch(): void {

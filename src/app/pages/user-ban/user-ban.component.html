@@ -79,7 +79,7 @@
 
     <!-- User List -->
     <div class="user-list">
-        <ng-container *ngFor="let user of isSearchPerformed ? filteredUsers : users">
+        <ng-container *ngFor="let user of filteredUsers">
             <div *ngIf="user.status === 0" class="user-card" style="display: flex; justify-content: space-between; align-items: center;">
                 <div  [routerLink]="['/admin_profileuser']"
                     [queryParams]="{ id: user.uid, adminId: userId }">

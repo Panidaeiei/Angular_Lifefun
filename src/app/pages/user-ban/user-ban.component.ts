@@ -49,19 +49,22 @@ export class UserBanComponent {
   }
 
   filterUsers(): void {
+    // กรองเฉพาะ user ที่ถูกแบน
     this.filteredUsers = this.users.filter(user => user.status === 0);
   }
 
   onSearchBannedUsers(): void {
-    if (this.searchQuery.trim() === '') {
-      this.filterUsers(); // ถ้าช่องค้นหาว่างให้แสดงผู้ถูกระงับทั้งหมดที่กรองแล้ว
+    const query = this.searchQuery.trim().toLowerCase();
+    if (query === '') {
+      this.filterUsers(); // ถ้าช่องค้นหาว่างให้แสดงผู้ถูกระงับทั้งหมด
       return;
     }
-
-    // ค้นหาแบบกรองใน array เดิม (client-side filtering)
+    // กรองจาก username หรือ email ของ user ที่ถูกแบน
     this.filteredUsers = this.users.filter(user =>
-      user.status === 0 &&
-      user.username.toLowerCase().includes(this.searchQuery.toLowerCase())
+      user.status === 0 && (
+        user.username.toLowerCase().includes(query) ||
+        (user.email && user.email.toLowerCase().includes(query))
+      )
     );
   }
 

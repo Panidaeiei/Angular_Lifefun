@@ -50,7 +50,7 @@ export class LoginComponent {
       password: this.password,
     };
 
-    this.http.post('http://117.18.125.19:3000/api/login', payload).subscribe(
+    this.http.post('https://flim.k0n4n4p4.site/api/login', payload).subscribe(
       (response: any) => {
         // ตรวจสอบว่ามีสถานะของบัญชีและถูกระงับหรือไม่
         if (response.status === 0) {
