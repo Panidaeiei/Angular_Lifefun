@@ -11,6 +11,7 @@ import { PostService } from '../../services/Postservice';
 import { UserService } from '../../services/Userservice';
 import { SearchUser } from '../../models/search-user.model';
 import { MatIconModule } from '@angular/material/icon';
+import { TimeAgoPipe } from '../../pipes/time-ago.pipe';
 
 
 @Component({
@@ -21,7 +22,8 @@ import { MatIconModule } from '@angular/material/icon';
         MatTabsModule,
         MatCardModule,
         MatButtonModule,
-        MatIconModule],
+        MatIconModule,
+        TimeAgoPipe],
   templateUrl: './homepage-main.component.html',
   styleUrl: './homepage-main.component.scss'
 })

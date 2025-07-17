@@ -18,15 +18,18 @@ import { ConfirmDeleteDialogComponent } from '../../confirm-delete-dialog/confir
 import { MatDialog } from '@angular/material/dialog';
 import { EditPostModel } from '../../models/edit-post.model';
 import { FormsModule } from '@angular/forms'
-import { TimeAgoPipe, NewlinePipe } from '../../pipes/time-ago.pipe';
+import { TimeAgoPipe, FormatLocalTimePipe} from '../../pipes/time-ago.pipe';
 import { Comment } from '../../models/comment_model';
 import { SharePostModel } from '../../models/sharepost_model';
 import { SavePostModel } from '../../models/savepost_service';
 import { ReportDialogComponent } from '../report-dialog/report-dialog.component';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-detail-post',
-  imports: [MatToolbarModule, RouterModule, CommonModule, MatTabsModule, MatCardModule, MatButtonModule, MatMenuModule, MatIconModule, NewlineToBrPipe, FormsModule, TimeAgoPipe],
+  imports: [
+    MatToolbarModule, RouterModule, CommonModule, MatTabsModule, MatCardModule, MatButtonModule, MatMenuModule, MatIconModule, NewlineToBrPipe, FormsModule, TimeAgoPipe, FormatLocalTimePipe, MatTooltipModule
+  ],
   templateUrl: './detail-post.component.html',
   styleUrls: ['./detail-post.component.scss']
 })
@@ -55,6 +58,7 @@ export class DetailPostComponent implements OnInit {
   touchEndX = 0;
   touchStartY = 0;
   touchEndY = 0;
+  isMobile: boolean = false;
 
   @ViewChild('commentInput') commentInput!: ElementRef;
   @ViewChildren(MatMenuTrigger) menuTriggers!: QueryList<MatMenuTrigger>;
@@ -63,8 +67,11 @@ export class DetailPostComponent implements OnInit {
   constructor(private route: ActivatedRoute, private router: Router, private userService: UserService, private postService: PostService, private reactPostservice: ReactPostservice, public dialog: MatDialog) { }
 
   ngOnInit(): void {
+    this.checkScreenSize();
+    window.addEventListener('resize', this.onResize.bind(this));
     // ดึงค่าจาก Query Parameters เพียงครั้งเดียว
     this.route.queryParams.subscribe((params) => {
+      console.log('Detail-post received params:', params); // เพิ่ม debug log
       // ตรวจสอบว่า post_id และ user_id อยู่ใน query params หรือไม่
       if (params['post_id']) {
         this.postId = params['post_id'];
@@ -110,6 +117,18 @@ export class DetailPostComponent implements OnInit {
       this.currentUserId = userId;
       console.log('Current User ID eiei:', this.currentUserId);
     });
+  }
+
+  ngOnDestroy(): void {
+    window.removeEventListener('resize', this.onResize.bind(this));
+  }
+
+  checkScreenSize() {
+    this.isMobile = window.innerWidth <= 900;
+  }
+
+  onResize() {
+    this.checkScreenSize();
   }
 
   openReportDialog(postId: number): void {
@@ -239,7 +258,9 @@ export class DetailPostComponent implements OnInit {
     });
   }
 
-
+  encodeLocation(location: string): string {
+    return encodeURIComponent(location);
+  }
   updateCurrentMedia(): void {
     if (this.post) {
       const allMedia = [

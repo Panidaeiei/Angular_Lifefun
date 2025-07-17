@@ -183,11 +183,14 @@
                 </mat-card-header>
                 <mat-card-content
                     style="background-color: white; padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; height: 700px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
-                    <div class="file-upload-container">
+                    <div class="file-upload-container" 
+                         (dragover)="onDragOver($event)" 
+                         (dragenter)="onDragEnter($event)" 
+                         (drop)="onDrop($event)">
                         <button class="add-file-btn" (click)="triggerFileInput()">
                             <span style="font-size: 30px;">+</span>
                         </button>
-                        <input id="file-input" type="file" hidden accept="image/*,video/*" (change)="onFileSelected($event)" />
+                        <input id="file-input" type="file" hidden accept="image/*,video/*" multiple (change)="onFileSelected($event)" />
                         <div *ngIf="files.length > 0" class="file-count-badge">{{ files.length }}</div>
 
                         <!-- ปุ่มลบไฟล์ -->
@@ -200,11 +203,19 @@
                         <!-- แสดงรูปภาพ -->
                         <div *ngIf="currentFile?.type === 'image'" class="media-preview">
                             <img [src]="currentFile.url" alt="Selected Image" />
+                            <!-- แสดงตัวเลขรูปที่กำลังดู -->
+                            <div *ngIf="files.length > 1" class="image-counter">
+                                {{ currentIndex + 1 }}/{{ files.length }}
+                            </div>
                         </div>
 
                         <!-- แสดงวิดีโอ -->
                         <div *ngIf="currentFile?.type === 'video'" class="media-preview">
                             <video [src]="currentFile.url" controls></video>
+                            <!-- แสดงตัวเลขวิดีโอที่กำลังดู -->
+                            <div *ngIf="files.length > 1" class="image-counter">
+                                {{ currentIndex + 1 }}/{{ files.length }}
+                            </div>
                         </div>
 
                         <!-- ปุ่มเลื่อนซ้าย -->
@@ -282,10 +293,14 @@
         <button class="add-file-btn" (click)="triggerFileInput()">
             +<span *ngIf="files.length > 0" class="file-count-number">{{ files.length }}</span>
         </button>
-        <input id="file-input" type="file" hidden accept="image/*,video/*" (change)="onFileSelected($event)" />
+                                <input id="file-input" type="file" hidden accept="image/*,video/*" multiple (change)="onFileSelected($event)" />
         <div *ngIf="currentFile" class="media-preview">
             <img *ngIf="currentFile.type === 'image'" [src]="currentFile.url" />
             <video *ngIf="currentFile.type === 'video'" [src]="currentFile.url" controls></video>
+            <!-- แสดงตัวเลขรูปที่กำลังดู (mobile) -->
+            <div *ngIf="files.length > 1" class="image-counter-mobile">
+                {{ currentIndex + 1 }}/{{ files.length }}
+            </div>
             <button class="remove-file-btn" (click)="confirmRemoveFile()">×</button>
             <!-- ปุ่มเลื่อนซ้าย -->
             <button *ngIf="files.length > 1" class="prev-btn" (click)="previousFile()"

@@ -12,6 +12,7 @@ import { ShowPost } from '../../models/showpost_model';
 import { UserService } from '../../services/Userservice';
 import { PostService } from '../../services/Postservice';
 import { ReactPostservice } from '../../services/ReactPostservice';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-user-skincare',
@@ -24,7 +25,9 @@ import { ReactPostservice } from '../../services/ReactPostservice';
     MatFormFieldModule,
     MatChipsModule,
     MatMenuModule,
-    MatButtonModule],
+    MatButtonModule,
+    MatTooltipModule
+  ],
   templateUrl: './user-skincare.component.html',
   styleUrl: './user-skincare.component.scss'
 })

@@ -32,7 +32,7 @@ body {
 
 @media (max-width: 1024px) {
   .content-container {
-    margin-top: 140px;
+    margin-top: 170px !important;
   }
 }
 
@@ -1128,38 +1128,3 @@ input[type='text'] {
   }
 }
 
-@media (max-width: 600px) {
-  .drawer {
-    width: 100vw;
-    right: -100vw;
-    border-radius: 0;
-  }
-  
-  .drawer.open {
-    right: 0;
-  }
-  
-  .drawer-content {
-    padding: 20px;
-  }
-  
-  .drawer-content h3 {
-    font-size: 24px;
-    margin-bottom: 20px;
-  }
-  
-  .drawer-content ul li a {
-    padding: 14px 16px;
-    font-size: 16px;
-  }
-  
-  .drawer-content ul li i {
-    font-size: 22px;
-  }
-  
-  .drawer-close-btn {
-    height: 44px;
-    font-size: 16px;
-    margin-top: 20px;
-  }
-}

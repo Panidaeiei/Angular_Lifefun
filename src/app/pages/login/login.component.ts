@@ -108,6 +108,24 @@ export class LoginComponent {
               text: 'บัญชีของคุณยังไม่ได้ปลดระงับ แต่กำหนดเวลาได้สิ้นสุดแล้ว กรุณาติดต่อแอดมิน',
             });
           }
+        } else if (error.status === 401) {
+          Swal.fire({
+            icon: 'error',
+            title: 'เข้าสู่ระบบไม่สำเร็จ',
+            text: error.error?.error || 'รหัสผ่านหรือชื่อผู้ใช้ไม่ถูกต้อง',
+          });
+        } else if (error.status === 404) {
+          Swal.fire({
+            icon: 'error',
+            title: 'ไม่พบผู้ใช้',
+            text: error.error?.error || 'ไม่พบอีเมลหรือชื่อผู้ใช้นี้ในระบบ',
+          });
+        } else {
+          Swal.fire({
+            icon: 'error',
+            title: 'เกิดข้อผิดพลาด',
+            text: error.error?.error || 'เกิดข้อผิดพลาดบางอย่าง กรุณาลองใหม่',
+          });
         }
       }
 

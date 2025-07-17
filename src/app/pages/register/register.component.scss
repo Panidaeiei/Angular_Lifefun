@@ -1,5 +1,83 @@
 /* Responsive Register Component */
 
+/* Global password toggle hiding - Ultimate approach */
+input[type="password"]::-webkit-credentials-auto-fill-button,
+input[type="password"]::-webkit-contacts-auto-fill-button,
+input[type="password"]::-webkit-strong-password-auto-fill-button,
+input[type="password"]::-webkit-weak-password-auto-fill-button,
+input[type="password"]::-webkit-text-security,
+input[type="password"]::-webkit-autofill {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  width: 0 !important;
+  height: 0 !important;
+  position: absolute !important;
+  pointer-events: none !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  background: transparent !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+input[type="password"]::-moz-credentials-auto-fill-button {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  width: 0 !important;
+  height: 0 !important;
+  position: absolute !important;
+  pointer-events: none !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  background: transparent !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+input[type="password"]::-ms-credentials-auto-fill-button {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  width: 0 !important;
+  height: 0 !important;
+  position: absolute !important;
+  pointer-events: none !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  background: transparent !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Additional specific selectors */
+.password-input::-webkit-credentials-auto-fill-button,
+.password-input::-webkit-contacts-auto-fill-button,
+.password-input::-webkit-strong-password-auto-fill-button,
+.password-input::-webkit-weak-password-auto-fill-button {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  width: 0 !important;
+  height: 0 !important;
+  position: absolute !important;
+  pointer-events: none !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  background: transparent !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
 :host {
   display: block;
   min-height: 100vh;
@@ -18,22 +96,22 @@
 .register-header {
   padding: 2rem 1rem;
   text-align: center;
-  
+
   @media (min-width: 768px) {
     padding: 3rem 2rem;
   }
-  
+
   .register-title {
     font-size: 2rem;
     font-weight: 400;
     color: rgb(0, 0, 0);
     margin: 0;
 
-    
+
     @media (min-width: 768px) {
       font-size: 2.5rem;
     }
-    
+
     @media (min-width: 1024px) {
       font-size: 3rem;
     }
@@ -45,8 +123,8 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  
-  
+
+
   @media (min-width: 1024px) {
     flex-direction: row;
     align-items: stretch;
@@ -61,57 +139,58 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  
+
   @media (min-width: 1024px) {
     width: 50%;
     padding: 3rem 2rem;
     display: flex;
   }
+
   @media (max-width: 1023px) {
     display: none !important;
   }
-  
+
   .brand-content {
     text-align: center;
     max-width: 400px;
-    
+
     .welcome-text {
       font-size: 1.5rem;
       font-weight: 500;
       color: rgb(10, 10, 10);
       margin-bottom: 2rem;
-      
+
       @media (min-width: 768px) {
         font-size: 2rem;
       }
 
     }
-    
+
     .logo-container {
       margin-bottom: 2rem;
-      
+
       .brand-logo {
         width: 120px;
         height: auto;
         filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
-        
+
         @media (min-width: 768px) {
           width: 150px;
         }
-        
+
         @media (min-width: 1024px) {
           width: 180px;
         }
       }
     }
-    
+
     .brand-description {
       .description-text {
         font-size: 1rem;
         color: rgba(14, 13, 13, 0.9);
         margin-bottom: 0.5rem;
         line-height: 1.6;
-        
+
         @media (min-width: 768px) {
           font-size: 1.125rem;
         }
@@ -126,21 +205,23 @@
   padding: 2rem 1rem;
   border-radius: 20px 20px 0 0;
   position: relative;
-  
+
   @media (min-width: 768px) {
     padding: 3rem 2rem;
     border-radius: 20px;
     margin: 0 1rem;
   }
-  
+
   @media (min-width: 1024px) {
     width: 50%;
     border-radius: 0;
     margin: 0;
   }
+
   @media (max-width: 1023px) {
     border-radius: 20px !important;
   }
+
   .form-container {
     max-width: 650px;
     margin: 0 auto;
@@ -152,7 +233,7 @@
 .profile-upload {
   text-align: center;
   margin-bottom: 2rem;
-  
+
   .profile-upload-label {
     display: inline-block;
     position: relative;
@@ -161,34 +242,47 @@
     overflow: hidden;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     transition: transform 0.3s ease;
-    
+
     &:hover {
       transform: scale(1.05);
-      
+
       .upload-overlay {
         opacity: 1;
       }
     }
+
+    &.disabled {
+      cursor: not-allowed;
+      opacity: 0.6;
+
+      &:hover {
+        transform: none;
+
+        .upload-overlay {
+          opacity: 0;
+        }
+      }
+    }
   }
-  
+
   .profile-image {
     width: 120px;
     height: 120px;
     object-fit: cover;
     border-radius: 50%;
     border: 4px solid white;
-    
+
     @media (min-width: 768px) {
       width: 140px;
       height: 140px;
     }
-    
+
     @media (min-width: 1024px) {
       width: 160px;
       height: 160px;
     }
   }
-  
+
   .upload-overlay {
     position: absolute;
     top: 0;
@@ -202,7 +296,7 @@
     opacity: 0;
     transition: opacity 0.3s ease;
     border-radius: 50%;
-    
+
     i {
       color: white;
       font-size: 1.5rem;
@@ -215,38 +309,38 @@
   .form-group {
     margin-bottom: 1.5rem;
   }
-  
+
   .form-row {
     display: flex;
     flex-direction: column;
     gap: 0;
-    
+
     @media (min-width: 768px) {
       flex-direction: row;
       gap: 1rem;
     }
-    
+
     .form-group {
       flex: 1;
       margin-bottom: 1.5rem;
     }
   }
-  
+
   .form-label {
     display: block;
     font-size: 0.875rem;
     font-weight: 600;
     color: #333;
     margin-bottom: 0.5rem;
-    
+
     @media (min-width: 768px) {
       font-size: 1rem;
     }
   }
-  
+
   .input-wrapper {
     position: relative;
-    
+
     .form-input {
       width: 100%;
       padding: 0.875rem 1rem;
@@ -256,29 +350,93 @@
       background: #f8fafc;
       transition: all 0.3s ease;
       box-sizing: border-box;
-      
+
       &:focus {
         outline: none;
         border-color: #667eea;
         background: white;
         box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
       }
-      
+
+      &:disabled {
+        background-color: #f5f5f5;
+        color: #999;
+        cursor: not-allowed;
+
+        &:focus {
+          border-color: #ddd;
+          box-shadow: none;
+        }
+      }
+
       &::placeholder {
         color: #94a3b8;
       }
-      
+
       @media (min-width: 768px) {
         padding: 1rem 1.25rem;
         font-size: 1rem;
       }
     }
-    
-    &.password-wrapper {
+
+        &.password-wrapper {
       .password-input {
         padding-right: 3rem;
+        
+        /* Hide default browser password toggle - more comprehensive approach */
+        &::-webkit-credentials-auto-fill-button,
+        &::-webkit-contacts-auto-fill-button,
+        &::-webkit-strong-password-auto-fill-button,
+        &::-webkit-weak-password-auto-fill-button {
+          display: none !important;
+          visibility: hidden !important;
+          opacity: 0 !important;
+          width: 0 !important;
+          height: 0 !important;
+          position: absolute !important;
+          pointer-events: none !important;
+        }
+        
+        /* For Firefox */
+        &::-moz-credentials-auto-fill-button {
+          display: none !important;
+          visibility: hidden !important;
+          opacity: 0 !important;
+          width: 0 !important;
+          height: 0 !important;
+          position: absolute !important;
+          pointer-events: none !important;
+        }
+        
+        /* For Edge */
+        &::-ms-credentials-auto-fill-button {
+          display: none !important;
+          visibility: hidden !important;
+          opacity: 0 !important;
+          width: 0 !important;
+          height: 0 !important;
+          position: absolute !important;
+          pointer-events: none !important;
+        }
+        
+        /* Additional Chrome/Webkit specific */
+        &::-webkit-text-security {
+          -webkit-text-security: none;
+        }
+        
+        /* Force hide any auto-fill buttons */
+        &::-webkit-autofill {
+          -webkit-box-shadow: 0 0 0 1000px white inset !important;
+        }
+        
+        /* Custom password hiding for text input */
+        &.password-hidden {
+          -webkit-text-security: disc;
+          text-security: disc;
+          font-family: 'Courier New', monospace;
+        }
       }
-      
+
       .password-toggle {
         position: absolute;
         right: 0.75rem;
@@ -291,12 +449,22 @@
         padding: 0.5rem;
         border-radius: 50%;
         transition: all 0.3s ease;
-        
+
         &:hover {
           background: #e2e8f0;
           color: #475569;
         }
-        
+
+        &:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+
+          &:hover {
+            background: none;
+            color: #64748b;
+          }
+        }
+
         i {
           font-size: 1rem;
         }
@@ -309,16 +477,16 @@
 .login-link {
   text-align: center;
   margin: 2rem 0;
-  
+
   .login-text {
     font-size: 0.875rem;
     color: #64748b;
-    
+
     @media (min-width: 768px) {
       font-size: 1rem;
     }
   }
-  
+
   .login-anchor {
     color: #ee5555;
     text-decoration: none;
@@ -343,22 +511,22 @@
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-  
+
   &:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
   }
-  
+
   &:active {
     transform: translateY(0);
   }
-  
+
   &:disabled {
     opacity: 0.6;
     cursor: not-allowed;
     transform: none;
   }
-  
+
   @media (min-width: 768px) {
     padding: 1.25rem 2rem;
     font-size: 1.125rem;
@@ -371,10 +539,32 @@
   pointer-events: none;
 }
 
+.loading-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+
+  i {
+    font-size: 1rem;
+  }
+}
+
+.register-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+
+  &:hover {
+    transform: none;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  }
+}
+
 /* Error States */
 .error {
   border-color: #ef4444 !important;
-  
+
   &:focus {
     border-color: #ef4444 !important;
     box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
@@ -390,7 +580,7 @@
 /* Success States */
 .success {
   border-color: #10b981 !important;
-  
+
   &:focus {
     border-color: #10b981 !important;
     box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1) !important;
@@ -403,6 +593,7 @@
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -418,20 +609,20 @@
   .register-container {
     padding: 0;
   }
-  
+
   .register-header {
     padding: 1.5rem 1rem;
   }
-  
+
   .brand-section {
     padding: 1.5rem 1rem;
   }
-  
+
   .form-section {
     padding: 1.5rem 1rem;
     border-radius: 20px 20px 0 0;
   }
-  
+
   .profile-image {
     width: 100px;
     height: 100px;
@@ -444,11 +635,11 @@
     max-width: 800px;
     margin: 0 auto;
   }
-  
+
   .brand-section {
     border-radius: 20px 0 0 20px;
   }
-  
+
   .form-section {
     border-radius: 0 20px 20px 0;
   }
@@ -460,11 +651,11 @@
     max-width: 1200px;
     margin: 0 auto;
   }
-  
+
   .brand-section {
     padding: 4rem 3rem;
   }
-  
+
   .form-section {
     padding: 4rem 3rem;
   }
@@ -484,7 +675,7 @@
   .form-input {
     border-width: 3px;
   }
-  
+
   .register-btn {
     border: 2px solid white;
   }
@@ -503,15 +694,28 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   transition: background 0.2s, box-shadow 0.2s;
   font-size: 1.2rem;
   color: #eea2a2;
   cursor: pointer;
 
-  &:hover, &:focus {
+  &:hover,
+  &:focus {
     background: #ffe6ea;
     color: #f8a6ad;
-    box-shadow: 0 4px 16px rgba(238,162,162,0.15);
+    box-shadow: 0 4px 16px rgba(238, 162, 162, 0.15);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+
+    &:hover,
+    &:focus {
+      background: white;
+      color: #eea2a2;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
   }
 }

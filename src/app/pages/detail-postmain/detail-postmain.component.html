@@ -63,7 +63,9 @@
           <div *ngIf="post.location">
             <i class="fa-solid fa-location-dot"
               style="margin-left: 20px; margin-right: 5px; font-size: 20px; color: rgb(228, 63, 91);"></i>
-            <a class="location" [href]="post.location" target="_blank">
+            <a class="location"
+              [href]="'https://www.google.com/maps/search/?api=1&query=' + encodeLocation(post.location)"
+              target="_blank" style="color: #e57373; text-decoration: underline;">
               Location:
               {{ post.location.length > 30 ? (post.location.substring(0, 30) + '...') : post.location }}
             </a>

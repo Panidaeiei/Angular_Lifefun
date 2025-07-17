@@ -50,6 +50,10 @@ export class DetailPostmainComponent {
     this.fetchComments();
   }
 
+  encodeLocation(location: string): string {
+    return encodeURIComponent(location);
+  }
+
   
   fetchPost(postId: string): void {
     const postIdNumber = Number(postId);  // แปลง postId จาก string เป็น number

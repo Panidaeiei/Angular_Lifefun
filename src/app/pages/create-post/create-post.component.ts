@@ -25,6 +25,7 @@ declare module 'leaflet' {
     function geocoder(options?: any): any;
   }
 }
+declare const google: any;
 @Component({
   selector: 'app-create-post',
   imports: [
@@ -57,6 +58,8 @@ export class CreatePostComponent implements OnInit {
   customSearch: string = '';
   customResults: any[] = [];
   customGeocoderTimeout: any = null;
+  placesService: any = null;
+  mapMarker: any = null;
 
   postData: Post = {
     title: '',
@@ -89,15 +92,17 @@ export class CreatePostComponent implements OnInit {
         this.map.remove();
       }
 
-      // ✅ สร้างแผนที่ใหม่
-      this.map = L.map(mapElement).setView([13.736717, 100.523186], 6);
+      // สร้างแผนที่ Google Maps
+      // @ts-ignore
+      this.map = new google.maps.Map(mapElement, {
+        center: { lat: 13.736717, lng: 100.523186 },
+        zoom: 13,
+      });
 
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors'
-      }).addTo(this.map);
-
-      // ไม่ต้องมี geocoderControl อีกต่อไป
-    }, 100); // รอให้ DOM สร้าง #map เสร็จก่อน
+      // สร้าง PlacesService
+      // @ts-ignore
+      this.placesService = new google.maps.places.PlacesService(this.map);
+    }, 100);
   }
   
 
@@ -193,21 +198,25 @@ export class CreatePostComponent implements OnInit {
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.files) {
-      const file = input.files[0];
+      const filesArray = Array.from(input.files);
+      let imageCount = this.files.filter(f => f.type === 'image').length;
+      let overLimit = false;
+      for (const file of filesArray) {
       if (file.type.startsWith('image/')) {
-        if (this.files.filter((f) => f.type === 'image').length >= 9) {
-          alert('คุณสามารถเลือกรูปภาพได้สูงสุด 9 ไฟล์');
-          return;
+          if (imageCount >= 9) {
+            overLimit = true;
+            continue;
         }
         const reader = new FileReader();
         reader.onload = () => {
           this.files.push({ url: reader.result as string, file, type: 'image' });
         };
         reader.readAsDataURL(file);
+          imageCount++;
       } else if (file.type.startsWith('video/')) {
         if (this.files.some((f) => f.type === 'video')) {
           alert('คุณสามารถเลือกวิดีโอได้เพียง 1 ไฟล์');
-          return;
+            continue;
         }
         const reader = new FileReader();
         reader.onload = () => {
@@ -218,7 +227,10 @@ export class CreatePostComponent implements OnInit {
         alert('โปรดเลือกไฟล์ที่เป็นรูปภาพหรือวิดีโอ');
       }
     }
-
+      if (overLimit) {
+        alert('คุณสามารถเลือกรูปภาพได้สูงสุด 9 ไฟล์');
+      }
+    }
     input.value = '';
   }
 
@@ -262,12 +274,34 @@ export class CreatePostComponent implements OnInit {
     this.postService.addPost(formData).subscribe(
       (response) => {
         this.isLoading = false; // ปิดสถานะการโหลด
+        console.log('Response from addPost:', response); // เพิ่ม log เพื่อดู response
         Swal.fire({
           title: 'เพิ่มโพสต์สำเร็จ',
           icon: 'success',
         }).then(() => {
           this.resetForm();
-          this.router.navigate(['/Homepagefollow'], { queryParams: { id: this.userId } });
+          // ใช้ postID จาก response (ตามที่ backend ส่งกลับมา)
+          console.log('Full response object:', response); // เพิ่ม debug เพื่อดู response ทั้งหมด
+          console.log('Response type:', typeof response);
+          console.log('Response keys:', Object.keys(response));
+          
+          // ลองเข้าถึง postId ในหลายวิธี
+          let postId;
+          if (response && typeof response === 'object') {
+            postId = response.postId || response.data?.postId || response.post_id || response.insertId || response.id;
+          }
+          // ถ้ายังไม่ได้ ให้ใช้ JSON.parse
+          if (!postId && typeof response === 'string') {
+            try {
+              const parsedResponse = JSON.parse(response);
+              postId = parsedResponse.postId || parsedResponse.post_id || parsedResponse.insertId || parsedResponse.id;
+            } catch (e) {
+              console.error('Error parsing response:', e);
+            }
+          }
+          console.log('Extracted postId:', postId, 'from response.postId:', response.postId);
+          console.log('Navigating to detail_post with postId:', postId, 'userId:', this.userId);
+          this.router.navigate(['/detail_post'], { queryParams: { post_id: postId, user_id: this.userId } });
         });
       },
       (error) => {
@@ -344,14 +378,23 @@ export class CreatePostComponent implements OnInit {
   }
 
   fetchCustomGeocode(query: string) {
-    fetch(
-      window.location.origin +
-        `/nominatim/search?q=${encodeURIComponent(query)}&format=json&addressdetails=1&accept-language=th`
-    )
-      .then((res) => res.json())
-      .then((data) => {
-        this.customResults = data;
-      });
+    if (!this.placesService) return;
+    const request = {
+      query: query,
+      fields: ['name', 'geometry', 'formatted_address'],
+    };
+    // @ts-ignore
+    this.placesService.findPlaceFromQuery(request, (results: any, status: any) => {
+      if (status === google.maps.places.PlacesServiceStatus.OK) {
+        this.customResults = results.map((place: any) => ({
+          display_name: place.name + (place.formatted_address ? ' - ' + place.formatted_address : ''),
+          lat: place.geometry.location.lat(),
+          lon: place.geometry.location.lng(),
+        }));
+      } else {
+        this.customResults = [];
+      }
+    });
   }
 
   selectCustomResult(result: any) {
@@ -359,12 +402,74 @@ export class CreatePostComponent implements OnInit {
     if (this.map) {
       const lat = parseFloat(result.lat);
       const lon = parseFloat(result.lon);
-      L.marker([lat, lon]).addTo(this.map);
-      this.map.setView([lat, lon], 13);
+      // ลบ marker เดิมถ้ามี
+      if (this.mapMarker) {
+        this.mapMarker.setMap(null);
+      }
+      // @ts-ignore
+      this.mapMarker = new google.maps.Marker({
+        position: { lat, lng: lon },
+        map: this.map,
+        title: result.display_name,
+      });
+      this.map.setCenter({ lat, lng: lon });
       this.postData.location = result.display_name;
       this.customResults = [];
       this.customSearch = result.display_name;
       this.closeMapDialog();
+    }
+  }
+
+  // ฟังก์ชันจัดการ Drag & Drop
+  onDragOver(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+
+  onDragEnter(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+
+  onDrop(event: DragEvent): void {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    if (event.dataTransfer?.files) {
+      const filesArray = Array.from(event.dataTransfer.files);
+      let imageCount = this.files.filter(f => f.type === 'image').length;
+      let overLimit = false;
+      
+      for (const file of filesArray) {
+        if (file.type.startsWith('image/')) {
+          if (imageCount >= 9) {
+            overLimit = true;
+            continue;
+          }
+          const reader = new FileReader();
+          reader.onload = () => {
+            this.files.push({ url: reader.result as string, file, type: 'image' });
+          };
+          reader.readAsDataURL(file);
+          imageCount++;
+        } else if (file.type.startsWith('video/')) {
+          if (this.files.some((f) => f.type === 'video')) {
+            alert('คุณสามารถเลือกวิดีโอได้เพียง 1 ไฟล์');
+            continue;
+          }
+          const reader = new FileReader();
+          reader.onload = () => {
+            this.files.push({ url: reader.result as string, file, type: 'video' });
+          };
+          reader.readAsDataURL(file);
+        } else {
+          alert('โปรดเลือกไฟล์ที่เป็นรูปภาพหรือวิดีโอ');
+        }
+      }
+      
+      if (overLimit) {
+        alert('คุณสามารถเลือกรูปภาพได้สูงสุด 9 ไฟล์');
+      }
     }
   }
 }

@@ -7,6 +7,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { User } from '../../models/register_model';
 import { ProfileService } from '../../services/Profileservice';
@@ -26,6 +27,7 @@ import { FormsModule } from '@angular/forms';
     MatCardModule,
     MatButtonModule,
     MatIconModule,
+    MatTooltipModule,
     FormsModule],
   templateUrl: './view-user.component.html',
   styleUrls: ['./view-user.component.scss']

@@ -26,6 +26,9 @@ body {
   background-color: rgb(249, 241, 239);
 }
 
+.mat-tab{
+  min-width: 800px !important;
+}
 .drawer {
   position: fixed;
   top: 0;
@@ -392,6 +395,7 @@ body {
     padding: 0 4px;
     border-radius: 0 0 10px 10px;
   }
+
   
   .center-menu { 
     display: none !important; 
@@ -661,6 +665,16 @@ body {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
   padding: 16px;
+  min-height: 300px;
+  align-items: start;
+  justify-items: center;
+}
+
+.no-post-message {
+  color: #aaa;
+  font-size: 20px;
+  margin: 40px 0;
+  text-align: center;
 }
 
 .post-item {
@@ -986,4 +1000,34 @@ body {
   --mdc-tab-indicator-active-indicator-color: rgb(0, 0, 0)  !important;
   border-color: rgb(0, 0, 0) !important; /* บังคับให้เส้นใต้เป็นสีเขียว */
   border-top-width: 2px !important;
+}
+
+// --- เพิ่ม min-height ให้กับ tab group ---
+.tab-container {
+  min-height: 400px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+::ng-deep .mat-mdc-tab-body-content {
+  min-height: 600px !important;
+}
+
+@media (max-width: 1024px) {
+  .tab-container {
+    min-height: 320px;
+  }
+  ::ng-deep .mat-mdc-tab-body-content {
+    min-height: 260px !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .tab-container {
+    min-height: 220px;
+  }
+  ::ng-deep .mat-mdc-tab-body-content {
+    min-height: 160px !important;
+  }
 }

@@ -28,32 +28,35 @@
 
     <!-- Right Side - Form Section -->
     <div class="form-section">
-      <button type="button" class="back-btn" (click)="goBack()" aria-label="กลับ">
+      <button type="button" class="back-btn" (click)="goBack()" [disabled]="isLoading" aria-label="กลับ">
         <i class="fa fa-arrow-left"></i>
       </button>
       <div class="form-container">
         <!-- Profile Image Upload -->
         <div class="profile-upload">
-          <label for="file-upload" class="profile-upload-label">
+          <label for="file-upload" class="profile-upload-label" [class.disabled]="isLoading">
             <img [src]="previewImage" alt="Profile Picture" class="profile-image" />
             <div class="upload-overlay">
               <i class="fa fa-camera"></i>
             </div>
           </label>
-          <input type="file" id="file-upload" accept="image/*" (change)="onFileSelected($event)" hidden />
+          <input type="file" id="file-upload" accept="image/*" (change)="onFileSelected($event)" [disabled]="isLoading" hidden />
         </div>
 
         <!-- Registration Form -->
-        <form (ngSubmit)="register()" class="register-form">
+        <form (ngSubmit)="register()" class="register-form" [class.loading]="isLoading">
           <!-- Email Field -->
           <div class="form-group">
             <label class="form-label">อีเมล (E-mail)</label>
             <div class="input-wrapper">
               <input type="email" 
-                     placeholder="กรอกอีเมล" 
+                     placeholder="กรอกอีเมล เช่น example@domain.com" 
                      [(ngModel)]="userData.email" 
                      name="email" 
+                     pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"
+                     title="กรุณากรอกอีเมลในรูปแบบที่ถูกต้อง เช่น example@domain.com"
                      required 
+                     [disabled]="isLoading"
                      class="form-input" />
             </div>
           </div>
@@ -67,6 +70,7 @@
                      [(ngModel)]="userData.username" 
                      name="username" 
                      required 
+                     [disabled]="isLoading"
                      class="form-input" />
             </div>
           </div>
@@ -80,6 +84,7 @@
                      [(ngModel)]="userData.phone" 
                      name="phone" 
                      required 
+                     [disabled]="isLoading"
                      class="form-input" />
             </div>
           </div>
@@ -89,14 +94,19 @@
             <div class="form-group">
               <label class="form-label">รหัสผ่าน (Password)</label>
               <div class="input-wrapper password-wrapper">
-                <input [type]="isPasswordVisible ? 'text' : 'password'" 
+                <input type="text" 
                        placeholder="กรอกรหัสผ่าน" 
                        [(ngModel)]="userData.password" 
                        name="password" 
                        required 
-                       class="form-input password-input" />
+                       [disabled]="isLoading"
+                       class="form-input password-input"
+                       [class.password-hidden]="!isPasswordVisible"
+                       autocomplete="new-password"
+                       data-form-type="other" />
                 <button type="button" 
                         (click)="togglePasswordVisibility()" 
+                        [disabled]="isLoading"
                         class="password-toggle">
                   <i [class]="isPasswordVisible ? 'fa fa-eye' : 'fa fa-eye-slash'"></i>
                 </button>
@@ -105,14 +115,19 @@
             <div class="form-group">
               <label class="form-label">ยืนยันรหัสผ่าน</label>
               <div class="input-wrapper password-wrapper">
-                <input [type]="isConfirmPasswordVisible ? 'text' : 'password'" 
+                <input type="text" 
                        placeholder="ยืนยันรหัสผ่าน" 
                        [(ngModel)]="confirmPassword" 
                        name="confirmPassword" 
                        required 
-                       class="form-input password-input" />
+                       [disabled]="isLoading"
+                       class="form-input password-input"
+                       [class.password-hidden]="!isConfirmPasswordVisible"
+                       autocomplete="new-password"
+                       data-form-type="other" />
                 <button type="button" 
                         (click)="toggleConfirmPasswordVisibility()" 
+                        [disabled]="isLoading"
                         class="password-toggle">
                   <i [class]="isConfirmPasswordVisible ? 'fa fa-eye' : 'fa fa-eye-slash'" ></i>
                 </button>
@@ -127,8 +142,12 @@
           </div>
 
           <!-- Submit Button -->
-          <button class="register-btn" type="submit">
-            <span>สมัครสมาชิก</span>
+          <button class="register-btn" type="submit" [disabled]="isLoading">
+            <span *ngIf="!isLoading">สมัครสมาชิก</span>
+            <span *ngIf="isLoading" class="loading-content">
+              <i class="fa fa-spinner fa-spin"></i>
+              กำลังสมัครสมาชิก...
+            </span>
           </button>
         </form>
       </div>

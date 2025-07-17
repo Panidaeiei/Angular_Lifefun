@@ -131,6 +131,66 @@ export class EditprofileUserComponent implements OnInit {
 
   // บันทึกข้อมูล
   onSaveProfile(): void {
+    // ตรวจสอบว่าฟิลด์ที่จำเป็นไม่เป็นค่าว่าง
+    if (!this.user.username || this.user.username.trim() === '') {
+      alert('กรุณากรอกชื่อผู้ใช้');
+      return;
+    }
+
+    // ตรวจสอบความยาวของชื่อผู้ใช้
+    if (this.user.username.trim().length < 3) {
+      alert('ชื่อผู้ใช้ต้องมีความยาวอย่างน้อย 3 ตัวอักษร');
+      return;
+    }
+
+    if (this.user.username.trim().length > 50) {
+      alert('ชื่อผู้ใช้ต้องมีความยาวไม่เกิน 50 ตัวอักษร');
+      return;
+    }
+
+    if (!this.user.email || this.user.email.trim() === '') {
+      alert('กรุณากรอกอีเมล');
+      return;
+    }
+
+    // ตรวจสอบรูปแบบอีเมล
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailRegex.test(this.user.email)) {
+      alert('กรุณากรอกอีเมลในรูปแบบที่ถูกต้อง เช่น example@domain.com');
+      return;
+    }
+
+    // ตรวจสอบความยาวของอีเมล
+    if (this.user.email.length > 254) {
+      alert('อีเมลต้องมีความยาวไม่เกิน 254 ตัวอักษร');
+      return;
+    }
+
+    // ตรวจสอบว่าอีเมลไม่ขึ้นต้นหรือลงท้ายด้วยจุด
+    if (this.user.email.startsWith('.') || this.user.email.endsWith('.')) {
+      alert('อีเมลไม่สามารถขึ้นต้นหรือลงท้ายด้วยจุดได้');
+      return;
+    }
+
+    // ตรวจสอบว่ามี @ เพียงตัวเดียว
+    const atCount = (this.user.email.match(/@/g) || []).length;
+    if (atCount !== 1) {
+      alert('อีเมลต้องมีเครื่องหมาย @ เพียงตัวเดียว');
+      return;
+    }
+
+    if (!this.user.phone || this.user.phone.trim() === '') {
+      alert('กรุณากรอกเบอร์โทรศัพท์');
+      return;
+    }
+
+    // ตรวจสอบรูปแบบเบอร์โทรศัพท์ (เบอร์ไทย)
+    const phoneRegex = /^[0-9]{9,10}$/;
+    if (!phoneRegex.test(this.user.phone.replace(/\s/g, ''))) {
+      alert('กรุณากรอกเบอร์โทรศัพท์ในรูปแบบที่ถูกต้อง (9-10 หลัก)');
+      return;
+    }
+
     const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/; // ต้องมีตัวอักษรและตัวเลขอย่างน้อย 1 ตัว ความยาว ≥ 8
 
     const isChangingPassword = this.newPassword || this.confirmPassword;
@@ -176,9 +236,8 @@ export class EditprofileUserComponent implements OnInit {
     if (this.user.phone) {
       formData.append('phone', this.user.phone);
     }
-    if (this.user.description) {
-      formData.append('description', this.user.description);
-    }
+    // ส่ง description เสมอ (รวมถึงค่าว่างเพื่อลบ description)
+      formData.append('description', this.user.description || '');
     if (this.newPassword) {
       formData.append('password', this.newPassword);
       formData.append('old_password', this.currentPassword);

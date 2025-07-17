@@ -31,6 +31,7 @@ export class RegisterComponent {
   isPasswordVisible: boolean = false;
   isConfirmPasswordVisible: boolean = false;
   isMobile = false;
+  isLoading: boolean = false; // เพิ่ม loading state
   constructor(private userService: UserService, private router: Router, private location: Location) { }
 
   ngOnInit(): void {
@@ -103,38 +104,103 @@ export class RegisterComponent {
   register() {
     // ตรวจสอบว่าผู้ใช้กรอกข้อมูลทุกฟิลด์หรือไม่
     if (!this.userData.email || !this.userData.password || !this.confirmPassword || !this.userData.username || !this.userData.phone) {
-      alert('กรุณากรอกข้อมูลให้ครบ');
+      Swal.fire({
+        icon: 'warning',
+        text: 'กรุณากรอกข้อมูลให้ครบ',
+        confirmButtonText: 'ตกลง'
+      });
+      return;
+    }
+  
+    // ตรวจสอบรูปแบบอีเมล
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailRegex.test(this.userData.email)) {
+      Swal.fire({
+        icon: 'warning',
+        text: 'กรุณากรอกอีเมลในรูปแบบที่ถูกต้อง เช่น example@domain.com',
+        confirmButtonText: 'ตกลง'
+      });
+      return;
+    }
+
+    // ตรวจสอบความยาวของอีเมล
+    if (this.userData.email.length > 254) {
+      Swal.fire({
+        icon: 'warning',
+        text: 'อีเมลต้องมีความยาวไม่เกิน 254 ตัวอักษร',
+        confirmButtonText: 'ตกลง'
+      });
+      return;
+    }
+
+    // ตรวจสอบว่าอีเมลไม่ขึ้นต้นหรือลงท้ายด้วยจุด
+    if (this.userData.email.startsWith('.') || this.userData.email.endsWith('.')) {
+      Swal.fire({
+        icon: 'warning',
+        text: 'อีเมลไม่สามารถขึ้นต้นหรือลงท้ายด้วยจุดได้',
+        confirmButtonText: 'ตกลง'
+      });
+      return;
+    }
+
+    // ตรวจสอบว่ามี @ เพียงตัวเดียว
+    const atCount = (this.userData.email.match(/@/g) || []).length;
+    if (atCount !== 1) {
+      Swal.fire({
+        icon: 'warning',
+        text: 'อีเมลต้องมีเครื่องหมาย @ เพียงตัวเดียว',
+        confirmButtonText: 'ตกลง'
+      });
       return;
     }
   
     // ตรวจสอบว่ารหัสผ่านกับการยืนยันรหัสผ่านตรงกัน
     if (this.userData.password !== this.confirmPassword) {
-      alert('รหัสผ่านไม่ตรงกัน');
+      Swal.fire({
+        icon: 'warning',
+        text: 'รหัสผ่านไม่ตรงกัน',
+        confirmButtonText: 'ตกลง'
+      });
       return;
     }
   
     // กำหนดรูปแบบการตรวจสอบรหัสผ่าน
     const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/;
     if (!passwordRegex.test(this.userData.password)) {
-      alert('รหัสผ่านต้องประกอบด้วย: \n- ตัวอักษร (A-Z, a-z) \n- ตัวเลข (0-9) \n- หรือตัวอักษรพิเศษ เช่น @$!%*?& \n- ความยาวอย่างน้อย 8 ตัวอักษร');
+      Swal.fire({
+        icon: 'warning',
+        text: 'รหัสผ่านต้องประกอบด้วย: \n- ตัวอักษร (A-Z, a-z) \n- ตัวเลข (0-9) \n- หรือตัวอักษรพิเศษ เช่น @$!%*?& \n- ความยาวอย่างน้อย 8 ตัวอักษร',
+        confirmButtonText: 'ตกลง'
+      });
       return;
     }
   
     // ตรวจสอบว่าเบอร์โทรศัพท์ต้องเป็นตัวเลข 10 หลัก
     const phoneRegex = /^[0-9]{10}$/;
     if (!phoneRegex.test(this.userData.phone)) {
-      alert('เบอร์โทรศัพท์ต้องเป็นตัวเลข 10 หลัก!');
+      Swal.fire({
+        icon: 'warning',
+        text: 'เบอร์โทรศัพท์ต้องเป็นตัวเลข 10 หลัก!',
+        confirmButtonText: 'ตกลง'
+      });
       return;
     }
     
     // ตรวจสอบว่า username เป็นไปตามเงื่อนไข
     const usernameRegex = /^[a-zA-Z0-9._]{1,30}$/; // เงื่อนไข username
     if (!usernameRegex.test(this.userData.username)) {
-      alert('ชื่อผู้ใช้ต้องมีความยาวไม่เกิน 30 ตัวอักษร และใช้ได้เฉพาะ a-z, A-Z, 0-9, จุด (.) และขีดล่าง (_)');
+      Swal.fire({
+        icon: 'warning',
+        text: 'ชื่อผู้ใช้ต้องมีความยาวไม่เกิน 30 ตัวอักษร และใช้ได้เฉพาะ a-z, A-Z, 0-9, จุด (.) และขีดล่าง (_)',
+        confirmButtonText: 'ตกลง'
+      });
       return;
     }
   
     console.log('Data to be sent:', this.userData); // ตรวจสอบข้อมูลที่กำลังส่ง
+  
+    // เริ่ม loading
+    this.isLoading = true;
   
     const formData = new FormData();
     formData.append('email', this.userData.email);
@@ -147,15 +213,23 @@ export class RegisterComponent {
   
     this.userService.registerUser(formData).subscribe(
       (response) => {
+        // หยุด loading
+        this.isLoading = false;
+        
         Swal.fire({
           icon: 'success',
-          text: 'ลงทะเบียนสำเร็จ!',
+          title: 'ลงทะเบียนสำเร็จ!',
+          text: 'ยินดีต้อนรับเข้าสู่ระบบ',
           confirmButtonText: 'ตกลง',
+          confirmButtonColor: '#4CAF50'
         }).then(() => {
           this.router.navigate(['/login']); // นำทางไปหน้า Login
         });
       },
       (error) => {
+        // หยุด loading
+        this.isLoading = false;
+        
         console.error('Error response:', error); // ดูข้อผิดพลาดจาก Backend
   
         // ตรวจสอบข้อความข้อผิดพลาดจาก Backend
@@ -163,28 +237,43 @@ export class RegisterComponent {
           if (error.error.error.includes('email')) {
             Swal.fire({
               icon: 'error',
+              title: 'เกิดข้อผิดพลาด',
               text: 'อีเมลนี้มีผู้ใช้งานแล้ว!',
+              confirmButtonText: 'ตกลง',
+              confirmButtonColor: '#f44336'
             });
           } else if (error.error.error.includes('username')) {
             Swal.fire({
               icon: 'error',
+              title: 'เกิดข้อผิดพลาด',
               text: 'ชื่อผู้ใช้นี้มีผู้ใช้งานแล้ว!',
+              confirmButtonText: 'ตกลง',
+              confirmButtonColor: '#f44336'
             });
           } else if (error.error.error.includes('phone')) {
             Swal.fire({
               icon: 'error',
+              title: 'เกิดข้อผิดพลาด',
               text: 'หมายเลขโทรศัพท์นี้มีผู้ใช้งานแล้ว!',
+              confirmButtonText: 'ตกลง',
+              confirmButtonColor: '#f44336'
             });
           } else {
             Swal.fire({
               icon: 'error',
+              title: 'เกิดข้อผิดพลาด',
               text: 'เกิดข้อผิดพลาด: ' + error.error.error,
+              confirmButtonText: 'ตกลง',
+              confirmButtonColor: '#f44336'
             });
           }
         } else {
           Swal.fire({
             icon: 'error',
+            title: 'เกิดข้อผิดพลาด',
             text: 'เกิดข้อผิดพลาดที่ไม่ทราบสาเหตุ!',
+            confirmButtonText: 'ตกลง',
+            confirmButtonColor: '#f44336'
           });
         }
       }

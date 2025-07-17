@@ -11,6 +11,7 @@ import { ReactPostservice } from '../../services/ReactPostservice';
 import { Postme } from '../../models/postme_model';
 import { User } from '../../models/register_model';
 import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { HostListener } from '@angular/core';
 
 @Component({
@@ -21,7 +22,8 @@ import { HostListener } from '@angular/core';
       MatTabsModule,
       MatCardModule,
       MatButtonModule,
-      MatIconModule,],
+      MatIconModule,
+      MatTooltipModule,],
   templateUrl: './viewuser-main.component.html',
   styleUrl: './viewuser-main.component.scss'
 })

@@ -6,14 +6,17 @@ import { CommonModule } from '@angular/common';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { ShowPost } from '../../models/showpost_model';
 import { UserService } from '../../services/Userservice';
 import { PostService } from '../../services/Postservice';
 import { ReactPostservice } from '../../services/ReactPostservice';
+import { filter } from 'rxjs/operators';
+import { TimeAgoPipe } from '../../pipes/time-ago.pipe';
 
 @Component({
   selector: 'app-homepage-user',
-  imports: [MatToolbarModule, RouterModule, CommonModule, MatTabsModule, MatCardModule, MatButtonModule],
+  imports: [MatToolbarModule, RouterModule, CommonModule, MatTabsModule, MatCardModule, MatButtonModule, MatTooltipModule, TimeAgoPipe],
   templateUrl: './homepage-user.component.html',
   styleUrl: './homepage-user.component.scss',
 })
@@ -31,21 +34,21 @@ export class HomepageUserComponent {
   constructor(private route: ActivatedRoute, private userService: UserService, private postService: PostService, private likePostService: ReactPostservice, private router: Router,) { }
 
   ngOnInit(): void {
-    this.checkScreenSize(); // ตรวจสอบขนาดหน้าจอเมื่อเริ่มต้น
-    this.userService.getCurrentUserId().subscribe((userId) => {
-      this.currentUserId = userId;
-      console.log('Current User ID:', this.currentUserId);
-    });
-    // ดึงค่าจาก Query Parameters
-    this.route.queryParams.subscribe((params) => {
-      this.postId = params['post_id'] || ''; // ดึง post_id
-      console.log('User ID:', this.userId);
-
-      if (this.postId) {
-        this.viewPost(this.postId); // ✅ อัพเดตจำนวนการดูโพสต์
-      } else {
-
-      }
+    this.checkScreenSize();
+    // ตรวจสอบ snapshot ครั้งแรก
+    const snapshotParams = this.route.snapshot.queryParams;
+    if (snapshotParams['id']) {
+      this.userId = snapshotParams['id'];
+      console.log('User ID from snapshot:', this.userId);
+      this.loadUserData();
+    }
+    // Subscribe เฉพาะ params ที่มี id เท่านั้น
+    this.route.queryParams
+      .pipe(filter(params => !!params['id']))
+      .subscribe((params) => {
+        this.userId = params['id'];
+        console.log('User ID from observable:', this.userId);
+        this.loadUserData();
     });
 
     this.route.queryParamMap.subscribe(params => {
@@ -82,6 +85,22 @@ export class HomepageUserComponent {
       }
     });
   
+  }
+
+  // แยกฟังก์ชันสำหรับโหลดข้อมูลผู้ใช้
+  private loadUserData(): void {
+    if (this.userId) {
+      // โหลดข้อมูลผู้ใช้ปัจจุบัน
+      this.userService.getCurrentUserId().subscribe((userId) => {
+        this.currentUserId = userId;
+        console.log('Current User ID:', this.currentUserId);
+      });
+      
+      this.userService.loadCurrentUserId();
+      
+      // โหลดโพสต์
+      this.fetchPosts();
+    }
   }
 
   // เพิ่มฟังก์ชันตรวจสอบขนาดหน้าจอ

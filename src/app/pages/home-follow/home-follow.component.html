@@ -18,7 +18,7 @@
             <i class="fa-solid fa-users"></i>
             <span class="itim-regular">ติดตาม</span>
         </a>
-        <a class="add-post-btn" [routerLink]="['/CreatePost']" [queryParams]="{ id: this.currentUserId}">
+        <a class="add-post-btn" [routerLink]="['/CreatePost']" [queryParams]="{ id: this.currentUserId}" matTooltip="เพิ่มโพสต์">
             <i class="fa-solid fa-plus"></i>
         </a>
         <a class="menu-item" [routerLink]="['/Notification_user']" [queryParams]="{ id: this.currentUserId }">
@@ -105,16 +105,6 @@
 </div>
 
 <div class="background-div" > 
-    <div style="display: flex; justify-content: center; margin-bottom: 30px; gap: 30px;">
-        <a [routerLink]="['/HomepageUser']" [queryParams]="{ id: this.currentUserId }"
-            style="text-decoration: none; color: rgb(109, 106, 106);">
-            <span style="font-size: 22px; ">สำหรับคุณ</span>
-        </a>
-        <a [routerLink]="['/Homepagefollow']" [queryParams]="{ id: this.currentUserId}"
-            style="text-decoration: none; color: rgb(0, 0, 0); font-weight: 600;">
-            <span style="font-size: 22px; ">กำลังติดตาม</span>
-        </a>
-    </div>
 
     <div class="card-container-wrapper">
         <div class="card-container">
@@ -125,7 +115,7 @@
                         <!-- แสดงรูปภาพหรือวิดีโอ -->
                         <a (click)="viewPost(post.post_id.toString())">
                             <ng-container *ngIf="post.media_type === 'image'; else videoTemplate">
-                                <img [src]="post.media_url || 'https://via.placeholder.com/360x300'" class="imgpost"
+                                <img [src]="post.media_url" class="imgpost"
                                     alt="รูปที่โพสต์">
                             </ng-container>
                             <ng-template #videoTemplate>
@@ -163,13 +153,18 @@
                         <div
                             style="display: flex; flex-direction: row; margin-left: 15px; margin-right: 15px; margin-top: 35px; gap: 10px; justify-content: space-between;">
                             <div style="display: flex; align-items: center; gap: 10px;">
-                                <img [src]="post.user_profile_image || 'https://via.placeholder.com/50'"
+                                <img [src]="post.user_profile_image || 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'"
                                     alt="รูปโปรไฟล์"
                                     style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;"
                                     (click)="goToProfile(post.user_uid.toString())">
-                                <span style="font-weight: 600; font-size: 20px;">
-                                    {{ post.user_name }}
-                                </span>
+                                <div style="display: flex; flex-direction: column;">
+                                    <span style="font-weight: 600; font-size: 20px;">
+                                        {{ post.user_name }}
+                                    </span>
+                                    <span style="font-size: 14px; color: #888;" *ngIf="post.post_time">
+                                        {{ post.post_time | timeAgo }}
+                                    </span>
+                                </div>
                             </div>
 
                             <!-- ไอคอนหัวใจสำหรับการกดไลค์ -->

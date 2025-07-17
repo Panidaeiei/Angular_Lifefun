@@ -34,23 +34,29 @@
 
       <!-- ฟอร์มข้อมูล -->
       <div class="form-group">
-        <label>ชื่อผู้ใช้</label>
-        <input type="text" [(ngModel)]="user.username" name="username" />
+        <label>ชื่อผู้ใช้ *</label>
+        <input type="text" [(ngModel)]="user.username" name="username" placeholder="กรอกชื่อผู้ใช้" required />
       </div>
 
       <div class="form-group">
-        <label>อีเมล</label>
-        <input type="email" [(ngModel)]="user.email" name="email" />
+        <label>อีเมล *</label>
+        <input type="email" 
+               [(ngModel)]="user.email" 
+               name="email" 
+               placeholder="กรอกอีเมล เช่น example@domain.com" 
+               pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"
+               title="กรุณากรอกอีเมลในรูปแบบที่ถูกต้อง เช่น example@domain.com"
+               required />
       </div>
 
       <div class="form-group">
-        <label>เบอร์โทรศัพท์</label>
-        <input type="tel" [(ngModel)]="user.phone" name="phone" />
+        <label>เบอร์โทรศัพท์ *</label>
+        <input type="tel" [(ngModel)]="user.phone" name="phone" placeholder="กรอกเบอร์โทรศัพท์" required />
       </div>
 
       <div class="form-group">
         <label>คำอธิบายตัวเอง</label>
-        <textarea [(ngModel)]="user.description" name="description"></textarea>
+        <textarea [(ngModel)]="user.description" name="description" placeholder="กรอกคำอธิบายตัวเอง (ไม่บังคับ)"></textarea>
       </div>
       
       <div class="form-group" style="position: relative; width: 100%;">

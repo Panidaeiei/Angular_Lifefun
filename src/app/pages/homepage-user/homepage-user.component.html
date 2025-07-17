@@ -17,7 +17,7 @@
       <i class="fa-solid fa-users"></i>
       <span class="itim-regular">ติดตาม</span>
     </a>
-    <a class="add-post-btn" [routerLink]="['/CreatePost']" [queryParams]="{ id: this.currentUserId}">
+    <a class="add-post-btn" [routerLink]="['/CreatePost']" [queryParams]="{ id: this.currentUserId}" matTooltip="เพิ่มโพสต์">
       <i class="fa-solid fa-plus"></i>
     </a>
     <a class="menu-item" [routerLink]="['/Notification_user']" [queryParams]="{ id: this.currentUserId }">
@@ -107,17 +107,7 @@
   </div>
 </div>
 
-<div class="background-div">
-  <div style="display: flex; justify-content: center; margin-bottom: 30px; gap: 30px; margin-top: 100px;">
-    <a [routerLink]="['/HomepageUser']" [queryParams]="{ id: this.currentUserId }"
-      style="text-decoration: none; color: black;">
-      <span style="font-size: 22px; font-weight: 600;">สำหรับคุณ</span>
-    </a>
-    <a [routerLink]="['/Homepagefollow']" [queryParams]="{ id: this.currentUserId}"
-      style="text-decoration: none; color: rgb(109, 106, 106);">
-      <span style="font-size: 22px; ">กำลังติดตาม</span>
-    </a>
-  </div>
+<div class="background-div" style="margin-top: 120px;">
 
   <div class="card-container-wrapper">
     <div class="card-container">
@@ -148,7 +138,7 @@
                 {{ post.title | slice:0:15 }}{{ post.title.length > 15 ? '...' : '' }}
               </span>
               <div style="display: flex; align-items: center; justify-content: space-between; margin-right: 10px;">
-                <a [routerLink]="['/detail_post']" [queryParams]="{ post_id: post.post_id, id: this.currentUserId }"
+                <a (click)="viewPost(post.post_id.toString()) "
                   class="hover-link" style="color: #e96e7e; font-size: 20px; text-decoration: none;">
                   View
                 </a>
@@ -161,12 +151,17 @@
             <div
               style="display: flex; flex-direction: row; margin-left: 15px; margin-right: 15px; margin-top: 35px; gap: 10px; justify-content: space-between;">
               <div style="display: flex; align-items: center; gap: 10px;">
-                <img [src]="post.user_profile_image || 'https://via.placeholder.com/50'" alt="รูปโปรไฟล์"
+                <img [src]="post.user_profile_image || 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'" alt="รูปโปรไฟล์"
                   style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;"
                   (click)="goToProfile(post.user_uid.toString())">
-                <span style="font-weight: 600; font-size: 20px;">
-                  {{ post.user_name }}
-                </span>
+                <div style="display: flex; flex-direction: column;">
+                  <span style="font-weight: 600; font-size: 20px;">
+                    {{ post.user_name }}
+                  </span>
+                  <span style="font-size: 14px; color: #888;" *ngIf="post.post_time">
+                    {{ post.post_time | timeAgo }}
+                  </span>
+                </div>
               </div>
 
               <!-- ไอคอนหัวใจสำหรับการกดไลค์ -->

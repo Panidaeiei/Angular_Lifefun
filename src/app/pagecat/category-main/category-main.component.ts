@@ -23,7 +23,7 @@ export class CategoryMainComponent {
     2: 'แฟชั่น',
     3: 'สกินแคร์',
     4: 'อาหาร',
-    5: 'สุภาพ',
+    5: 'สุขภาพ',
     6: 'ท่องเที่ยว'
   };
   categoryName: string = '';

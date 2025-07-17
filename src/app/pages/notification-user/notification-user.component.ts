@@ -10,11 +10,13 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { ReactPostservice } from '../../services/ReactPostservice';
 import { MatBadgeModule } from '@angular/material/badge';
 import { UserService } from '../../services/Userservice';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { filter } from 'rxjs/operators';
 
 
 @Component({
   selector: 'app-notification-user',
-  imports: [MatToolbarModule, RouterModule, CommonModule, MatTabsModule, MatCardModule, MatButtonModule, MatSidenavModule, MatBadgeModule],
+  imports: [MatToolbarModule, RouterModule, CommonModule, MatTabsModule, MatCardModule, MatButtonModule, MatSidenavModule, MatBadgeModule, MatTooltipModule],
   templateUrl: './notification-user.component.html',
   styleUrls: ['./notification-user.component.scss'] // Corrected property name and path
 })
@@ -49,26 +51,37 @@ export class NotificationUserComponent {
   constructor(private route: ActivatedRoute, private notificationService: ReactPostservice, private userService: UserService, private router: Router) { }
 
   ngOnInit(): void {
-    this.checkScreenSize(); // ตรวจสอบขนาดหน้าจอเมื่อเริ่มต้น
-    // ดึงค่าจาก Query Parameters
+    this.checkScreenSize();
+    // ตรวจสอบ snapshot ครั้งแรก
+    const snapshotParams = this.route.snapshot.queryParams;
+    if (snapshotParams['id']) {
+      this.userId = snapshotParams['id'];
+      console.log('User ID from snapshot:', this.userId);
+      this.loadNotificationData();
+    }
     this.userService.getCurrentUserId().subscribe((userId) => {
       this.currentUserId = userId;
       console.log('Current User ID:', this.currentUserId);
     });
-
-    this.route.queryParams.subscribe((params) => {
-      if (params['id']) {
+    // Subscribe เฉพาะ params ที่มี id เท่านั้น
+    this.route.queryParams
+      .pipe(filter(params => !!params['id']))
+      .subscribe((params) => {
         this.userId = params['id'];
-        console.log('User ID:', this.userId);
+        console.log('User ID from observable:', this.userId);
+        this.loadNotificationData();
+      });
+  }
+
+  // แยกฟังก์ชันสำหรับโหลดข้อมูลการแจ้งเตือน
+  private loadNotificationData(): void {
+    if (this.userId) {
         this.loadNotifications_like();
         this.loadNotifications_follow();
         this.loadNotifications_share();
         this.loadNotifications_comment();
         this.loadNotificationsUnban();
-      } else {
-        console.error('User ID not found in query parameters.');
       }
-    });
   }
 
   @HostListener('window:resize', ['$event'])

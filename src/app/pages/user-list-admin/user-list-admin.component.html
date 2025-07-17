@@ -80,6 +80,9 @@
 
     <!-- User List -->
     <div class="user-list">
+        <div *ngIf="isSearchPerformed && filteredUsers.length === 0" style="text-align: center; color: #d9534f; font-size: 20px; margin-top: 30px;">
+            ไม่พบผู้ใช้
+        </div>
         <div class="user-card" *ngFor="let user of isSearchPerformed ? filteredUsers : users" style="display: flex; justify-content: space-between; align-items: center;">
             <div [routerLink]="['/admin_profileuser']" [queryParams]="{ id: user.uid, adminId: userId }">
                 <div style="display: flex; align-items: center;">

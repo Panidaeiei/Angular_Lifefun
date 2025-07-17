@@ -109,4 +109,8 @@ export class UserBanComponent {
     }
   }
 
+  // Getter สำหรับ template เพื่อแสดงเฉพาะผู้ใช้ที่ถูกระงับ
+  get filteredBannedUsers() {
+    return this.filteredUsers ? this.filteredUsers.filter((user: any) => user.status === 0) : [];
+  }
 }

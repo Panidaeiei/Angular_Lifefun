@@ -12,6 +12,7 @@ import { ShowPost } from '../../models/showpost_model';
 import { UserService } from '../../services/Userservice';
 import { PostService } from '../../services/Postservice';
 import { ReactPostservice } from '../../services/ReactPostservice';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-user-fashion',
@@ -24,7 +25,8 @@ import { ReactPostservice } from '../../services/ReactPostservice';
     MatFormFieldModule,
     MatChipsModule,
     MatMenuModule,
-    MatButtonModule
+    MatButtonModule,
+    MatTooltipModule
   ],
   templateUrl: './user-fashion.component.html',
   styleUrl: './user-fashion.component.scss'

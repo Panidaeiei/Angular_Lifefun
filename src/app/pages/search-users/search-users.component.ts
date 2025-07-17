@@ -10,11 +10,12 @@ import { UserService } from '../../services/Userservice';
 import { SearchUser } from '../../models/search-user.model';
 import { FormsModule } from '@angular/forms';
 import { Postme } from '../../models/postme_model';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 
 @Component({
   selector: 'app-search-users',
-  imports: [MatToolbarModule, RouterModule, CommonModule, MatTabsModule, MatCardModule, MatButtonModule, FormsModule],
+  imports: [MatToolbarModule, RouterModule, CommonModule, MatTabsModule, MatCardModule, MatButtonModule, FormsModule, MatTooltipModule],
   templateUrl: './search-users.component.html',
   styleUrl: './search-users.component.scss'
 })

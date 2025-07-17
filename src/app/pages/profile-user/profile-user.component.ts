@@ -7,6 +7,9 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { combineLatest, filter, switchMap } from 'rxjs/operators';
 
 import { User } from '../../models/register_model';
 import { ProfileService } from '../../services/Profileservice';
@@ -24,6 +27,7 @@ import { ReactPostservice } from '../../services/ReactPostservice';
     MatCardModule,
     MatButtonModule,
     MatIconModule,
+    MatTooltipModule,
   ],
   templateUrl: './profile-user.component.html',
   styleUrls: ['./profile-user.component.scss'],
@@ -47,25 +51,34 @@ export class ProfileUserComponent implements OnInit {
   constructor(private route: ActivatedRoute, private profileService: ProfileService, private reactPostservice: ReactPostservice,) { }
 
   ngOnInit(): void {
-    this.checkScreenSize(); // ตรวจสอบขนาดหน้าจอเมื่อเริ่มต้น
-    // ดึงข้อมูล User ID จาก Query Parameters
-    this.route.queryParams.subscribe((params) => {
-      if (params['id']) {
+    this.checkScreenSize();
+    // Subscribe เฉพาะ params ที่มี id และโหลดข้อมูล user/profile
+    this.route.queryParams
+      .pipe(
+        filter(params => !!params['id']),
+        switchMap(params => {
         this.userId = params['id'];
         console.log('User ID:', this.userId);
-
-        // เรียกฟังก์ชันเมื่อมีค่า userId
-        this.getUserProfile();
+          this.isLoading = true;
+          // โหลด user profile
+          return this.profileService.getUserProfile();
+        })
+      )
+      .subscribe(
+        user => {
+          this.user = user;
+          this.isLoading = false;
+          // โหลดข้อมูลอื่นๆต่อ เช่น post, follow ฯลฯ
         this.getUserPosts();
         this.getSharedPosts();
         this.getSavePosts();
-
         this.loadFollowCount();
-      } else {
-        this.userId = ''; // กำหนดค่าเริ่มต้นเมื่อไม่มี User ID
-        console.warn('User ID not found in query parameters.');
+        },
+        error => {
+          this.isLoading = false;
+          // handle error
       }
-    });
+      );
   }
 
   @HostListener('window:resize', ['$event'])
@@ -162,4 +175,15 @@ export class ProfileUserComponent implements OnInit {
     );
   }
 
+  // แยกฟังก์ชันสำหรับโหลดข้อมูลผู้ใช้
+  private loadUserData(): void {
+    if (this.userId) {
+      // เรียกฟังก์ชันเมื่อมีค่า userId
+      this.getUserProfile();
+      this.getUserPosts();
+      this.getSharedPosts();
+      this.getSavePosts();
+      this.loadFollowCount();
+    }
+  }
 }

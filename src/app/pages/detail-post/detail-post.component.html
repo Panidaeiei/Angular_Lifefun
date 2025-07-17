@@ -1,138 +1,110 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+<link rel="preload" href="https://fonts.googleapis.com/css2?family=Itim&display=swap" as="style">
 
 
 <div style="display: flex; align-items: center; justify-content: center; flex-direction: column; ">
     <mat-toolbar class="fixed-toolbar">
         <!-- Logo ด้านซ้าย -->
-        <a [routerLink]="['/HomepageUser']" [queryParams]="{ id: this.currentUserId }">
-            <img src="../../../assets/images/Logoweb.png" alt="Home Icon" width="80px">
+        <a [routerLink]="['/HomepageUser']" [queryParams]="{ id: currentUserId }">
+            <img src="../../../assets/images/Logoweb.png" alt="Home Icon">
         </a>
-        <div style="width: 5%;"></div>
+
         <!-- เมนูตรงกลาง -->
-        <div class="center-menu"
-            style="display: flex; flex-grow: 1; justify-content: center; align-items: center; gap: 50px;">
-            <div style="display: flex; flex-direction: column; align-items: center;">
-                <a [routerLink]="['/HomepageUser']" [queryParams]="{ id: this.currentUserId }">
-                    <i style="font-size: 40px; color: black;" class="fa-solid fa-house"></i>
-                </a>
+        <div class="center-menu" *ngIf="!isMobile">
+            <a class="menu-item" [routerLink]="['/HomepageUser']" [queryParams]="{ id: currentUserId }">
+                <i class="fa-solid fa-house"></i>
                 <span class="itim-regular">หน้าหลัก</span>
-            </div>
-            <div style="display: flex; flex-direction: column; align-items: center;">
-                <a [routerLink]="['/Homepagefollow']" [queryParams]="{ id: this.currentUserId}">
-                    <i style="font-size: 40px; color: black;" class="fa-solid fa-users"></i>
-                </a>
+            </a>
+            <a class="menu-item" [routerLink]="['/Homepagefollow']" [queryParams]="{ id: currentUserId }">
+                <i class="fa-solid fa-users"></i>
                 <span class="itim-regular">ติดตาม</span>
-            </div>
-            <div style="margin-left: 20px;">
-                <a class="add-post-btn" [routerLink]="['/CreatePost']" [queryParams]="{ id: this.currentUserId}">
-                    <i class="fa-solid fa-plus"></i>
-                </a>
-            </div>
-            <div class="menu-item" routerLinkActive="active" [routerLink]="['/Notification_user']"
-                [queryParams]="{ id: userId }">
-                <i style="font-size: 40px; color: black;" class="fa-solid fa-bell"></i>
+            </a>
+            <a class="add-post-btn" [routerLink]="['/CreatePost']" [queryParams]="{ id: currentUserId }"
+                matTooltip="เพิ่มโพสต์">
+                <i class="fa-solid fa-plus"></i>
+            </a>
+            <a class="menu-item" [routerLink]="['/Notification_user']" [queryParams]="{ id: currentUserId }">
+                <i class="fa-solid fa-bell"></i>
                 <span class="itim-regular">การแจ้งเตือน</span>
-            </div>
-            <div style="display: flex; flex-direction: column; align-items: center;">
-                <a [routerLink]="['/ProfileUser']" [queryParams]="{ id: this.currentUserId }">
-                    <i style="font-size: 40px; color: black;" class="fa-solid fa-user"></i>
-                </a>
+            </a>
+            <a class="menu-item" [routerLink]="['/ProfileUser']" [queryParams]="{ id: currentUserId }">
+                <i class="fa-solid fa-user"></i>
                 <span class="itim-regular">โปรไฟล์</span>
-            </div>
+            </a>
         </div>
+
         <!-- เมนูขวาสุด -->
-        <div class="toolbar-actions" style="display: flex; align-items: center; gap: 16px;">
-            <!-- ค้นหา -->
-            <div style="display: flex; flex-direction: column; align-items: center;">
-                <a [routerLink]="['/search_users']" [queryParams]="{ id: this.currentUserId }">
-                    <i style="font-size: 30px; color: black;" class="fa-solid fa-search"></i>
-                </a>
-            </div>
-            <!-- ไอคอนเมนู -->
-            <div style="display: flex; flex-direction: column; align-items: center; margin-left: 10px;">
-                <a href="javascript:void(0)" (click)="toggleDrawer()">
-                    <i style="font-size: 30px; color: black; margin-right: 10px;" class="fa-solid fa-bars"></i>
-                </a>
-            </div>
-        </div>
-        <!-- Drawer -->
-        <div class="drawer" [class.open]="isDrawerOpen">
-            <div class="drawer-content">
-                <h3 style="font-weight: 500; font-size: 30px;">MENU</h3>
-                <ul style="list-style: none; padding: 0;">
-                    <!-- เมนูหลัก (ซ้ำกับ center-menu เพื่อรองรับจอเล็ก) -->
-                    <li
-                        style="border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; align-items: center; gap: 10px;">
-                        <i class="fa-solid fa-house" style="font-size: 20px; color: black;"></i>
-                        <a [routerLink]="['/HomepageUser']" [queryParams]="{ id: this.currentUserId }"
-                            style="text-decoration: none; color: black;">
-                            <span class="itim-regular">หน้าหลัก</span>
-                        </a>
-                    </li>
-                    <li
-                        style="border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; align-items: center; gap: 10px;">
-                        <i class="fa-solid fa-users" style="font-size: 20px; color: black;"></i>
-                        <a [routerLink]="['/Homepagefollow']" [queryParams]="{ id: this.currentUserId }"
-                            style="text-decoration: none; color: black;">
-                            <span class="itim-regular">ติดตาม</span>
-                        </a>
-                    </li>
-                    <li
-                        style="border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; align-items: center; gap: 10px;">
-                        <i class="fa-solid fa-plus" style="font-size: 20px; color: black;"></i>
-                        <a [routerLink]="['/CreatePost']" [queryParams]="{ id: this.currentUserId }"
-                            style="text-decoration: none; color: black;">
-                            <span class="itim-regular">สร้างโพสต์</span>
-                        </a>
-                    </li>
-                    <li
-                        style="border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; align-items: center; gap: 10px;">
-                        <i class="fa-solid fa-bell" style="font-size: 20px; color: black;"></i>
-                        <a [routerLink]="['/Notification_user']" [queryParams]="{ id: this.currentUserId }"
-                            style="text-decoration: none; color: black;">
-                            <span class="itim-regular">การแจ้งเตือน</span>
-                        </a>
-                    </li>
-                    <li
-                        style="border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; align-items: center; gap: 10px;">
-                        <i class="fa-solid fa-user" style="font-size: 20px; color: black;"></i>
-                        <a [routerLink]="['/ProfileUser']" [queryParams]="{ id: this.currentUserId }"
-                            style="text-decoration: none; color: black;">
-                            <span class="itim-regular">โปรไฟล์</span>
-                        </a>
-                    </li>
-                    <!-- หมวดหมู่ -->
-                    <li
-                        style="border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; align-items: center; gap: 10px;">
-                        <i class="fa fa-list" style="font-size: 20px; color: black;"></i>
-                        <a [routerLink]="['/category']" [queryParams]="{ id: this.currentUserId }"
-                            style="text-decoration: none; color: black;">
-                            <span class="itim-regular">หมวดหมู่</span>
-                        </a>
-                    </li>
-                    <!-- แชท -->
-                    <li
-                        style="border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; align-items: center; gap: 10px;">
-                        <i class="fa fa-comments" style="font-size: 20px; color: black;"></i>
-                        <a [routerLink]="['/chat']" [queryParams]="{ id: this.currentUserId }"
-                            style="text-decoration: none; color: black;">
-                            <span class="itim-regular">แชท</span>
-                        </a>
-                    </li>
-                    <!-- ออกจากระบบ -->
-                    <li
-                        style="border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; align-items: center; gap: 10px;">
-                        <i class="fa fa-sign-out" style="font-size: 20px; color: black;"></i>
-                        <a href="/" style="text-decoration: none; color: black;">
-                            <span class="itim-regular">ออกจากระบบ</span>
-                        </a>
-                    </li>
-                </ul>
-                <button mat-flat-button style="background-color: rgb(226, 124, 150); width: 100px;"
-                    (click)="toggleDrawer()">ปิด</button>
-            </div>
+        <div class="toolbar-actions">
+            <a [routerLink]="['/search_users']" [queryParams]="{ id: currentUserId }">
+                <i class="fa-solid fa-search"></i>
+            </a>
+            <button class="toolbar-hamburger" (click)="toggleDrawer()" aria-label="เมนู">
+                <i class="fa-solid fa-bars"></i>
+            </button>
         </div>
     </mat-toolbar>
+
+    <!-- Drawer Overlay -->
+    <div class="drawer-overlay" [class.open]="isDrawerOpen" (click)="toggleDrawer()"></div>
+    <!-- Drawer -->
+    <div class="drawer" [class.open]="isDrawerOpen">
+        <div class="drawer-content">
+            <h3>MENU</h3>
+            <ul>
+                <li>
+                    <a [routerLink]="['/HomepageUser']" [queryParams]="{ id: currentUserId }">
+                        <i class="fa-solid fa-house"></i>
+                        <span class="itim-regular">หน้าหลัก</span>
+                    </a>
+                </li>
+                <li>
+                    <a [routerLink]="['/Homepagefollow']" [queryParams]="{ id: currentUserId }">
+                        <i class="fa-solid fa-users"></i>
+                        <span class="itim-regular">ติดตาม</span>
+                    </a>
+                </li>
+                <li>
+                    <a [routerLink]="['/CreatePost']" [queryParams]="{ id: currentUserId }">
+                        <i class="fa-solid fa-plus"></i>
+                        <span class="itim-regular">สร้างโพสต์</span>
+                    </a>
+                </li>
+                <li>
+                    <a [routerLink]="['/Notification_user']" [queryParams]="{ id: currentUserId }">
+                        <i class="fa-solid fa-bell"></i>
+                        <span class="itim-regular">การแจ้งเตือน</span>
+                    </a>
+                </li>
+                <li>
+                    <a [routerLink]="['/ProfileUser']" [queryParams]="{ id: currentUserId }">
+                        <i class="fa-solid fa-user"></i>
+                        <span class="itim-regular">โปรไฟล์</span>
+                    </a>
+                </li>
+                <li>
+                    <a [routerLink]="['/category']" [queryParams]="{ id: currentUserId }">
+                        <i class="fa fa-list"></i>
+                        <span class="itim-regular">หมวดหมู่</span>
+                    </a>
+                </li>
+                <li>
+                    <a [routerLink]="['/chat']" [queryParams]="{ id: currentUserId }">
+                        <i class="fa fa-comments"></i>
+                        <span class="itim-regular">แชท</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/">
+                        <i class="fa fa-sign-out"></i>
+                        <span class="itim-regular">ออกจากระบบ</span>
+                    </a>
+                </li>
+                <li>
+                    <button class="drawer-close-btn" (click)="toggleDrawer()">ปิด</button>
+                </li>
+            </ul>
+        </div>
+    </div>
     <div *ngIf="post" class="divpost">
         <!-- ส่วนแสดงโปรไฟล์ผู้ใช้ -->
         <div class="profile-section">
@@ -142,14 +114,19 @@
                     alt="รูปโปรไฟล์" (click)="goToProfile(post.user_uid.toString())">
                 <div class="profile-details">
                     <span class="profile-name">{{post.user_name}}</span>
-                    <span class="profile-time">{{post.post_time | timeAgo}}</span>
+                    <span class="profile-time">
+                        {{ post.post_time | timeAgo }} • 
+                        {{ post.post_time | formatLocalTime }}
+                    </span>
+                      
                     <ng-container *ngIf="post.location">
                         <!-- มือถือ -->
                         <div class="profile-location mobile-location">
                             <i class="fa-solid fa-location-dot"></i>
                             <span>
                                 Location:
-                                <a class="location" [href]="post.location" target="_blank">
+                                <a class="location"
+                                    [href]="'https://www.google.com/maps/search/?api=1&query=' + encodeLocation(post.location)">
                                     {{ post.location.length > 20 ? (post.location.substring(0, 20) + '...') :
                                     post.location }}
                                 </a>
@@ -160,7 +137,8 @@
                             <i class="fa-solid fa-location-dot"></i>
                             <span>
                                 Location:
-                                <a class="location" [href]="post.location" target="_blank">
+                                <a class="location"
+                                    [href]="'https://www.google.com/maps/search/?api=1&query=' + encodeLocation(post.location)">
                                     {{ post.location.length > 30 ? (post.location.substring(0, 30) + '...') :
                                     post.location }}
                                 </a>
@@ -169,7 +147,7 @@
                     </ng-container>
                 </div>
             </div>
-            <a mat-button [matMenuTriggerFor]="menu" class="profile-menu-btn">
+            <a mat-button [matMenuTriggerFor]="menu" class="profile-menu-btn" matTooltip="ตัวเลือกโพสต์">
                 <svg xmlns="http://www.w3.org/2000/svg" height="30" viewBox="0 0 24 24" width="30" fill="black">
                     <circle cx="12" cy="5" r="2"></circle>
                     <circle cx="12" cy="12" r="2"></circle>
@@ -221,9 +199,9 @@
                 <!-- ปุ่มเลื่อน (Previous/Next) -->
                 <div class="slider-controls" *ngIf="(post.images.length + post.videos.length) > 1">
                     <button (click)="prevMedia()" class="prev-btn" style="touch-action: manipulation;"
-                        [disabled]="currentMediaIndex === 0">❮</button>
+                        [disabled]="currentMediaIndex === 0" matTooltip="รูปก่อนหน้า">❮</button>
                     <button (click)="nextMedia()" class="next-btn" style="touch-action: manipulation;"
-                        [disabled]="currentMediaIndex === (post.images.length + post.videos.length - 1)">❯</button>
+                        [disabled]="currentMediaIndex === (post.images.length + post.videos.length - 1)" matTooltip="รูปถัดไป">❯</button>
                 </div>
 
                 <!-- แสดงสถานะการเลื่อน (จำนวนรูป/วิดีโอ) -->
@@ -234,11 +212,8 @@
 
                 <!-- Dots Indicator (แสดงเฉพาะถ้ามี media > 1) -->
                 <div class="media-dots" *ngIf="(post.images.length + post.videos.length) > 1">
-                  <span
-                    *ngFor="let m of [].constructor(post.images.length + post.videos.length); let i = index"
-                    [class.active]="i === currentMediaIndex"
-                    class="dot"
-                  ></span>
+                    <span *ngFor="let m of [].constructor(post.images.length + post.videos.length); let i = index"
+                        [class.active]="i === currentMediaIndex" class="dot"></span>
                 </div>
             </div>
         </div>
@@ -248,7 +223,8 @@
             <div style="display: flex; gap: 20px;">
                 <div style="display: flex; gap: 5px; align-items: center;">
                     <i class="fa fa-heart heart-icon" [class.liked]="post.isLiked" (click)="toggleHeart(post)"
-                        style="font-size: 40px; cursor: pointer;">
+                        style="font-size: 40px; cursor: pointer;" 
+                        [matTooltip]="post.isLiked ? 'เลิกถูกใจ' : 'ถูกใจ'">
                     </i>
 
                     <span *ngIf="post.likes_count > 0 && post.likes_count !== null"
@@ -258,17 +234,18 @@
                 </div>
                 <div style="display: flex; align-items: center; gap: 5px;">
                     <i style="font-size: 40px; cursor: pointer;" class="fa-regular fa-comment"
-                        (click)="toggleShowComments()"></i>
+                        (click)="toggleShowComments()" matTooltip="ความคิดเห็น"></i>
                     <span *ngIf="comments.length > 0" style="font-weight: 500; font-size: 25px;">{{ comments.length
                         }}</span>
                 </div>
                 <i style="font-size: 40px; cursor: pointer;" class="fa-solid fa-share" (click)="sharePost()"
-                    [ngClass]="{ 'shared': isShared, 'not-shared': !isShared }">
+                    [ngClass]="{ 'shared': isShared, 'not-shared': !isShared }" matTooltip="แชร์โพสต์">
                 </i>
 
             </div>
             <i style="font-size: 30px; cursor: pointer;" class="fa-regular fa-bookmark"
-                [ngClass]="{ 'saved': isSave, 'not-saved': !isSave }" (click)="toggleSavePost()"></i>
+                [ngClass]="{ 'saved': isSave, 'not-saved': !isSave }" (click)="toggleSavePost()" 
+                [matTooltip]="isSave ? 'ลบออกจากบันทึก' : 'บันทึกโพสต์'"></i>
         </div>
         <div class="post-content">
             <span *ngIf="!isEditing" [innerHTML]="post.title | newlineToBr"></span>
@@ -280,9 +257,9 @@
             <div
                 style="display: flex; justify-content: flex-end; margin-top: 10px; gap: 10px; margin-bottom: 15px; margin-right: 10px;">
                 <button mat-button style="color: rgb(33, 135, 224); font-size: 18px;"
-                    (click)="saveEditedPost()">บันทึก</button>
+                    (click)="saveEditedPost()" matTooltip="บันทึกการแก้ไข">บันทึก</button>
                 <button mat-button style="font-size: 16px; background-color: rgb(204, 60, 60); color: aliceblue;"
-                    (click)="cancelEdit()">ยกเลิก</button>
+                    (click)="cancelEdit()" matTooltip="ยกเลิกการแก้ไข">ยกเลิก</button>
             </div>
         </div>
 
@@ -305,7 +282,7 @@
                             title="comment">{{ comment.title }}</span>
                     </div>
                 </div>
-                <button mat-icon-button [matMenuTriggerFor]="menu2" class="comment-menu-btn">
+                <button mat-icon-button [matMenuTriggerFor]="menu2" class="comment-menu-btn" matTooltip="ตัวเลือกเพิ่มเติม">
                     <mat-icon>more_vert</mat-icon>
                 </button>
                 <mat-menu #menu2="matMenu">
@@ -320,7 +297,8 @@
 
         <!-- ปุ่มแสดงคอมเมนต์เพิ่มเติม -->
         <div *ngIf="comments.length > 2" style="margin-bottom: 10px; margin-left: 10px;">
-            <button mat-button (click)="toggleShowComments()" style=" color: #7e7776;">
+            <button mat-button (click)="toggleShowComments()" style=" color: #7e7776;" 
+                [matTooltip]="showAllComments ? 'ซ่อนคอมเมนต์บางส่วน' : 'แสดงคอมเมนต์ทั้งหมด'">
                 {{ showAllComments ? 'แสดงคอมเมนต์น้อยลง' : 'แสดงคอมเมนต์เพิ่มเติม' }}
             </button>
         </div>
@@ -332,7 +310,8 @@
                     style="width: 100%; border-radius: 20px; height: 50px; font-size: 20px; border: none; background-color: #f0f0f0; padding: 10px; padding-right: 40px;"
                     type="text" placeholder="เพิ่มความคิดเห็น" (keydown.enter)="onSubmitComment(commentInput.value)" />
                 <button (click)="onSubmitComment(commentInput.value)"
-                    style="position: absolute; right: 10px; background: none; border: none; color: #423534; font-size: 30px; cursor: pointer;">
+                    style="position: absolute; right: 10px; background: none; border: none; color: #423534; font-size: 30px; cursor: pointer;"
+                    matTooltip="ส่งความคิดเห็น">
                     <i class="fas fa-paper-plane"></i>
                 </button>
             </div>

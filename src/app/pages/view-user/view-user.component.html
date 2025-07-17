@@ -17,7 +17,7 @@
                 <i class="fa-solid fa-users"></i>
                 <span class="itim-regular">ติดตาม</span>
             </a>
-            <a class="add-post-btn" [routerLink]="['/CreatePost']" [queryParams]="{ id: userId}">
+            <a class="add-post-btn" [routerLink]="['/CreatePost']" [queryParams]="{ id: userId}" matTooltip="เพิ่มโพสต์">
                     <i class="fa-solid fa-plus"></i>
                 </a>
             <a class="menu-item" [routerLink]="['/Notification_user']" [queryParams]="{ id: userId }">
@@ -183,7 +183,7 @@
                 <!-- โพสต์ของผู้ใช้ -->
                 <mat-tab>
                     <ng-template mat-tab-label>
-                        <mat-icon>apps</mat-icon>
+                        <mat-icon matTooltip="โพสต์">apps</mat-icon>
                     </ng-template>
                     <div class="post-grid">
                         <div *ngFor="let post of userPosts" class="post-item">
@@ -206,7 +206,7 @@
                 </mat-tab>
                 <mat-tab>
                     <ng-template mat-tab-label>
-                        <mat-icon>share</mat-icon>
+                        <mat-icon matTooltip="แชร์โพสต์">share</mat-icon>
                     </ng-template>
                     <div class="post-grid">
                         <div *ngFor="let post of sharedPosts" class="post-item">
@@ -229,7 +229,7 @@
                 </mat-tab>
                 <mat-tab>
                     <ng-template mat-tab-label>
-                        <mat-icon>bookmark</mat-icon>
+                        <mat-icon matTooltip="บันทึกโพสต์">bookmark</mat-icon>
                     </ng-template>
                     <div class="post-grid">
                         <div *ngFor="let post of savedPosts" class="post-item">

@@ -14,7 +14,7 @@
             <i class="fa-solid fa-users"></i>
             <span class="itim-regular">ติดตาม</span>
         </a>
-        <a class="add-post-btn" [routerLink]="['/CreatePost']" [queryParams]="{ id: this.currentUserId}">
+        <a class="add-post-btn" [routerLink]="['/CreatePost']" [queryParams]="{ id: this.currentUserId}" matTooltip="เพิ่มโพสต์">
             <i class="fa-solid fa-plus"></i>
         </a>
         <a class="menu-item" [routerLink]="['/Notification_user']" [queryParams]="{ id: this.currentUserId }">

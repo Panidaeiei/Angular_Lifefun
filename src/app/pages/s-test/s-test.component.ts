@@ -10,10 +10,11 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { RouterModule } from '@angular/router';
 import { TimeAgoPipe} from '../../pipes/time-ago.pipe';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-s-test',
-  imports: [MatToolbarModule, CommonModule, MatTabsModule, MatCardModule, MatButtonModule, FormsModule, RouterModule, TimeAgoPipe],
+  imports: [MatToolbarModule, CommonModule, MatTabsModule, MatCardModule, MatButtonModule, FormsModule, RouterModule, TimeAgoPipe, MatTooltipModule],
   templateUrl: './s-test.component.html',
   styleUrl: './s-test.component.scss'
 })
