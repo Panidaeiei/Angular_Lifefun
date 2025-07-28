@@ -25,6 +25,7 @@
             "assets": [
               "src/assets",
               "src/favicon.ico",
+              "src/manifest.webmanifest",
               {
                 "glob": "**/*",
                 "input": "node_modules/@fortawesome/fontawesome-free/webfonts",
@@ -69,7 +70,8 @@
                 "sweetalert2",
                 "leaflet"
               ],  
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "serviceWorker": "ngsw-config.json"
             },
             "development": {
               "optimization": false,

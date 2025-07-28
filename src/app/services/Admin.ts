@@ -15,21 +15,34 @@ export class AdminService {
 
   // ฟังก์ชันระงับบัญชีผู้ใช้
   banUser(uid: number, reason: string, end_date: string): Observable<Ban> {
-    const token = localStorage.getItem('token'); // สมมติว่าคุณเก็บ token ไว้ใน localStorage หรือ sessionStorage
+    const token =
+      localStorage.getItem('adminToken') ||
+      sessionStorage.getItem('adminToken') ||
+      localStorage.getItem('token') ||
+      sessionStorage.getItem('token');
+    if (!token) {
+      throw new Error('No token found. Please login again.');
+    }
     const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`, // ส่ง token ใน Header
+      'Authorization': `Bearer ${token}`,
     });
     const body = { uid, reason, end_date };
     return this.http.post<Ban>(`${this.baseUrl}/admin/ban`, body, { headers }).pipe(
       catchError(this.handleError)
     );
   }
-
   // ฟังก์ชันยกเลิกการระงับบัญชีผู้ใช้
   unbanUser(uid: number): Observable<Ban> {
-    const token = localStorage.getItem('token'); // สมมติว่าคุณเก็บ token ไว้ใน localStorage หรือ sessionStorage
+    const token =
+      localStorage.getItem('adminToken') ||
+      sessionStorage.getItem('adminToken') ||
+      localStorage.getItem('token') ||
+      sessionStorage.getItem('token');
+    if (!token) {
+      throw new Error('No token found. Please login again.');
+    }
     const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`, // ส่ง token ใน Header
+      'Authorization': `Bearer ${token}`,
     });
     const body = { uid };
     return this.http.post<Ban>(`${this.baseUrl}/admin/unban`, body, { headers }).pipe(

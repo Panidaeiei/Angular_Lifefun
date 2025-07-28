@@ -8,17 +8,17 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { Router, RouterModule } from '@angular/router';
 import { PostService } from '../../services/Postservice';
 import { ShowPost } from '../../models/showpost_model';
-import { TimeAgoPipe} from '../../pipes/time-ago.pipe';
+import { TimeAgoPipe } from '../../pipes/time-ago.pipe';
 
 @Component({
   selector: 'app-searctpost-main',
-  imports: [RouterModule, MatToolbarModule, CommonModule, MatTabsModule, MatCardModule, MatButtonModule, FormsModule,TimeAgoPipe],
+  imports: [RouterModule, MatToolbarModule, CommonModule, MatTabsModule, MatCardModule, MatButtonModule, FormsModule, TimeAgoPipe],
   templateUrl: './searctpost-main.component.html',
   styleUrl: './searctpost-main.component.scss'
 })
 export class SearctpostMainComponent implements OnInit {
 
-  constructor(private router : Router,private postService: PostService) {
+  constructor(private router: Router, private postService: PostService) {
     this.checkScreenSize();
   }
 
@@ -26,7 +26,7 @@ export class SearctpostMainComponent implements OnInit {
   searchQuery = '';
   errorMessage = '';
   loading = false;
-  isDialogOpen = false; 
+  isDialogOpen = false;
   isMobile = false;
   isDrawerOpen = false;
   showFull: { [postId: string]: boolean } = {};
@@ -53,31 +53,17 @@ export class SearctpostMainComponent implements OnInit {
     // แสดงข้อความเต็มใน alert หรือ modal
     alert(post.title);
   }
-  
+
   ngOnInit() {
     this.loading = true;
     this.postService.getPosts().subscribe({
       next: (data) => {
-        this.allPosts = data;
-        this.posts = data;
-        this.loading = false;
-      },
-      error: (error) => {
-        this.errorMessage = error.message;
-        this.loading = false;
-      }
-    });
-  }
-  
-  onSearch() {
-    if (this.searchQuery.trim() === '') {
-      this.posts = this.allPosts;
-      return;
-    }
-    this.loading = true;
-    this.postService.searchPosts(this.searchQuery).subscribe({
-      next: (data) => {
-        this.posts = data;
+        // กรองโพสต์ที่ post_id ซ้ำ
+        const uniquePosts = data.filter((value, index, self) =>
+          index === self.findIndex((t) => t.post_id === value.post_id)
+        );
+        this.allPosts = uniquePosts;
+        this.posts = uniquePosts;
         this.loading = false;
       },
       error: (error) => {
@@ -87,7 +73,30 @@ export class SearctpostMainComponent implements OnInit {
     });
   }
 
-    onloginClick(): void {
+  onSearch() {
+    if (this.searchQuery.trim() === '') {
+      this.posts = [];
+      return;
+    }
+
+    this.loading = true;
+    this.postService.searchPosts(this.searchQuery).subscribe({
+      next: (data) => {
+        // กรองโพสต์ที่ post_id ซ้ำ
+        const uniquePosts = data.filter((value, index, self) =>
+          index === self.findIndex((t) => t.post_id === value.post_id)
+        );
+        this.posts = uniquePosts;
+        this.loading = false;
+      },
+      error: (error) => {
+        this.errorMessage = error.message;
+        this.loading = false;
+      }
+    });
+  }
+
+  onloginClick(): void {
     if (!this.isUserLoggedIn()) {  // ตรวจสอบว่าเข้าสู่ระบบหรือยัง
       this.openDialog();
     } else {
@@ -96,7 +105,7 @@ export class SearctpostMainComponent implements OnInit {
     }
   }
 
-    isUserLoggedIn(): boolean {
+  isUserLoggedIn(): boolean {
     return false; // สมมุติว่า user ยังไม่ได้เข้าสู่ระบบ
   }
 
@@ -112,7 +121,7 @@ export class SearctpostMainComponent implements OnInit {
     this.router.navigate(['/login']); // ไปที่หน้า Login
   }
 
-    goToProfile(userId: string): void {
+  goToProfile(userId: string): void {
     console.log('Navigating to user profile:', userId);
 
     if (!userId) {

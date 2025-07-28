@@ -33,45 +33,268 @@ body {
   /* สีพื้นหลังเหมือนกัน */
 }
 
+/* Admin Toolbar Styles */
+.admin-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  height: 85px;
+  background: rgba(247, 220, 220, 0.85);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+  border-radius: 0 0 18px 18px;
+  padding: 0 18px;
+  position: fixed;
+  top: 0; left: 0; width: 100vw;
+  z-index: 1000;
+  transition: all 0.3s ease;
+}
+
+.logo-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  transition: transform 0.2s ease;
+}
+
+.logo-link:hover {
+  transform: scale(1.05);
+}
+
+.logo-image {
+  width: 56px;
+  height: auto;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(233,135,135,0.12);
+  transition: transform 0.2s ease;
+}
+
+.center-menu {
+  display: flex;
+  gap: 36px;
+  align-items: center;
+  justify-content: flex-start;
+  margin: 0;
+  margin-left: 20px;
+}
+
+.logout-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(244, 67, 54, 0.2);
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+    transition: left 0.5s ease;
+  }
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(244, 67, 54, 0.3);
+    background: linear-gradient(135deg, #d32f2f 0%, #c62828 100%);
+
+    &::before {
+      left: 100%;
+    }
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(244, 67, 54, 0.2);
+  }
+
+  i {
+    font-size: 16px;
+    transition: transform 0.2s ease;
+  }
+
+  span {
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+  }
+
+  &:hover i {
+    transform: scale(1.1);
+  }
+}
+
 .menu-item {
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding: 8px 16px;
+  border-radius: 16px;
+  transition: all 0.3s ease;
+  color: #222;
   text-decoration: none;
+  font-weight: 500;
   position: relative;
+  overflow: hidden;
+  
+  i { 
+    font-size: 28px; 
+    margin-bottom: 4px; 
+    color: #222;
+    transition: all 0.3s ease;
+  }
+  
+  span { 
+    font-size: 15px; 
+    color: #222;
+    transition: all 0.3s ease;
+    font-weight: 500;
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(226, 140, 150, 0.1), transparent);
+    transition: left 0.5s ease;
+  }
+}
+
+.menu-item:hover {
+  background: #ffe6ee;
+  color: #e27c96;
+  box-shadow: 0 4px 12px rgba(226, 140, 150, 0.15);
+  transform: translateY(-2px);
+
+  &::before {
+    left: 100%;
+  }
+
+  i, span {
+    color: #e27c96;
+  }
 }
 
 .menu-item.active {
-  color: #ff0000;
-  /* สีเมื่อ active */
+  background: #ffe6ee;
+  color: #e27c96;
+  box-shadow: 0 4px 12px rgba(226, 140, 150, 0.15);
+
+  i, span {
+    color: #e27c96;
+  }
 }
 
-.menu-item span {
-  font-size: 14px;
-  margin-top: 5px;
+.toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-left: auto;
 }
 
-.menu-item.active i,
-.menu-item.active span {
-  color: #000000;
-  /* เปลี่ยนสีเมื่อ active */
-}
+.toolbar-hamburger {
+  display: flex;
+  background: none;
+  border: none;
+  font-size: 28px;
+  color: #e27c96;
+  margin-left: 16px;
+  border-radius: 12px;
+  padding: 8px 12px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  align-items: center;
+  justify-content: center;
 
-.menu-item.active::after {
+  &::before {
   content: '';
   position: absolute;
-  bottom: -41px;
-  left: 50%;
-  /* เริ่มที่กึ่งกลางของเมนู */
-  transform: translateX(-50%);
-  /* ดันกลับมาครึ่งหนึ่งของความกว้าง */
-  height: 5px;
-  background-color: #000000;
-  /* สีขีดล่าง */
-  width: 130px;
-  /* ความกว้างของขีด */
-
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(226, 140, 150, 0.1), transparent);
+    transition: left 0.5s ease;
+  }
 }
+
+.toolbar-hamburger:hover {
+  background: #ffe6ee;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(226, 140, 150, 0.15);
+
+  &::before {
+    left: 100%;
+  }
+}
+
+.toolbar-hamburger:active, .toolbar-hamburger:focus {
+  background: #ffe6ee;
+  transform: translateY(0);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .admin-toolbar {
+    height: 60px;
+    padding: 0 8px;
+  }
+  
+  .center-menu { 
+    gap: 18px; 
+  }
+  
+  .menu-item i { 
+    font-size: 20px; 
+  }
+  
+  .menu-item span { 
+    font-size: 12px; 
+  }
+  
+  .toolbar-hamburger {
+    font-size: 24px;
+    padding: 6px 10px;
+  }
+}
+
+@media (max-width: 600px) {
+  .admin-toolbar {
+    height: 80px;
+    padding: 0 4px;
+    border-radius: 0 0 10px 10px;
+  }
+  
+  .center-menu { 
+    display: none !important; 
+  }
+  
+  .toolbar-hamburger {
+    font-size: 30px;
+    padding: 8px 12px;
+    margin-left: auto;
+  }
+}
+
+/* Removed duplicate menu-item styles - now using the new ones above */
 
 
 .hover-link {

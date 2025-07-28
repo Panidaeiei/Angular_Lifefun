@@ -45,6 +45,12 @@ export class UserSkincareComponent {
   viewPosts: any[] = [];
 
   ngOnInit(): void {
+    const loggedInUserId = localStorage.getItem('userId') || sessionStorage.getItem('userId');
+    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+    if (!loggedInUserId || !token) {
+      this.router.navigate(['/login'], { queryParams: { error: 'unauthorized' } });
+      return;
+    }
     this.userService.getCurrentUserId().subscribe((userId) => {
       this.currentUserId = userId;
       console.log('Current User ID:', this.currentUserId);
@@ -179,5 +185,15 @@ export class UserSkincareComponent {
 
   toggleDrawer(): void {
     this.isDrawerOpen = !this.isDrawerOpen; // สลับสถานะเปิด/ปิด
+  }
+
+  logout(): void {
+    localStorage.removeItem('userId');
+    localStorage.removeItem('token');
+    localStorage.removeItem('userRole');
+    sessionStorage.removeItem('userId');
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('userRole');
+    this.router.navigate(['/login']);
   }
 }

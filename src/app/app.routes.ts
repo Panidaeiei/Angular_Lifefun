@@ -31,9 +31,7 @@ import { CategoryMainComponent } from './pagecat/category-main/category-main.com
 import { ChatUserComponent } from './pages/chat-user/chat-user.component';
 import { NotiAddminComponent } from './pages/noti-addmin/noti-addmin.component';
 import { ReportPostdetailComponent } from './pages/report-postdetail/report-postdetail.component';
-
-
-
+import { BanStatusGuard } from './services/ban-status.guard';
 
 
 export const routes: Routes = [
@@ -42,32 +40,32 @@ export const routes: Routes = [
     {path: 'login', component: LoginComponent},
     {path: 'register', component: RegisterComponent},
     {path: 'HomepageAdmin', component: HomepageAdminComponent},
-    {path: 'HomepageUser', component: HomepageUserComponent},
-    {path: 'Homepagefollow', component: HomeFollowComponent},
-    {path: 'Notification_user', component: NotificationUserComponent},
-    {path: 'ProfileUser', component: ProfileUserComponent},
-    {path: 'CreatePost', component: CreatePostComponent},
-    {path: 'category', component: CategoryPageComponent},
-    {path: 'detail_post', component: DetailPostComponent},
-    {path: 'editprofile', component: EditprofileUserComponent},
-    {path: 'view_user/:userId', component: ViewUserComponent},
+    {path: 'HomepageUser', component: HomepageUserComponent, canActivate: [BanStatusGuard]},
+    {path: 'Homepagefollow', component: HomeFollowComponent, canActivate: [BanStatusGuard]},
+    {path: 'Notification_user', component: NotificationUserComponent, canActivate: [BanStatusGuard]},
+    {path: 'ProfileUser', component: ProfileUserComponent, canActivate: [BanStatusGuard]},
+    {path: 'CreatePost', component: CreatePostComponent, canActivate: [BanStatusGuard]},
+    {path: 'category', component: CategoryPageComponent, canActivate: [BanStatusGuard]},
+    {path: 'detail_post', component: DetailPostComponent, canActivate: [BanStatusGuard]},
+    {path: 'editprofile', component: EditprofileUserComponent, canActivate: [BanStatusGuard]},
+    {path: 'view_user/:userId', component: ViewUserComponent, canActivate: [BanStatusGuard]},
     {path: 'profileuserAdmin', component: ProfileuserAdminComponent},
     {path: 'userlist', component: UserListAdminComponent},
-    {path: 'search_users', component: SearchUsersComponent},
+    {path: 'search_users', component: SearchUsersComponent, canActivate: [BanStatusGuard]},
     {path: 'userban', component: UserBanComponent},
-    {path: 'stest', component: STestComponent},
+    {path: 'stest', component: STestComponent, canActivate: [BanStatusGuard]},
     {path: 'category_main', component: CategorynotUserComponent},
     {path: 'search_main', component: SearchMainComponent},
     {path: 'viewuser_main', component: ViewuserMainComponent},
     {path: 'searchpost_main', component: SearctpostMainComponent},
-    {path: 'Post_Cosmetics', component: UserCosmeticsComponent},
-    {path: 'Post_Fashion', component: UserFashionComponent},
-    {path: 'Post_Food', component: UserFoodComponent},
-    {path: 'Post_Skincare', component: UserSkincareComponent},
-    {path: 'Post_Health', component: UserHealthComponent},
-    {path: 'Post_Travel', component: UserTravelComponent},
-    {path: 'Cat_main/:cat_id', component: CategoryMainComponent},
-    {path: 'chat', component: ChatUserComponent},
+    {path: 'Post_Cosmetics', component: UserCosmeticsComponent, canActivate: [BanStatusGuard]},
+    {path: 'Post_Fashion', component: UserFashionComponent, canActivate: [BanStatusGuard]},
+    {path: 'Post_Food', component: UserFoodComponent, canActivate: [BanStatusGuard]},
+    {path: 'Post_Skincare', component: UserSkincareComponent, canActivate: [BanStatusGuard]},
+    {path: 'Post_Health', component: UserHealthComponent, canActivate: [BanStatusGuard]},
+    {path: 'Post_Travel', component: UserTravelComponent, canActivate: [BanStatusGuard]},
+    {path: 'Cat_main/:cat_id', component: CategoryMainComponent, canActivate: [BanStatusGuard]},
+    {path: 'chat', component: ChatUserComponent, canActivate: [BanStatusGuard]},
     {path: 'noti_addmin', component: NotiAddminComponent},
     {path: 'admin_profileuser', component: ProfileuserAdminComponent},
     {path: 'detail_postadmin', component: ReportPostdetailComponent}

@@ -19,7 +19,10 @@
                 <i class="fa-solid fa-plus"></i>
             </a>
             <a class="menu-item active" routerLinkActive="active" [routerLink]="['/Notification_user']" [queryParams]="{ id: this.currentUserId }">
-                <i class="fa-solid fa-bell"></i>
+                <div class="bell-icon-container">
+                    <i class="fa-solid fa-bell"></i>
+                    <div class="notification-dot" *ngIf="notificationCounts.total > 0"></div>
+                </div>
                 <span class="itim-regular">การแจ้งเตือน</span>
             </a>
             <a class="menu-item" [routerLink]="['/ProfileUser']" [queryParams]="{ id: this.currentUserId}">
@@ -64,7 +67,10 @@
                 </li>
                 <li>
                     <a class="active" routerLinkActive="active" [routerLink]="['/Notification_user']" [queryParams]="{ id: this.currentUserId }">
-                        <i class="fa-solid fa-bell"></i>
+                        <div class="bell-icon-container">
+                            <i class="fa-solid fa-bell"></i>
+                            <div class="notification-dot" *ngIf="notificationCounts.total > 0"></div>
+                        </div>
                         <span class="itim-regular">การแจ้งเตือน</span>
                     </a>
                 </li>
@@ -87,7 +93,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="/">
+                    <a (click)="logout()" style="cursor:pointer;">
                         <i class="fa fa-sign-out"></i>
                         <span class="itim-regular">ออกจากระบบ</span>
                     </a>
@@ -278,7 +284,7 @@
         </ng-container>
 
         <ng-template #noFollowNotifications>
-            <p>ไม่มีการแจ้งเตือนติดตาม</p>
+            <p>ไม่มีการแจ้งเตือนการติดตาม</p>
         </ng-template>
     </div>
 

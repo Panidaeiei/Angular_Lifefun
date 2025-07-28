@@ -5,11 +5,13 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
-import { ActivatedRoute, RouterModule, Params } from '@angular/router';
+import { ActivatedRoute, RouterModule, Params, Router } from '@angular/router';
 import { MatBadgeModule } from '@angular/material/badge';
 import { FormsModule } from '@angular/forms';
 import { UserService } from '../../services/Userservice';
 import { ChatService } from '../../services/chat.service';
+import { NotificationService, NotificationCounts } from '../../services/notification.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-chat-user',
@@ -55,11 +57,34 @@ export class ChatUserComponent implements OnInit, OnDestroy {
   // สำหรับ hover bubble
   hoveredMsgIndex: number | null = null;
 
+  // สำหรับป้องกันการส่งซ้ำ
+  isSending: boolean = false;
+
+  // สำหรับจัดการ scroll
+  isUserScrolling: boolean = false;
+  isNearBottom: boolean = true;
+
+  notificationCounts: NotificationCounts = {
+    like: 0,
+    follow: 0,
+    share: 0,
+    comment: 0,
+    unban: 0,
+    total: 0
+  };
+  private notificationSubscription?: Subscription;
+
   @Input() userData: any;
 
-  constructor(private route: ActivatedRoute, private userService: UserService, private chatService: ChatService) {}
+  constructor(private route: ActivatedRoute, private userService: UserService, private chatService: ChatService, private router: Router, private notificationService: NotificationService) {}
 
   ngOnInit() {
+    const loggedInUserId = localStorage.getItem('userId') || sessionStorage.getItem('userId');
+    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+    if (!loggedInUserId || !token) {
+      this.router.navigate(['/login'], { queryParams: { error: 'unauthorized' } });
+      return;
+    }
     this.route.queryParams.subscribe((params: Params) => {
       this.userId = String(params['id']);
       this.fromId = this.userId;
@@ -67,14 +92,46 @@ export class ChatUserComponent implements OnInit, OnDestroy {
       
       if (this.userId) {
         this.loadUserChats();
+        // เริ่มการติดตามการแจ้งเตือน
+        this.startNotificationTracking();
       }
     });
     
     this.checkScreenSize();
+    
+    // ตั้งค่าให้แชทเริ่มต้นที่ด้านล่างเสมอ
+    setTimeout(() => {
+      this.scrollToBottom();
+    }, 100);
   }
 
   ngOnDestroy() {
-    // Cleanup subscriptions if needed
+    // หยุดการติดตามการแจ้งเตือน
+    this.notificationService.stopAutoUpdate();
+    
+    // ยกเลิก subscription
+    if (this.notificationSubscription) {
+      this.notificationSubscription.unsubscribe();
+    }
+  }
+
+  // เริ่มการติดตามการแจ้งเตือน
+  private startNotificationTracking(): void {
+    if (this.userId) {
+      // โหลดการแจ้งเตือนครั้งแรก
+      this.notificationService.loadNotificationCounts(Number(this.userId));
+      
+      // เริ่มการอัปเดตอัตโนมัติ
+      this.notificationService.startAutoUpdate(Number(this.userId));
+      
+      // ติดตามการเปลี่ยนแปลงจำนวนการแจ้งเตือน
+      this.notificationSubscription = this.notificationService.notificationCounts$.subscribe(
+        (counts) => {
+          this.notificationCounts = counts;
+          console.log('Notification counts updated:', counts);
+        }
+      );
+    }
   }
 
   loadUserChats() {
@@ -88,6 +145,7 @@ export class ChatUserComponent implements OnInit, OnDestroy {
           lastMessageTime: chat.last_message_time,
           lastMessageSenderId: String(chat.last_message_sender_id || ''),
           lastMessageSenderName: chat.last_message_sender_name || chat.other_username,
+          uid: chat.other_user || chat.other_user_id || chat.uid || chat.other_id || chat.user_id || chat.id, // เพิ่ม uid
           ...chat
         };
         // DEBUG LOG
@@ -96,7 +154,10 @@ export class ChatUserComponent implements OnInit, OnDestroy {
           chatId: mapped.chatId,
           lastMessage: mapped.lastMessage,
           lastMessageSenderId: mapped.lastMessageSenderId,
-          lastMessageSenderName: mapped.lastMessageSenderName
+          lastMessageSenderName: mapped.lastMessageSenderName,
+          uid: mapped.uid,
+          other_user_id: chat.other_user_id,
+          originalChat: chat
         });
         return mapped;
       });
@@ -113,9 +174,32 @@ export class ChatUserComponent implements OnInit, OnDestroy {
     this.selectedChat = chat;
     this.chatId = chat.chatId;
     
+    // รีเซ็ต scroll state
+    this.isNearBottom = true;
+    this.isUserScrolling = false;
+    
     // ดึงข้อความจาก Firebase แบบ real-time
     this.chatService.listenMessages(chat.chatId, (messages) => {
+      const previousLength = this.currentChatMessages.length;
       this.currentChatMessages = messages;
+      
+      if (previousLength === 0) {
+        // เริ่มที่ข้อความล่าสุดเลย
+        setTimeout(() => {
+          const chatMessages = document.querySelector('.chat-messages');
+          if (chatMessages) {
+            // ตั้งค่าให้เริ่มที่ล่างสุดทันที
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            this.isNearBottom = true;
+            this.isUserScrolling = false;
+          }
+        }, 100);
+      } else if (messages.length > previousLength && this.isNearBottom && !this.isUserScrolling) {
+        // มีข้อความใหม่และผู้ใช้อยู่ใกล้ด้านล่าง - เลื่อนไปล่าสุด
+        setTimeout(() => {
+          this.scrollToBottomForNewMessage();
+        }, 100);
+      }
     });
     
     if (this.isMobile) {
@@ -124,7 +208,16 @@ export class ChatUserComponent implements OnInit, OnDestroy {
   }
 
   async sendMessage() {
+    // ป้องกันการส่งซ้ำ
+    if (this.isSending) {
+      console.log('กำลังส่งข้อความอยู่ กรุณารอสักครู่...');
+      return;
+    }
+    
     if ((!this.newMessage.trim() && !this.chatImage && !this.chatVideo) || !this.chatId) return;
+    
+    // ตั้งค่ากำลังส่ง
+    this.isSending = true;
     
     let pendingMsg: any = null;
     if (this.chatImage) {
@@ -188,6 +281,11 @@ export class ChatUserComponent implements OnInit, OnDestroy {
       this.chatImage = null;
       this.chatVideo = null;
       this.selectedFilePreview = null;
+      
+      // เลื่อนไปที่ข้อความล่าสุดหลังจากส่งข้อความ
+      setTimeout(() => {
+        this.scrollToBottomForNewMessage();
+      }, 100);
     } catch (error) {
       console.error('Error sending message:', error);
       // ถ้าเกิด error ให้ลบ pending message ออก
@@ -197,6 +295,9 @@ export class ChatUserComponent implements OnInit, OnDestroy {
           this.currentChatMessages.splice(index, 1);
         }
       }
+    } finally {
+      // รีเซ็ตสถานะการส่งเสมอ
+      this.isSending = false;
     }
   }
 
@@ -286,5 +387,76 @@ export class ChatUserComponent implements OnInit, OnDestroy {
 
   closeMobileDrawer() {
     this.isDrawerOpenMobile = false;
+  }
+
+  goToProfile(uid: string) {
+    console.log('goToProfile called with uid:', uid);
+    if (uid) {
+      console.log('Navigating to /view_user with uid:', uid);
+      this.router.navigate(['/view_user', this.userId], { queryParams: { Profileuser: uid } });
+    } else {
+      console.log('uid is empty or undefined');
+    }
+  }
+
+  scrollToBottom() {
+    const chatMessages = document.querySelector('.chat-messages');
+    if (chatMessages) {
+      // ใช้ requestAnimationFrame เพื่อให้แน่ใจว่า DOM อัปเดตเสร็จแล้ว
+      requestAnimationFrame(() => {
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+        // อัปเดต scroll state
+        this.isNearBottom = true;
+        this.isUserScrolling = false;
+      });
+    }
+  }
+
+  // Method สำหรับเมื่อมีข้อความใหม่
+  scrollToBottomForNewMessage() {
+    const chatMessages = document.querySelector('.chat-messages');
+    if (chatMessages) {
+      // ใช้ requestAnimationFrame เพื่อให้แน่ใจว่า DOM อัปเดตเสร็จ
+      requestAnimationFrame(() => {
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+        this.isNearBottom = true;
+      });
+    }
+  }
+
+
+
+  // ตรวจสอบว่าผู้ใช้อยู่ใกล้ด้านล่างหรือไม่
+  checkIfNearBottom(): boolean {
+    const chatMessages = document.querySelector('.chat-messages');
+    if (chatMessages) {
+      const { scrollTop, scrollHeight, clientHeight } = chatMessages;
+      const threshold = 100; // ระยะห่างจากด้านล่าง (pixel)
+      return scrollHeight - scrollTop - clientHeight < threshold;
+    }
+    return true;
+  }
+
+  // จัดการ scroll event
+  onChatScroll() {
+    this.isUserScrolling = true;
+    this.isNearBottom = this.checkIfNearBottom();
+    
+    // รีเซ็ต flag หลังจากผู้ใช้หยุด scroll
+    setTimeout(() => {
+      this.isUserScrolling = false;
+    }, 200); // เพิ่มเวลาให้แน่ใจว่าผู้ใช้หยุด scroll แล้ว
+  }
+
+  logout() {
+    localStorage.removeItem('userId');
+    localStorage.removeItem('token');
+    localStorage.removeItem('userRole');
+    localStorage.removeItem('currentUserId');
+    sessionStorage.removeItem('userId');
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('userRole');
+    sessionStorage.removeItem('currentUserId');
+    this.router.navigate(['/login']);
   }
 }

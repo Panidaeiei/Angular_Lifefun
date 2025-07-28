@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { Component, ElementRef, OnInit, QueryList, ViewChild, ViewChildren, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterModule } from '@angular/router';
@@ -13,6 +13,8 @@ import { ReactPostservice } from '../../services/ReactPostservice';
 import { NewlineToBrPipe } from '../../newline-to-br.pipe';
 import { FormsModule } from '@angular/forms'
 import { TimeAgoPipe } from '../../pipes/time-ago.pipe';
+import { NotificationService, NotificationCounts } from '../../services/notification.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-detail-postmain',
@@ -20,17 +22,29 @@ import { TimeAgoPipe } from '../../pipes/time-ago.pipe';
   templateUrl: './detail-postmain.component.html',
   styleUrl: './detail-postmain.component.scss'
 })
-export class DetailPostmainComponent {
+export class DetailPostmainComponent implements OnDestroy {
   post: any;
   currentMedia: { type: string; url: string } = { type: '', url: '' };
   currentMediaIndex: number = 0; // ตัวแปรนี้ใช้สำหรับการเลื่อนดูสื่อ
   postId: string = '';
   comments: any[] = []; // คอมเมนต์ที่ดึงมา
+  userId: string = '';
+  notificationCounts: NotificationCounts = {
+    like: 0,
+    follow: 0,
+    share: 0,
+    comment: 0,
+    unban: 0,
+    total: 0
+  };
+  private notificationSubscription?: Subscription;
 
   constructor(
     private route: ActivatedRoute,
     private postService: PostService,
-    private reactPostservice: ReactPostservice
+    private reactPostservice: ReactPostservice,
+    private notificationService: NotificationService,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -45,9 +59,36 @@ export class DetailPostmainComponent {
       } else {
         console.error('Post ID not found in query parameters.');
       }
+
+      // ดึง userId จาก query params
+      if (params['id']) {
+        this.userId = params['id'];
+        console.log('User ID:', this.userId);
+        // เริ่มการติดตามการแจ้งเตือน
+        this.startNotificationTracking();
+      }
     });
 
     this.fetchComments();
+  }
+
+  // เริ่มการติดตามการแจ้งเตือน
+  private startNotificationTracking(): void {
+    if (this.userId) {
+      // โหลดการแจ้งเตือนครั้งแรก
+      this.notificationService.loadNotificationCounts(Number(this.userId));
+      
+      // เริ่มการอัปเดตอัตโนมัติ
+      this.notificationService.startAutoUpdate(Number(this.userId));
+      
+      // ติดตามการเปลี่ยนแปลงจำนวนการแจ้งเตือน
+      this.notificationSubscription = this.notificationService.notificationCounts$.subscribe(
+        (counts) => {
+          this.notificationCounts = counts;
+          console.log('Notification counts updated:', counts);
+        }
+      );
+    }
   }
 
   encodeLocation(location: string): string {
@@ -123,6 +164,16 @@ export class DetailPostmainComponent {
     if (this.post && (this.post.images.length + this.post.videos.length) > 1) {  // ตรวจสอบ post ว่ามีข้อมูลและมีหลาย media
       this.currentMediaIndex = (this.currentMediaIndex - 1 + (this.post.images.length + this.post.videos.length)) % (this.post.images.length + this.post.videos.length);
       this.updateCurrentMedia();
+    }
+  }
+
+  ngOnDestroy(): void {
+    // หยุดการติดตามการแจ้งเตือน
+    this.notificationService.stopAutoUpdate();
+    
+    // ยกเลิก subscription
+    if (this.notificationSubscription) {
+      this.notificationSubscription.unsubscribe();
     }
   }
 }

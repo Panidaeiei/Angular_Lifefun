@@ -42,6 +42,12 @@ export class SearchUsersComponent {
   ) { }
 
   ngOnInit(): void {
+    const loggedInUserId = localStorage.getItem('userId') || sessionStorage.getItem('userId');
+    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+    if (!loggedInUserId || !token) {
+      this.router.navigate(['/login'], { queryParams: { error: 'unauthorized' } });
+      return;
+    }
     this.checkScreenSize();
     window.addEventListener('resize', () => this.checkScreenSize());
     this.routeron.queryParams.subscribe((params) => {
@@ -80,7 +86,7 @@ export class SearchUsersComponent {
   onSearch(): void {
     if (this.searchQuery.trim() === '') {
       this.searchResults = [];
-      this.isSearchPerformed = false; 
+      this.isSearchPerformed = false;
       return;
     }
 
@@ -101,7 +107,7 @@ export class SearchUsersComponent {
     console.log('Current User ID:', this.currentUserId);
     console.log('Navigating to:', userId);
     console.log('Query Params ID:', this.userId);
-  
+
     if (!userId || !this.currentUserId) {
       console.error('User ID is missing! Navigation aborted.');
       return;
@@ -116,5 +122,16 @@ export class SearchUsersComponent {
     }
   }
 
+  logout(): void {
+    localStorage.removeItem('userId');
+    localStorage.removeItem('token');
+    localStorage.removeItem('userRole');
+    localStorage.removeItem('currentUserId');
+    sessionStorage.removeItem('userId');
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('userRole');
+    sessionStorage.removeItem('currentUserId');
+    this.router.navigate(['/login']);
+  }
 
 }

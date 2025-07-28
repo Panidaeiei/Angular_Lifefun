@@ -7,6 +7,8 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatCardModule } from '@angular/material/card';
 import {MatButtonModule} from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { NotificationService, NotificationCounts } from '../../services/notification.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-category-page',
@@ -21,15 +23,32 @@ export class CategoryPageComponent implements OnInit, OnDestroy {
   isDrawerOpen: boolean = false; 
   cat_id!: number;
   isMobile: boolean = false;
+  notificationCounts: NotificationCounts = {
+    like: 0,
+    follow: 0,
+    share: 0,
+    comment: 0,
+    unban: 0,
+    total: 0
+  };
+  private notificationSubscription?: Subscription;
 
-  constructor(private router: ActivatedRoute, private cdr: ChangeDetectorRef) { }
+  constructor(private route: ActivatedRoute, private cdr: ChangeDetectorRef, private router: Router, private notificationService: NotificationService) { }
 
   ngOnInit(): void {
-    this.router.queryParams.subscribe((params: any) => {
+    const loggedInUserId = localStorage.getItem('userId') || sessionStorage.getItem('userId');
+    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+    if (!loggedInUserId || !token) {
+      this.router.navigate(['/login'], { queryParams: { error: 'unauthorized' } });
+      return;
+    }
+    this.route.queryParams.subscribe((params: any) => {
       if (params['id']) {
         this.userId = params['id'];
         this.cat_id = +params['cat_id'];
         console.log('User ID set from queryParams:', this.userId);
+        // เริ่มการติดตามการแจ้งเตือน
+        this.startNotificationTracking();
       } else {
         console.error('User ID not found in queryParams.');
       }
@@ -41,6 +60,33 @@ export class CategoryPageComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     window.removeEventListener('resize', this.checkScreen.bind(this));
+    
+    // หยุดการติดตามการแจ้งเตือน
+    this.notificationService.stopAutoUpdate();
+    
+    // ยกเลิก subscription
+    if (this.notificationSubscription) {
+      this.notificationSubscription.unsubscribe();
+    }
+  }
+
+  // เริ่มการติดตามการแจ้งเตือน
+  private startNotificationTracking(): void {
+    if (this.userId) {
+      // โหลดการแจ้งเตือนครั้งแรก
+      this.notificationService.loadNotificationCounts(Number(this.userId));
+      
+      // เริ่มการอัปเดตอัตโนมัติ
+      this.notificationService.startAutoUpdate(Number(this.userId));
+      
+      // ติดตามการเปลี่ยนแปลงจำนวนการแจ้งเตือน
+      this.notificationSubscription = this.notificationService.notificationCounts$.subscribe(
+        (counts) => {
+          this.notificationCounts = counts;
+          console.log('Notification counts updated:', counts);
+        }
+      );
+    }
   }
 
   checkScreen() {
@@ -50,5 +96,17 @@ export class CategoryPageComponent implements OnInit, OnDestroy {
 
   toggleDrawer(): void {
     this.isDrawerOpen = !this.isDrawerOpen; // สลับสถานะเปิด/ปิด
+  }
+
+  logout(): void {
+    localStorage.removeItem('userId');
+    localStorage.removeItem('token');
+    localStorage.removeItem('userRole');
+    localStorage.removeItem('currentUserId');
+    sessionStorage.removeItem('userId');
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('userRole');
+    sessionStorage.removeItem('currentUserId');
+    this.router.navigate(['/login']);
   }
 }

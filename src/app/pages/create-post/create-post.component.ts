@@ -119,6 +119,12 @@ export class CreatePostComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    const loggedInUserId = localStorage.getItem('userId') || sessionStorage.getItem('userId');
+    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+    if (!loggedInUserId || !token) {
+      this.router.navigate(['/login'], { queryParams: { error: 'unauthorized' } });
+      return;
+    }
     this.route.queryParams.subscribe((params) => {
       if (params['id']) {
         this.userId = params['id'];
@@ -352,6 +358,14 @@ export class CreatePostComponent implements OnInit {
   }
 
   logout(): void {
+    localStorage.removeItem('userId');
+    localStorage.removeItem('token');
+    localStorage.removeItem('userRole');
+    localStorage.removeItem('currentUserId');
+    sessionStorage.removeItem('userId');
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('userRole');
+    sessionStorage.removeItem('currentUserId');
     this.router.navigate(['/login']);
   }
 

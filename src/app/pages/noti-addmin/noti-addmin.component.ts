@@ -26,7 +26,7 @@ export class NotiAddminComponent {
   reportCount: number = 0;
   latestReporterName: string = '';
 
-  constructor(private route: ActivatedRoute, private notificationService: ReactPostservice) { }
+  constructor(private route: ActivatedRoute, private notificationService: ReactPostservice, private router: Router) { }
 
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
@@ -66,5 +66,15 @@ export class NotiAddminComponent {
   selectCard(cardData: any) {
     this.selectedCard = cardData;
     this.isNotiDrawerOpen = false;
+  }
+
+  logout() {
+    localStorage.removeItem('adminId');
+    localStorage.removeItem('adminRole');
+    localStorage.removeItem('adminToken');
+    sessionStorage.removeItem('adminId');
+    sessionStorage.removeItem('adminRole');
+    sessionStorage.removeItem('adminToken');
+    this.router.navigate(['/login']);
   }
 }

@@ -10,6 +10,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { ReactPostservice } from '../../services/ReactPostservice';
 import { MatBadgeModule } from '@angular/material/badge';
 import { UserService } from '../../services/Userservice';
+import { NotificationService } from '../../services/notification.service';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { filter } from 'rxjs/operators';
 
@@ -47,10 +48,30 @@ export class NotificationUserComponent {
   notificationsUnban: any[] = [];
   unreadUnbanCount: number = 0;
   isMobile: boolean = false; // เพิ่มตัวแปรนี้
+  notificationCounts: any = {
+    like: 0,
+    follow: 0,
+    share: 0,
+    comment: 0,
+    unban: 0,
+    total: 0
+  };
 
-  constructor(private route: ActivatedRoute, private notificationService: ReactPostservice, private userService: UserService, private router: Router) { }
+  constructor(
+    private route: ActivatedRoute, 
+    private notificationService: ReactPostservice, 
+    private userService: UserService, 
+    private globalNotificationService: NotificationService,
+    private router: Router
+  ) { }
 
   ngOnInit(): void {
+    const loggedInUserId = localStorage.getItem('userId') || sessionStorage.getItem('userId');
+    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+    if (!loggedInUserId || !token) {
+      this.router.navigate(['/login'], { queryParams: { error: 'unauthorized' } });
+      return;
+    }
     this.checkScreenSize();
     // ตรวจสอบ snapshot ครั้งแรก
     const snapshotParams = this.route.snapshot.queryParams;
@@ -158,6 +179,12 @@ export class NotificationUserComponent {
         next: () => {
           noti.notify = 1;  // เปลี่ยนสถานะอ่านแล้ว
           this.updateUnreadCount();
+          // อัปเดต global notification service แบบทันที
+          this.globalNotificationService.markAsRead('like', noti.lid);
+          // อัปเดตการแจ้งเตือนแบบทันที
+          if (this.userId) {
+            this.globalNotificationService.refreshImmediately(Number(this.userId));
+          }
           console.log('All notifications:', this.notifications);
         },
         error: err => {
@@ -196,6 +223,12 @@ export class NotificationUserComponent {
         next: () => {
           noti.notify = 0;
           this.updateUnreadFollowCount();
+          // อัปเดต global notification service แบบทันที
+          this.globalNotificationService.markAsRead('follow', noti.follow_id);
+          // อัปเดตการแจ้งเตือนแบบทันที
+          if (this.userId) {
+            this.globalNotificationService.refreshImmediately(Number(this.userId));
+          }
           this.goToProfile(noti.follow_uid);
 
           console.log('All follow notifications:', this.notificationsFollow);
@@ -260,6 +293,12 @@ export class NotificationUserComponent {
         next: () => {
           noti.notify = 1;       // <-- แต่หลังจากอ่านแล้วคุณตั้ง notify = 1 ซึ่งหมายถึง "อ่านแล้ว"
           this.updateUnreadShareCount();
+          // อัปเดต global notification service แบบทันที
+          this.globalNotificationService.markAsRead('share', noti.share_id);
+          // อัปเดตการแจ้งเตือนแบบทันที
+          if (this.userId) {
+            this.globalNotificationService.refreshImmediately(Number(this.userId));
+          }
           console.log('All share notifications:', this.notificationsShare);
         },
         error: err => {
@@ -309,6 +348,12 @@ export class NotificationUserComponent {
         next: () => {
           noti.notify = 1;   // อ่านแล้ว
           this.updateUnreadCommentCount();
+          // อัปเดต global notification service แบบทันที
+          this.globalNotificationService.markAsRead('comment', noti.cid);
+          // อัปเดตการแจ้งเตือนแบบทันที
+          if (this.userId) {
+            this.globalNotificationService.refreshImmediately(Number(this.userId));
+          }
           console.log('All comment notifications:', this.notificationsComment);
         },
         error: err => {
@@ -337,6 +382,18 @@ export class NotificationUserComponent {
         this.unreadUnbanCount = 0;
       }
     );
+  }
+
+  logout() {
+    localStorage.removeItem('userId');
+    localStorage.removeItem('token');
+    localStorage.removeItem('userRole');
+    localStorage.removeItem('currentUserId');
+    sessionStorage.removeItem('userId');
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('userRole');
+    sessionStorage.removeItem('currentUserId');
+    this.router.navigate(['/login']);
   }
 
 }

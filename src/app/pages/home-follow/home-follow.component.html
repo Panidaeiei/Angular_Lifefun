@@ -14,18 +14,22 @@
             <i class="fa-solid fa-house"></i>
             <span class="itim-regular">หน้าหลัก</span>
         </a>
-        <a class="menu-item active" [routerLink]="['/Homepagefollow']" [queryParams]="{ id: this.currentUserId}">
+        <a class="menu-item" routerLinkActive="active" [routerLink]="['/Homepagefollow']" [queryParams]="{ id: this.currentUserId}">
             <i class="fa-solid fa-users"></i>
             <span class="itim-regular">ติดตาม</span>
         </a>
-        <a class="add-post-btn" [routerLink]="['/CreatePost']" [queryParams]="{ id: this.currentUserId}" matTooltip="เพิ่มโพสต์">
+        <a class="add-post-btn" routerLinkActive="active" [routerLink]="['/CreatePost']" [queryParams]="{ id: this.currentUserId}"
+            matTooltip="เพิ่มโพสต์">
             <i class="fa-solid fa-plus"></i>
         </a>
-        <a class="menu-item" [routerLink]="['/Notification_user']" [queryParams]="{ id: this.currentUserId }">
-            <i class="fa-solid fa-bell"></i>
+        <a class="menu-item" routerLinkActive="active" [routerLink]="['/Notification_user']" [queryParams]="{ id: this.currentUserId }">
+            <div class="bell-icon-container">
+                <i class="fa-solid fa-bell"></i>
+                <div class="notification-dot" *ngIf="notificationCounts.total > 0"></div>
+            </div>
             <span class="itim-regular">การแจ้งเตือน</span>
         </a>
-        <a class="menu-item" [routerLink]="['/ProfileUser']" [queryParams]="{ id: this.currentUserId }">
+        <a class="menu-item" routerLinkActive="active" [routerLink]="['/ProfileUser']" [queryParams]="{ id: this.currentUserId }">
             <i class="fa-solid fa-user"></i>
             <span class="itim-regular">โปรไฟล์</span>
         </a>
@@ -34,7 +38,7 @@
     <!-- เมนูขวาสุด -->
     <div class="toolbar-actions">
         <!-- ค้นหา -->
-        <a [routerLink]="['/search_users']" [queryParams]="{ id: this.currentUserId }" >
+        <a [routerLink]="['/search_users']" [queryParams]="{ id: this.currentUserId }">
             <i class="fa-solid fa-search"></i>
         </a>
         <!-- ไอคอนเมนู - แสดงในทุกขนาดหน้าจอ -->
@@ -50,49 +54,52 @@
         <h3>MENU</h3>
         <ul>
             <li>
-                <a [routerLink]="['/HomepageUser']" [queryParams]="{ id: this.currentUserId }">
+                <a routerLinkActive="active" [routerLink]="['/HomepageUser']" [queryParams]="{ id: this.currentUserId }">
                     <i class="fa-solid fa-house"></i>
                     <span class="itim-regular">หน้าหลัก</span>
                 </a>
             </li>
-            <li class="active">
-                <a [routerLink]="['/Homepagefollow']" [queryParams]="{ id: this.currentUserId }">
+            <li>
+                <a routerLinkActive="active" [routerLink]="['/Homepagefollow']" [queryParams]="{ id: this.currentUserId }">
                     <i class="fa-solid fa-users"></i>
                     <span class="itim-regular">ติดตาม</span>
                 </a>
             </li>
             <li>
-                <a [routerLink]="['/CreatePost']" [queryParams]="{ id: this.currentUserId }">
+                <a routerLinkActive="active" [routerLink]="['/CreatePost']" [queryParams]="{ id: this.currentUserId }">
                     <i class="fa-solid fa-plus"></i>
                     <span class="itim-regular">สร้างโพสต์</span>
                 </a>
             </li>
             <li>
-                <a [routerLink]="['/Notification_user']" [queryParams]="{ id: this.currentUserId }">
-                    <i class="fa-solid fa-bell"></i>
+                <a routerLinkActive="active" [routerLink]="['/Notification_user']" [queryParams]="{ id: this.currentUserId }">
+                    <div class="bell-icon-container">
+                        <i class="fa-solid fa-bell"></i>
+                        <div class="notification-dot" *ngIf="notificationCounts.total > 0"></div>
+                    </div>
                     <span class="itim-regular">การแจ้งเตือน</span>
                 </a>
             </li>
             <li>
-                <a [routerLink]="['/ProfileUser']" [queryParams]="{ id: this.currentUserId }">
+                <a routerLinkActive="active" [routerLink]="['/ProfileUser']" [queryParams]="{ id: this.currentUserId }">
                     <i class="fa-solid fa-user"></i>
                     <span class="itim-regular">โปรไฟล์</span>
                 </a>
             </li>
             <li>
-                <a [routerLink]="['/category']" [queryParams]="{ id: this.currentUserId }">
+                <a routerLinkActive="active" [routerLink]="['/category']" [queryParams]="{ id: this.currentUserId }">
                     <i class="fa fa-list"></i>
                     <span class="itim-regular">หมวดหมู่</span>
                 </a>
             </li>
             <li>
-                <a [routerLink]="['/chat']" [queryParams]="{ id: this.currentUserId }">
+                <a routerLinkActive="active" [routerLink]="['/chat']" [queryParams]="{ id: this.currentUserId }">
                     <i class="fa fa-comments"></i>
                     <span class="itim-regular">แชท</span>
                 </a>
             </li>
             <li>
-                <a href="/">
+                <a (click)="logout()" style="cursor:pointer;">
                     <i class="fa fa-sign-out"></i>
                     <span class="itim-regular">ออกจากระบบ</span>
                 </a>
@@ -104,7 +111,12 @@
     </div>
 </div>
 
-<div class="background-div" > 
+<div *ngIf="!posts || posts.length === 0" class="no-follow-message"
+    style="text-align:center; margin-top: 40px; font-size: 22px; margin-top: 150px; color: #777171;">
+    ยังไม่มีโพสต์ของผู้ใช้ที่คุณติดตาม
+</div>
+
+<div class="background-div">
 
     <div class="card-container-wrapper">
         <div class="card-container">
@@ -115,8 +127,7 @@
                         <!-- แสดงรูปภาพหรือวิดีโอ -->
                         <a (click)="viewPost(post.post_id.toString())">
                             <ng-container *ngIf="post.media_type === 'image'; else videoTemplate">
-                                <img [src]="post.media_url" class="imgpost"
-                                    alt="รูปที่โพสต์">
+                                <img [src]="post.media_url" class="imgpost" alt="รูปที่โพสต์">
                             </ng-container>
                             <ng-template #videoTemplate>
                                 <video [src]="post.media_url" controls class="imgpost">

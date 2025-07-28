@@ -1,108 +1,88 @@
 <div class="background-div">
-    <mat-toolbar class="fixed-toolbar"
-        style="background-color: rgb(233, 135, 135); height: 90px; display: flex; align-items: center; justify-content: space-between;">
-
-        <a [routerLink]="['/HomepageAdmin']" [queryParams]="{ id: userId }">
-            <img src="../../../assets/images/Logoweb.png" alt="Home Icon" width="80px">
+    <mat-toolbar class="admin-toolbar">
+        <!-- Logo ด้านซ้าย -->
+        <a  class="logo-link">
+            <img src="../../../assets/images/Logoweb.png" alt="Home Icon" class="logo-image">
         </a>
-        <!-- กลุ่มไอคอนด้านซ้าย -->
-        <div style="display: flex; flex-grow: 1; justify-content: center; align-items: center; text-align: center;">
-            <div style="display: flex; justify-content: center; align-items: center; gap: 60px;">
 
-                <div style="display: flex; flex-direction: column; align-items: center;">
-                    <a [routerLink]="['/HomepageAdmin']" [queryParams]="{ id: userId }">
-                        <i style="font-size: 40px; color: black;" class="fas fa-house"></i>
-                    </a>
-                    <span class="itim-regular">หน้าหลัก</span>
-                </div>
-
-                <div style="display: flex; flex-direction: column; align-items: center;">
-                    <a class="menu-item" routerLinkActive="active" [routerLink]="['/userlist']"
+        <!-- เมนูตรงกลาง -->
+        <div class="center-menu">
+            <a class="menu-item active" routerLinkActive="active" [routerLink]="['/userlist']"
                         [queryParams]="{ id: userId }">
-                        <i style="font-size: 40px; color: black;" class="fas fa-users"></i>
+                <i class="fa-solid fa-users"></i>
                         <span class="itim-regular">ผู้ใช้งาน</span>
                     </a>
-                </div>
 
-                <div style="display: flex; flex-direction: column; align-items: center;">
-                    <a [routerLink]="['/noti_addmin']" [queryParams]="{ id: userId }">
-                        <i style="font-size: 40px; color: black;" class="fas fa-bell"></i>
-                    </a>
+            <a class="menu-item" [routerLink]="['/noti_addmin']" [queryParams]="{ id: userId }">
+                <i class="fa-solid fa-bell"></i>
                     <span class="itim-regular">การแจ้งเตือน</span>
-                </div>
-
-            </div>
-        </div>
-
-        <!-- ไอคอนเมนู -->
-        <div style="display: flex; flex-direction: column; align-items: center; margin-left: 20px;">
-            <a href="javascript:void(0)" (click)="toggleDrawer()">
-                <i style="font-size: 40px; color: black;" class="fa-solid fa-bars"></i>
             </a>
         </div>
 
-        <!-- Drawer -->
-        <div class="drawer" [class.open]="isDrawerOpen">
-            <div class="drawer-content">
-                <h3 style="font-weight: 500; font-size: 30px;">MENU</h3>
-                <ul style="list-style: none; padding: 0;">
-                    <!-- ออกจากระบบ -->
-                    <li
-                        style="border-bottom: 1px solid #ccc; padding: 10px 0; display: flex; align-items: center; gap: 10px;">
-                        <i class="fa fa-sign-out" style="font-size: 20px; color: black;"></i>
-                        <a href="/" style="text-decoration: none; color: black;">
-                            <span class="itim-regular">ออกจากระบบ</span>
-                        </a>
-                    </li>
-                </ul>
-                <button mat-flat-button style="background-color: rgb(226, 124, 150); width: 100px;"
-                    (click)="toggleDrawer()">ปิด</button>
-            </div>
+        <!-- เมนูขวาสุด -->
+        <div class="toolbar-actions">
+            <button class="logout-button" (click)="logout()">
+                <i class="fa-solid fa-sign-out-alt"></i>
+                <span>ออกจากระบบ</span>
+            </button>
         </div>
     </mat-toolbar>
 
     <!-- การค้นหา -->
-    <div style="margin-top: 130px;" class="search-container2">
+    <div class="search-container2">
         <i class="fa-solid fa-magnifying-glass"></i>
-        <input type="text" class="search-input" placeholder="ค้นหา..." [(ngModel)]="searchQuery" (input)="onSearch()" />
+        <input type="text" class="search-input" placeholder="ค้นหาผู้ใช้..." [(ngModel)]="searchQuery"
+            (input)="onSearch()" />
     </div>
 
     <!-- Tabs -->
     <div class="tabs">
         <a [routerLink]="['/userlist']" [queryParams]="{ id: userId }" (click)="resetSearch()"
-            class="active">ผู้ใช้งาน</a>
-        <a [routerLink]="['/userban']" [queryParams]="{ id: userId }">ผู้ใช้งานที่ถูกระงับ</a>
+            class="tab-item active">ผู้ใช้งาน</a>
+        <a [routerLink]="['/userban']" [queryParams]="{ id: userId }" class="tab-item">ผู้ใช้งานที่ถูกระงับ</a>
     </div>
 
-    <div style="margin-left: 150px; font-size: 100%; font-weight: bold; margin-left: 400px">
-        <a>รายชื่อบัญชีผู้ใช้งาน</a>
+    <div class="page-title">
+
+        <p>จัดการและดูข้อมูลผู้ใช้งานทั้งหมดในระบบ</p>
     </div>
 
     <!-- User List -->
     <div class="user-list">
-        <div *ngIf="isSearchPerformed && filteredUsers.length === 0" style="text-align: center; color: #d9534f; font-size: 20px; margin-top: 30px;">
-            ไม่พบผู้ใช้
+        <div *ngIf="isSearchPerformed && filteredUsers.length === 0" class="no-results">
+            <i class="fa-solid fa-search"></i>
+            <h3>ไม่พบผู้ใช้</h3>
+            <p>ลองค้นหาด้วยคำค้นอื่น</p>
         </div>
-        <div class="user-card" *ngFor="let user of isSearchPerformed ? filteredUsers : users" style="display: flex; justify-content: space-between; align-items: center;">
-            <div [routerLink]="['/admin_profileuser']" [queryParams]="{ id: user.uid, adminId: userId }">
-                <div style="display: flex; align-items: center;">
+
+        <div class="user-card" *ngFor="let user of isSearchPerformed ? filteredUsers : users">
+            <div class="user-info" [routerLink]="['/admin_profileuser']"
+                [queryParams]="{ id: user.uid, adminId: userId }">
+                <div class="user-avatar-container">
                     <img [src]="user.image_url ? user.image_url : 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'"
-                        class="user-avatar" style="object-fit: cover; width: 100px; height: 100px;">
-                    <div style="margin-top: -30px; margin-left: 10px;">
-                        <div class="user-name" style="font-size: 20px;">{{ user.username }}</div>
-                        <div class="user-email" style="font-size: 20px;">Email: {{ user.email }}</div>
-                        <div class="user-meta" style="font-size: 18px;">
-                            <span>โทรศัพท์: {{ user.phone }}</span>
+                        class="user-avatar" alt="User Avatar">
+                    <div class="user-status" [class.online]="user.status === 0" [class.banned]="user.status === 1">
+                    </div>
+                </div>
+                <div class="user-details">
+                    <h3 class="user-name">{{ user.username }}</h3>
+                    <div class="user-email">
+                        <i class="fa-solid fa-envelope"></i>
+                        {{ user.email }}
+                        </div>
+                    <div class="user-phone">
+                        <i class="fa-solid fa-phone"></i>
+                        {{ user.phone }}
                     </div>
                 </div>
             </div>
+            <div class="user-actions">
+                <button mat-flat-button class="action-button ban-button" (click)="toggleBanlist(user)">
+                    <i class="fa-solid fa-ban"></i>
+                    ระงับบัญชี
+            </button>
+            </div>
         </div>
-        <button mat-flat-button [style.background-color]="user.status === 0 ? 'green' : 'rgb(216, 57, 57)'"
-            (click)="toggleBanlist(user)">
-            {{ user.status === 0 ? 'ยกเลิกการระงับบัญชี' : 'ระงับบัญชี' }}
-        </button>
-        </div>
-        
     </div>
 
     <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>

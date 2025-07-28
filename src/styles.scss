@@ -1,4 +1,69 @@
 /* You can add global styles to this file, and also import other style files */
+
+/* ปรับแต่ง notification badge ให้เป็นจุดแดงเล็กๆ */
+.mat-badge-content {
+  background-color: #ff4444 !important;
+  color: transparent !important;
+  font-size: 0 !important;
+  font-weight: bold !important;
+  min-width: 8px !important;
+  height: 8px !important;
+  line-height: 8px !important;
+  border-radius: 50% !important;
+  border: 1px solid white !important;
+}
+
+/* Animation สำหรับ badge เมื่อมีจำนวนใหม่ */
+.mat-badge-content {
+  animation: badgePulse 0.6s ease-in-out;
+}
+
+@keyframes badgePulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* จุดแดงการแจ้งเตือนที่ไอคอน bell ทั่วทั้งแอป */
+.bell-icon-container {
+  position: relative;
+  display: inline-block;
+}
+
+.notification-dot {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 8px;
+  height: 8px;
+  background-color: #ff4444;
+  border-radius: 50%;
+  border: 1px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  animation: notificationPulse 2s infinite;
+  z-index: 1001;
+}
+
+@keyframes notificationPulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
 @import url('https://fonts.googleapis.com/css2?family=Itim&display=swap');
 
 html, body { height: 100%; }

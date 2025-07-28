@@ -1,5 +1,5 @@
-import { Component, OnInit, HostListener } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, OnInit, HostListener, OnDestroy } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -8,13 +8,14 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { combineLatest, filter, switchMap } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
 
 import { User } from '../../models/register_model';
 import { ProfileService } from '../../services/Profileservice';
 import { Postme } from '../../models/postme_model';
 import { ReactPostservice } from '../../services/ReactPostservice';
+import { NotificationService, NotificationCounts } from '../../services/notification.service';
 
 @Component({
   selector: 'app-profile-user',
@@ -32,7 +33,7 @@ import { ReactPostservice } from '../../services/ReactPostservice';
   templateUrl: './profile-user.component.html',
   styleUrls: ['./profile-user.component.scss'],
 })
-export class ProfileUserComponent implements OnInit {
+export class ProfileUserComponent implements OnInit, OnDestroy {
   userId: string = '';
   isLiked: boolean = false;
   isDrawerOpen: boolean = false; // เริ่มต้น Drawer ปิด
@@ -47,10 +48,31 @@ export class ProfileUserComponent implements OnInit {
   followingCount: number = 0;
   followedId: string = '';
   isMobile: boolean = false; // เพิ่มตัวแปรนี้
+  notificationCounts: NotificationCounts = {
+    like: 0,
+    follow: 0,
+    share: 0,
+    comment: 0,
+    unban: 0,
+    total: 0
+  };
+  private notificationSubscription?: Subscription;
 
-  constructor(private route: ActivatedRoute, private profileService: ProfileService, private reactPostservice: ReactPostservice,) { }
+  constructor(
+    private route: ActivatedRoute, 
+    private profileService: ProfileService, 
+    private reactPostservice: ReactPostservice, 
+    private notificationService: NotificationService,
+    private router: Router
+  ) { }
 
   ngOnInit(): void {
+    const loggedInUserId = localStorage.getItem('userId') || sessionStorage.getItem('userId');
+    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+    if (!loggedInUserId || !token) {
+      this.router.navigate(['/login'], { queryParams: { error: 'unauthorized' } });
+      return;
+    }
     this.checkScreenSize();
     // Subscribe เฉพาะ params ที่มี id และโหลดข้อมูล user/profile
     this.route.queryParams
@@ -73,12 +95,34 @@ export class ProfileUserComponent implements OnInit {
         this.getSharedPosts();
         this.getSavePosts();
         this.loadFollowCount();
+        
+        // เริ่มการติดตามการแจ้งเตือน
+        this.startNotificationTracking();
         },
         error => {
           this.isLoading = false;
           // handle error
       }
       );
+  }
+
+  // เริ่มการติดตามการแจ้งเตือน
+  private startNotificationTracking(): void {
+    if (this.userId) {
+      // โหลดการแจ้งเตือนครั้งแรก
+      this.notificationService.loadNotificationCounts(Number(this.userId));
+      
+      // เริ่มการอัปเดตอัตโนมัติ
+      this.notificationService.startAutoUpdate(Number(this.userId));
+      
+      // ติดตามการเปลี่ยนแปลงจำนวนการแจ้งเตือน
+      this.notificationSubscription = this.notificationService.notificationCounts$.subscribe(
+        (counts) => {
+          this.notificationCounts = counts;
+          console.log('Notification counts updated:', counts);
+        }
+      );
+    }
   }
 
   @HostListener('window:resize', ['$event'])
@@ -184,6 +228,28 @@ export class ProfileUserComponent implements OnInit {
       this.getSharedPosts();
       this.getSavePosts();
       this.loadFollowCount();
+    }
+  }
+
+  logout(): void {
+    localStorage.removeItem('userId');
+    localStorage.removeItem('token');
+    localStorage.removeItem('userRole');
+    localStorage.removeItem('currentUserId');
+    sessionStorage.removeItem('userId');
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('userRole');
+    sessionStorage.removeItem('currentUserId');
+    this.router.navigate(['/login']);
+  }
+
+  ngOnDestroy(): void {
+    // หยุดการติดตามการแจ้งเตือน
+    this.notificationService.stopAutoUpdate();
+    
+    // ยกเลิก subscription
+    if (this.notificationSubscription) {
+      this.notificationSubscription.unsubscribe();
     }
   }
 }

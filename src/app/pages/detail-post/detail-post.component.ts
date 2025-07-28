@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
+import { Component, ElementRef, OnInit, QueryList, ViewChild, ViewChildren, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterModule } from '@angular/router';
@@ -24,6 +24,8 @@ import { SharePostModel } from '../../models/sharepost_model';
 import { SavePostModel } from '../../models/savepost_service';
 import { ReportDialogComponent } from '../report-dialog/report-dialog.component';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { NotificationService, NotificationCounts } from '../../services/notification.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-detail-post',
@@ -33,7 +35,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
   templateUrl: './detail-post.component.html',
   styleUrls: ['./detail-post.component.scss']
 })
-export class DetailPostComponent implements OnInit {
+export class DetailPostComponent implements OnInit, OnDestroy {
   userId: string = '';
   commentOwnerId: string = '';
   postId: string = '';
@@ -59,14 +61,29 @@ export class DetailPostComponent implements OnInit {
   touchStartY = 0;
   touchEndY = 0;
   isMobile: boolean = false;
+  notificationCounts: NotificationCounts = {
+    like: 0,
+    follow: 0,
+    share: 0,
+    comment: 0,
+    unban: 0,
+    total: 0
+  };
+  private notificationSubscription?: Subscription;
 
   @ViewChild('commentInput') commentInput!: ElementRef;
   @ViewChildren(MatMenuTrigger) menuTriggers!: QueryList<MatMenuTrigger>;
 
 
-  constructor(private route: ActivatedRoute, private router: Router, private userService: UserService, private postService: PostService, private reactPostservice: ReactPostservice, public dialog: MatDialog) { }
+  constructor(private route: ActivatedRoute, private router: Router, private userService: UserService, private postService: PostService, private reactPostservice: ReactPostservice, public dialog: MatDialog, private notificationService: NotificationService) { }
 
   ngOnInit(): void {
+    const loggedInUserId = localStorage.getItem('userId') || sessionStorage.getItem('userId');
+    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+    if (!loggedInUserId || !token) {
+      this.router.navigate(['/login'], { queryParams: { error: 'unauthorized' } });
+      return;
+    }
     this.checkScreenSize();
     window.addEventListener('resize', this.onResize.bind(this));
     // ดึงค่าจาก Query Parameters เพียงครั้งเดียว
@@ -87,6 +104,8 @@ export class DetailPostComponent implements OnInit {
       if (params['user_id']) {
         this.userId = params['user_id'];
         console.log('User ID:', this.userId);
+        // เริ่มการติดตามการแจ้งเตือน
+        this.startNotificationTracking();
       } else {
         console.error('User ID not found in query parameters.');
       }
@@ -121,6 +140,33 @@ export class DetailPostComponent implements OnInit {
 
   ngOnDestroy(): void {
     window.removeEventListener('resize', this.onResize.bind(this));
+    
+    // หยุดการติดตามการแจ้งเตือน
+    this.notificationService.stopAutoUpdate();
+    
+    // ยกเลิก subscription
+    if (this.notificationSubscription) {
+      this.notificationSubscription.unsubscribe();
+    }
+  }
+
+  // เริ่มการติดตามการแจ้งเตือน
+  private startNotificationTracking(): void {
+    if (this.userId) {
+      // โหลดการแจ้งเตือนครั้งแรก
+      this.notificationService.loadNotificationCounts(Number(this.userId));
+      
+      // เริ่มการอัปเดตอัตโนมัติ
+      this.notificationService.startAutoUpdate(Number(this.userId));
+      
+      // ติดตามการเปลี่ยนแปลงจำนวนการแจ้งเตือน
+      this.notificationSubscription = this.notificationService.notificationCounts$.subscribe(
+        (counts) => {
+          this.notificationCounts = counts;
+          console.log('Notification counts updated:', counts);
+        }
+      );
+    }
   }
 
   checkScreenSize() {
@@ -584,6 +630,18 @@ export class DetailPostComponent implements OnInit {
     this.touchEndX = 0;
     this.touchStartY = 0;
     this.touchEndY = 0;
+  }
+
+  logout() {
+    localStorage.removeItem('userId');
+    localStorage.removeItem('token');
+    localStorage.removeItem('userRole');
+    localStorage.removeItem('currentUserId');
+    sessionStorage.removeItem('userId');
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('userRole');
+    sessionStorage.removeItem('currentUserId');
+    this.router.navigate(['/login']);
   }
 
 }

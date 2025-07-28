@@ -26,6 +26,41 @@ body {
   background-color: rgb(249, 241, 239);
 }
 
+/* จุดแดงการแจ้งเตือนที่ไอคอน bell */
+.bell-icon-container {
+  position: relative;
+  display: inline-block;
+}
+
+.notification-dot {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 8px;
+  height: 8px;
+  background-color: #ff4444;
+  border-radius: 50%;
+  border: 1px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  animation: notificationPulse 2s infinite;
+  z-index: 1001;
+}
+
+@keyframes notificationPulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
 .drawer {
   position: fixed;
   top: 0;

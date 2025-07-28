@@ -67,12 +67,15 @@
         </div>
     </div>
     <div>
-        <!-- Search Container -->
-        <div style="display: flex; margin-top: 100px; justify-content: center; margin-bottom: 30px;">
-            <div class="search-container">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" class="search-input" [(ngModel)]="searchQuery" (input)="onSearch()"
-                    (keyup.enter)="onSearch()" placeholder="ค้นหาโพสต์...">
+        <div style="display: flex; justify-content: center; margin-bottom: 30px; margin-top: 100px;">
+            <div class="search-wrapper">
+                <div class="search-container">
+                    <input type="text" class="search-input" [(ngModel)]="searchQuery" (input)="onSearch()"
+                        (keyup.enter)="onSearch()" placeholder="ค้นหาโพสต์...">
+                    <button class="search-btn" (click)="onSearch()" aria-label="ค้นหา">
+                        <i class="fa-solid fa-search"></i>
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -91,7 +94,7 @@
             <div *ngIf="posts.length > 0" class="post-grid">
                 <div *ngFor="let post of posts" class="post-card">
                     <div class="profile-row">
-                        <img [src]="post.user_profile_image" alt="Profile Image">
+                        <img [src]="post.user_profile_image || 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'" alt="Profile Image">
                         <div class="profile-info">
                             <span class="user-name">{{ post.user_name }}</span>
                             <span class="post-time">{{ post.post_time | timeAgo }}</span>

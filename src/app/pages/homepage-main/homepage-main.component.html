@@ -41,12 +41,10 @@
                         <!-- แสดงรูปภาพหรือวิดีโอ -->
                         <a (click)="onHeartClick()">
                             <ng-container *ngIf="post.media_type === 'image'; else videoTemplate">
-                                <img [src]="post.media_url"
-                                    class="imgpost" alt="รูปที่โพสต์">
+                                <img [src]="post.media_url" class="imgpost" alt="รูปที่โพสต์">
                             </ng-container>
                             <ng-template #videoTemplate>
-                                <video [src]="post.media_url" controls
-                                    class="imgpost">
+                                <video [src]="post.media_url" controls class="imgpost">
                                 </video>
                             </ng-template>
                         </a>
@@ -150,6 +148,7 @@
                 </a>
             </li>
         </ul>
-        <button mat-flat-button style="background-color: rgb(226, 124, 150); width: 100px;" (click)="toggleDrawer()">ปิด</button>
+        <button mat-flat-button style="background-color: rgb(226, 124, 150); width: 100px;"
+            (click)="toggleDrawer()">ปิด</button>
     </div>
 </div>

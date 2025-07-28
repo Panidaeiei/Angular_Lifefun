@@ -20,7 +20,7 @@ export class HomepageAdminComponent {
   isDrawerOpen: boolean = false; 
   posts: ShowPost[] = [];
 
-  constructor(private route: ActivatedRoute,private postService: PostService) {}
+  constructor(private route: ActivatedRoute, private postService: PostService, private router: Router) {}
 
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
@@ -61,6 +61,18 @@ export class HomepageAdminComponent {
   
   toggleDrawer(): void {
     this.isDrawerOpen = !this.isDrawerOpen; // สลับสถานะเปิด/ปิด
+  }
+
+  logout() {
+    localStorage.removeItem('userId');
+    localStorage.removeItem('token');
+    localStorage.removeItem('userRole');
+    localStorage.removeItem('currentUserId');
+    sessionStorage.removeItem('userId');
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('userRole');
+    sessionStorage.removeItem('currentUserId');
+    this.router.navigate(['/login']);
   }
 
 }

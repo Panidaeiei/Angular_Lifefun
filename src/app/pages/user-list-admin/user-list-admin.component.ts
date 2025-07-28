@@ -28,9 +28,15 @@ export class UserListAdminComponent {
   isSearchPerformed: boolean = false;
   filteredUsers: any[] = [];
 
-  constructor(private route: ActivatedRoute, private userService: UserService, private adminservice: AdminService) { }
+  constructor(private route: ActivatedRoute, private userService: UserService, private adminservice: AdminService, private router: Router) { }
 
   ngOnInit() {
+    const adminId = localStorage.getItem('adminId') || sessionStorage.getItem('adminId');
+    const adminToken = localStorage.getItem('adminToken') || sessionStorage.getItem('adminToken');
+    if (!adminId || !adminToken) {
+      this.router.navigate(['/login'], { queryParams: { error: 'unauthorized' } });
+      return;
+    }
     this.route.queryParams.subscribe(params => {
       this.userId = params['id']; // ดึง ID จาก Query Parameters
       console.log('User ID:', this.userId);
@@ -38,10 +44,17 @@ export class UserListAdminComponent {
 
     this.userService.getUsers().subscribe({
       next: (data) => {
-        this.users = data.filter(user => user.status !== 0); 
-        this.filteredUsers = this.users; 
+        this.users = data.filter(user => user.status !== 0);
+        this.filteredUsers = this.users;
+        if (this.users.length === 0) {
+          this.errorMessage = 'ไม่พบผู้ใช้งาน';
+        } else {
+          this.errorMessage = '';
+        }
       },
-      error: (error) => this.errorMessage = error.message
+      error: (error) => {
+        this.errorMessage = 'Unauthorized';
+      }
     });
 
   }
@@ -83,6 +96,7 @@ export class UserListAdminComponent {
         this.adminservice.unbanUser(user.uid).subscribe({
           next: (response) => {
             user.status = 1;  // เปลี่ยนสถานะผู้ใช้เป็นปกติ
+            this.filteredUsers = this.users.filter(u => u.status !== 0);
             console.log('ยกเลิกการระงับบัญชี:', response);
           },
           error: (error) => {
@@ -96,7 +110,11 @@ export class UserListAdminComponent {
         this.adminservice.banUser(user.uid, 'โพสต์เนื้อหาที่ไม่เหมาะสม', '2025-12-31').subscribe({
           next: (response) => {
             user.status = 0;  // เปลี่ยนสถานะผู้ใช้เป็นระงับ
+            this.filteredUsers = this.users.filter(u => u.status !== 0);
             console.log('บัญชีผู้ใช้ถูกระงับ:', response);
+            // นำทางไปหน้า userban พร้อมส่ง id (adminId)
+            const adminId = localStorage.getItem('adminId') || sessionStorage.getItem('adminId');
+            this.router.navigate(['/userban'], { queryParams: { id: adminId } });
           },
           error: (error) => {
             console.error('เกิดข้อผิดพลาด:', error);
@@ -106,4 +124,13 @@ export class UserListAdminComponent {
     }
   }
 
+  logout() {
+    localStorage.removeItem('adminId');
+    localStorage.removeItem('adminRole');
+    localStorage.removeItem('adminToken');
+    sessionStorage.removeItem('adminId');
+    sessionStorage.removeItem('adminRole');
+    sessionStorage.removeItem('adminToken');
+    this.router.navigate(['/login']);
+  }
 }

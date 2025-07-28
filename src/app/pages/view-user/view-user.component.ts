@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -8,6 +8,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { Subscription } from 'rxjs';
 
 import { User } from '../../models/register_model';
 import { ProfileService } from '../../services/Profileservice';
@@ -16,6 +17,7 @@ import { Follow } from '../../models/follow.model';
 import { ReactPostservice } from '../../services/ReactPostservice';
 import { UserService } from '../../services/Userservice';
 import { ChatService } from '../../services/chat.service';
+import { NotificationService, NotificationCounts } from '../../services/notification.service';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -33,7 +35,16 @@ import { FormsModule } from '@angular/forms';
   styleUrls: ['./view-user.component.scss']
 })
 export class ViewUserComponent implements OnInit, OnDestroy {
-  constructor(private route: ActivatedRoute, private profileService: ProfileService, private reactPostservice: ReactPostservice,private userService: UserService, private cdr: ChangeDetectorRef, private chatService: ChatService) { }
+  constructor(
+    private route: ActivatedRoute, 
+    private profileService: ProfileService, 
+    private reactPostservice: ReactPostservice,
+    private userService: UserService, 
+    private cdr: ChangeDetectorRef, 
+    private chatService: ChatService, 
+    private notificationService: NotificationService,
+    private router: Router
+  ) { }
 
   userId: string = '';
   cid: string = '';
@@ -61,8 +72,23 @@ export class ViewUserComponent implements OnInit, OnDestroy {
   previewUrl: string | null = null;
   previewType: 'image' | 'video' | null = null;
   hoveredMsgIndex: number | null = null;
+  notificationCounts: NotificationCounts = {
+    like: 0,
+    follow: 0,
+    share: 0,
+    comment: 0,
+    unban: 0,
+    total: 0
+  };
+  private notificationSubscription?: Subscription;
 
   ngOnInit(): void {
+    const loggedInUserId = localStorage.getItem('userId') || sessionStorage.getItem('userId');
+    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+    if (!loggedInUserId || !token) {
+      this.router.navigate(['/login'], { queryParams: { error: 'unauthorized' } });
+      return;
+    }
     this.userService.loadCurrentUserId(); // โหลด userId จาก localStorage เข้า BehaviorSubject
     this.userService.getCurrentUserId().subscribe((userId) => {
       this.currentUserId = userId;
@@ -90,26 +116,11 @@ export class ViewUserComponent implements OnInit, OnDestroy {
       if (this.userId) {
         this.loadUserProfile();
         this.loadUserPosts();
+        
+        // เริ่มการติดตามการแจ้งเตือน
+        this.startNotificationTracking();
       } else {
         console.warn('User ID not found in path parameters.');
-      }
-    });
-
-    this.route.paramMap.subscribe((params) => {
-      this.cid = params.get('cid') || '';
-
-      if (params.get('userId')) {
-        this.followedId = params.get('userId') || '';  // ให้ followedId เป็น userId ของโปรไฟล์ที่กำลังดู
-        console.log('Followed ID (โปรไฟล์ที่กำลังดูอยู่):', this.followedId);
-      }
-    });
-
-    this.route.queryParams.subscribe((params) => {
-      this.Profileuser = params['Profileuser'] || '';
-      console.log('Profileuser ID (เจ้าของโปรไฟล์ที่ต้องติดตาม):', this.Profileuser);
-
-      if (this.Profileuser) {
-        this.followedId = this.Profileuser;
       }
     });
 
@@ -118,6 +129,10 @@ export class ViewUserComponent implements OnInit, OnDestroy {
       this.Profileuser = params['Profileuser'] || '';  // รับค่า viewerId จาก query parameter
       console.log('Profileuser ID (เจ้าของโปรไฟล์):', this.Profileuser);  // แสดง viewerId
       if (this.Profileuser) {
+        // เซ็ต followedId เป็น Profileuser เพื่อใช้ในการติดตาม
+        this.followedId = this.Profileuser;
+        console.log('Followed ID set to:', this.followedId);
+        
         // ดึงข้อมูลของเจ้าของโปรไฟล์
         this.checkFollowStatus();
         this.loadFollowCount();
@@ -130,7 +145,34 @@ export class ViewUserComponent implements OnInit, OnDestroy {
     window.addEventListener('resize', this.checkScreen.bind(this));
   }
 
+  // เริ่มการติดตามการแจ้งเตือน
+  private startNotificationTracking(): void {
+    if (this.userId) {
+      // โหลดการแจ้งเตือนครั้งแรก
+      this.notificationService.loadNotificationCounts(Number(this.userId));
+      
+      // เริ่มการอัปเดตอัตโนมัติ
+      this.notificationService.startAutoUpdate(Number(this.userId));
+      
+      // ติดตามการเปลี่ยนแปลงจำนวนการแจ้งเตือน
+      this.notificationSubscription = this.notificationService.notificationCounts$.subscribe(
+        (counts) => {
+          this.notificationCounts = counts;
+          console.log('Notification counts updated:', counts);
+        }
+      );
+    }
+  }
+
   ngOnDestroy(): void {
+    // หยุดการติดตามการแจ้งเตือน
+    this.notificationService.stopAutoUpdate();
+    
+    // ยกเลิก subscription
+    if (this.notificationSubscription) {
+      this.notificationSubscription.unsubscribe();
+    }
+    
     window.removeEventListener('resize', this.checkScreen.bind(this));
   }
 
@@ -174,8 +216,8 @@ export class ViewUserComponent implements OnInit, OnDestroy {
   }
 
   toggleFollow(): void {
-    if (!this.followedId) {
-      console.error('Followed ID ไม่ถูกต้อง:', this.followedId);
+    if (!this.Profileuser) {
+      console.error('Profileuser ไม่ถูกต้อง:', this.Profileuser);
       return;
     }
   
@@ -186,12 +228,14 @@ export class ViewUserComponent implements OnInit, OnDestroy {
     if (confirm(confirmMessage)) { //แสดงป๊อปอัปยืนยัน
       const followData: Follow = {
         following_id: this.userId,
-        followed_id: this.followedId
+        followed_id: this.Profileuser
       };
   
+      console.log('Toggling follow with data:', followData);
       this.reactPostservice.toggleFollow(followData).subscribe(
         (response) => {
           this.isFollowing = response.isFollowing;
+          console.log('Follow toggled, new status:', this.isFollowing);
           this.loadFollowCount(); //โหลดจำนวนติดตามใหม่
         },
         (error) => {
@@ -204,11 +248,16 @@ export class ViewUserComponent implements OnInit, OnDestroy {
 
   //ตรวจสอบสถานะการติดตาม
   checkFollowStatus(): void {
-    if (!this.userId || !this.followedId) return;
+    if (!this.userId || !this.Profileuser) {
+      console.warn('userId or Profileuser is not set, cannot check follow status');
+      return;
+    }
 
-    this.reactPostservice.checkFollowStatus(this.userId, this.followedId).subscribe(
+    console.log('Checking follow status for userId:', this.userId, 'Profileuser:', this.Profileuser);
+    this.reactPostservice.checkFollowStatus(this.userId, this.Profileuser).subscribe(
       (response) => {
         this.isFollowing = response.isFollowing;
+        console.log('Follow status:', this.isFollowing);
       },
       (error) => {
         console.error('Error fetching follow status:', error);
@@ -218,12 +267,17 @@ export class ViewUserComponent implements OnInit, OnDestroy {
 
   //โหลดจำนวน Followers & Following
   loadFollowCount(): void {
-    if (!this.followedId) return;
+    if (!this.Profileuser) {
+      console.warn('Profileuser is not set, cannot load follow count');
+      return;
+    }
 
-    this.reactPostservice.getFollowCount(this.followedId).subscribe(
+    console.log('Loading follow count for Profileuser:', this.Profileuser);
+    this.reactPostservice.getFollowCount(this.Profileuser).subscribe(
       (response) => {
         this.followersCount = response.followers;
         this.followingCount = response.following;
+        console.log('Follow count loaded:', { followers: this.followersCount, following: this.followingCount });
       },
       (error) => {
         console.error('Error fetching follow count:', error);
@@ -378,5 +432,17 @@ export class ViewUserComponent implements OnInit, OnDestroy {
     const prevTime = new Date(prev.create_at).getTime();
     const currTime = new Date(curr.create_at).getTime();
     return (currTime - prevTime) > 5 * 60 * 1000;
+  }
+
+  logout(): void {
+    localStorage.removeItem('userId');
+    localStorage.removeItem('token');
+    localStorage.removeItem('userRole');
+    localStorage.removeItem('currentUserId');
+    sessionStorage.removeItem('userId');
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('userRole');
+    sessionStorage.removeItem('currentUserId');
+    this.router.navigate(['/login']);
   }
 }

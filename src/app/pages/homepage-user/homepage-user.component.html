@@ -17,11 +17,15 @@
       <i class="fa-solid fa-users"></i>
       <span class="itim-regular">ติดตาม</span>
     </a>
-    <a class="add-post-btn" [routerLink]="['/CreatePost']" [queryParams]="{ id: this.currentUserId}" matTooltip="เพิ่มโพสต์">
+    <a class="add-post-btn" [routerLink]="['/CreatePost']" [queryParams]="{ id: this.currentUserId}"
+      matTooltip="เพิ่มโพสต์">
       <i class="fa-solid fa-plus"></i>
     </a>
     <a class="menu-item" [routerLink]="['/Notification_user']" [queryParams]="{ id: this.currentUserId }">
-      <i class="fa-solid fa-bell"></i>
+      <div class="bell-icon-container">
+        <i class="fa-solid fa-bell"></i>
+        <div class="notification-dot" *ngIf="notificationCounts.total > 0"></div>
+      </div>
       <span class="itim-regular">การแจ้งเตือน</span>
     </a>
     <a class="menu-item" [routerLink]="['/ProfileUser']" [queryParams]="{ id: this.currentUserId }">
@@ -69,7 +73,10 @@
       </li>
       <li>
         <a [routerLink]="['/Notification_user']" [queryParams]="{ id: this.currentUserId }">
-          <i class="fa-solid fa-bell"></i>
+          <div class="bell-icon-container">
+            <i class="fa-solid fa-bell"></i>
+            <div class="notification-dot" *ngIf="notificationCounts.total > 0"></div>
+          </div>
           <span class="itim-regular">การแจ้งเตือน</span>
         </a>
       </li>
@@ -95,7 +102,7 @@
       </li>
       <!-- ออกจากระบบ -->
       <li>
-        <a href="/">
+        <a (click)="logout()" style="cursor:pointer;">
           <i class="fa fa-sign-out"></i>
           <span class="itim-regular">ออกจากระบบ</span>
         </a>
@@ -138,8 +145,8 @@
                 {{ post.title | slice:0:15 }}{{ post.title.length > 15 ? '...' : '' }}
               </span>
               <div style="display: flex; align-items: center; justify-content: space-between; margin-right: 10px;">
-                <a (click)="viewPost(post.post_id.toString()) "
-                  class="hover-link" style="color: #e96e7e; font-size: 20px; text-decoration: none;">
+                <a (click)="viewPost(post.post_id.toString()) " class="hover-link"
+                  style="color: #e96e7e; font-size: 20px; text-decoration: none;">
                   View
                 </a>
                 <span style="margin-left: 5px; color: rgb(168, 168, 168); margin-top: 5px;">{{
@@ -151,8 +158,9 @@
             <div
               style="display: flex; flex-direction: row; margin-left: 15px; margin-right: 15px; margin-top: 35px; gap: 10px; justify-content: space-between;">
               <div style="display: flex; align-items: center; gap: 10px;">
-                <img [src]="post.user_profile_image || 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'" alt="รูปโปรไฟล์"
-                  style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;"
+                <img
+                  [src]="post.user_profile_image || 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'"
+                  alt="รูปโปรไฟล์" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;"
                   (click)="goToProfile(post.user_uid.toString())">
                 <div style="display: flex; flex-direction: column;">
                   <span style="font-weight: 600; font-size: 20px;">

@@ -3,7 +3,7 @@
     <a [routerLink]="['/HomepageUser']" [queryParams]="{ id: userId }">
         <img src="../../../assets/images/Logoweb.png" alt="Home Icon">
     </a>
-    
+
     <!-- เมนูตรงกลาง -->
     <div class="center-menu" *ngIf="!isMobile">
         <a class="menu-item" [routerLink]="['/HomepageUser']" [queryParams]="{ id: userId}">
@@ -26,7 +26,7 @@
             <span class="itim-regular">โปรไฟล์</span>
         </a>
     </div>
-    
+
     <!-- เมนูขวาสุด -->
     <div class="toolbar-actions">
         <a [routerLink]="['/search_users']" [queryParams]="{ id: userId }">
@@ -89,7 +89,7 @@
                 </a>
             </li>
             <li>
-                <a href="/">
+                <a (click)="logout()" style="cursor:pointer;">
                     <i class="fa fa-sign-out"></i>
                     <span class="itim-regular">ออกจากระบบ</span>
                 </a>
@@ -103,67 +103,72 @@
 
 <div class="main-container">
 
-  <div style="display: flex; justify-content: center; margin-bottom: 30px;">
-    <div class="search-wrapper">
-        <div class="search-container">
-            <input type="text" class="search-input" [(ngModel)]="searchQuery" (input)="onSearch()" (keyup.enter)="onSearch()" placeholder="ค้นหาโพสต์...">
-            <button class="search-btn" (click)="onSearch()" aria-label="ค้นหา">
-                <i class="fa-solid fa-search"></i>
-            </button>
+    <div style="display: flex; justify-content: center; margin-bottom: 30px;">
+        <div class="search-wrapper">
+            <div class="search-container">
+                <input type="text" class="search-input" [(ngModel)]="searchQuery" (input)="onSearch()"
+                    (keyup.enter)="onSearch()" placeholder="ค้นหาโพสต์...">
+                <button class="search-btn" (click)="onSearch()" aria-label="ค้นหา">
+                    <i class="fa-solid fa-search"></i>
+                </button>
+            </div>
         </div>
     </div>
-</div>
 
-  <div class="modern-tabs">
-    <a class="tab" [routerLink]="['/search_users']" [queryParams]="{ id: userId }" routerLinkActive="active">บัญชีผู้ใช้งาน</a>
-    <a class="tab" [routerLink]="['/stest']" [queryParams]="{ id: userId }" routerLinkActive="active">โพสต์</a>
-  </div>
-
-  <div *ngIf="loading" class="loading">⏳ กำลังค้นหา...</div>
-
-  <div *ngIf="posts.length > 0">
-    <div class="post-grid">
-      <div *ngFor="let post of posts" class="post-card">
-        <div class="profile-row">
-          <img [src]="post.user_profile_image" alt="Profile Image">
-          <div class="profile-info">
-            <span class="user-name">{{ post.user_name }}</span>
-            <span class="post-time">{{post.post_time | timeAgo}}</span>
-          </div>
-        </div>
-        
-        <div class="media-container">
-          <a [routerLink]="['/detail_post']" [queryParams]="{ post_id: post.post_id, user_id: userId }">
-            <img *ngIf="post.media_type === 'image'" [src]="post.media_url" alt="Post Image">
-          </a>
-          <a [routerLink]="['/detail_post']" [queryParams]="{ post_id: post.post_id, user_id: userId }">
-            <video *ngIf="post.media_type === 'video'" [src]="post.media_url" controls></video>
-          </a>
-          <div *ngIf="post.hasMultipleMedia" class="multiple-media-icon">
-            <i class="fa fa-clone" style="font-size: 24px; color: white;"></i>
-          </div>
-        </div>
-        
-        <div class="like-row">
-          <span style="font-size: 25px;">♥️</span>
-          <span style="font-size: 20px; margin-left: 5px;">{{ post.likes_count != null ? post.likes_count : 0 }}</span>
-        </div>
-        
-        <div class="post-content">
-          <p class="post-title">
-            {{ showFull[post.post_id.toString()] ? post.title : (post.title | slice:0:90) + (post.title.length > 90 ? '...' : '') }}
-          </p>
-          <button *ngIf="post.title.length > 40" class="show-more-btn" (click)="toggleShowFull(post.post_id.toString())">
-            {{ showFull[post.post_id.toString()] ? 'ย่อข้อความ' : 'อ่านเพิ่มเติม' }}
-          </button>
-        </div>
-      </div>
+    <div class="modern-tabs">
+        <a class="tab" [routerLink]="['/search_users']" [queryParams]="{ id: userId }"
+            routerLinkActive="active">บัญชีผู้ใช้งาน</a>
+        <a class="tab" [routerLink]="['/stest']" [queryParams]="{ id: userId }" routerLinkActive="active">โพสต์</a>
     </div>
-  </div>
 
-  <div *ngIf="posts.length === 0 && searchQuery.trim() !== ''" class="no-results">
-    <p>ไม่พบโพสต์ที่เกี่ยวข้อง</p>
-  </div>
-  
-  <div style="height: 30px;"></div>
+    <div *ngIf="loading" class="loading">⏳ กำลังค้นหา...</div>
+
+    <div *ngIf="posts.length > 0">
+        <div class="post-grid">
+            <div *ngFor="let post of posts" class="post-card">
+                <div class="profile-row">
+                    <img [src]="post.user_profile_image || 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'" alt="Profile Image">
+                    <div class="profile-info">
+                        <span class="user-name">{{ post.user_name }}</span>
+                        <span class="post-time">{{post.post_time | timeAgo}}</span>
+                    </div>
+                </div>
+
+                <div class="media-container">
+                    <a [routerLink]="['/detail_post']" [queryParams]="{ post_id: post.post_id, user_id: userId }">
+                        <img *ngIf="post.media_type === 'image'" [src]="post.media_url" alt="Post Image">
+                    </a>
+                    <a [routerLink]="['/detail_post']" [queryParams]="{ post_id: post.post_id, user_id: userId }">
+                        <video *ngIf="post.media_type === 'video'" [src]="post.media_url" controls></video>
+                    </a>
+                    <div *ngIf="post.hasMultipleMedia" class="multiple-media-icon">
+                        <i class="fa fa-clone" style="font-size: 24px; color: white;"></i>
+                    </div>
+                </div>
+
+                <div class="like-row">
+                    <span style="font-size: 25px;">♥️</span>
+                    <span style="font-size: 20px; margin-left: 5px;">{{ post.likes_count != null ? post.likes_count : 0
+                        }}</span>
+                </div>
+
+                <div class="post-content">
+                    <p class="post-title">
+                        {{ showFull[post.post_id.toString()] ? post.title : (post.title | slice:0:90) +
+                        (post.title.length > 90 ? '...' : '') }}
+                    </p>
+                    <button *ngIf="post.title.length > 40" class="show-more-btn"
+                        (click)="toggleShowFull(post.post_id.toString())">
+                        {{ showFull[post.post_id.toString()] ? 'ย่อข้อความ' : 'อ่านเพิ่มเติม' }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div *ngIf="posts.length === 0 && searchQuery.trim() !== ''" class="no-results">
+        <p>ไม่พบโพสต์ที่เกี่ยวข้อง</p>
+    </div>
+
+    <div style="height: 30px;"></div>
 </div>

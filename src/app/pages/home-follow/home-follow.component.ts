@@ -1,4 +1,4 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterModule } from '@angular/router';
@@ -11,8 +11,10 @@ import { UserService } from '../../services/Userservice';
 import { PostService } from '../../services/Postservice';
 import { ShowPost } from '../../models/showpost_model';
 import { ReactPostservice } from '../../services/ReactPostservice';
+import { NotificationService, NotificationCounts } from '../../services/notification.service';
 import { filter } from 'rxjs/operators';
 import { TimeAgoPipe } from '../../pipes/time-ago.pipe';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-home-follow',
@@ -20,7 +22,7 @@ import { TimeAgoPipe } from '../../pipes/time-ago.pipe';
   templateUrl: './home-follow.component.html',
   styleUrl: './home-follow.component.scss'
 })
-export class HomeFollowComponent {
+export class HomeFollowComponent implements OnDestroy {
   currentUserId: string | null = null;
   userId: string = '';
   isLiked: boolean = false;
@@ -30,10 +32,32 @@ export class HomeFollowComponent {
   postId: string = '';
   viewPosts: any[] = [];
   isMobile: boolean = false; // เพิ่มตัวแปรนี้
+  notificationCounts: NotificationCounts = {
+    like: 0,
+    follow: 0,
+    share: 0,
+    comment: 0,
+    unban: 0,
+    total: 0
+  };
+  private notificationSubscription?: Subscription;
 
-   constructor(private route: ActivatedRoute, private userService: UserService, private postService: PostService, private likePostService: ReactPostservice, private router: Router) { }
+   constructor(
+    private route: ActivatedRoute, 
+    private userService: UserService, 
+    private postService: PostService, 
+    private likePostService: ReactPostservice, 
+    private notificationService: NotificationService,
+    private router: Router
+  ) { }
 
   ngOnInit(): void {
+    const loggedInUserId = localStorage.getItem('userId') || sessionStorage.getItem('userId');
+    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+    if (!loggedInUserId || !token) {
+      this.router.navigate(['/login'], { queryParams: { error: 'unauthorized' } });
+      return;
+    }
     this.checkScreenSize(); // ตรวจสอบขนาดหน้าจอเมื่อเริ่มต้น
     
     // ตรวจสอบ query parameters จาก snapshot ก่อน
@@ -85,6 +109,28 @@ export class HomeFollowComponent {
         console.error('Error loading views:', err);
       }
     });
+
+    // เริ่มการติดตามการแจ้งเตือน
+    this.startNotificationTracking();
+  }
+
+  // เริ่มการติดตามการแจ้งเตือน
+  private startNotificationTracking(): void {
+    if (this.userId) {
+      // โหลดการแจ้งเตือนครั้งแรก
+      this.notificationService.loadNotificationCounts(Number(this.userId));
+      
+      // เริ่มการอัปเดตอัตโนมัติ
+      this.notificationService.startAutoUpdate(Number(this.userId));
+      
+      // ติดตามการเปลี่ยนแปลงจำนวนการแจ้งเตือน
+      this.notificationSubscription = this.notificationService.notificationCounts$.subscribe(
+        (counts) => {
+          this.notificationCounts = counts;
+          console.log('Notification counts updated:', counts);
+        }
+      );
+    }
   }
 
   @HostListener('window:resize', ['$event'])
@@ -193,5 +239,27 @@ export class HomeFollowComponent {
 
   toggleDrawer(): void {
     this.isDrawerOpen = !this.isDrawerOpen; // สลับสถานะเปิด/ปิด
+  }
+
+  logout() {
+    localStorage.removeItem('userId');
+    localStorage.removeItem('token');
+    localStorage.removeItem('userRole');
+    localStorage.removeItem('currentUserId');
+    sessionStorage.removeItem('userId');
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('userRole');
+    sessionStorage.removeItem('currentUserId');
+    this.router.navigate(['/login']);
+  }
+
+  ngOnDestroy(): void {
+    // หยุดการติดตามการแจ้งเตือน
+    this.notificationService.stopAutoUpdate();
+    
+    // ยกเลิก subscription
+    if (this.notificationSubscription) {
+      this.notificationSubscription.unsubscribe();
+    }
   }
 }

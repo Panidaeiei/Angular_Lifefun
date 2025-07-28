@@ -174,17 +174,28 @@ export class RegisterComponent {
       });
       return;
     }
-  
-    // ตรวจสอบว่าเบอร์โทรศัพท์ต้องเป็นตัวเลข 10 หลัก
-    const phoneRegex = /^[0-9]{10}$/;
-    if (!phoneRegex.test(this.userData.phone)) {
+    
+    // ลบช่องว่างและเครื่องหมาย - ออกก่อนตรวจสอบ
+    const cleanPhone = this.userData.phone.replace(/[\s\-]/g, '');
+    
+    // ตรวจสอบรูปแบบเบอร์มือถือ (06, 08, 09)
+    const mobilePhoneRegex = /^(0[689][0-9]{8})$/;
+    if (!mobilePhoneRegex.test(cleanPhone)) {
       Swal.fire({
         icon: 'warning',
-        text: 'เบอร์โทรศัพท์ต้องเป็นตัวเลข 10 หลัก!',
+        title: 'กรุณากรอกเบอร์มือถือเท่านั้น',
+        html: `
+          <div style="text-align: left;">
+            <p>กรุณากรอกเบอร์มือถือในรูปแบบที่ถูกต้อง (10 หลัก)</p>
+          </div>
+        `,
         confirmButtonText: 'ตกลง'
       });
       return;
     }
+    
+    // อัปเดตเบอร์โทรศัพท์ให้เป็นรูปแบบที่สะอาด
+    this.userData.phone = cleanPhone;
     
     // ตรวจสอบว่า username เป็นไปตามเงื่อนไข
     const usernameRegex = /^[a-zA-Z0-9._]{1,30}$/; // เงื่อนไข username
@@ -196,8 +207,6 @@ export class RegisterComponent {
       });
       return;
     }
-  
-    console.log('Data to be sent:', this.userData); // ตรวจสอบข้อมูลที่กำลังส่ง
   
     // เริ่ม loading
     this.isLoading = true;

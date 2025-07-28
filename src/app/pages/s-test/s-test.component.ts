@@ -31,24 +31,31 @@ export class STestComponent {
   activeTab: string = 'post';
   isMobile: boolean = false; 
 
-  constructor(private postService: PostService, private router: ActivatedRoute,) { }
+  constructor(private postService: PostService, private route: ActivatedRoute, private router: Router) { }
 
   ngOnInit(): void {
-    this.router.queryParams.subscribe((params) => {
+    const loggedInUserId = localStorage.getItem('userId') || sessionStorage.getItem('userId');
+    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+    if (!loggedInUserId || !token) {
+      this.router.navigate(['/login'], { queryParams: { error: 'unauthorized' } });
+      return;
+    }
+    this.route.queryParams.subscribe((params) => {
       if (params['id']) {
         this.userId = params['id'];
         console.log('User ID set from queryParams:', this.userId);
-
       } else {
         console.error('User ID not found in queryParams.');
-
       }
-
     });
 
     this.postService.getPosts().subscribe((data: any[]) => {
-      this.allPosts = data;
-      this.posts = data;
+      // กรองโพสต์ที่ post_id ซ้ำ
+      const uniquePosts = data.filter((value, index, self) =>
+        index === self.findIndex((t) => t.post_id === value.post_id)
+      );
+      this.allPosts = uniquePosts;
+      this.posts = uniquePosts;
     });
   }
 
@@ -61,7 +68,11 @@ export class STestComponent {
     this.loading = true;
     this.postService.searchPosts(this.searchQuery).subscribe({
       next: (data) => {
-        this.posts = data;
+        // กรองโพสต์ที่ post_id ซ้ำ
+        const uniquePosts = data.filter((value, index, self) =>
+          index === self.findIndex((t) => t.post_id === value.post_id)
+        );
+        this.posts = uniquePosts;
         this.loading = false;
       },
       error: (error) => {
@@ -77,5 +88,17 @@ export class STestComponent {
 
   toggleShowFull(postId: string) {
     this.showFull[postId] = !this.showFull[postId];
+  }
+  
+  logout(): void {
+    localStorage.removeItem('userId');
+    localStorage.removeItem('token');
+    localStorage.removeItem('userRole');
+    localStorage.removeItem('currentUserId');
+    sessionStorage.removeItem('userId');
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('userRole');
+    sessionStorage.removeItem('currentUserId');
+    this.router.navigate(['/login']);
   }
 }

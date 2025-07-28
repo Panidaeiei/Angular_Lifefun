@@ -24,6 +24,14 @@ export class UserService {
     return this.currentUserIdSubject.asObservable();
   }
 
+  getCurrentUser(): Observable<User> {
+    const userId = localStorage.getItem('userId') || sessionStorage.getItem('userId');
+    if (!userId) {
+      return throwError(() => new Error('No userId found'));
+    }
+    return this.getUserById(userId);
+  }
+
   loadCurrentUserId(): void {
     const storedUserId = localStorage.getItem('currentUserId');
     if (storedUserId) {
@@ -38,7 +46,10 @@ export class UserService {
   }
 
   getUsers(): Observable<User[]> {
-    const token = localStorage.getItem('token');
+    // ดึง token ตาม role
+    const adminToken = localStorage.getItem('adminToken') || sessionStorage.getItem('adminToken');
+    const userToken = localStorage.getItem('token') || sessionStorage.getItem('token');
+    const token = adminToken || userToken;
     if (!token) {
       return throwError(() => new Error('Unauthorized'));
     }
@@ -52,7 +63,6 @@ export class UserService {
       })
     );
   }
-
 
   // ดึงข้อมูลผู้ใช้
   getUserById(userId: string): Observable<User> {
@@ -79,7 +89,7 @@ export class UserService {
       console.error('No token found');
       return throwError(() => new Error('Unauthorized: Token not found in LocalStorage'));
     }
-  
+
     const headers = new HttpHeaders({
       Authorization: `Bearer ${token}`,
     });
@@ -89,7 +99,7 @@ export class UserService {
     formData.forEach((value, key) => {
       console.log(`📤 ${key}:`, value);
     });
-  
+
     return this.http.put(`${this.baseUrl}/edit_user`, formData, { headers, responseType: 'json' }).pipe(
       tap((response) => {
         console.log('📥 Raw response from backend:', response);
@@ -100,13 +110,13 @@ export class UserService {
         console.log('📌 Error statusText:', error.statusText);
         console.log('📌 Full raw error response:', error);
         console.log('📌 Parsed error object:', error.error);
-  
+
         // ถ้า error.error มีค่าให้ใช้มัน ถ้าไม่มีให้ใช้ error เอง
         return throwError(() => new Error(JSON.stringify(error.error || error)));
       })
     );
   }
-  
+
 
   // ลบผู้ใช้
   deleteUser(userId: string): Observable<any> {

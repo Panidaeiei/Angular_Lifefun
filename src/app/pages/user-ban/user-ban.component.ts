@@ -29,9 +29,15 @@ export class UserBanComponent {
   isSearchPerformed: boolean = false;
 
 
-  constructor(private route: ActivatedRoute, private userService: UserService, private adminservice: AdminService) { }
+  constructor(private route: ActivatedRoute, private userService: UserService, private adminservice: AdminService, private router: Router) { }
 
   ngOnInit() {
+    const adminId = localStorage.getItem('adminId') || sessionStorage.getItem('adminId');
+    const adminToken = localStorage.getItem('adminToken') || sessionStorage.getItem('adminToken');
+    if (!adminId || !adminToken) {
+      this.router.navigate(['/login'], { queryParams: { error: 'unauthorized' } });
+      return;
+    }
     this.route.queryParams.subscribe(params => {
       this.userId = params['id']; // ดึง ID จาก Query Parameters
       console.log('User ID:', this.userId);
@@ -42,9 +48,15 @@ export class UserBanComponent {
       next: (data) => {
         this.users = data;
         this.filterUsers();
-
+        if (this.filteredUsers.length === 0) {
+          this.errorMessage = 'ไม่พบผู้ใช้งานที่ถูกระงับ';
+        } else {
+          this.errorMessage = '';
+        }
       },
-      error: (error) => this.errorMessage = error.message
+      error: (error) => {
+        this.errorMessage = 'Unauthorized';
+      }
     });
   }
 
@@ -86,6 +98,18 @@ export class UserBanComponent {
             user.status = 1; // เปลี่ยนสถานะเป็นปกติ
             this.filterUsers(); // อัปเดต filteredUsers หลังจากเปลี่ยนสถานะ
             console.log('ยกเลิกการระงับบัญชี:', response);
+            // แจ้งเตือนความสำเร็จและ redirect
+            import('sweetalert2').then(Swal => {
+              Swal.default.fire({
+                icon: 'success',
+                title: 'สำเร็จ',
+                text: 'ยกเลิกการระงับบัญชีเรียบร้อยแล้ว',
+                timer: 1500,
+                showConfirmButton: false
+              }).then(() => {
+                this.router.navigate(['/userlist'], { queryParams: { id: this.userId } });
+              });
+            });
           },
           error: (error) => {
             console.error('เกิดข้อผิดพลาด:', error);
@@ -112,5 +136,15 @@ export class UserBanComponent {
   // Getter สำหรับ template เพื่อแสดงเฉพาะผู้ใช้ที่ถูกระงับ
   get filteredBannedUsers() {
     return this.filteredUsers ? this.filteredUsers.filter((user: any) => user.status === 0) : [];
+  }
+
+  logout() {
+    localStorage.removeItem('adminId');
+    localStorage.removeItem('adminRole');
+    localStorage.removeItem('adminToken');
+    sessionStorage.removeItem('adminId');
+    sessionStorage.removeItem('adminRole');
+    sessionStorage.removeItem('adminToken');
+    this.router.navigate(['/login']);
   }
 }

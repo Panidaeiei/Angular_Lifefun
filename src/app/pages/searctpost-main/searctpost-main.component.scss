@@ -56,6 +56,17 @@ body {
   margin-right: auto;
 }
 
+.search-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-left: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
 .search-container {
     display: flex;
     align-items: center;

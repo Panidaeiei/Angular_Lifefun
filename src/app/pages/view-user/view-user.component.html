@@ -6,35 +6,39 @@
         <a [routerLink]="['/HomepageUser']" [queryParams]="{ id: userId }">
             <img src="../../../assets/images/Logoweb.png" alt="Home Icon">
         </a>
-        
+
         <!-- เมนูตรงกลาง -->
         <div class="center-menu" *ngIf="!isMobile">
             <a class="menu-item" [routerLink]="['/HomepageUser']" [queryParams]="{ id: userId}">
                 <i class="fa-solid fa-house"></i>
                 <span class="itim-regular">หน้าหลัก</span>
-                </a>
+            </a>
             <a class="menu-item" [routerLink]="['/Homepagefollow']" [queryParams]="{ id: userId}">
                 <i class="fa-solid fa-users"></i>
                 <span class="itim-regular">ติดตาม</span>
             </a>
-            <a class="add-post-btn" [routerLink]="['/CreatePost']" [queryParams]="{ id: userId}" matTooltip="เพิ่มโพสต์">
-                    <i class="fa-solid fa-plus"></i>
-                </a>
+            <a class="add-post-btn" [routerLink]="['/CreatePost']" [queryParams]="{ id: userId}"
+                matTooltip="เพิ่มโพสต์">
+                <i class="fa-solid fa-plus"></i>
+            </a>
             <a class="menu-item" [routerLink]="['/Notification_user']" [queryParams]="{ id: userId }">
-                <i class="fa-solid fa-bell"></i>
+                <div class="bell-icon-container">
+                    <i class="fa-solid fa-bell"></i>
+                    <div class="notification-dot" *ngIf="notificationCounts.total > 0"></div>
+                </div>
                 <span class="itim-regular">การแจ้งเตือน</span>
-                </a>
+            </a>
             <a class="menu-item" [routerLink]="['/ProfileUser']" [queryParams]="{ id: userId}">
                 <i class="fa-solid fa-user"></i>
                 <span class="itim-regular">โปรไฟล์</span>
             </a>
         </div>
-        
+
         <!-- เมนูขวาสุด -->
         <div class="toolbar-actions">
-                <a [routerLink]="['/search_users']" [queryParams]="{ id: userId }">
+            <a [routerLink]="['/search_users']" [queryParams]="{ id: userId }">
                 <i class="fa-solid fa-search"></i>
-                </a>
+            </a>
             <button class="toolbar-hamburger" (click)="toggleDrawer()" aria-label="เมนู">
                 <i class="fa-solid fa-bars"></i>
             </button>
@@ -43,78 +47,81 @@
 
     <!-- Drawer Overlay -->
     <div class="drawer-overlay" [class.open]="isDrawerOpen" (click)="toggleDrawer()"></div>
-    
-        <!-- Drawer -->
-        <div class="drawer" [class.open]="isDrawerOpen">
-            <div class="drawer-content">
+
+    <!-- Drawer -->
+    <div class="drawer" [class.open]="isDrawerOpen">
+        <div class="drawer-content">
             <h3>MENU</h3>
             <ul>
                 <li>
                     <a [routerLink]="['/HomepageUser']" [queryParams]="{ id: userId }">
                         <i class="fa-solid fa-house"></i>
-                            <span class="itim-regular">หน้าหลัก</span>
-                        </a>
-                    </li>
+                        <span class="itim-regular">หน้าหลัก</span>
+                    </a>
+                </li>
                 <li>
                     <a [routerLink]="['/Homepagefollow']" [queryParams]="{ id: userId }">
                         <i class="fa-solid fa-users"></i>
-                            <span class="itim-regular">ติดตาม</span>
-                        </a>
-                    </li>
+                        <span class="itim-regular">ติดตาม</span>
+                    </a>
+                </li>
                 <li>
                     <a [routerLink]="['/CreatePost']" [queryParams]="{ id: userId }">
                         <i class="fa-solid fa-plus"></i>
-                            <span class="itim-regular">สร้างโพสต์</span>
-                        </a>
-                    </li>
+                        <span class="itim-regular">สร้างโพสต์</span>
+                    </a>
+                </li>
                 <li>
                     <a [routerLink]="['/Notification_user']" [queryParams]="{ id: userId }">
-                        <i class="fa-solid fa-bell"></i>
-                            <span class="itim-regular">การแจ้งเตือน</span>
-                        </a>
-                    </li>
+                        <div class="bell-icon-container">
+                            <i class="fa-solid fa-bell"></i>
+                            <div class="notification-dot" *ngIf="notificationCounts.total > 0"></div>
+                        </div>
+                        <span class="itim-regular">การแจ้งเตือน</span>
+                    </a>
+                </li>
                 <li>
                     <a [routerLink]="['/ProfileUser']" [queryParams]="{ id: userId }">
                         <i class="fa-solid fa-user"></i>
-                            <span class="itim-regular">โปรไฟล์</span>
-                        </a>
-                    </li>
+                        <span class="itim-regular">โปรไฟล์</span>
+                    </a>
+                </li>
                 <li>
                     <a [routerLink]="['/category']" [queryParams]="{ userId }">
                         <i class="fa fa-list"></i>
-                            <span class="itim-regular">หมวดหมู่</span>
-                        </a>
-                    </li>
+                        <span class="itim-regular">หมวดหมู่</span>
+                    </a>
+                </li>
                 <li>
                     <a [routerLink]="['/chat']" [queryParams]="{ id: userId }">
                         <i class="fa fa-comments"></i>
-                            <span class="itim-regular">แชท</span>
-                        </a>
-                    </li>
+                        <span class="itim-regular">แชท</span>
+                    </a>
+                </li>
                 <li>
-                    <a href="/">
+                    <a (click)="logout()" style="cursor:pointer;">
                         <i class="fa fa-sign-out"></i>
-                            <span class="itim-regular">ออกจากระบบ</span>
-                        </a>
-                    </li>
+                        <span class="itim-regular">ออกจากระบบ</span>
+                    </a>
+                </li>
                 <li>
                     <button class="drawer-close-btn" (click)="toggleDrawer()">ปิด</button>
                 </li>
-                </ul>
+            </ul>
         </div>
     </div>
     <div class="content-container">
         <!-- MOBILE IG-style profile header (no story) -->
         <div *ngIf="isMobile" class="profile-header-mobile">
             <div style="display: flex; flex-direction: row; align-items: center; gap: 18px;">
-                <img [src]="userProfile?.image_url || 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'" class="profile-avatar" />
+                <img [src]="userProfile?.image_url || 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'"
+                    class="profile-avatar" />
                 <div class="profile-info-mobile">
                     <div class="profile-row-mobile">
                         <span class="profile-username-mobile">{{ userProfile?.username || 'Username' }}</span>
-                        <button class="buttonEdit-mobile" (click)="toggleFollow()">{{ isFollowing ? 'เลิกติดตาม' : 'ติดตาม' }}</button>
-                        <button *ngIf="userProfile"
-                            class="buttonsend buttonEdit-mobile"
-                            (click)="toggleChatBox()">
+                        <button class="buttonEdit-mobile" (click)="toggleFollow()">{{ isFollowing ? 'เลิกติดตาม' :
+                            'ติดตาม' }}</button>
+                        <button *ngIf="userProfile" class="buttonsend buttonEdit-mobile" (click)="toggleChatBox()">
                             <i class="fa-solid fa-envelope" style="font-size: 16px;"></i>
                         </button>
                     </div>
@@ -144,16 +151,16 @@
                 <div style="display: flex; flex-direction: row; gap: 180px;">
                     <div class="profile-header-container">
                         <div class="profile-header">
-                            <img [src]="userProfile?.image_url || 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'" class="profile-avatar">
+                            <img [src]="userProfile?.image_url || 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'"
+                                class="profile-avatar">
                             <div class="profile-info">
                                 <div class="profile-username-row">
                                     <span class="profile-username">{{ userProfile?.username || 'Username' }}</span>
                                     <button class="buttonEdit" (click)="toggleFollow()">
-                                        <span style="font-weight: 500;">{{ isFollowing ? 'เลิกติดตาม' : 'ติดตาม' }}</span>
+                                        <span style="font-weight: 500;">{{ isFollowing ? 'เลิกติดตาม' : 'ติดตาม'
+                                            }}</span>
                                     </button>
-                                    <button *ngIf="userProfile"
-                                        class="buttonsend"
-                                        (click)="toggleChatBox()">
+                                    <button *ngIf="userProfile" class="buttonsend" (click)="toggleChatBox()">
                                         <i class="fa-solid fa-envelope" style="font-size: 20px;"></i>
                                     </button>
                                 </div>
@@ -259,29 +266,18 @@
                 </button>
             </div>
             <div class="chat-messages">
-                <div *ngFor="let msg of messages; let i = index"
-                    [ngClass]="{
+                <div *ngFor="let msg of messages; let i = index" [ngClass]="{
                         'my-message-row': msg.uid === currentUserId,
                         'other-message-row': msg.uid !== currentUserId
-                    }"
-                    class="message-row"
-                >
-                    <img
-                        *ngIf="msg.uid !== currentUserId"
-                        class="chat-avatar"
+                    }" class="message-row">
+                    <img *ngIf="msg.uid !== currentUserId" class="chat-avatar"
                         [src]="userProfile?.image_url || 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'"
-                        alt="avatar"
-                    />
-                    <div
-                        [ngClass]="{
+                        alt="avatar" />
+                    <div [ngClass]="{
                             'my-message': msg.uid === currentUserId,
                             'other-message': msg.uid !== currentUserId
-                        }"
-                        class="chat-bubble"
-                        (mouseenter)="hoveredMsgIndex = i"
-                        (mouseleave)="hoveredMsgIndex = null"
-                        (click)="hoveredMsgIndex = hoveredMsgIndex === i ? null : i"
-                    >
+                        }" class="chat-bubble" (mouseenter)="hoveredMsgIndex = i" (mouseleave)="hoveredMsgIndex = null"
+                        (click)="hoveredMsgIndex = hoveredMsgIndex === i ? null : i">
                         <div class="bubble-content">
                             <ng-container [ngSwitch]="msg.type">
                                 <span *ngSwitchCase="1">{{ msg.text }}</span>
@@ -299,26 +295,27 @@
                 </div>
             </div>
             <div class="chat-input-area">
-              <div *ngIf="previewUrl" class="chat-preview-bar">
-                <button class="preview-close-btn" (click)="clearPreview()">×</button>
-                <img *ngIf="previewType === 'image'" [src]="previewUrl" class="preview-img" />
-                <video *ngIf="previewType === 'video'" [src]="previewUrl" class="preview-video" controls></video>
-              </div>
-              <div class="chat-input-row">
-                <!-- ปุ่มเลือกไฟล์ (รูป/วิดีโอ) -->
-                <button class="icon-btn" (click)="fileInput.click()" title="ส่งรูปภาพหรือวิดีโอ">
-                  <i class="fa fa-image"></i>
-                </button>
-                <input #fileInput type="file" (change)="onChatFileSelected($event)" accept="image/*,video/*" style="display: none;" />
+                <div *ngIf="previewUrl" class="chat-preview-bar">
+                    <button class="preview-close-btn" (click)="clearPreview()">×</button>
+                    <img *ngIf="previewType === 'image'" [src]="previewUrl" class="preview-img" />
+                    <video *ngIf="previewType === 'video'" [src]="previewUrl" class="preview-video" controls></video>
+                </div>
+                <div class="chat-input-row">
+                    <!-- ปุ่มเลือกไฟล์ (รูป/วิดีโอ) -->
+                    <button class="icon-btn" (click)="fileInput.click()" title="ส่งรูปภาพหรือวิดีโอ">
+                        <i class="fa fa-image"></i>
+                    </button>
+                    <input #fileInput type="file" (change)="onChatFileSelected($event)" accept="image/*,video/*"
+                        style="display: none;" />
 
-                <!-- ช่องพิมพ์ข้อความ -->
-                <input type="text" [(ngModel)]="chatText" placeholder="Aa" (keyup.enter)="sendChatMessage()" />
+                    <!-- ช่องพิมพ์ข้อความ -->
+                    <input type="text" [(ngModel)]="chatText" placeholder="Aa" (keyup.enter)="sendChatMessage()" />
 
-                <!-- ปุ่มส่ง -->
-                <button class="icon-btn send-btn" (click)="sendChatMessage()" title="ส่งข้อความ">
-                  <i class="fa fa-paper-plane"></i>
-                </button>
-              </div>
+                    <!-- ปุ่มส่ง -->
+                    <button class="icon-btn send-btn" (click)="sendChatMessage()" title="ส่งข้อความ">
+                        <i class="fa fa-paper-plane"></i>
+                    </button>
+                </div>
             </div>
         </div>
     </div>

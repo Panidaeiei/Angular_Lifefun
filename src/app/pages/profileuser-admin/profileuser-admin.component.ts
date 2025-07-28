@@ -147,8 +147,14 @@ export class ProfileuserAdminComponent {
     }
   }
 
-  toggleDrawer(): void {
-    this.isDrawerOpen = !this.isDrawerOpen; // สลับสถานะเปิด/ปิด
+  logout(): void {
+    if (window.confirm('คุณแน่ใจหรือไม่ว่าต้องการออกจากระบบ?')) {
+      // ล้างข้อมูล session หรือ localStorage ถ้ามี
+      localStorage.clear();
+      sessionStorage.clear();
+      
+      // นำผู้ใช้ไปยังหน้า login
+      window.location.href = '/';
+    }
   }
-
 }

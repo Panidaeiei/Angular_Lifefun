@@ -1,87 +1,271 @@
+:host,
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgb(249, 241, 239);
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
 
+:host {
+  display: block;
+  min-height: 100vh;
+  width: 100vw;
+  background-color: rgb(249, 241, 239);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+}
+
+body {
+  overflow-y: auto;
+  background-color: rgb(249, 241, 239);
+  min-height: 100vh;
+  width: 100vw;
+  margin: 0;
+  padding: 0;
+}
+
+.background-div {
+  min-height: 100vh;
+  width: 100vw;
+  background-color: rgb(249, 241, 239);
+  position: relative;
+  margin: 0;
+  padding: 0;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
+
+/* Admin Toolbar Styles */
+.admin-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  height: 85px;
+  background: rgba(247, 220, 220, 0.85);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+  border-radius: 0 0 18px 18px;
+  padding: 0 18px;
+  position: fixed;
+  top: 0; left: 0; width: 100vw;
+  z-index: 1000;
+  transition: all 0.3s ease;
+}
+
+.logo-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  transition: transform 0.2s ease;
+}
+
+.logo-link:hover {
+  transform: scale(1.05);
+}
+
+.logo-image {
+  width: 56px;
+  height: auto;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(233,135,135,0.12);
+  transition: transform 0.2s ease;
+}
+
+.center-menu {
+  display: flex;
+  gap: 36px;
+  align-items: center;
+  justify-content: flex-start;
+  margin: 0;
+  margin-left: 20px;
+}
   
   .menu-item {
     display: flex;
     flex-direction: column;
     align-items: center;
+  padding: 8px 16px;
+  border-radius: 16px;
+  transition: all 0.3s ease;
+  color: #222;
     text-decoration: none;
+  font-weight: 500;
     position: relative;
+  overflow: hidden;
+  
+  i { 
+    font-size: 28px; 
+    margin-bottom: 4px; 
+    color: #222;
+    transition: all 0.3s ease;
   }
   
-  .menu-item.active {
-    color: #ff0000;
-    /* สีเมื่อ active */
+  span { 
+    font-size: 15px; 
+    color: #222;
+    transition: all 0.3s ease;
+    font-weight: 500;
   }
-  
-  
-  .menu-item span {
-    font-size: 14px;
-    margin-top: 5px;
-  }
-  
-  .menu-item.active i,
-  .menu-item.active span {
-    color: #000000;
-    /* เปลี่ยนสีเมื่อ active */
-  }
-  
-  .menu-item.active::after {
+
+  &::before {
     content: '';
     position: absolute;
-    bottom: -10px;
-    left: 50%;
-    /* เริ่มที่กึ่งกลางของเมนู */
-    transform: translateX(-50%);
-    /* ดันกลับมาครึ่งหนึ่งของความกว้าง */
-    height: 5px;
-    background-color: #000000;
-    /* สีขีดล่าง */
-    width: 80px;
-    /* ความกว้างของขีด */
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(226, 140, 150, 0.1), transparent);
+    transition: left 0.5s ease;
+  }
+}
+
+.menu-item:hover {
+  background: #ffe6ee;
+  color: #e27c96;
+  box-shadow: 0 4px 12px rgba(226, 140, 150, 0.15);
+  transform: translateY(-2px);
+
+  &::before {
+    left: 100%;
+  }
+
+  i, span {
+    color: #e27c96;
+  }
+}
+
+.toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-left: auto;
   }
   
-//ส่วนการจัดการการ์ด
-.card-container {
-    display: flex;
-    justify-content: flex-start;
-    /* เรียงจากด้านซ้าย */
-    align-items: center;
-    flex-wrap: wrap;
-    /* ย้ายไปบรรทัดใหม่เมื่อเกินความกว้าง */
-    padding: 0 80px;
-    /* เพิ่มระยะห่างด้านซ้ายและขวา */
-    gap: 40px;
-    /* ระยะห่างระหว่างการ์ด */
-    max-width: 100%;
+.logout-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(244, 67, 54, 0.2);
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+    transition: left 0.5s ease;
+  }
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(244, 67, 54, 0.3);
+    background: linear-gradient(135deg, #d32f2f 0%, #c62828 100%);
+
+    &::before {
+      left: 100%;
+    }
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(244, 67, 54, 0.2);
+  }
+
+  i {
+    font-size: 16px;
+    transition: transform 0.2s ease;
+  }
+
+  span {
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+  }
+
+  &:hover i {
+    transform: scale(1.1);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .admin-toolbar {
+    height: 60px;
+    padding: 0 8px;
   }
   
-  
-  .card-wrapper {
-    flex: 1 1 calc(25% - 20px);
-    /* ให้การ์ดแต่ละอันกว้าง 25% และลดช่องว่าง */
-    max-width: 360px;
-    /* จำกัดความกว้างสูงสุด */
-    margin-bottom: 20px;
-    /* เว้นระยะระหว่างแถว */
-    cursor: pointer;
-    /* เปลี่ยน Cursor เป็นมือเมื่อ Hover */
+  .center-menu { 
+    gap: 18px; 
   }
   
-  .cardpost {
-    display: flex;
-    flex-direction: column;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    /* เพิ่ม Animation */
+  .menu-item i { 
+    font-size: 20px; 
   }
   
-  .cardpost:hover {
-    transform: scale(1.02);
-    /* ขยายการ์ดเล็กน้อย */
-    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
-    /* เพิ่มเงา */
+  .menu-item span { 
+    font-size: 12px; 
   }
+  
+  .logout-button {
+    font-size: 12px;
+    padding: 8px 14px;
+    
+    span {
+      font-size: 12px;
+    }
+    
+    i {
+      font-size: 14px;
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .admin-toolbar {
+    height: 80px;
+    padding: 0 4px;
+    border-radius: 0 0 10px 10px;
+  }
+  
+  .center-menu { 
+    display: none !important; 
+  }
+  
+  .logout-button {
+    font-size: 11px;
+    padding: 6px 10px;
+    
+    span {
+      font-size: 11px;
+    }
+    
+    i {
+      font-size: 12px;
+    }
+  }
+}
+
   .buttonEdit {
     border: none;
     width: 180px;
@@ -100,31 +284,31 @@
 /* แก้ไขสีเมื่อแท็บถูกเลือก */
 ::ng-deep .mat-mdc-tab.mdc-tab--active .mdc-tab-indicator__content--underline {
   --mdc-tab-indicator-active-indicator-color: rgb(0, 0, 0)  !important;
-  border-color: rgb(0, 0, 0) !important; /* บังคับให้เส้นใต้เป็นสีเขียว */
+  border-color: rgb(0, 0, 0) !important;
   border-top-width: 2px !important;
 }
+
 .post-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, 300px); /* ความกว้างของแต่ละโพสต์ถูกกำหนดเป็น 300px */
-  gap: 10px; /* ระยะห่างระหว่างโพสต์ */
-  padding: 40px; /* ระยะห่างจากขอบ */
+  grid-template-columns: repeat(auto-fill, 300px);
+  gap: 10px;
+  padding: 40px;
   justify-content: center;
 }
 
 .post-item {
-  width: 300px; /* กำหนดความกว้างเฉพาะโพสต์ */
+  width: 300px;
   position: relative;
   margin-top: -15px; 
 }
 
 .post-image,
 .post-video {
-  width: 300px; /* ความกว้างของสื่อ */
-  height: 300px; /* ความสูงของสื่อ */
+  width: 300px;
+  height: 300px;
   object-fit: cover;
-  border-radius: 0px; /* ไม่มีความมน */
+  border-radius: 0px;
 }
-
 
 .multiple-media-icon {
   top: 10px;
@@ -132,42 +316,3 @@
   padding: 5px;
   border-radius: 50%;
 }
-
-.drawer {
-  position: fixed;
-  top: 0;
-  right: -300px;
-  /* ซ่อน Drawer ทางขวา */
-  width: 300px;
-  height: 100%;
-  background-color: white;
-  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
-  transition: right 0.3s ease;
-  /* เพิ่ม Transition */
-  z-index: 1000;
-}
-
-/* Drawer เปิด */
-.drawer.open {
-  right: 0;
-  /* แสดง Drawer */
-}
-
-/* สไตล์เนื้อหาใน Drawer */
-.drawer-content {
-  padding: 20px;
-}
-
-.drawer-content h3 {
-  margin-top: 0;
-}
-
-.drawer-content ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-.drawer-content ul li {
-  margin: 10px 0;
-}
-

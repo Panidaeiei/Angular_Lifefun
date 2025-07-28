@@ -1,6 +1,7 @@
 import { Component, HostListener } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import Swal from 'sweetalert2';
@@ -21,7 +22,7 @@ export class LoginComponent {
   isPasswordVisible: boolean = false;
   isMobile = false;
 
-  constructor(private http: HttpClient, private router: Router, private userService: UserService,) { }
+  constructor(private http: HttpClient, private router: Router, private userService: UserService, private route: ActivatedRoute) { }
 
   @HostListener('window:resize')
   onResize() {
@@ -30,6 +31,16 @@ export class LoginComponent {
 
   ngOnInit() {
     this.checkScreenSize();
+    // แสดงข้อความเตือนถ้ามี error=unauthorized ใน query param
+    this.route.queryParams.subscribe((params: any) => {
+      if (params['error'] === 'unauthorized') {
+        Swal.fire({
+          icon: 'warning',
+          title: 'กรุณาเข้าสู่ระบบ',
+          text: 'คุณต้องเข้าสู่ระบบก่อนใช้งานหน้านี้',
+        });
+      }
+    });
   }
 
   checkScreenSize() {
@@ -62,22 +73,39 @@ export class LoginComponent {
           return;
         }
 
-        // ถ้า login สำเร็จให้บันทึก token
-        localStorage.setItem('token', response.token);
-        sessionStorage.setItem('token', response.token);
-
-        localStorage.setItem('userId', response.id);
-        sessionStorage.setItem('userId', response.id);
-
-        localStorage.setItem('userRole', response.role);
-        sessionStorage.setItem('userRole', response.role);
-
-        this.userService.setCurrentUserId(response.id);
-
-        // นำทางไปยังหน้า Home ตาม role
         if (response.role === 'admin') {
-          this.router.navigate(['/HomepageAdmin'], { queryParams: { id: response.id } });
+          // ลบ key ของ user
+          localStorage.removeItem('userId');
+          localStorage.removeItem('userRole');
+          localStorage.removeItem('token');
+          sessionStorage.removeItem('userId');
+          sessionStorage.removeItem('userRole');
+          sessionStorage.removeItem('token');
+          // set key ของ admin
+          localStorage.setItem('adminId', response.id);
+          localStorage.setItem('adminRole', 'admin');
+          localStorage.setItem('adminToken', response.token);
+          sessionStorage.setItem('adminId', response.id);
+          sessionStorage.setItem('adminRole', 'admin');
+          sessionStorage.setItem('adminToken', response.token);
+          this.userService.setCurrentUserId(response.id);
+          this.router.navigate(['/userlist'], { queryParams: { id: response.id } });
         } else if (response.role === 'user') {
+          // ลบ key ของ admin
+          localStorage.removeItem('adminId');
+          localStorage.removeItem('adminRole');
+          localStorage.removeItem('adminToken');
+          sessionStorage.removeItem('adminId');
+          sessionStorage.removeItem('adminRole');
+          sessionStorage.removeItem('adminToken');
+          // set key ของ user
+          localStorage.setItem('userId', response.id);
+          localStorage.setItem('userRole', 'user');
+          localStorage.setItem('token', response.token);
+          sessionStorage.setItem('userId', response.id);
+          sessionStorage.setItem('userRole', 'user');
+          sessionStorage.setItem('token', response.token);
+          this.userService.setCurrentUserId(response.id);
           this.router.navigate(['/HomepageUser'], { queryParams: { id: response.id } });
         }
       },
@@ -132,6 +160,23 @@ export class LoginComponent {
     );
   }
 
+  logout() {
+    // ลบ key ของ user
+    localStorage.removeItem('userId');
+    localStorage.removeItem('userRole');
+    localStorage.removeItem('token');
+    sessionStorage.removeItem('userId');
+    sessionStorage.removeItem('userRole');
+    sessionStorage.removeItem('token');
+    // ลบ key ของ admin
+    localStorage.removeItem('adminId');
+    localStorage.removeItem('adminRole');
+    localStorage.removeItem('adminToken');
+    sessionStorage.removeItem('adminId');
+    sessionStorage.removeItem('adminRole');
+    sessionStorage.removeItem('adminToken');
+    this.router.navigate(['/login']);
+  }
 
   togglePasswordVisibility() {
     this.isPasswordVisible = !this.isPasswordVisible;

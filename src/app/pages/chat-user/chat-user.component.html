@@ -18,7 +18,10 @@
                 <i class="fa-solid fa-plus"></i>
             </a>
             <a [routerLink]="['/Notification_user']" [queryParams]="{ id: userId }" class="menu-item">
-                <i class="fa-solid fa-bell"></i>
+                <div class="bell-icon-container">
+                    <i class="fa-solid fa-bell"></i>
+                    <div class="notification-dot" *ngIf="notificationCounts.total > 0"></div>
+                </div>
                 <span class="itim-regular">การแจ้งเตือน</span>
             </a>
             <a [routerLink]="['/ProfileUser']" [queryParams]="{ id: userId }" class="menu-item">
@@ -63,7 +66,10 @@
                 </li>
                 <li>
                     <a [routerLink]="['/Notification_user']" [queryParams]="{ id: userId }">
-                        <i class="fa-solid fa-bell"></i>
+                        <div class="bell-icon-container">
+                            <i class="fa-solid fa-bell"></i>
+                            <div class="notification-dot" *ngIf="notificationCounts.total > 0"></div>
+                        </div>
                         <span class="itim-regular">การแจ้งเตือน</span>
                     </a>
                 </li>
@@ -86,7 +92,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="/">
+                    <a (click)="logout()" style="cursor:pointer;">
                         <i class="fa fa-sign-out"></i>
                         <span class="itim-regular">ออกจากระบบ</span>
                     </a>
@@ -112,8 +118,12 @@
                 </div>
             </div>
             <div class="chat-list">
+                <ng-container *ngIf="chatList.length > 0; else noChats">
                 <div class="chat-list-item" *ngFor="let chat of chatList" (click)="selectChat(chat)">
-                    <img [src]="chat.avatar" alt="avatar" />
+                    <img [src]="chat.avatar || 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'" 
+                         alt="avatar" 
+                        
+                         class="clickable-avatar" />
                     <div class="chat-list-info">
                         <span class="chat-list-name">{{ chat.name }}</span>
                         <span class="chat-list-last">
@@ -131,17 +141,30 @@
                         </span>
                     </div>
                 </div>
+                </ng-container>
+                <ng-template #noChats>
+                    
+                </ng-template>
             </div>
         </aside>
 
         <!-- Main Chat -->
-        <main class="chat-main">
+        <main class="chat-main" *ngIf="selectedChat; else noChatSelected">
             <div class="chat-header">
                 <button *ngIf="isMobile" class="drawer-btn" (click)="openMobileDrawer()"><i class="fa fa-bars"></i></button>
-                <img [src]="selectedChat?.avatar" alt="avatar" />
+                <img [src]="selectedChat?.avatar || 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'" 
+                     alt="avatar" 
+                     (click)="goToProfile(selectedChat?.uid)"
+                     class="clickable-avatar" />
                 <strong>{{ selectedChat?.name }}</strong>
             </div>
-            <div class="chat-messages">
+            <div class="chat-messages" (scroll)="onChatScroll()">
+                <!-- ปุ่มไปที่ข้อความล่าสุด -->
+                <div *ngIf="!isNearBottom && currentChatMessages.length > 0" class="scroll-to-bottom-btn" (click)="scrollToBottom()">
+                    <i class="fa fa-chevron-down"></i>
+                    <span>ข้อความใหม่</span>
+                </div>
+                
                 <div *ngFor="let msg of currentChatMessages; let i = index"
                     [ngClass]="{'message': true, 'right': msg.uid === userId, 'left': msg.uid !== userId}"
                     (mouseenter)="hoveredMsgIndex = i"
@@ -165,16 +188,20 @@
             <div class="chat-input">
                 <!-- input file ซ่อนไว้ -->
                 <input type="file" #fileInput accept="image/*,video/*" style="display:none"
-                    (change)="onChatFileSelected($event)" />
+                    (change)="onChatFileSelected($event)" [disabled]="isSending" />
                 <!-- ปุ่มเลือกไฟล์ (รูป/วิดีโอ) -->
-                <button class="icon-btn" (click)="fileInput.click()" title="ส่งรูปภาพหรือวิดีโอ">
+                <button class="icon-btn" (click)="fileInput.click()" title="ส่งรูปภาพหรือวิดีโอ" 
+                    [disabled]="isSending" [class.disabled]="isSending">
                     <i class="fa fa-image"></i>
                 </button>
                 <!-- ช่องพิมพ์ข้อความ -->
-                <input type="text" placeholder="พิมพ์ข้อความ..." [(ngModel)]="newMessage" (keydown.enter)="sendMessage()" />
+                <input type="text" placeholder="พิมพ์ข้อความ..." [(ngModel)]="newMessage" 
+                    (keydown.enter)="sendMessage()" [disabled]="isSending" />
                 <!-- ปุ่มส่งข้อความ -->
-                <button class="icon-btn" (click)="sendMessage()" title="ส่งข้อความ">
-                    <i class="fa fa-paper-plane"></i>
+                <button class="icon-btn" (click)="sendMessage()" title="ส่งข้อความ" 
+                    [disabled]="isSending" [class.disabled]="isSending">
+                    <i class="fa" [class.fa-paper-plane]="!isSending" [class.fa-spinner]="isSending" 
+                       [class.fa-spin]="isSending"></i>
                 </button>
             </div>
             <!-- Preview bar สำหรับไฟล์ที่เลือก -->
@@ -192,6 +219,21 @@
                 </button>
             </div>
         </main>
+        
+        <!-- Empty state when no chat is selected -->
+        <ng-template #noChatSelected>
+            <div class="empty-chat-area">
+                <div class="no-chats-container">
+                    <div class="no-chats-icon">
+                        <i class="fa fa-comments"></i>
+                    </div>
+                    <div class="no-chats-text">
+                        <h3>ยังไม่มีแชท</h3>
+                        <p>เริ่มต้นการสนทนา</p>
+                    </div>
+                </div>
+            </div>
+        </ng-template>
     </div>
 
     <!-- Mobile Drawer รายชื่อแชท -->
@@ -206,8 +248,12 @@
                 </div>
             </div>
             <div class="chat-list">
+                <ng-container *ngIf="chatList.length > 0; else noChatsMobile">
                 <div class="chat-list-item" *ngFor="let chat of chatList" (click)="selectChat(chat); closeMobileDrawer()">
-                    <img [src]="chat.avatar" alt="avatar" />
+                        <img [src]="chat.avatar || 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'" 
+                             alt="avatar" 
+                             (click)="goToProfile(chat.uid); $event.stopPropagation()"
+                             class="clickable-avatar" />
                     <div class="chat-list-info">
                         <span class="chat-list-name">{{ chat.name }}</span>
                         <span class="chat-list-last">
@@ -225,6 +271,18 @@
                         </span>
                     </div>
                 </div>
+                </ng-container>
+                <ng-template #noChatsMobile>
+                    <div class="no-chats-container">
+                        <div class="no-chats-icon">
+                            <i class="fa fa-comments"></i>
+                        </div>
+                        <div class="no-chats-text">
+                            <h3>ยังไม่มีแชท</h3>
+                            <p>เริ่มต้นการสนทนา</p>
+                        </div>
+                    </div>
+                </ng-template>
             </div>
         </aside>
     </div>

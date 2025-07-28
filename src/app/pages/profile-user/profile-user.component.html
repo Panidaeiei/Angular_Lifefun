@@ -26,7 +26,10 @@
                 <i class="fa-solid fa-plus"></i>
             </a>
             <a class="menu-item" [routerLink]="['/Notification_user']" [queryParams]="{ id: userId }">
-                <i class="fa-solid fa-bell"></i>
+                <div class="bell-icon-container">
+                    <i class="fa-solid fa-bell"></i>
+                    <div class="notification-dot" *ngIf="notificationCounts.total > 0"></div>
+                </div>
                 <span class="itim-regular">การแจ้งเตือน</span>
             </a>
             <a class="menu-item active" routerLinkActive="active" [routerLink]="['/ProfileUser']" [queryParams]="{ id: userId}">
@@ -71,7 +74,10 @@
                 </li>
                 <li>
                     <a [routerLink]="['/Notification_user']" [queryParams]="{ id: userId }">
-                        <i class="fa-solid fa-bell"></i>
+                        <div class="bell-icon-container">
+                            <i class="fa-solid fa-bell"></i>
+                            <div class="notification-dot" *ngIf="notificationCounts.total > 0"></div>
+                        </div>
                         <span class="itim-regular">การแจ้งเตือน</span>
                     </a>
                 </li>
@@ -94,7 +100,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="/">
+                    <a (click)="logout()" style="cursor:pointer;">
                         <i class="fa fa-sign-out"></i>
                         <span class="itim-regular">ออกจากระบบ</span>
                     </a>

@@ -1,4 +1,4 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterModule } from '@angular/router';
@@ -7,20 +7,24 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatBadgeModule } from '@angular/material/badge';
 import { ShowPost } from '../../models/showpost_model';
 import { UserService } from '../../services/Userservice';
 import { PostService } from '../../services/Postservice';
 import { ReactPostservice } from '../../services/ReactPostservice';
+import { NotificationService, NotificationCounts } from '../../services/notification.service';
 import { filter } from 'rxjs/operators';
 import { TimeAgoPipe } from '../../pipes/time-ago.pipe';
+import Swal from 'sweetalert2';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-homepage-user',
-  imports: [MatToolbarModule, RouterModule, CommonModule, MatTabsModule, MatCardModule, MatButtonModule, MatTooltipModule, TimeAgoPipe],
+  imports: [MatToolbarModule, RouterModule, CommonModule, MatTabsModule, MatCardModule, MatButtonModule, MatTooltipModule, MatBadgeModule, TimeAgoPipe],
   templateUrl: './homepage-user.component.html',
   styleUrl: './homepage-user.component.scss',
 })
-export class HomepageUserComponent {
+export class HomepageUserComponent implements OnDestroy {
   currentUserId: string | null = null;
   userId: string = '';
   isLiked: boolean = false;
@@ -30,10 +34,33 @@ export class HomepageUserComponent {
   postId: string = '';
   viewPosts: any[] = [];
   isMobile: boolean = false; // เพิ่มตัวแปรสำหรับตรวจสอบ mobile
+  notificationCounts: NotificationCounts = {
+    like: 0,
+    follow: 0,
+    share: 0,
+    comment: 0,
+    unban: 0,
+    total: 0
+  };
+  private notificationSubscription?: Subscription;
 
-  constructor(private route: ActivatedRoute, private userService: UserService, private postService: PostService, private likePostService: ReactPostservice, private router: Router,) { }
+  constructor(
+    private route: ActivatedRoute, 
+    private userService: UserService, 
+    private postService: PostService, 
+    private likePostService: ReactPostservice, 
+    private notificationService: NotificationService,
+    private router: Router
+  ) { }
 
   ngOnInit(): void {
+    // ตรวจสอบการเข้าสู่ระบบก่อน
+    const loggedInUserId = localStorage.getItem('userId') || sessionStorage.getItem('userId');
+    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+    if (!loggedInUserId || !token) {
+      this.router.navigate(['/login']);
+      return;
+    }
     this.checkScreenSize();
     // ตรวจสอบ snapshot ครั้งแรก
     const snapshotParams = this.route.snapshot.queryParams;
@@ -68,6 +95,13 @@ export class HomepageUserComponent {
     this.userService.getCurrentUserId().subscribe((userId) => {
       this.currentUserId = userId;
 
+      // ตรวจสอบ userId ใน url กับ userId ที่ล็อกอิน
+      const urlUserId = this.route.snapshot.queryParams['id'];
+      if (urlUserId && userId && urlUserId !== userId) {
+        // ถ้า id ใน url ไม่ตรงกับ id ที่ล็อกอินไว้ ให้ redirect ออก
+        this.router.navigate(['/login']); // หรือหน้า error อื่น ๆ ตามต้องการ
+        return;
+      }
     });
 
     this.userService.loadCurrentUserId();
@@ -85,6 +119,8 @@ export class HomepageUserComponent {
       }
     });
   
+    // เริ่มการติดตามการแจ้งเตือน
+    this.startNotificationTracking();
   }
 
   // แยกฟังก์ชันสำหรับโหลดข้อมูลผู้ใช้
@@ -100,6 +136,25 @@ export class HomepageUserComponent {
       
       // โหลดโพสต์
       this.fetchPosts();
+    }
+  }
+
+  // เริ่มการติดตามการแจ้งเตือน
+  private startNotificationTracking(): void {
+    if (this.userId) {
+      // โหลดการแจ้งเตือนครั้งแรก
+      this.notificationService.loadNotificationCounts(Number(this.userId));
+      
+      // เริ่มการอัปเดตอัตโนมัติ
+      this.notificationService.startAutoUpdate(Number(this.userId));
+      
+      // ติดตามการเปลี่ยนแปลงจำนวนการแจ้งเตือน
+      this.notificationSubscription = this.notificationService.notificationCounts$.subscribe(
+        (counts) => {
+          this.notificationCounts = counts;
+          console.log('Notification counts updated:', counts);
+        }
+      );
     }
   }
 
@@ -162,61 +217,77 @@ export class HomepageUserComponent {
   }
   
   toggleHeart(post: ShowPost): void {
-    const userId = this.userId;  
-    console.log('userId Like:', userId); 
+    if (!this.currentUserId) {
+      console.error('User ID not found');
+      return;
+    }
 
-    // เปลี่ยนสถานะ isLiked
-    post.isLiked = !post.isLiked;
-    console.log('Heart icon clicked for post:', post.post_id, 'Liked:', post.isLiked);
-
-    // เรียกใช้ LikePostService เพื่ออัปเดตสถานะการไลค์ในฐานข้อมูล
-    this.likePostService.likePost(post.post_id, Number(userId)).subscribe(
-      (response) => {
-        console.log('Post liked successfully:', response);
-        post.likes_count = response.likes_count;  // อัปเดตยอดไลค์
+    this.likePostService.likePost(post.post_id, Number(this.currentUserId)).subscribe({
+      next: (response) => {
+        console.log('Like response:', response);
+        post.isLiked = response.isLiked;
+        post.likes_count = response.likeCount;
+        
+        // อัปเดตการแจ้งเตือนแบบทันทีหลังจากไลค์
+        if (this.userId) {
+          // ใช้ refreshImmediately แทน loadNotificationCounts เพื่อความเร็ว
+          this.notificationService.refreshImmediately(Number(this.userId));
+          
+          // ถ้าเป็นการไลค์ (ไม่ใช่การเลิกไลค์) ให้เพิ่มการแจ้งเตือนทันที
+          if (response.isLiked) {
+            this.notificationService.addNotificationImmediately('like');
+          }
+        }
       },
-      (error) => {
-        console.error('Error liking post:', error);
+      error: (error) => {
+        console.error('Error toggling like:', error);
       }
-    );
+    });
   }
 
   goToProfile(userId: string): void {
-    console.log('Current User ID:', this.currentUserId);
-    console.log('Navigating to:', userId);
-    console.log('Query Params ID:', this.userId);
-  
-    if (!userId || !this.currentUserId) {
+    if (!userId) {
       console.error('User ID is missing! Navigation aborted.');
       return;
     }
   
-    if (userId === this.currentUserId) {
-      // หาก userId คือ currentUserId, ไปที่หน้าประวัติของผู้ใช้ (ProfileUser)
-      this.router.navigate(['/ProfileUser'], { queryParams: { id: this.currentUserId } });
-    } else {
-      // หาก userId ไม่เหมือน currentUserId, ไปที่หน้าผู้ใช้ที่กำลังดู (view_user) พร้อม queryParams สำหรับ viewerId
       this.router.navigate(['/view_user', this.currentUserId], { queryParams: { Profileuser: userId } });
-    }
   }
-  
 
   toggleDrawer(): void {
     this.isDrawerOpen = !this.isDrawerOpen; // สลับสถานะเปิด/ปิด
   }
 
   checkLikeStatus(postId: number): void {
-    this.likePostService.checkLikeStatus(postId).subscribe(
-      (response) => {
-        // ตั้งค่าการไลค์สำหรับโพสต์นี้
-        const post = this.posts.find(p => p.post_id === postId);
-        if (post) {
-          post.isLiked = response.liked;  // อัปเดตสถานะการไลค์ของโพสต์
-        }
+    this.likePostService.checkLikeStatus(postId).subscribe({
+      next: (response) => {
+        console.log('Like status for post', postId, ':', response);
       },
-      (error) => {
+      error: (error) => {
         console.error('Error checking like status:', error);
       }
-    );
+    });
+  }
+
+  logout() {
+    localStorage.removeItem('userId');
+    localStorage.removeItem('token');
+    localStorage.removeItem('userRole');
+    localStorage.removeItem('currentUserId');
+    sessionStorage.removeItem('userId');
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('userRole');
+    sessionStorage.removeItem('currentUserId');
+    this.router.navigate(['/login']);
+  }
+
+  ngOnDestroy(): void {
+    // หยุดการติดตามการแจ้งเตือน
+    this.notificationService.stopAutoUpdate();
+    
+    // ยกเลิก subscription
+    if (this.notificationSubscription) {
+      this.notificationSubscription.unsubscribe();
+    }
   }
 }
