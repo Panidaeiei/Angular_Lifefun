@@ -8,14 +8,18 @@
         <!-- เมนูตรงกลาง -->
         <div class="center-menu">
             <a class="menu-item active" routerLinkActive="active" [routerLink]="['/userlist']"
-                        [queryParams]="{ id: userId }">
+                        [queryParams]="{ id: adminId }">
                 <i class="fa-solid fa-users"></i>
                         <span class="itim-regular">ผู้ใช้งาน</span>
                     </a>
 
-            <a class="menu-item" [routerLink]="['/noti_addmin']" [queryParams]="{ id: userId }">
-                <i class="fa-solid fa-bell"></i>
-                    <span class="itim-regular">การแจ้งเตือน</span>
+            <a class="menu-item" [routerLink]="['/noti_addmin']" [queryParams]="{ id: adminId }">
+                <div class="bell-icon-container">
+                    <i class="fa-solid fa-bell"></i>
+                    <div class="notification-dot" *ngIf="notificationCounts.total > 0"></div>
+                    <!-- Debug: {{ notificationCounts.total }} -->
+                </div>
+                <span class="itim-regular">การแจ้งเตือน</span>
             </a>
         </div>
 
@@ -37,13 +41,12 @@
 
     <!-- Tabs -->
     <div class="tabs">
-        <a [routerLink]="['/userlist']" [queryParams]="{ id: userId }" (click)="resetSearch()"
+        <a [routerLink]="['/userlist']" [queryParams]="{ id: adminId }" (click)="resetSearch()"
             class="tab-item active">ผู้ใช้งาน</a>
-        <a [routerLink]="['/userban']" [queryParams]="{ id: userId }" class="tab-item">ผู้ใช้งานที่ถูกระงับ</a>
+        <a [routerLink]="['/userban']" [queryParams]="{ id: adminId }" class="tab-item">ผู้ใช้งานที่ถูกระงับ</a>
     </div>
 
     <div class="page-title">
-
         <p>จัดการและดูข้อมูลผู้ใช้งานทั้งหมดในระบบ</p>
     </div>
 
@@ -56,8 +59,10 @@
         </div>
 
         <div class="user-card" *ngFor="let user of isSearchPerformed ? filteredUsers : users">
-            <div class="user-info" [routerLink]="['/admin_profileuser']"
-                [queryParams]="{ id: user.uid, adminId: userId }">
+            <div class="user-info" 
+                (click)="navigateToUserProfile(user.uid)"
+                [style.pointer-events]="!user.uid ? 'none' : 'auto'"
+                [style.opacity]="!user.uid ? '0.5' : '1'">
                 <div class="user-avatar-container">
                     <img [src]="user.image_url ? user.image_url : 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'"
                         class="user-avatar" alt="User Avatar">
@@ -73,6 +78,10 @@
                     <div class="user-phone">
                         <i class="fa-solid fa-phone"></i>
                         {{ user.phone }}
+                    </div>
+                             <div class="user-id" style="font-size: 12px; color: #666;">
+             <i class="fa-solid fa-id-card"></i>
+             ID: {{ user.uid || 'ไม่มี ID' }}
                     </div>
                 </div>
             </div>

@@ -141,34 +141,40 @@ export class PostService {
 
   // ฟังก์ชันสำหรับลบโพสต์
   deletePost(postId: number): Observable<any> {
-    const token = localStorage.getItem('token');  // ดึง JWT token จาก localStorage
+    const userToken = localStorage.getItem('token') || sessionStorage.getItem('token');
+    const adminToken = localStorage.getItem('adminToken') || sessionStorage.getItem('adminToken');
+    const token = adminToken || userToken; // ใช้ admin token ก่อน ถ้าไม่มีค่อยใช้ user token
 
     // ตรวจสอบว่า JWT token มีค่าไหม
     if (!token) {
       console.error('JWT token not found in localStorage');
-      throw new Error('Unauthorized: Missing token');
+      return throwError(() => new Error('Unauthorized: Missing token'));
     }
 
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`  // ส่ง JWT token
     });
 
+    console.log('Using token type:', adminToken ? 'adminToken' : 'userToken');
     // ส่งคำขอลบโพสต์ไปยัง Backend
     return this.http.delete(`${this.baseUrl}/posts/deletePost/${postId}`, { headers });
   }
 
   editPost(postId: number, editData: EditPostModel): Observable<any> {
-    const token = localStorage.getItem('token');  // ดึง JWT token จาก localStorage
+    const userToken = localStorage.getItem('token') || sessionStorage.getItem('token');
+    const adminToken = localStorage.getItem('adminToken') || sessionStorage.getItem('adminToken');
+    const token = adminToken || userToken; // ใช้ admin token ก่อน ถ้าไม่มีค่อยใช้ user token
 
     if (!token) {
       console.error('JWT token not found in localStorage');
-      return throwError('Unauthorized: Missing token');
+      return throwError(() => new Error('Unauthorized: Missing token'));
     }
 
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`,  // ส่ง JWT token ใน header
     });
 
+    console.log('Using token type:', adminToken ? 'adminToken' : 'userToken');
     // ส่งคำขอ PUT ไปที่ API เพื่อแก้ไขโพสต์
     return this.http.put(`${this.baseUrl}/posts/editPost/${postId}`, editData, { headers });
   }

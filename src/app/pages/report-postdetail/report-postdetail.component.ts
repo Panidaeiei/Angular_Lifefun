@@ -27,6 +27,7 @@ import { ConfirmDeleteDialogComponent } from '../../confirm-delete-dialog/confir
 export class ReportPostdetailComponent {
 
   userId: string = '';
+  adminId: string = '';
   postId: string = '';
   isDrawerOpen: boolean = false;
   post: any;
@@ -44,9 +45,18 @@ export class ReportPostdetailComponent {
     this.route.queryParams.subscribe(params => {
       this.postId = params['post_id'];     // รับ post_id จาก query
       this.userId = params['user_id'];
+      this.adminId = params['adminId'];
+
+      // ถ้าไม่มี adminId ใน query params ให้ดึงจาก storage
+      if (!this.adminId) {
+        const adminIdFromStorage = localStorage.getItem('adminId') || sessionStorage.getItem('adminId');
+        this.adminId = adminIdFromStorage || '';
+        console.log('AdminId from storage:', this.adminId);
+      }
 
       this.fetchPost(this.postId);
       console.log('Post ID:', this.postId);
+      console.log('Admin ID:', this.adminId);
     });
 
     this.userService.getUsers().subscribe({
@@ -160,5 +170,45 @@ export class ReportPostdetailComponent {
     });
   }
 
+  navigateToUserProfile(userId: number): void {
+    console.log('=== Navigate To User Profile ===');
+    console.log('userId (ผู้ใช้ที่เลือก):', userId);
+    console.log('userId type:', typeof userId);
+    console.log('this.adminId (แอดมิน):', this.adminId);
+    console.log('this.adminId type:', typeof this.adminId);
+    
+    if (!this.adminId) {
+      alert('เกิดข้อผิดพลาด: ไม่พบ Admin ID');
+      return;
+    }
+    
+    if (!userId) {
+      alert('เกิดข้อผิดพลาด: ไม่พบ User ID');
+      return;
+    }
+    
+    const params = { id: userId, adminId: this.adminId };
+    console.log('Navigating to /admin_profileuser with params:', params);
+    console.log('Params type check:', {
+      idType: typeof params.id,
+      adminIdType: typeof params.adminId,
+      idValue: params.id,
+      adminIdValue: params.adminId
+    });
+    
+    this.router.navigate(['/admin_profileuser'], {
+      queryParams: params
+    });
+  }
+
+  logout() {
+    localStorage.removeItem('adminId');
+    localStorage.removeItem('adminRole');
+    localStorage.removeItem('adminToken');
+    sessionStorage.removeItem('adminId');
+    sessionStorage.removeItem('adminRole');
+    sessionStorage.removeItem('adminToken');
+    this.router.navigate(['/login']);
+  }
 
 }

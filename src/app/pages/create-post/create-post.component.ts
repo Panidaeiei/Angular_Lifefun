@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit, HostListener, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { ActivatedRoute, RouterModule } from '@angular/router';
@@ -19,6 +19,8 @@ import * as L from 'leaflet';
 import 'leaflet-control-geocoder';
 import { Location } from '@angular/common';
 import { MatSelectModule } from '@angular/material/select';
+import { NotificationService, NotificationCounts } from '../../services/notification.service';
+import { Subscription } from 'rxjs';
 
 declare module 'leaflet' {
   namespace Control {
@@ -43,7 +45,7 @@ declare const google: any;
   templateUrl: './create-post.component.html',
   styleUrl: './create-post.component.scss',
 })
-export class CreatePostComponent implements OnInit {
+export class CreatePostComponent implements OnInit, OnDestroy {
   userId: string = '';
   categories: Category[] = []; // Use the Category model
   currentIndex: number = 0; // ดัชนีปัจจุบัน
@@ -60,6 +62,15 @@ export class CreatePostComponent implements OnInit {
   customGeocoderTimeout: any = null;
   placesService: any = null;
   mapMarker: any = null;
+  notificationCounts: NotificationCounts = {
+    like: 0,
+    follow: 0,
+    share: 0,
+    comment: 0,
+    unban: 0,
+    total: 0
+  };
+  private notificationSubscription?: Subscription;
 
   postData: Post = {
     title: '',
@@ -75,7 +86,8 @@ export class CreatePostComponent implements OnInit {
     private postService: PostService,
     private userService: UserService,  // Inject UserService
     private router: Router,
-    private location: Location
+    private location: Location,
+    private notificationService: NotificationService
   ) { }
 
   openMapDialog() {
@@ -131,6 +143,8 @@ export class CreatePostComponent implements OnInit {
         this.postData.uid = parseInt(this.userId, 10); // อัปเดต uid
         console.log('User ID set from queryParams:', this.userId);
         this.loadUserData(this.userId);
+        // เริ่มการติดตามการแจ้งเตือน
+        this.startNotificationTracking();
       } else {
         console.error('User ID not found in queryParams.');
         this.router.navigate(['/login']); // เปลี่ยนเส้นทางไปหน้า login หากไม่มี userId
@@ -148,6 +162,35 @@ export class CreatePostComponent implements OnInit {
 
   checkScreenSize() {
     this.isMobile = window.innerWidth <= 600;
+  }
+
+  ngOnDestroy(): void {
+    // หยุดการติดตามการแจ้งเตือน
+    this.notificationService.stopAutoUpdate();
+    
+    // ยกเลิก subscription
+    if (this.notificationSubscription) {
+      this.notificationSubscription.unsubscribe();
+    }
+  }
+
+  // เริ่มการติดตามการแจ้งเตือน
+  private startNotificationTracking(): void {
+    if (this.userId) {
+      // โหลดการแจ้งเตือนครั้งแรก
+      this.notificationService.loadNotificationCounts(Number(this.userId));
+      
+      // เริ่มการอัปเดตอัตโนมัติ
+      this.notificationService.startAutoUpdate(Number(this.userId));
+      
+      // ติดตามการเปลี่ยนแปลงจำนวนการแจ้งเตือน
+      this.notificationSubscription = this.notificationService.notificationCounts$.subscribe(
+        (counts) => {
+          this.notificationCounts = counts;
+          console.log('Notification counts updated:', counts);
+        }
+      );
+    }
   }
 
   loadUserData(userId: string): void {

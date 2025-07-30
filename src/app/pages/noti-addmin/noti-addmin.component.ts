@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterModule } from '@angular/router';
@@ -8,6 +8,8 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { ReactPostservice } from '../../services/ReactPostservice';
 import { MatBadgeModule } from '@angular/material/badge';
+import { AdminNotificationService, AdminNotificationCounts } from '../../services/admin-notification.service';
+import { Subscription } from 'rxjs';
 
 
 @Component({
@@ -16,7 +18,7 @@ import { MatBadgeModule } from '@angular/material/badge';
   templateUrl: './noti-addmin.component.html',
   styleUrl: './noti-addmin.component.scss'
 })
-export class NotiAddminComponent {
+export class NotiAddminComponent implements OnDestroy {
 
   userId: string = '';
   isDrawerOpen: boolean = false;
@@ -25,8 +27,18 @@ export class NotiAddminComponent {
   reportNotifications: any[] = [];
   reportCount: number = 0;
   latestReporterName: string = '';
+  notificationCounts: AdminNotificationCounts = {
+    report: 0,
+    total: 0
+  };
+  private notificationSubscription?: Subscription;
 
-  constructor(private route: ActivatedRoute, private notificationService: ReactPostservice, private router: Router) { }
+  constructor(
+    private route: ActivatedRoute, 
+    private notificationService: ReactPostservice, 
+    private router: Router,
+    private adminNotificationService: AdminNotificationService
+  ) { }
 
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
@@ -35,6 +47,28 @@ export class NotiAddminComponent {
     });
 
     this.loadReportNotifications();
+    
+    // เริ่มการติดตามการแจ้งเตือน
+    this.startNotificationTracking();
+  }
+
+  // เริ่มการติดตามการแจ้งเตือน
+  private startNotificationTracking(): void {
+    if (this.userId) {
+      // โหลดการแจ้งเตือนครั้งแรก
+      this.adminNotificationService.loadNotificationCounts(this.userId);
+      
+      // เริ่มการอัปเดตอัตโนมัติ
+      this.adminNotificationService.startAutoUpdate(this.userId);
+      
+      // ติดตามการเปลี่ยนแปลงจำนวนการแจ้งเตือน
+      this.notificationSubscription = this.adminNotificationService.notificationCounts.subscribe(
+        (counts) => {
+          this.notificationCounts = counts;
+          console.log('Admin notification counts updated:', counts);
+        }
+      );
+    }
   }
 
   loadReportNotifications(): void {
@@ -42,6 +76,12 @@ export class NotiAddminComponent {
       next: (data) => {
         this.reportNotifications = data.reports;
         this.reportCount = this.reportNotifications.length;
+
+        // อัปเดต notification counts จากข้อมูลที่มี
+        this.notificationCounts = {
+          report: this.reportCount,
+          total: this.reportCount
+        };
 
         if (this.reportCount > 0) {
           this.latestReporterName = this.reportNotifications[0].username;
@@ -76,5 +116,15 @@ export class NotiAddminComponent {
     sessionStorage.removeItem('adminRole');
     sessionStorage.removeItem('adminToken');
     this.router.navigate(['/login']);
+  }
+
+  ngOnDestroy(): void {
+    // หยุดการติดตามการแจ้งเตือน
+    this.adminNotificationService.stopAutoUpdate();
+    
+    // ยกเลิก subscription
+    if (this.notificationSubscription) {
+      this.notificationSubscription.unsubscribe();
+    }
   }
 }

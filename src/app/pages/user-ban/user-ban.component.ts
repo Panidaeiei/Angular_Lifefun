@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterModule } from '@angular/router';
@@ -11,6 +11,10 @@ import { User } from '../../models/register_model';
 import { AdminService } from '../../services/Admin';
 import { UserBan } from '../../models/ban.model';
 import { FormsModule } from '@angular/forms';
+import { AdminNotificationService, AdminNotificationCounts } from '../../services/admin-notification.service';
+import { Subscription } from 'rxjs';
+import { ReactPostservice } from '../../services/ReactPostservice';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-user-ban',
@@ -18,8 +22,7 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './user-ban.component.html',
   styleUrl: './user-ban.component.scss'
 })
-export class UserBanComponent {
-  [x: string]: any;
+export class UserBanComponent implements OnDestroy {
   userId: string = '';
   users: User[] = [];
   errorMessage: string = '';
@@ -27,9 +30,21 @@ export class UserBanComponent {
   filteredUsers: any[] = [];
   searchQuery: string = '';
   isSearchPerformed: boolean = false;
+  notificationCounts: AdminNotificationCounts = {
+    report: 0,
+    total: 0
+  };
+  private notificationSubscription?: Subscription;
 
 
-  constructor(private route: ActivatedRoute, private userService: UserService, private adminservice: AdminService, private router: Router) { }
+  constructor(
+    private route: ActivatedRoute, 
+    private userService: UserService, 
+    private adminservice: AdminService, 
+    private router: Router,
+    private adminNotificationService: AdminNotificationService,
+    private http: HttpClient
+  ) { }
 
   ngOnInit() {
     const adminId = localStorage.getItem('adminId') || sessionStorage.getItem('adminId');
@@ -56,6 +71,49 @@ export class UserBanComponent {
       },
       error: (error) => {
         this.errorMessage = 'Unauthorized';
+      }
+    });
+
+    // เริ่มการติดตามการแจ้งเตือน
+    this.startNotificationTracking();
+  }
+
+  // เริ่มการติดตามการแจ้งเตือน
+  private startNotificationTracking(): void {
+    if (this.userId) {
+      // โหลดการแจ้งเตือนครั้งแรก
+      this.adminNotificationService.loadNotificationCounts(this.userId);
+      
+      // เริ่มการอัปเดตอัตโนมัติ
+      this.adminNotificationService.startAutoUpdate(this.userId);
+      
+      // ติดตามการเปลี่ยนแปลงจำนวนการแจ้งเตือน
+      this.notificationSubscription = this.adminNotificationService.notificationCounts.subscribe(
+        (counts) => {
+          this.notificationCounts = counts;
+          console.log('Admin notification counts updated:', counts);
+        }
+      );
+
+      // โหลดข้อมูลการแจ้งเตือนจาก API ที่มีอยู่
+      this.loadReportNotifications();
+    }
+  }
+
+  // โหลดข้อมูลการแจ้งเตือน
+  private loadReportNotifications(): void {
+    const notificationService = new ReactPostservice(this.http);
+    notificationService.Noti_Reportaddmin().subscribe({
+      next: (data: any) => {
+        const reportCount = data.reports?.length || 0;
+        this.notificationCounts = {
+          report: reportCount,
+          total: reportCount
+        };
+        console.log('Report notifications loaded:', reportCount);
+      },
+      error: (err: any) => {
+        console.error('Error loading report notifications:', err);
       }
     });
   }
@@ -146,5 +204,15 @@ export class UserBanComponent {
     sessionStorage.removeItem('adminRole');
     sessionStorage.removeItem('adminToken');
     this.router.navigate(['/login']);
+  }
+
+  ngOnDestroy(): void {
+    // หยุดการติดตามการแจ้งเตือน
+    this.adminNotificationService.stopAutoUpdate();
+    
+    // ยกเลิก subscription
+    if (this.notificationSubscription) {
+      this.notificationSubscription.unsubscribe();
+    }
   }
 }

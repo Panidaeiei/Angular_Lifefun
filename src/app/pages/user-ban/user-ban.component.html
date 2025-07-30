@@ -14,7 +14,10 @@
             </a>
 
             <a class="menu-item" [routerLink]="['/noti_addmin']" [queryParams]="{ id: userId }">
-                <i class="fa-solid fa-bell"></i>
+                <div class="bell-icon-container">
+                    <i class="fa-solid fa-bell"></i>
+                    <div class="notification-dot" *ngIf="notificationCounts.total > 0"></div>
+                </div>
                 <span class="itim-regular">การแจ้งเตือน</span>
             </a>
         </div>

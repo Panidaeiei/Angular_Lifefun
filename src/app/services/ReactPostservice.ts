@@ -216,14 +216,36 @@ export class ReactPostservice {
   }
 
   getFollowCount(userId: string): Observable<FollowCount> {
+    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+    
+    if (!token) {
+      console.error('Token not found');
+      // ล้างข้อมูล session และ redirect
+      localStorage.clear();
+      sessionStorage.clear();
+      window.location.href = '/';
+      return throwError('Token not found');
+    }
+
     const headers = new HttpHeaders({
-      Authorization: `Bearer ${localStorage.getItem('token')}`,  // ส่ง JWT token ใน header
-      'Content-Type': 'application/json'  // กำหนด Content-Type ให้ถูกต้อง
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json'
     });
 
     return this.http.get<FollowCount>(
-      `${this.baseUrl}/follows/follow-count?userId=${userId}`, { headers }
-
+      `${this.baseUrl}/follows/follow-count?userId=${userId}`, 
+      { headers }
+    ).pipe(
+      catchError((error) => {
+        console.error('Error fetching follow count:', error);
+        if (error.status === 401) {
+          console.error('Token หมดอายุหรือไม่ถูกต้อง');
+          localStorage.clear();
+          sessionStorage.clear();
+          window.location.href = '/';
+        }
+        return throwError(error);
+      })
     );
   }
 

@@ -53,18 +53,79 @@ export class AdminService {
   // ฟังก์ชันจัดการข้อผิดพลาด
   private handleError(error: any): Observable<never> {
     let errorMessage = 'เกิดข้อผิดพลาด';
-    if (error.error instanceof ErrorEvent) {
+    
+    if (error.status === 401) {
+      console.error('Token หมดอายุหรือไม่ถูกต้อง');
+      // ล้างข้อมูล session
+      localStorage.clear();
+      sessionStorage.clear();
+      // redirect ไปหน้า login
+      window.location.href = '/';
+      errorMessage = 'Token หมดอายุ กรุณาเข้าสู่ระบบใหม่';
+    } else if (error.error instanceof ErrorEvent) {
       // Error จาก Client-side
       errorMessage = `Error: ${error.error.message}`;
     } else {
       // Error จาก Server-side
       errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
     }
+    
+    console.error('Admin Service Error:', error);
     return throwError(errorMessage);
   }
 
   searchBanUsers(username: string): Observable<User[]> {
     return this.http.get<User[]>(`${this.baseUrl}/admin/search_banuser`, { params: { username } });
+  }
+
+  // Admin Profile Methods
+  getAdminUserProfileById(userId: string): Observable<any> {
+    const adminToken = localStorage.getItem('adminToken') || sessionStorage.getItem('adminToken');
+    if (!adminToken) {
+      return throwError(() => new Error('Admin token not found'));
+    }
+
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${adminToken}`,
+      'Content-Type': 'application/json'
+    });
+
+    // ใช้ API route เดิม
+    return this.http.get(`${this.baseUrl}/profile/Prouser/${userId}`, { headers }).pipe(
+      catchError(this.handleError.bind(this))
+    );
+  }
+
+  getAdminUserPostsById(userId: string): Observable<any> {
+    const adminToken = localStorage.getItem('adminToken') || sessionStorage.getItem('adminToken');
+    if (!adminToken) {
+      return throwError(() => new Error('Admin token not found'));
+    }
+
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${adminToken}`,
+      'Content-Type': 'application/json'
+    });
+
+    return this.http.get(`${this.baseUrl}/profile/posts_user/${userId}`, { headers }).pipe(
+      catchError(this.handleError.bind(this))
+    );
+  }
+
+  getAdminFollowCount(userId: string): Observable<any> {
+    const adminToken = localStorage.getItem('adminToken') || sessionStorage.getItem('adminToken');
+    if (!adminToken) {
+      return throwError(() => new Error('Admin token not found'));
+    }
+
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${adminToken}`,
+      'Content-Type': 'application/json'
+    });
+
+    return this.http.get(`${this.baseUrl}/follows/follow-count?userId=${userId}`, { headers }).pipe(
+      catchError(this.handleError.bind(this))
+    );
   }
 
 }

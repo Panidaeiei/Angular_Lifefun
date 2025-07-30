@@ -14,8 +14,11 @@
 
             <a class="menu-item active" routerLinkActive="active" [routerLink]="['/noti_addmin']"
                         [queryParams]="{ id: userId }">
-                <i class="fa-solid fa-bell"></i>
-                    <span class="itim-regular">การแจ้งเตือน</span>
+                <div class="bell-icon-container">
+                    <i class="fa-solid fa-bell"></i>
+                    <div class="notification-dot" *ngIf="notificationCounts.total > 0"></div>
+                </div>
+                <span class="itim-regular">การแจ้งเตือน</span>
             </a>
         </div>
 
@@ -35,7 +38,7 @@
             <div style="position: relative; width: 100%; padding: 10px 0;">
                 <!-- ข้อความตรงกลาง -->
                 <div style="text-align: center;">
-                    <span class="fa-solid itim-regular" style="font-size: 30px; color: black;">
+                    <span class="fa-solid itim-regular" style="font-size: 25px; color: black;">
                         การแจ้งเตือน
                     </span>
                 </div>
@@ -82,7 +85,7 @@
         <p>{{ selectedCard.description }}</p>
     </div>
 
-    <div style="margin-top: -70px;">
+    <div style="margin-top: 20px;">
         <div *ngIf="selectedCard === 'report'"
             style="display: flex; flex-direction: column; align-items: center; padding: 20px; width: 100%;">
             <ng-container *ngIf="reportNotifications && reportNotifications.length > 0; else noReports">
@@ -113,7 +116,11 @@
             </ng-container>
 
             <ng-template #noReports>
-                <p style="color: #888; font-size: 20px;">ยังไม่มีการรายงาน</p>
+                <div style="text-align: center; padding: 50px 20px; margin-top: 100px;">
+                    <i class="fa-solid fa-bell-slash" style="font-size: 60px; color: #ccc; margin-bottom: 20px;"></i>
+                    <p style="color: #888; font-size: 20px; margin: 0;">ยังไม่มีการแจ้งเตือน</p>
+                    <p style="color: #aaa; font-size: 16px; margin: 10px 0 0 0;">เมื่อมีการรายงานใหม่จะแสดงที่นี่</p>
+                </div>
             </ng-template>
 
         </div>

@@ -316,3 +316,81 @@ body {
   padding: 5px;
   border-radius: 50%;
 }
+
+.bell-icon-container {
+  position: relative;
+  display: inline-block;
+}
+
+.notification-dot {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 8px;
+  height: 8px;
+  background-color: #ff4444;
+  border-radius: 50%;
+  border: 1px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  animation: notificationPulse 2s infinite;
+  z-index: 1001;
+}
+
+@keyframes notificationPulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+// Minimal button styles
+.minimal-button {
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  border: 1px solid #e0e0e0;
+  background: white;
+  color: #666;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  
+  i {
+    font-size: 12px;
+  }
+  
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  &.banned {
+    color: #4caf50;
+    border-color: #4caf50;
+    
+    &:hover {
+      background: #4caf50;
+      color: white;
+    }
+  }
+  
+  &.active {
+    color: #f44336;
+    border-color: #f44336;
+    
+    &:hover {
+      background: #f44336;
+      color: white;
+    }
+  }
+}
