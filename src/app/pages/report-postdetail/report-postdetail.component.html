@@ -1,6 +1,6 @@
 <mat-toolbar class="admin-toolbar">
     <!-- Logo ด้านซ้าย -->
-    <a [routerLink]="['/HomepageAdmin']" [queryParams]="{ id: adminId }" class="logo-link">
+    <a  class="logo-link">
         <img src="../../../assets/images/Logoweb.png" alt="Home Icon" class="logo-image">
     </a>
 
@@ -28,60 +28,56 @@
 <div style="display: flex; justify-content: center; align-items: center; margin-top: 130PX;">
     <div *ngIf="post" class="divpost">
         <!-- ส่วนแสดงโปรไฟล์ผู้ใช้ -->
-        <div class="post-header">
-            <div style="display: flex;">
-                <div style="display: flex;">
-                        <a  (click)="navigateToUserProfile(post.user_uid)" style="cursor: pointer;">
-                            <img [src]="post.user_profile_image || 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'"
-                                alt="รูปโปรไฟล์"
-                                style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover;">
-                        </a>
-                    <div style="display: flex; flex-direction: row; justify-content: space-between; gap: 520px;">
-                        <div style="display: flex; flex-direction: column;">
-                            <span style="font-size: 30px; font-weight: 500; margin-left: 20px;">
-                                {{ post.user_name }}
-                            </span>
-                            <span style="color: #7e7776; margin-top: 5px; margin-left: 25px; margin-bottom: 10px;">
-                                {{ post.post_time | timeAgo }}
-                            </span>
-                            <div *ngIf="post.location">
-                                <i class="fa-solid fa-location-dot"
-                                    style="margin-left: 20px; margin-right: 5px; font-size: 20px; color: rgb(228, 63, 91);"></i>
-                                <a class="location" [href]="post.location" target="_blank">
-                                    Location:
-                                    {{ post.location.length > 30 ? (post.location.substring(0, 30) + '...') :
-                                    post.location
-                                    }}
-                                </a>
-                            </div>
-                        </div>
-                        <a mat-button [matMenuTriggerFor]="menu"
-                            style="display: flex; align-items: center; justify-content: center; padding: 0;">
-                            <svg xmlns="http://www.w3.org/2000/svg" height="30" viewBox="0 0 24 24" width="30"
-                                fill="black">
-                                <circle cx="12" cy="5" r="2"></circle>
-                                <circle cx="12" cy="12" r="2"></circle>
-                                <circle cx="12" cy="19" r="2"></circle>
-                            </svg>
-                        </a>
-
-                        <mat-menu #menu="matMenu">
-                            <button mat-menu-item (click)="deletePost(post.post_id)">
-                                <i class="fa-solid fa-user-slash"
-                                    style="margin-right: 5px; font-size: 20px; color: rgb(200, 50, 50);"></i>
-                                <span style="font-size: 15px;">ลบโพสต์</span>
-                            </button>
-                            <button mat-menu-item >
-                                <div style="display: flex; align-items: center; justify-content: center;">
-                                    <i class="fa-solid fa-xmark"
-                                        style="margin-right: 5px; font-size: 30px; color: #d9534f;"></i>
-                                    <span style="font-size: 15px;">ปฏิเสธการรายงาน</span>
-                                </div>
-                            </button>
-                        </mat-menu>
-                    </div>
+        <div class="post-header" style="display: flex; align-items: flex-start; width: 100%;">
+            <a (click)="navigateToUserProfile(post.user_uid)" style="cursor: pointer; flex-shrink: 0;">
+                <img [src]="post.user_profile_image || 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'"
+                    alt="รูปโปรไฟล์"
+                    style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover;">
+            </a>
+            
+            <div style="display: flex; flex-direction: column; flex: 1; margin-left: 20px;">
+                <span style="font-size: 30px; font-weight: 500;">
+                    {{ post.user_name }}
+                </span>
+                <span style="color: #7e7776; margin-top: 5px; margin-bottom: 10px;">
+                    {{ post.post_time | timeAgo }}
+                </span>
+                <div *ngIf="post.location">
+                    <i class="fa-solid fa-location-dot"
+                        style="margin-right: 5px; font-size: 20px; color: rgb(228, 63, 91);"></i>
+                    <a class="location" [href]="post.location" target="_blank">
+                        Location:
+                        {{ post.location.length > 30 ? (post.location.substring(0, 30) + '...') :
+                        post.location
+                        }}
+                    </a>
                 </div>
             </div>
+            
+            <a mat-button [matMenuTriggerFor]="menu"
+                style="display: flex; align-items: center; justify-content: center; padding: 0; flex-shrink: 0;">
+                <svg xmlns="http://www.w3.org/2000/svg" height="30" viewBox="0 0 24 24" width="30"
+                    fill="black">
+                    <circle cx="12" cy="5" r="2"></circle>
+                    <circle cx="12" cy="12" r="2"></circle>
+                    <circle cx="12" cy="19" r="2"></circle>
+                </svg>
+            </a>
+
+            <mat-menu #menu="matMenu">
+                <button mat-menu-item (click)="deletePost(post.post_id)">
+                    <i class="fa-solid fa-user-slash"
+                        style="margin-right: 5px; font-size: 20px; color: rgb(200, 50, 50);"></i>
+                    <span style="font-size: 15px;">ลบโพสต์</span>
+                </button>
+                <!-- <button mat-menu-item >
+                    <div style="display: flex; align-items: center; justify-content: center;">
+                        <i class="fa-solid fa-xmark"
+                            style="margin-right: 5px; font-size: 30px; color: #d9534f;"></i>
+                        <span style="font-size: 15px;">ปฏิเสธการรายงาน</span>
+                    </div>
+                </button> -->
+            </mat-menu>
         </div>
 
         <!-- รูปภาพ/วิดีโอ -->

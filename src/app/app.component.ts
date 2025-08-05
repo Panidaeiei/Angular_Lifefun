@@ -1,7 +1,8 @@
 import { HttpClientModule } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterModule} from '@angular/router';
 import { instantMeiliSearch } from '@meilisearch/instant-meilisearch'
+import { UserService } from './services/Userservice';
 
 const searchClient = instantMeiliSearch(
   'https://ms-3f99c75ba93f-19552.sgp.meilisearch.io',

@@ -10,11 +10,12 @@ import { ReactPostservice } from '../../services/ReactPostservice';
 import { MatBadgeModule } from '@angular/material/badge';
 import { AdminNotificationService, AdminNotificationCounts } from '../../services/admin-notification.service';
 import { Subscription } from 'rxjs';
+import { FormatLocalTimePipe } from '../../pipes/time-ago.pipe';
 
 
 @Component({
   selector: 'app-noti-addmin',
-  imports: [MatToolbarModule, RouterModule, CommonModule, MatTabsModule, MatCardModule, MatButtonModule, MatBadgeModule],
+  imports: [MatToolbarModule, RouterModule, CommonModule, MatTabsModule, MatCardModule, MatButtonModule, MatBadgeModule, FormatLocalTimePipe],
   templateUrl: './noti-addmin.component.html',
   styleUrl: './noti-addmin.component.scss'
 })

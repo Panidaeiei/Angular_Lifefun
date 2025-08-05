@@ -32,6 +32,7 @@ import { ChatUserComponent } from './pages/chat-user/chat-user.component';
 import { NotiAddminComponent } from './pages/noti-addmin/noti-addmin.component';
 import { ReportPostdetailComponent } from './pages/report-postdetail/report-postdetail.component';
 import { BanStatusGuard } from './services/ban-status.guard';
+import { CacheManagerComponent } from './pages/cache-manager/cache-manager.component';
 
 
 export const routes: Routes = [
@@ -67,5 +68,6 @@ export const routes: Routes = [
     {path: 'chat', component: ChatUserComponent, canActivate: [BanStatusGuard]},
     {path: 'noti_addmin', component: NotiAddminComponent},
     {path: 'admin_profileuser', component: ProfileuserAdminComponent},
-    {path: 'detail_postadmin', component: ReportPostdetailComponent}
+    {path: 'detail_postadmin', component: ReportPostdetailComponent},
+    {path: 'cache-manager', component: CacheManagerComponent}
 ];

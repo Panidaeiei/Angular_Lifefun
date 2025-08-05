@@ -13,11 +13,12 @@ import { UserService } from '../../services/Userservice';
 import { NotificationService } from '../../services/notification.service';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { filter } from 'rxjs/operators';
+import { FormatLocalTimePipe } from '../../pipes/time-ago.pipe';
 
 
 @Component({
   selector: 'app-notification-user',
-  imports: [MatToolbarModule, RouterModule, CommonModule, MatTabsModule, MatCardModule, MatButtonModule, MatSidenavModule, MatBadgeModule, MatTooltipModule],
+  imports: [MatToolbarModule, RouterModule, CommonModule, MatTabsModule, MatCardModule, MatButtonModule, MatSidenavModule, MatBadgeModule, MatTooltipModule, FormatLocalTimePipe],
   templateUrl: './notification-user.component.html',
   styleUrls: ['./notification-user.component.scss'] // Corrected property name and path
 })

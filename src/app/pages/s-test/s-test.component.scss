@@ -52,7 +52,7 @@ body {
   margin-top: 120px;
   padding: 0 16px;
   width: 100%;
-  max-width: 1200px;
+  max-width: 1000px;
   margin-left: auto;
   margin-right: auto;
 }
@@ -134,9 +134,9 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 32px;
+  gap: 24px;
   width: 100%;
-  max-width: 600px;
+  max-width: 500px;
   margin: 0 auto;
 }
 
@@ -151,7 +151,7 @@ body {
   flex-direction: column;
   align-items: stretch;
   width: 100%;
-  max-width: 600px;
+  max-width: 500px;
   margin: 0 auto;
 }
 
@@ -165,14 +165,14 @@ body {
 .post-card .profile-row {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin: 18px 18px 0 18px;
+  gap: 10px;
+  margin: 16px 16px 0 16px;
 }
 
 .post-card .profile-row img {
   border-radius: 50%;
-  width: 56px;
-  height: 56px;
+  width: 48px;
+  height: 48px;
   object-fit: cover;
   border: 2px solid var(--card-border);
   background: #f3ede7;
@@ -187,7 +187,7 @@ body {
 }
 
 .post-card .profile-info .user-name {
-  font-size: 1.08rem;
+  font-size: 1rem;
   font-weight: 700;
   color: var(--text-main);
   margin: 0;
@@ -198,7 +198,7 @@ body {
 
 .post-card .profile-info .post-time {
   color: var(--text-secondary);
-  font-size: 0.97rem;
+  font-size: 0.9rem;
   margin-top: 2px;
   margin: 0;
 }
@@ -207,9 +207,9 @@ body {
 .post-card .media-container {
   position: relative;
   width: 100%;
-  aspect-ratio: 1/1;
+  aspect-ratio: 4/3;
   background: #f7f3ef;
-  margin-top: 14px;
+  margin-top: 12px;
   overflow: hidden;
 }
 
@@ -242,36 +242,36 @@ body {
 .post-card .like-row {
   display: flex;
   align-items: center;
-  margin: 12px 18px 0 18px;
-  font-size: 1.1rem;
+  margin: 10px 16px 0 16px;
+  font-size: 1rem;
   color: var(--accent);
-  gap: 8px;
+  gap: 6px;
 }
 
 // เนื้อหาโพสต์
 .post-card .post-content {
   text-align: left;
-  padding: 12px 18px 18px 18px;
+  padding: 10px 16px 16px 16px;
   margin-top: 0;
 }
 
 .post-card .post-title {
-  font-size: 1.08rem;
+  font-size: 1rem;
   color: var(--text-main);
   font-weight: 500;
   margin: 0;
   word-break: break-word;
-  line-height: 1.5;
+  line-height: 1.4;
 }
 
 .show-more-btn {
   background: #e7d7c9;
   color: #5a4633;
   border: none;
-  border-radius: 16px;
-  padding: 6px 16px;
-  font-size: 0.9rem;
-  margin-top: 8px;
+  border-radius: 14px;
+  padding: 5px 14px;
+  font-size: 0.85rem;
+  margin-top: 6px;
   cursor: pointer;
   transition: all 0.18s ease;
   outline: none;
@@ -286,6 +286,51 @@ body {
   }
 }
 
+// ปุ่มดูโพสต์เพิ่มเติม
+.view-more-container {
+  margin-top: 16px;
+  display: flex;
+  justify-content: center;
+}
+
+.view-more-btn {
+  background: rgba(255, 255, 255, 0.9);
+  color: #666;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  padding: 6px 16px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  outline: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  text-decoration: none;
+  font-family: "Itim", serif;
+  backdrop-filter: blur(10px);
+
+  &:hover, &:focus {
+    background: rgba(255, 255, 255, 1);
+    color: #333;
+    border-color: rgba(0, 0, 0, 0.15);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  }
+
+  i {
+    font-size: 12px;
+    opacity: 0.7;
+  }
+}
+
 // Loading และ No results
 .loading, .no-results {
   text-align: center;
@@ -295,12 +340,15 @@ body {
 }
 
 .no-results {
-  background: #fff;
   border-radius: 12px;
   box-shadow: var(--card-shadow);
   border: 1px solid var(--card-border);
   margin: 20px auto;
   max-width: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
 }
 
 .drawer {
@@ -620,12 +668,26 @@ body {
 
 // Heart icon
 .heart-icon {
-  color: gray;
-  transition: color 0.3s ease;
+  color: #ccc;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  font-size: 26px;
+}
+
+.heart-icon:hover {
+  color: #ff6b6b;
+  transform: scale(1.1);
 }
 
 .heart-icon.liked {
-  color: rgb(224, 67, 67);
+  color: #e74c3c !important;
+  animation: heartBeat 0.3s ease-in-out;
+}
+
+@keyframes heartBeat {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
 }
 
 // User list
@@ -793,6 +855,11 @@ body {
     padding: 5px 14px;
   }
 
+  .view-more-btn {
+    font-size: 0.85rem;
+    padding: 6px 16px;
+  }
+
   .search-container {
     margin-top: 30px;
   }
@@ -914,6 +981,18 @@ body {
     width: 90%;
     box-sizing: border-box;
     margin-right: 40px !important;
+  }
+
+  .no-results {
+    border-radius: 12px;
+    box-shadow: var(--card-shadow);
+    border: 1px solid var(--card-border);
+    margin: 20px auto;
+    max-width: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
   }
 }
 
