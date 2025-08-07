@@ -63,7 +63,6 @@ export class STestComponent {
         if (post.isLiked === undefined) {
           post.isLiked = false;
         }
-        console.log('Post', post.post_id, 'initial isLiked:', post.isLiked);
       });
       
       // ตรวจสอบสถานะการกดใจสำหรับแต่ละโพสต์
@@ -93,7 +92,6 @@ export class STestComponent {
           if (post.isLiked === undefined) {
             post.isLiked = false;
           }
-          console.log('Search Post', post.post_id, 'initial isLiked:', post.isLiked);
         });
         
         // ตรวจสอบสถานะการกดใจสำหรับโพสต์ที่ค้นหา
@@ -140,7 +138,6 @@ export class STestComponent {
 
     this.likePostService.likePost(post.post_id, Number(this.currentUserId)).subscribe({
       next: (response) => {
-        console.log('Like response:', response);
         
         // ตรวจสอบว่า response มี isLiked หรือไม่
         if (response.hasOwnProperty('isLiked')) {
@@ -156,9 +153,7 @@ export class STestComponent {
         } else if (response.hasOwnProperty('likes_count')) {
           post.likes_count = response.likes_count;
         }
-        
-        console.log('Updated like status:', post.isLiked);
-        console.log('Updated likes count:', post.likes_count);
+
       },
       error: (error) => {
         console.error('Error toggling like:', error);
@@ -170,8 +165,6 @@ export class STestComponent {
   checkLikeStatus(postId: number): void {
     this.likePostService.checkLikeStatus(postId).subscribe({
       next: (response) => {
-        console.log('Like status for post', postId, ':', response);
-        console.log('Response keys:', Object.keys(response));
         
         // อัพเดตสถานะการกดใจในโพสต์
         const post = this.posts.find(p => p.post_id === postId);
@@ -179,13 +172,13 @@ export class STestComponent {
           // ตรวจสอบหลายรูปแบบของ response
           if (response.hasOwnProperty('isLiked')) {
             post.isLiked = response.isLiked;
-            console.log('Updated post like status (isLiked):', post.post_id, 'isLiked:', post.isLiked);
+
           } else if (response.hasOwnProperty('liked')) {
             post.isLiked = response.liked;
-            console.log('Updated post like status (liked):', post.post_id, 'isLiked:', post.isLiked);
+
           } else if (response.hasOwnProperty('is_liked')) {
             post.isLiked = response.is_liked;
-            console.log('Updated post like status (is_liked):', post.post_id, 'isLiked:', post.isLiked);
+
           } else {
             console.log('No like status found in response for post:', postId);
           }
