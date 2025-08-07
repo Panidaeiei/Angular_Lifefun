@@ -140,6 +140,7 @@
                           </ng-template>
                         </span>
                     </div>
+                    
                 </div>
                 </ng-container>
                 <ng-template #noChats>
@@ -157,6 +158,14 @@
                      (click)="goToProfile(selectedChat?.uid)"
                      class="clickable-avatar" />
                 <strong>{{ selectedChat?.name }}</strong>
+                <div class="chat-menu-wrapper chat-menu-header" *ngIf="selectedChat">
+                  <button class="chat-menu-btn" (click)="toggleChatMenu(selectedChat.chatId)">
+                    <i class="fa fa-ellipsis-v"></i>
+                  </button>
+                  <ul class="chat-menu-list" *ngIf="openedMenuId === selectedChat.chatId">
+                    <li (click)="deleteChat(selectedChat.chatId)"><i class="fa fa-trash"></i> ลบแชท</li>
+                  </ul>
+                </div>
             </div>
             <div class="chat-messages" (scroll)="onChatScroll()">
                 <!-- ปุ่มไปที่ข้อความล่าสุด -->
@@ -269,6 +278,14 @@
                             <span style="color: #aaa;">ยังไม่มีข้อความ</span>
                           </ng-template>
                         </span>
+                    </div>
+                    <div class="chat-menu-wrapper" (click)="$event.stopPropagation()">
+                      <button class="chat-menu-btn" (click)="toggleChatMenu(chat.chatId)">
+                        <i class="fa fa-ellipsis-v"></i>
+                      </button>
+                      <ul class="chat-menu-list" *ngIf="openedMenuId === chat.chatId">
+                        <li (click)="deleteChat(chat.chatId)"><i class="fa fa-trash"></i> ลบแชท</li>
+                      </ul>
                     </div>
                 </div>
                 </ng-container>

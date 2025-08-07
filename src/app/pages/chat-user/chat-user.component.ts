@@ -74,6 +74,8 @@ export class ChatUserComponent implements OnInit, OnDestroy {
   };
   private notificationSubscription?: Subscription;
 
+  openedMenuId: string | null = null;
+
   @Input() userData: any;
 
   constructor(private route: ActivatedRoute, private userService: UserService, private chatService: ChatService, private router: Router, private notificationService: NotificationService) {}
@@ -128,7 +130,6 @@ export class ChatUserComponent implements OnInit, OnDestroy {
       this.notificationSubscription = this.notificationService.notificationCounts$.subscribe(
         (counts) => {
           this.notificationCounts = counts;
-          console.log('Notification counts updated:', counts);
         }
       );
     }
@@ -136,7 +137,30 @@ export class ChatUserComponent implements OnInit, OnDestroy {
 
   loadUserChats() {
     this.chatService.getUserChats(this.userId, (chats) => {
-      this.chatList = chats.map(chat => {
+      // ตรวจสอบสถานะผู้ใช้แต่ละคนก่อนแสดงในรายการแชท
+      const validChats = chats.filter(chat => {
+        const otherUserId = chat.other_user || chat.other_user_id || chat.uid || chat.other_id || chat.user_id || chat.id;
+        if (!otherUserId) return false;
+        
+        // ตรวจสอบว่าผู้ใช้นี้ยังมีอยู่ในระบบหรือไม่
+        this.userService.checkUserExists(otherUserId).subscribe({
+          next: (exists: boolean) => {
+            if (!exists) {
+              console.log(`User ${otherUserId} has been deleted, removing from chat list`);
+              // ลบแชทออกจาก Firebase ถ้าผู้ใช้ถูกลบแล้ว
+              this.chatService.removeChatFromUser(this.userId, chat.chatId);
+            }
+          },
+          error: (error: any) => {
+            console.error(`Error checking user ${otherUserId}:`, error);
+            // ถ้าไม่สามารถตรวจสอบได้ ให้แสดงแชทไว้ก่อน
+          }
+        });
+        
+        return true; // แสดงแชทไว้ก่อนจนกว่าจะตรวจสอบเสร็จ
+      });
+
+      this.chatList = validChats.map(chat => {
         const mapped = {
           avatar: chat.other_image_url,
           name: chat.other_username,
@@ -424,7 +448,17 @@ export class ChatUserComponent implements OnInit, OnDestroy {
     }
   }
 
-
+  async deleteChat(chatId: string) {
+    if (!chatId) return;
+    if (!confirm('คุณต้องการลบห้องแชทนี้ทั้งหมดใช่หรือไม่? ข้อความที่และรูปถาพที่ส่งจะถูกลบออกด้วย')) return;
+    await this.chatService.removeChatFromUser(this.userId, chatId);
+    await this.chatService.deleteEntireChat(chatId); // <-- ลบทั้งห้องแชท
+    this.loadUserChats();
+    if (this.selectedChat && this.selectedChat.chatId === chatId) {
+      this.selectedChat = null;
+      this.currentChatMessages = [];
+    }
+  }
 
   // ตรวจสอบว่าผู้ใช้อยู่ใกล้ด้านล่างหรือไม่
   checkIfNearBottom(): boolean {
@@ -458,5 +492,22 @@ export class ChatUserComponent implements OnInit, OnDestroy {
     sessionStorage.removeItem('userRole');
     sessionStorage.removeItem('currentUserId');
     this.router.navigate(['/login']);
+  }
+
+  toggleChatMenu(chatId: string) {
+    if (this.openedMenuId === chatId) {
+      this.openedMenuId = null;
+    } else {
+      this.openedMenuId = chatId;
+    }
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    // ปิดเมนูถ้าคลิกนอกปุ่มเมนู
+    const target = event.target as HTMLElement;
+    if (!target.closest('.chat-menu-wrapper')) {
+      this.openedMenuId = null;
+    }
   }
 }
