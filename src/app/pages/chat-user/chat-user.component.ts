@@ -15,6 +15,7 @@ import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-chat-user',
+  standalone: true,
   imports: [MatToolbarModule, MatButtonModule, RouterModule, MatCardModule, MatIconModule, CommonModule, MatBadgeModule,
     MatTabsModule, FormsModule],
   templateUrl: './chat-user.component.html',
