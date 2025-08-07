@@ -18,6 +18,7 @@ import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-detail-postmain',
+  standalone: true,
   imports: [MatToolbarModule, RouterModule, CommonModule, MatTabsModule, MatCardModule, MatButtonModule, MatMenuModule, MatIconModule, NewlineToBrPipe, FormsModule, TimeAgoPipe],
   templateUrl: './detail-postmain.component.html',
   styleUrl: './detail-postmain.component.scss'

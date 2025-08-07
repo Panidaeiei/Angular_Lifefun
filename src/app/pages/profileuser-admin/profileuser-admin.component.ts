@@ -18,6 +18,7 @@ import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-profileuser-admin',
+  standalone: true,
   imports: [MatToolbarModule, RouterModule, CommonModule, MatIconModule, MatTabsModule, MatButtonModule],
   templateUrl: './profileuser-admin.component.html',
   styleUrl: './profileuser-admin.component.scss'

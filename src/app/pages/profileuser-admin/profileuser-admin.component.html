@@ -120,8 +120,8 @@
                         <div *ngFor="let post of userPosts" class="post-item">
                             <div>
                                 <!-- แสดงรูปภาพหรือวิดีโอ -->
-                                <a [routerLink]="['/detail_postadmin']"
-                                [queryParams]="{ post_id: post.post_id, user_id: userId }">
+                                <a [routerLink]="['/detail_post']"
+                                    [queryParams]="{ post_id: post.post_id, user_id: userId }">
                                     <img *ngIf="post.media_type === 'image'"
                                         [src]="post.firstMediaUrl || 'https://via.placeholder.com/350x300'"
                                         alt="รูปที่โพสต์" class="post-image">

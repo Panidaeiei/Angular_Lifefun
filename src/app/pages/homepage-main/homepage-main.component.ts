@@ -16,6 +16,7 @@ import { TimeAgoPipe } from '../../pipes/time-ago.pipe';
 
 @Component({
   selector: 'app-homepage-main',
+  standalone: true,
   imports: [MatToolbarModule,
         RouterModule,
         CommonModule,

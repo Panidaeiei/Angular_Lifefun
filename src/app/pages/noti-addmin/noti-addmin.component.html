@@ -1,7 +1,7 @@
 <div class="background-div">
     <mat-toolbar class="admin-toolbar">
         <!-- Logo ด้านซ้าย -->
-        <a class="logo-link">
+        <a [routerLink]="['/HomepageAdmin']" [queryParams]="{ id: userId }" class="logo-link">
             <img src="../../../assets/images/Logoweb.png" alt="Home Icon" class="logo-image">
         </a>
 
@@ -92,16 +92,16 @@
                 <div *ngFor="let report of reportNotifications" class="noti-card2" [routerLink]="['/detail_postadmin']"
                     [queryParams]="{ post_id: report.post_id, user_id: userId, rid: report.rid }">
                     <div class="noti-content" style="display: flex; align-items: center; gap: 12px;">
-                        <img [src]="report.reporter_image || 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'"
+                        <img [src]="report.image_url || 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'"
                             alt="User Image"
                             style="width: 60px; height: 60px; object-fit: cover; border-radius: 50%; flex-shrink: 0;">
                         <div>
                             <div class="noti-text">
                                 <strong>{{ report.username }}</strong> รายงานโพสต์ <strong>"{{ report.post_caption
-                                    }}"</strong>  
+                                    }}"</strong>
                             </div>
                             <div class="noti-text">เหตุผล: {{ report.reason }}</div>
-                            <div class="noti-date">{{ report.date_time | formatLocalTime }}</div>
+                            <div class="noti-date">{{ report.date_time | date: 'short' }}</div>
                         </div>
                     </div>
 

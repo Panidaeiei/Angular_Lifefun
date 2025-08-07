@@ -59,35 +59,8 @@
     </div>
 </div>
 <div>
-    <!-- Loading State -->
-    <div *ngIf="isLoading" style="display: flex; justify-content: center; align-items: center; margin-top: 200px;">
-        <div style="text-align: center;">
-            <div style="width: 50px; height: 50px; border: 5px solid #f3f3f3; border-top: 5px solid #e27c96; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto;"></div>
-            <p style="margin-top: 20px; color: #666;">กำลังโหลดข้อมูล...</p>
-        </div>
-    </div>
-
-    <!-- Error Message -->
-    <div *ngIf="errorMessage && !isLoading" style="display: flex; justify-content: center; align-items: center; margin-top: 200px;">
-        <div style="text-align: center; color: #e74c3c;">
-            <i class="material-icons" style="font-size: 48px; margin-bottom: 10px;">error</i>
-            <p>{{ errorMessage }}</p>
-        </div>
-    </div>
-
-    <!-- Mock Data Notice -->
-    <div *ngIf="!isLoading && !errorMessage && isMockData" style="display: flex; justify-content: center; align-items: center; margin-top: 20px;">
-        <div style="text-align: center; background-color: #fff3cd; border: 1px solid #ffeaa7; border-radius: 8px; padding: 12px; max-width: 600px;">
-            <i class="material-icons" style="font-size: 24px; color: #856404; margin-bottom: 8px;">info</i>
-            <p style="color: #856404; margin: 0; font-size: 14px;">
-                <strong>หมายเหตุ:</strong> ข้อมูลที่แสดงเป็นข้อมูลตัวอย่าง เนื่องจากคุณยังไม่ได้เข้าสู่ระบบ 
-                กรุณา <a routerLink="/login" style="color: #e27c96; text-decoration: underline;">เข้าสู่ระบบ</a> เพื่อดูข้อมูลจริง
-            </p>
-        </div>
-    </div>
-
     <!-- PROFILE HEADER (responsive) -->
-    <div *ngIf="!isLoading && !errorMessage" style="display: flex; flex-direction: column; margin-top: 170px;">
+    <div style="display: flex; flex-direction: column; margin-top: 170px;">
         <!-- MOBILE IG-style profile header (no story) -->
         <div *ngIf="isMobile" class="profile-header-mobile">
             <div style="display: flex; flex-direction: row; align-items: center; gap: 18px;">

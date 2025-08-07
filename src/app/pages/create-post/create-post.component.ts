@@ -30,6 +30,7 @@ declare module 'leaflet' {
 declare const google: any;
 @Component({
   selector: 'app-create-post',
+  standalone: true,
   imports: [
     MatToolbarModule,
     RouterModule,

@@ -16,6 +16,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-user-travel',
+  standalone: true,
   imports: [
     MatToolbarModule,
     RouterModule,

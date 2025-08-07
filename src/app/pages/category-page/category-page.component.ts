@@ -12,6 +12,7 @@ import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-category-page',
+  standalone: true,
   imports: [MatToolbarModule,RouterModule,CommonModule,MatTabsModule,MatButtonModule,MatCardModule,MatTooltipModule],
   templateUrl: './category-page.component.html',
   styleUrl: './category-page.component.scss'

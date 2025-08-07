@@ -22,6 +22,7 @@ import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-view-user',
+  standalone: true,
   imports: [MatToolbarModule,
     RouterModule,
     CommonModule,

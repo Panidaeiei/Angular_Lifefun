@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, throwError, BehaviorSubject } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { LikePost } from '../models/LikePost_model';
 import { Comment } from '../models/comment_model';
 import { SharePostModel } from '../models/sharepost_model';
 import { SavePostModel } from '../models/savepost_service';
 import { Follow, FollowCount, FollowStatus } from '../models/follow.model';
-import { tap } from 'rxjs/operators';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -39,7 +39,14 @@ export class ReactPostservice {
       notify: 0,
     };
 
-    return this.http.post(`${this.baseUrl}/likepost/like`, likePost, { headers });
+    return this.http.post(`${this.baseUrl}/likepost/like`, likePost, { headers }).pipe(
+      // เมื่อทำการไลค์โพสต์, เราจะเปลี่ยนแปลงสถานะของไลค์
+      tap((response: any) => {
+        if (response.isLiked !== undefined) {
+          this.likeStatusSubject.next(response.isLiked); // อัปเดตสถานะการไลค์ใน BehaviorSubject
+        }
+      })
+    );
   }
 
   // ฟังก์ชันในการตรวจสอบสถานะไลค์
@@ -54,7 +61,12 @@ export class ReactPostservice {
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
 
     // ส่ง HTTP GET request ไปที่ API ที่ตรวจสอบสถานะไลค์
-    return this.http.get(`${this.baseUrl}/likepost/check-like-status?post_id=${postId}`, { headers });
+    return this.http.get(`${this.baseUrl}/likepost/check-like-status?post_id=${postId}`, { headers }).pipe(
+      tap((response: any) => {
+        // ใช้ข้อมูลที่ได้รับจาก API เพื่อตรวจสอบว่าไลค์หรือไม่
+        this.likeStatusSubject.next(response.liked);
+      })
+    );
   }
 
   addComment(postId: number, title: string, userId: number): Observable<any> {
@@ -236,19 +248,6 @@ export class ReactPostservice {
       })
     );
   }
-
-  // ดึงข้อมูล follow count แบบ public (ไม่ต้องมี token)
-  getFollowCountPublic(userId: string): Observable<FollowCount> {
-    return this.http.get<FollowCount>(
-      `${this.baseUrl}/follows/public/follow-count?userId=${userId}`
-    ).pipe(
-      catchError((error) => {
-        console.error('Error fetching follow count (public):', error);
-        return throwError(error);
-      })
-    );
-  }
-
 
   sendReport(reason: string, pid: number, uid: string | number): Observable<any> {
     const body = { reason, pid, uid: Number(uid) };

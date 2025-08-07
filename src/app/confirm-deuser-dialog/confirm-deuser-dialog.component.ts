@@ -3,6 +3,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-confirm-deuser-dialog',
+  standalone: true,
   imports: [],
   templateUrl: './confirm-deuser-dialog.component.html',
   styleUrl: './confirm-deuser-dialog.component.scss'

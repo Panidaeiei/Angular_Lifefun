@@ -246,7 +246,7 @@
                             <strong>{{ noti.username }}</strong> กดไลค์โพสต์
                             <span>"{{ noti.post_caption }}"</span>
                         </div>
-                        <div class="noti-date">{{ noti.date_time| formatLocalTime }}</div>
+                        <div class="noti-date">{{ noti.date_time | date: 'short' }}</div>
                     </div>
                 </div>
                 <div>
@@ -277,7 +277,7 @@
                         <div class="noti-text">
                             <strong>{{ noti.username }}</strong> ติดตามคุณแล้ว
                         </div>
-                        <div class="noti-date">{{ noti.create_at.replace('T', ' ').slice(0, 16) }}</div>
+                        <div class="noti-date">{{ noti.create_at | date: 'short' }}</div>
                     </div>
                 </div>
             </div>
@@ -306,7 +306,7 @@
                             <strong>{{ noti.username }}</strong> แชร์โพสต์ของคุณ
                             <span>"{{ noti.post_caption }}"</span>
                         </div>
-                        <div class="noti-date">{{ noti.date_time | formatLocalTime }}</div>
+                        <div class="noti-date">{{ noti.date_time | date: 'short' }}</div>
                     </div>
                 </div>
                 <div>
@@ -341,7 +341,7 @@
                             <strong>{{ noti.username }}</strong> แสดงความคิดเห็น
                             <span>"{{ noti.comment_title }}"</span>
                         </div>
-                        <div class="noti-date">{{ noti.date_time | formatLocalTime }}</div>
+                        <div class="noti-date">{{ noti.date_time | date: 'short' }}</div>
                     </div>
                 </div>
                 <div>

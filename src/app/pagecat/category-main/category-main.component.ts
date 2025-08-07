@@ -10,6 +10,7 @@ import { PostService } from '../../services/Postservice';
 
 @Component({
   selector: 'app-category-main',
+  standalone: true,
   imports: [MatToolbarModule,RouterModule,CommonModule,MatTabsModule,MatButtonModule,MatCardModule],
   templateUrl: './category-main.component.html',
   styleUrl: './category-main.component.scss'

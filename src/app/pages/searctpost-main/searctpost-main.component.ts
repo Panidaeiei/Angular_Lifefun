@@ -12,6 +12,7 @@ import { TimeAgoPipe } from '../../pipes/time-ago.pipe';
 
 @Component({
   selector: 'app-searctpost-main',
+  standalone: true,
   imports: [RouterModule, MatToolbarModule, CommonModule, MatTabsModule, MatCardModule, MatButtonModule, FormsModule, TimeAgoPipe],
   templateUrl: './searctpost-main.component.html',
   styleUrl: './searctpost-main.component.scss'

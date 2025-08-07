@@ -18,6 +18,7 @@ import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-home-follow',
+  standalone: true,
   imports: [MatToolbarModule,RouterModule,CommonModule,MatTabsModule,MatButtonModule,MatCardModule,MatTooltipModule, TimeAgoPipe ],
   templateUrl: './home-follow.component.html',
   styleUrl: './home-follow.component.scss'

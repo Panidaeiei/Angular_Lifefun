@@ -9,6 +9,7 @@ import { catchError, throwError } from 'rxjs';
 
 @Component({
   selector: 'app-report-dialog',
+  standalone: true,
   imports: [MatDialogModule,
     MatFormFieldModule,
     MatInputModule,

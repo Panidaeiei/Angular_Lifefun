@@ -2,6 +2,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
   name: 'timeAgo',
+  standalone: true,
 })
 export class TimeAgoPipe implements PipeTransform {
   transform(value: string | Date): string {
@@ -65,6 +66,7 @@ export class TimeAgoPipe implements PipeTransform {
 
 @Pipe({
   name: 'formatLocalTime',
+  standalone: true,
 })
 export class FormatLocalTimePipe implements PipeTransform {
   transform(value: string | Date): string {

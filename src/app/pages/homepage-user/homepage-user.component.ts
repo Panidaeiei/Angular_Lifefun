@@ -20,6 +20,7 @@ import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-homepage-user',
+  standalone: true,
   imports: [MatToolbarModule, RouterModule, CommonModule, MatTabsModule, MatCardModule, MatButtonModule, MatTooltipModule, MatBadgeModule, TimeAgoPipe],
   templateUrl: './homepage-user.component.html',
   styleUrl: './homepage-user.component.scss',
@@ -152,6 +153,7 @@ export class HomepageUserComponent implements OnDestroy {
       this.notificationSubscription = this.notificationService.notificationCounts$.subscribe(
         (counts) => {
           this.notificationCounts = counts;
+          console.log('Notification counts updated:', counts);
         }
       );
     }
@@ -192,6 +194,7 @@ export class HomepageUserComponent implements OnDestroy {
   fetchPosts(): void {
     this.postService.getPosts_interests().subscribe(
       (response: ShowPost[]) => {
+        console.log('Response from API:', response);  // ตรวจสอบข้อมูลที่ได้รับจาก API
 
         // กรองโพสต์ที่มี `post_id` ซ้ำ
         const uniquePosts = response.filter((value, index, self) =>

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { BehaviorSubject, catchError, Observable, throwError, map } from 'rxjs';
+import { BehaviorSubject, catchError, Observable, tap, throwError } from 'rxjs';
 import { User } from '../models/register_model';
 import { environment } from '../../environments/environment';
 import { SearchUser } from '../models/search-user.model';
@@ -101,6 +101,9 @@ export class UserService {
     });
 
     return this.http.put(`${this.baseUrl}/edit_user`, formData, { headers, responseType: 'json' }).pipe(
+      tap((response) => {
+        console.log('📥 Raw response from backend:', response);
+      }),
       catchError((error: HttpErrorResponse) => {
         console.error('❌ Error in updateUser:', error);
         console.log('📌 Error status:', error.status);
@@ -136,33 +139,10 @@ export class UserService {
     );
   }
 
-  // ตรวจสอบว่าผู้ใช้ยังมีอยู่ในระบบหรือไม่
-  checkUserExists(userId: string): Observable<boolean> {
+  searchUsers(username: string): Observable<SearchUser[]> {
     const token = localStorage.getItem('token');
     if (!token) {
-      console.error('No token found');
       return throwError(() => new Error('Unauthorized: Token not found in LocalStorage'));
-    }
-
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${token}`,
-    });
-
-    return this.http.get<User>(`${this.baseUrl}/view_users/${userId}`, { headers }).pipe(
-      // ถ้าสำเร็จแสดงว่าผู้ใช้มีอยู่
-      map(() => true),
-      catchError((error) => {
-        console.error(`Error checking user ${userId}:`, error);
-        // ถ้าเกิด error (เช่น 404) แสดงว่าผู้ใช้ไม่มีอยู่
-        return throwError(() => new Error('User not found'));
-      })
-    );
-  }
-
-  searchUsers(username: string): Observable<SearchUser[]> {
-    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-    if (!token) {
-      return throwError(() => new Error('Unauthorized: Token not found in LocalStorage or SessionStorage'));
     }
 
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
@@ -170,16 +150,6 @@ export class UserService {
     return this.http.get<SearchUser[]>(`${this.baseUrl}/search_user?username=${username}`, { headers }).pipe(
       catchError(error => {
         console.error('Error fetching searched users:', error);
-        return throwError(() => new Error(error.message || 'Failed to search users'));
-      })
-    );
-  }
-
-  // ค้นหาผู้ใช้แบบ public (ไม่ต้องมี token)
-  searchUsersPublic(username: string): Observable<SearchUser[]> {
-    return this.http.get<SearchUser[]>(`${this.baseUrl}/search_user?username=${username}`).pipe(
-      catchError(error => {
-        console.error('Error fetching searched users (public):', error);
         return throwError(() => new Error(error.message || 'Failed to search users'));
       })
     );

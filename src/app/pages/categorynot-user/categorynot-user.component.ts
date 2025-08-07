@@ -9,6 +9,7 @@ import {MatButtonModule} from '@angular/material/button';
 
 @Component({
   selector: 'app-categorynot-user',
+  standalone: true,
   imports: [MatToolbarModule,RouterModule,CommonModule,MatTabsModule,MatButtonModule,MatCardModule],
   templateUrl: './categorynot-user.component.html',
   styleUrl: './categorynot-user.component.scss'

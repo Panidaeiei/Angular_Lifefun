@@ -16,6 +16,7 @@ import { HostListener } from '@angular/core';
 
 @Component({
   selector: 'app-viewuser-main',
+  standalone: true,
   imports: [MatToolbarModule,
       RouterModule,
       CommonModule,
@@ -47,8 +48,6 @@ export class ViewuserMainComponent {
     followingCount: number = 0;
     isDialogOpen = false; 
     isMobile = false;
-    isLoading: boolean = false; // เพิ่ม loading state
-    isMockData: boolean = false; // เพิ่ม flag สำหรับ mock data
  
 
     ngOnInit(): void {
@@ -57,8 +56,6 @@ export class ViewuserMainComponent {
         if (profileUserId) {
           this.Profileuser = profileUserId;
           this.followedId = profileUserId;
-          this.isLoading = true;
-          this.errorMessage = '';
           this.loadUserProfile();
           this.loadUserPosts();
           this.loadFollowCount();
@@ -82,140 +79,48 @@ export class ViewuserMainComponent {
   
   loadUserProfile(): void {
     if (this.Profileuser) {
-      // ตรวจสอบว่ามี token หรือไม่
-      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-      
-      if (token) {
-        // ถ้ามี token ให้ใช้ method ที่ต้อง authentication
-        this.profileService.getUserProfileById(this.Profileuser).subscribe(
-          (data) => {
-            this.userProfile = data;
-            console.log('Owner Profile Data:', this.userProfile);
-          },
-          (error) => {
-            console.error('Error fetching owner profile:', error);
-            if (error.status === 404) {
-              this.userProfile = null;
-            } else if (error.status === 401) {
-              // ถ้า authentication ล้มเหลว ให้ลองใช้ public method
-              this.loadUserProfilePublic();
-            }
+      this.profileService.getUserProfileById(this.Profileuser).subscribe(
+        (data) => {
+          this.userProfile = data;  // เก็บข้อมูลโปรไฟล์ของเจ้าของโปรไฟล์
+          console.log('Owner Profile Data:', this.userProfile);
+        },
+        (error) => {
+          console.error('Error fetching owner profile:', error);
+          if (error.status === 404) {
+            this.userProfile = null; // ไม่พบข้อมูลของเจ้าของโปรไฟล์
           }
-        );
-      } else {
-        // ถ้าไม่มี token ให้ใช้ public method
-        this.loadUserProfilePublic();
-      }
+        }
+      );
     }
-  }
-
-  private loadUserProfilePublic(): void {
-    this.profileService.getUserProfileByIdPublic(this.Profileuser).subscribe(
-      (data) => {
-        this.userProfile = data;
-        console.log('Owner Profile Data (Public):', this.userProfile);
-        this.isLoading = false;
-        // ตรวจสอบว่าเป็น mock data หรือไม่
-        if (data.description && data.description.includes('public profile view')) {
-          this.isMockData = true;
-        }
-      },
-      (error) => {
-        console.error('Error fetching owner profile (public):', error);
-        if (error.status === 404) {
-          this.userProfile = null;
-          this.errorMessage = 'ไม่พบข้อมูลผู้ใช้นี้';
-        } else {
-          this.errorMessage = 'เกิดข้อผิดพลาดในการโหลดข้อมูลโปรไฟล์';
-        }
-        this.isLoading = false;
-      }
-    );
   }
 
   loadUserPosts(): void {
     if (this.Profileuser) {
-      // ตรวจสอบว่ามี token หรือไม่
-      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-      
-      if (token) {
-        // ถ้ามี token ให้ใช้ method ที่ต้อง authentication
-        this.profileService.getUserPostsById(this.Profileuser).subscribe(
-          (data) => {
-            this.userPosts = data.userPosts;
-            console.log('User Posts (จากเจ้าของโปรไฟล์):', this.userPosts);
-            this.savedPosts = data.savedPosts;
-            this.sharedPosts = data.sharedPosts;
-          },
-          (error) => {
-            console.error('Error fetching posts:', error);
-            if (error.status === 401) {
-              // ถ้า authentication ล้มเหลว ให้ลองใช้ public method
-              this.loadUserPostsPublic();
-            } else {
-              this.errorMessage = 'ไม่สามารถดึงข้อมูลโพสต์ได้';
-            }
-          }
-        );
-      } else {
-        // ถ้าไม่มี token ให้ใช้ public method
-        this.loadUserPostsPublic();
-      }
+      this.profileService.getUserPostsById(this.Profileuser).subscribe(
+        (data) => {
+          this.userPosts = data.userPosts;  // โพสต์ของเจ้าของโปรไฟล์
+          console.log('User Posts (จากเจ้าของโปรไฟล์):', this.userPosts);
+          this.savedPosts = data.savedPosts;  // โพสต์ที่บันทึก
+          this.sharedPosts = data.sharedPosts; // โพสต์ที่แชร์
+        },
+        (error) => {
+          this.errorMessage = 'ไม่สามารถดึงข้อมูลโพสต์ได้';
+          console.error('Error fetching posts:', error);
+        }
+      );
     }
-  }
-
-  private loadUserPostsPublic(): void {
-    this.profileService.getUserPostsByIdPublic(this.Profileuser).subscribe(
-      (data) => {
-        this.userPosts = data.userPosts;
-        console.log('User Posts (Public):', this.userPosts);
-        this.savedPosts = data.savedPosts;
-        this.sharedPosts = data.sharedPosts;
-        this.isLoading = false;
-      },
-      (error) => {
-        console.error('Error fetching posts (public):', error);
-        this.errorMessage = 'ไม่สามารถดึงข้อมูลโพสต์ได้';
-        this.isLoading = false;
-      }
-    );
   }
 
   loadFollowCount(): void {
     if (!this.followedId) return;
 
-    // ตรวจสอบว่ามี token หรือไม่
-    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-    
-    if (token) {
-      // ถ้ามี token ให้ใช้ method ที่ต้อง authentication
-      this.reactPostservice.getFollowCount(this.followedId).subscribe(
-        (response) => {
-          this.followersCount = response.followers;
-          this.followingCount = response.following;
-        },
-        (error) => {
-          console.error('Error fetching follow count:', error);
-          if (error.status === 401) {
-            // ถ้า authentication ล้มเหลว ให้ลองใช้ public method
-            this.loadFollowCountPublic();
-          }
-        }
-      );
-    } else {
-      // ถ้าไม่มี token ให้ใช้ public method
-      this.loadFollowCountPublic();
-    }
-  }
-
-  private loadFollowCountPublic(): void {
-    this.reactPostservice.getFollowCountPublic(this.followedId).subscribe(
+    this.reactPostservice.getFollowCount(this.followedId).subscribe(
       (response) => {
         this.followersCount = response.followers;
         this.followingCount = response.following;
       },
       (error) => {
-        console.error('Error fetching follow count (public):', error);
+        console.error('Error fetching follow count:', error);
       }
     );
   }

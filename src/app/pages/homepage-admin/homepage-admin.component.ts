@@ -11,6 +11,7 @@ import { ShowPost } from '../../models/showpost_model';
 
 @Component({
   selector: 'app-homepage-admin',
+  standalone: true,
   imports: [MatToolbarModule, RouterModule, CommonModule, MatTabsModule, MatCardModule, MatButtonModule],
   templateUrl: './homepage-admin.component.html',
   styleUrl: './homepage-admin.component.scss'

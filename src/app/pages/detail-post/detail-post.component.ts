@@ -19,7 +19,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { EditPostModel } from '../../models/edit-post.model';
 import { FormsModule } from '@angular/forms'
 import { TimeAgoPipe, FormatLocalTimePipe} from '../../pipes/time-ago.pipe';
-import { Comment } from '../../models/comment_model';
 import { SharePostModel } from '../../models/sharepost_model';
 import { SavePostModel } from '../../models/savepost_service';
 import { ReportDialogComponent } from '../report-dialog/report-dialog.component';
@@ -29,6 +28,7 @@ import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-detail-post',
+  standalone: true,
   imports: [
     MatToolbarModule, RouterModule, CommonModule, MatTabsModule, MatCardModule, MatButtonModule, MatMenuModule, MatIconModule, NewlineToBrPipe, FormsModule, TimeAgoPipe, FormatLocalTimePipe, MatTooltipModule
   ],

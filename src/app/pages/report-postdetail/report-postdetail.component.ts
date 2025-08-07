@@ -20,6 +20,7 @@ import { ConfirmDeleteDialogComponent } from '../../confirm-delete-dialog/confir
 
 @Component({
   selector: 'app-report-postdetail',
+  standalone: true,
   imports: [MatToolbarModule, RouterModule, CommonModule, MatTabsModule, MatCardModule, MatButtonModule, MatMenuModule, MatIconModule, NewlineToBrPipe, FormsModule, TimeAgoPipe],
   templateUrl: './report-postdetail.component.html',
   styleUrl: './report-postdetail.component.scss'

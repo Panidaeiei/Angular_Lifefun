@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { initializeApp } from 'firebase/app';
-import { getDatabase, ref, push, set, onValue, DataSnapshot, update, get, remove } from 'firebase/database';
-import { getStorage, ref as storageRef, uploadBytes, getDownloadURL, deleteObject, listAll } from 'firebase/storage';
+import { getDatabase, ref, push, set, onValue, DataSnapshot, update, get } from 'firebase/database';
+import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
@@ -152,50 +152,5 @@ export class ChatService {
     await this.addUserToChat(chatId, user1, user2);
     
     return chatId;
-  }
-
-  // ลบแชทออกจากรายการของผู้ใช้ (เมื่อผู้ใช้ถูกลบออกจากระบบ)
-  async removeChatFromUser(userId: string, chatId: string): Promise<void> {
-    const userChatRef = ref(this.db, `user_chats/${userId}/${chatId}`);
-    await set(userChatRef, null); // ลบแชทออกจาก user_chats
-    console.log(`Removed chat ${chatId} from user ${userId}`);
-  }
-
-  // ลบไฟล์ทั้งหมดในโฟลเดอร์แชท (ทั้งรูปและวิดีโอ)
-  async deleteAllChatMedia(chatId: string): Promise<void> {
-    // ลบรูปภาพ
-    const imagesFolderRef = storageRef(this.storage, `chat_images/${chatId}`);
-    const imagesList = await listAll(imagesFolderRef);
-    for (const item of imagesList.items) {
-      await deleteObject(item);
-    }
-    // ลบวิดีโอ
-    const videosFolderRef = storageRef(this.storage, `chat_videos/${chatId}`);
-    const videosList = await listAll(videosFolderRef);
-    for (const item of videosList.items) {
-      await deleteObject(item);
-    }
-  }
-
-  // ลบข้อความทั้งหมดในแชท (Realtime DB)
-  async deleteAllChatMessages(chatId: string): Promise<void> {
-    const messagesRef = ref(this.db, `chats/${chatId}/messages`);
-    await remove(messagesRef);
-  }
-
-  // ลบ users ในแชท (Realtime DB)
-  async deleteAllChatUsers(chatId: string): Promise<void> {
-    const usersRef = ref(this.db, `chats/${chatId}/users`);
-    await remove(usersRef);
-  }
-
-  // ลบทั้งห้องแชท (ข้อความ, รูป, วิดีโอ, users)
-  async deleteEntireChat(chatId: string): Promise<void> {
-    await this.deleteAllChatMessages(chatId);
-    await this.deleteAllChatUsers(chatId);
-    await this.deleteAllChatMedia(chatId);
-    // ลบข้อมูลห้องแชทหลัก (chats/{chatId})
-    const chatRef = ref(this.db, `chats/${chatId}`);
-    await remove(chatRef);
   }
 }

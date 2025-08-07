@@ -1,4 +1,4 @@
-import { Component, HostListener } from '@angular/core';
+import { Component } from '@angular/core';
 import { ShowPost } from '../../models/showpost_model';
 import { PostService } from '../../services/Postservice';
 import { FormsModule } from '@angular/forms';
@@ -11,11 +11,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { RouterModule } from '@angular/router';
 import { TimeAgoPipe} from '../../pipes/time-ago.pipe';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { ReactPostservice } from '../../services/ReactPostservice';
-import { UserService } from '../../services/Userservice';
 
 @Component({
   selector: 'app-s-test',
+  standalone: true,
   imports: [MatToolbarModule, CommonModule, MatTabsModule, MatCardModule, MatButtonModule, FormsModule, RouterModule, TimeAgoPipe, MatTooltipModule],
   templateUrl: './s-test.component.html',
   styleUrl: './s-test.component.scss'
@@ -23,7 +22,6 @@ import { UserService } from '../../services/Userservice';
 export class STestComponent {
 
   userId: string = '';
-  currentUserId: string | null = null;
   searchQuery = '';
   allPosts: any[] = [];
   posts: any[] = [];
@@ -34,13 +32,7 @@ export class STestComponent {
   activeTab: string = 'post';
   isMobile: boolean = false; 
 
-  constructor(
-    private postService: PostService, 
-    private route: ActivatedRoute, 
-    private router: Router,
-    private likePostService: ReactPostservice,
-    private userService: UserService
-  ) { }
+  constructor(private postService: PostService, private route: ActivatedRoute, private router: Router) { }
 
   ngOnInit(): void {
     const loggedInUserId = localStorage.getItem('userId') || sessionStorage.getItem('userId');
@@ -58,17 +50,6 @@ export class STestComponent {
       }
     });
 
-    // โหลดข้อมูลผู้ใช้ปัจจุบัน
-    this.userService.getCurrentUserId().subscribe((userId) => {
-      this.currentUserId = userId;
-      console.log('Current User ID:', this.currentUserId);
-    });
-    
-    this.userService.loadCurrentUserId();
-    
-    // ตรวจสอบขนาดหน้าจอ
-    this.checkScreenSize();
-
     this.postService.getPosts().subscribe((data: any[]) => {
       // กรองโพสต์ที่ post_id ซ้ำ
       const uniquePosts = data.filter((value, index, self) =>
@@ -76,19 +57,6 @@ export class STestComponent {
       );
       this.allPosts = uniquePosts;
       this.posts = uniquePosts;
-      
-      // กำหนดค่าเริ่มต้นสำหรับ isLiked ถ้าไม่มี
-      this.posts.forEach((post) => {
-        if (post.isLiked === undefined) {
-          post.isLiked = false;
-        }
-        console.log('Post', post.post_id, 'initial isLiked:', post.isLiked);
-      });
-      
-      // ตรวจสอบสถานะการกดใจสำหรับแต่ละโพสต์
-      this.posts.forEach((post) => {
-        this.checkLikeStatus(post.post_id);
-      });
     });
   }
 
@@ -106,20 +74,6 @@ export class STestComponent {
           index === self.findIndex((t) => t.post_id === value.post_id)
         );
         this.posts = uniquePosts;
-        
-        // กำหนดค่าเริ่มต้นสำหรับ isLiked ถ้าไม่มี
-        this.posts.forEach((post) => {
-          if (post.isLiked === undefined) {
-            post.isLiked = false;
-          }
-          console.log('Search Post', post.post_id, 'initial isLiked:', post.isLiked);
-        });
-        
-        // ตรวจสอบสถานะการกดใจสำหรับโพสต์ที่ค้นหา
-        this.posts.forEach((post) => {
-          this.checkLikeStatus(post.post_id);
-        });
-        
         this.loading = false;
       },
       error: (error) => {
@@ -135,85 +89,6 @@ export class STestComponent {
 
   toggleShowFull(postId: string) {
     this.showFull[postId] = !this.showFull[postId];
-  }
-
-  // เพิ่มฟังก์ชันตรวจสอบขนาดหน้าจอ
-  @HostListener('window:resize', ['$event'])
-  onResize(event: any) {
-    this.checkScreenSize();
-  }
-
-  checkScreenSize() {
-    this.isMobile = window.innerWidth <= 600;
-  }
-
-  // เพิ่มฟังก์ชันการกดใจ
-  toggleHeart(post: ShowPost): void {
-    if (!this.currentUserId) {
-      console.error('User ID not found');
-      return;
-    }
-
-    console.log('Toggling heart for post:', post.post_id, 'User ID:', this.currentUserId);
-    console.log('Current like status:', post.isLiked);
-
-    this.likePostService.likePost(post.post_id, Number(this.currentUserId)).subscribe({
-      next: (response) => {
-        console.log('Like response:', response);
-        
-        // ตรวจสอบว่า response มี isLiked หรือไม่
-        if (response.hasOwnProperty('isLiked')) {
-          post.isLiked = response.isLiked;
-        } else {
-          // ถ้าไม่มี isLiked ใน response ให้สลับสถานะปัจจุบัน
-          post.isLiked = !post.isLiked;
-        }
-        
-        // อัพเดตจำนวนไลค์
-        if (response.hasOwnProperty('likeCount')) {
-          post.likes_count = response.likeCount;
-        } else if (response.hasOwnProperty('likes_count')) {
-          post.likes_count = response.likes_count;
-        }
-        
-        console.log('Updated like status:', post.isLiked);
-        console.log('Updated likes count:', post.likes_count);
-      },
-      error: (error) => {
-        console.error('Error toggling like:', error);
-      }
-    });
-  }
-
-  // เพิ่มฟังก์ชันตรวจสอบสถานะการกดใจ
-  checkLikeStatus(postId: number): void {
-    this.likePostService.checkLikeStatus(postId).subscribe({
-      next: (response) => {
-        console.log('Like status for post', postId, ':', response);
-        console.log('Response keys:', Object.keys(response));
-        
-        // อัพเดตสถานะการกดใจในโพสต์
-        const post = this.posts.find(p => p.post_id === postId);
-        if (post) {
-          // ตรวจสอบหลายรูปแบบของ response
-          if (response.hasOwnProperty('isLiked')) {
-            post.isLiked = response.isLiked;
-            console.log('Updated post like status (isLiked):', post.post_id, 'isLiked:', post.isLiked);
-          } else if (response.hasOwnProperty('liked')) {
-            post.isLiked = response.liked;
-            console.log('Updated post like status (liked):', post.post_id, 'isLiked:', post.isLiked);
-          } else if (response.hasOwnProperty('is_liked')) {
-            post.isLiked = response.is_liked;
-            console.log('Updated post like status (is_liked):', post.post_id, 'isLiked:', post.isLiked);
-          } else {
-            console.log('No like status found in response for post:', postId);
-          }
-        }
-      },
-      error: (error) => {
-        console.error('Error checking like status:', error);
-      }
-    });
   }
   
   logout(): void {

@@ -18,6 +18,7 @@ import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-user-list-admin',
+  standalone: true,
   imports: [MatToolbarModule, RouterModule, CommonModule, MatTabsModule, MatCardModule, MatButtonModule, FormsModule],
   templateUrl: './user-list-admin.component.html',
   styleUrl: './user-list-admin.component.scss'
@@ -192,6 +193,11 @@ export class UserListAdminComponent implements OnDestroy {
   }
 
   navigateToUserProfile(userId: number): void {
+    console.log('=== Navigate To User Profile ===');
+    console.log('userId (ผู้ใช้ที่เลือก):', userId);
+    console.log('userId type:', typeof userId);
+    console.log('this.adminId (แอดมิน):', this.adminId);
+    console.log('this.adminId type:', typeof this.adminId);
     
     if (!this.adminId) {
       alert('เกิดข้อผิดพลาด: ไม่พบ Admin ID');

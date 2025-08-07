@@ -18,6 +18,7 @@ import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-user-ban',
+  standalone: true,
   imports: [MatToolbarModule, RouterModule, CommonModule, MatTabsModule, MatCardModule, MatButtonModule, FormsModule],
   templateUrl: './user-ban.component.html',
   styleUrl: './user-ban.component.scss'
