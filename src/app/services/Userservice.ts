@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { BehaviorSubject, catchError, Observable, tap, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, Observable, throwError, map } from 'rxjs';
 import { User } from '../models/register_model';
 import { environment } from '../../environments/environment';
 import { SearchUser } from '../models/search-user.model';
@@ -139,10 +139,33 @@ export class UserService {
     );
   }
 
-  searchUsers(username: string): Observable<SearchUser[]> {
+  // ตรวจสอบว่าผู้ใช้ยังมีอยู่ในระบบหรือไม่
+  checkUserExists(userId: string): Observable<boolean> {
     const token = localStorage.getItem('token');
     if (!token) {
+      console.error('No token found');
       return throwError(() => new Error('Unauthorized: Token not found in LocalStorage'));
+    }
+
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    return this.http.get<User>(`${this.baseUrl}/view_users/${userId}`, { headers }).pipe(
+      // ถ้าสำเร็จแสดงว่าผู้ใช้มีอยู่
+      map(() => true),
+      catchError((error) => {
+        console.error(`Error checking user ${userId}:`, error);
+        // ถ้าเกิด error (เช่น 404) แสดงว่าผู้ใช้ไม่มีอยู่
+        return throwError(() => new Error('User not found'));
+      })
+    );
+  }
+
+  searchUsers(username: string): Observable<SearchUser[]> {
+    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+    if (!token) {
+      return throwError(() => new Error('Unauthorized: Token not found in LocalStorage or SessionStorage'));
     }
 
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);

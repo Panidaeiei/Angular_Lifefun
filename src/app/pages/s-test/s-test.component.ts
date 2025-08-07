@@ -57,6 +57,19 @@ export class STestComponent {
       );
       this.allPosts = uniquePosts;
       this.posts = uniquePosts;
+      
+      // กำหนดค่าเริ่มต้นสำหรับ isLiked ถ้าไม่มี
+      this.posts.forEach((post) => {
+        if (post.isLiked === undefined) {
+          post.isLiked = false;
+        }
+        console.log('Post', post.post_id, 'initial isLiked:', post.isLiked);
+      });
+      
+      // ตรวจสอบสถานะการกดใจสำหรับแต่ละโพสต์
+      this.posts.forEach((post) => {
+        this.checkLikeStatus(post.post_id);
+      });
     });
   }
 
@@ -74,6 +87,20 @@ export class STestComponent {
           index === self.findIndex((t) => t.post_id === value.post_id)
         );
         this.posts = uniquePosts;
+        
+        // กำหนดค่าเริ่มต้นสำหรับ isLiked ถ้าไม่มี
+        this.posts.forEach((post) => {
+          if (post.isLiked === undefined) {
+            post.isLiked = false;
+          }
+          console.log('Search Post', post.post_id, 'initial isLiked:', post.isLiked);
+        });
+        
+        // ตรวจสอบสถานะการกดใจสำหรับโพสต์ที่ค้นหา
+        this.posts.forEach((post) => {
+          this.checkLikeStatus(post.post_id);
+        });
+        
         this.loading = false;
       },
       error: (error) => {
@@ -89,6 +116,85 @@ export class STestComponent {
 
   toggleShowFull(postId: string) {
     this.showFull[postId] = !this.showFull[postId];
+  }
+
+  // เพิ่มฟังก์ชันตรวจสอบขนาดหน้าจอ
+  @HostListener('window:resize', ['$event'])
+  onResize(event: any) {
+    this.checkScreenSize();
+  }
+
+  checkScreenSize() {
+    this.isMobile = window.innerWidth <= 600;
+  }
+
+  // เพิ่มฟังก์ชันการกดใจ
+  toggleHeart(post: ShowPost): void {
+    if (!this.currentUserId) {
+      console.error('User ID not found');
+      return;
+    }
+
+    console.log('Toggling heart for post:', post.post_id, 'User ID:', this.currentUserId);
+    console.log('Current like status:', post.isLiked);
+
+    this.likePostService.likePost(post.post_id, Number(this.currentUserId)).subscribe({
+      next: (response) => {
+        console.log('Like response:', response);
+        
+        // ตรวจสอบว่า response มี isLiked หรือไม่
+        if (response.hasOwnProperty('isLiked')) {
+          post.isLiked = response.isLiked;
+        } else {
+          // ถ้าไม่มี isLiked ใน response ให้สลับสถานะปัจจุบัน
+          post.isLiked = !post.isLiked;
+        }
+        
+        // อัพเดตจำนวนไลค์
+        if (response.hasOwnProperty('likeCount')) {
+          post.likes_count = response.likeCount;
+        } else if (response.hasOwnProperty('likes_count')) {
+          post.likes_count = response.likes_count;
+        }
+        
+        console.log('Updated like status:', post.isLiked);
+        console.log('Updated likes count:', post.likes_count);
+      },
+      error: (error) => {
+        console.error('Error toggling like:', error);
+      }
+    });
+  }
+
+  // เพิ่มฟังก์ชันตรวจสอบสถานะการกดใจ
+  checkLikeStatus(postId: number): void {
+    this.likePostService.checkLikeStatus(postId).subscribe({
+      next: (response) => {
+        console.log('Like status for post', postId, ':', response);
+        console.log('Response keys:', Object.keys(response));
+        
+        // อัพเดตสถานะการกดใจในโพสต์
+        const post = this.posts.find(p => p.post_id === postId);
+        if (post) {
+          // ตรวจสอบหลายรูปแบบของ response
+          if (response.hasOwnProperty('isLiked')) {
+            post.isLiked = response.isLiked;
+            console.log('Updated post like status (isLiked):', post.post_id, 'isLiked:', post.isLiked);
+          } else if (response.hasOwnProperty('liked')) {
+            post.isLiked = response.liked;
+            console.log('Updated post like status (liked):', post.post_id, 'isLiked:', post.isLiked);
+          } else if (response.hasOwnProperty('is_liked')) {
+            post.isLiked = response.is_liked;
+            console.log('Updated post like status (is_liked):', post.post_id, 'isLiked:', post.isLiked);
+          } else {
+            console.log('No like status found in response for post:', postId);
+          }
+        }
+      },
+      error: (error) => {
+        console.error('Error checking like status:', error);
+      }
+    });
   }
   
   logout(): void {
