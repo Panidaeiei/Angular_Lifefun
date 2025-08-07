@@ -195,13 +195,10 @@ export class EditprofileUserComponent implements OnInit {
 
     const isChangingPassword = this.newPassword || this.confirmPassword;
 
-    // ถ้าไม่ได้ตั้งใจเปลี่ยนรหัสผ่าน (newPassword, confirmPassword ว่าง) ให้ clear currentPassword
-    if (!isChangingPassword) {
-      this.currentPassword = '';
-    }
+    const isTryingToChangePassword =
+      this.currentPassword || this.newPassword || this.confirmPassword;
 
-    // ถ้ากรอก newPassword หรือ confirmPassword ต้องกรอกครบทั้ง 3 ช่อง
-    if (isChangingPassword) {
+    if (isTryingToChangePassword) {
       if (!this.currentPassword || !this.newPassword || !this.confirmPassword) {
         alert('กรุณากรอกรหัสผ่านให้ครบทุกช่อง');
         return;
@@ -218,7 +215,10 @@ export class EditprofileUserComponent implements OnInit {
         alert('รหัสผ่านไม่ตรงกัน');
         return;
       }
+    } else {
+      this.currentPassword = '';
     }
+
 
     this.isLoading = true;
     const formData = new FormData();
@@ -237,7 +237,7 @@ export class EditprofileUserComponent implements OnInit {
       formData.append('phone', this.user.phone);
     }
     // ส่ง description เสมอ (รวมถึงค่าว่างเพื่อลบ description)
-      formData.append('description', this.user.description || '');
+    formData.append('description', this.user.description || '');
     if (this.newPassword) {
       formData.append('password', this.newPassword);
       formData.append('old_password', this.currentPassword);
@@ -251,7 +251,7 @@ export class EditprofileUserComponent implements OnInit {
         console.log('✅ Success response:', response);
         console.log('✅ Response type:', typeof response);
         console.log('✅ Response message:', response.message);
-        
+
         // ตรวจสอบว่า response มี error หรือไม่
         if (response.error || response.errors) {
           console.error('❌ Backend returned error in success response:', response);
@@ -273,9 +273,9 @@ export class EditprofileUserComponent implements OnInit {
         console.log('📌 Error status:', error.status);
         console.log('📌 Error message:', error.message);
         console.log('📌 Error error:', error.error);
-    
+
         let errorMessage = 'รหัสผ่านเดิมไม่ถูกต้อง!';
-    
+
         // ✅ กรณีที่ error เป็น `Error` object และอยู่ใน `error.message`
         let backendResponse;
         try {
@@ -283,12 +283,12 @@ export class EditprofileUserComponent implements OnInit {
         } catch (e) {
           backendResponse = error.error || {}; // ถ้าแปลงไม่ได้ ใช้ error.error แทน
         }
-    
+
         // ✅ ถ้า backendResponse มี errors ให้ดึงมาแสดงผล
         if (backendResponse.errors) {
           const errors = backendResponse.errors;
           errorMessage = '';
-    
+
           if (errors.username) {
             errorMessage += errors.username + '\n';
           }
@@ -299,12 +299,12 @@ export class EditprofileUserComponent implements OnInit {
             errorMessage += errors.phone + '\n';
           }
         }
-    
+
         alert(errorMessage.trim()); // ✅ แจ้งเตือนข้อผิดพลาด และให้ผู้ใช้แก้ไขข้อมูล
         this.isLoading = false;
       }
-    });    
-    
+    });
+
   }
 
 

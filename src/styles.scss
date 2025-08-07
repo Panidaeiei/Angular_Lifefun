@@ -50,6 +50,10 @@
   z-index: 1001;
 }
 
+html {
+  color-scheme: light !important;
+}
+
 @keyframes notificationPulse {
   0% {
     transform: scale(1);

@@ -38,15 +38,7 @@ export class ReactPostservice {
       date_time: new Date().toISOString(),  // Add current date and time
       notify: 0,
     };
-
-    return this.http.post(`${this.baseUrl}/likepost/like`, likePost, { headers }).pipe(
-      // เมื่อทำการไลค์โพสต์, เราจะเปลี่ยนแปลงสถานะของไลค์
-      tap((response: any) => {
-        if (response.isLiked !== undefined) {
-          this.likeStatusSubject.next(response.isLiked); // อัปเดตสถานะการไลค์ใน BehaviorSubject
-        }
-      })
-    );
+    return this.http.post(`${this.baseUrl}/likepost/like`, likePost, { headers });
   }
 
   // ฟังก์ชันในการตรวจสอบสถานะไลค์
@@ -61,12 +53,7 @@ export class ReactPostservice {
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
 
     // ส่ง HTTP GET request ไปที่ API ที่ตรวจสอบสถานะไลค์
-    return this.http.get(`${this.baseUrl}/likepost/check-like-status?post_id=${postId}`, { headers }).pipe(
-      tap((response: any) => {
-        // ใช้ข้อมูลที่ได้รับจาก API เพื่อตรวจสอบว่าไลค์หรือไม่
-        this.likeStatusSubject.next(response.liked);
-      })
-    );
+   return this.http.get(`${this.baseUrl}/likepost/check-like-status?post_id=${postId}`, { headers });
   }
 
   addComment(postId: number, title: string, userId: number): Observable<any> {
@@ -119,6 +106,18 @@ export class ReactPostservice {
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
 
     return this.http.delete(`${this.baseUrl}/comments/Decomment?comment_id=${commentId}`, { headers });
+  }
+
+    // ดึงข้อมูล follow count แบบ public (ไม่ต้องมี token)
+  getFollowCountPublic(userId: string): Observable<FollowCount> {
+    return this.http.get<FollowCount>(
+      `${this.baseUrl}/follows/public/follow-count?userId=${userId}`
+    ).pipe(
+      catchError((error) => {
+        console.error('Error fetching follow count (public):', error);
+        return throwError(error);
+      })
+    );
   }
 
   sharePost(post: SharePostModel): Observable<any> {
@@ -217,7 +216,7 @@ export class ReactPostservice {
 
   getFollowCount(userId: string): Observable<FollowCount> {
     const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-    
+
     if (!token) {
       console.error('Token not found');
       // ล้างข้อมูล session และ redirect
@@ -233,7 +232,7 @@ export class ReactPostservice {
     });
 
     return this.http.get<FollowCount>(
-      `${this.baseUrl}/follows/follow-count?userId=${userId}`, 
+      `${this.baseUrl}/follows/follow-count?userId=${userId}`,
       { headers }
     ).pipe(
       catchError((error) => {

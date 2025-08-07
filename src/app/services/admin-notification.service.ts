@@ -24,25 +24,24 @@ export class AdminNotificationService {
 
   // ดึงจำนวนการแจ้งเตือน
   loadNotificationCounts(adminId: string): void {
-    const adminToken = localStorage.getItem('adminToken') || sessionStorage.getItem('adminToken');
-    if (!adminToken) {
-      console.error('Admin token not found');
-      return;
-    }
-
-    const headers = { 'Authorization': `Bearer ${adminToken}` };
-    
-    this.http.get<any>(`${this.apiUrl}/admin/notifications/count`, { headers }).subscribe({
+     this.http.get<any>(`${this.apiUrl}/noti/notifications_reports`).subscribe({
       next: (response) => {
+        const reportCount = response.reports ? response.reports.length : 0;
         const counts: AdminNotificationCounts = {
-          report: response.report_count || 0,
-          total: (response.report_count || 0)
+          report: reportCount,
+          total: reportCount
         };
         this.notificationCounts$.next(counts);
         console.log('Admin notification counts loaded:', counts);
       },
       error: (error) => {
         console.error('Error loading admin notification counts:', error);
+         // ใช้ค่าเริ่มต้นเมื่อ API ไม่ทำงาน
+        const defaultCounts: AdminNotificationCounts = {
+          report: 0,
+          total: 0
+        };
+        this.notificationCounts$.next(defaultCounts);
       }
     });
   }
@@ -50,25 +49,43 @@ export class AdminNotificationService {
   // เริ่มการอัปเดตอัตโนมัติ
   startAutoUpdate(adminId: string, intervalSeconds: number = 10): void {
     this.stopAutoUpdate();
+      
+    // ใช้ API ที่มีอยู่จริง
+    this.http.get<any>(`${this.apiUrl}/noti/notifications_reports`).subscribe({
+      next: (response) => {
+        // ถ้า API ทำงานได้ ให้เริ่ม auto update
+        this.startAutoUpdateTimer(adminId, intervalSeconds);
+      },
+      error: (error) => {
+        console.error('API endpoint not available, stopping auto update:', error);
+        // ใช้ค่าเริ่มต้นเมื่อ API ไม่ทำงาน
+        const defaultCounts: AdminNotificationCounts = {
+          report: 0,
+          total: 0
+        };
+        this.notificationCounts$.next(defaultCounts);
+      }
+    });
+  }
+
+  // แยกฟังก์ชันสำหรับ timer
+  private startAutoUpdateTimer(adminId: string, intervalSeconds: number): void {
     this.autoUpdateSubscription = timer(0, intervalSeconds * 1000).pipe(
       switchMap(() => {
-        const adminToken = localStorage.getItem('adminToken') || sessionStorage.getItem('adminToken');
-        if (!adminToken) {
-          return [];
-        }
-        const headers = { 'Authorization': `Bearer ${adminToken}` };
-        return this.http.get<any>(`${this.apiUrl}/admin/notifications/count`, { headers });
+         return this.http.get<any>(`${this.apiUrl}/noti/notifications_reports`);
       })
     ).subscribe({
       next: (response) => {
+         const reportCount = response.reports ? response.reports.length : 0;
         const counts: AdminNotificationCounts = {
-          report: response.report_count || 0,
-          total: (response.report_count || 0)
+         report: reportCount,
+          total: reportCount
         };
         this.notificationCounts$.next(counts);
       },
       error: (error) => {
         console.error('Error in auto update:', error);
+         this.stopAutoUpdate();
       }
     });
   }

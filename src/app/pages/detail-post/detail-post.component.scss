@@ -932,8 +932,8 @@ mat-icon {
   }
 }
 
-/* Dark Mode Support */
-@media (prefers-color-scheme: dark) {
+/* Dark Mode Support - Disabled */
+/* @media (prefers-color-scheme: dark) {
   .divpost {
     background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
     border-color: rgba(255, 255, 255, 0.1);
@@ -955,7 +955,7 @@ mat-icon {
       background: rgba(45, 55, 72, 0.95) !important;
     }
   }
-}
+} */
 
 /* High DPI Displays */
 @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {

@@ -124,5 +124,31 @@ export class ProfileService {
       return throwError(error);
     }
   }
+
+   // ดึงข้อมูลผู้ใช้แบบ public (ไม่ต้องมี token)
+  getUserProfileByIdPublic(userId: string): Observable<User> {
+    return this.http
+      .get<User>(`${this.baseUrl}/profile/public/Prouser/${userId}`)
+      .pipe(
+        catchError(error => {
+          console.error('Error fetching user profile (public):', error);
+          return throwError(error);
+        })
+      );
+  }
+
+  // ดึงโพสต์ของผู้ใช้แบบ public (ไม่ต้องมี token)
+  getUserPostsByIdPublic(userId: string): Observable<{ userPosts: Postme[]; savedPosts: Postme[]; sharedPosts: Postme[] }> {
+    return this.http
+      .get<{ userPosts: Postme[]; savedPosts: Postme[]; sharedPosts: Postme[] }>(
+        `${this.baseUrl}/profile/public/posts_user/${userId}`
+      )
+      .pipe(
+        catchError(error => {
+          console.error('Error fetching user posts (public):', error);
+          return throwError(error);
+        })
+      );
+  }
 }
 

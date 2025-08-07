@@ -1,4 +1,3 @@
-import { Component } from '@angular/core';
 import { ShowPost } from '../../models/showpost_model';
 import { PostService } from '../../services/Postservice';
 import { FormsModule } from '@angular/forms';
@@ -9,8 +8,12 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { RouterModule } from '@angular/router';
-import { TimeAgoPipe} from '../../pipes/time-ago.pipe';
+import { TimeAgoPipe } from '../../pipes/time-ago.pipe';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { ReactPostservice } from '../../services/ReactPostservice';
+import { UserService } from '../../services/Userservice';
+import { Component } from '@angular/core';
+import { HostListener } from '@angular/core';
 
 @Component({
   selector: 'app-s-test',
@@ -19,9 +22,11 @@ import { MatTooltipModule } from '@angular/material/tooltip';
   templateUrl: './s-test.component.html',
   styleUrl: './s-test.component.scss'
 })
+
 export class STestComponent {
 
   userId: string = '';
+  currentUserId: string | null = null;
   searchQuery = '';
   allPosts: any[] = [];
   posts: any[] = [];
@@ -30,9 +35,15 @@ export class STestComponent {
   isDrawerOpen: boolean = false; // เริ่มต้น Drawer ปิด
   showFull: { [key: string]: boolean } = {};
   activeTab: string = 'post';
-  isMobile: boolean = false; 
+  isMobile: boolean = false;
 
-  constructor(private postService: PostService, private route: ActivatedRoute, private router: Router) { }
+  constructor(
+    private postService: PostService,
+    private route: ActivatedRoute,
+    private router: Router,
+    private likePostService: ReactPostservice,
+    private userService: UserService
+  ) { }
 
   ngOnInit(): void {
     const loggedInUserId = localStorage.getItem('userId') || sessionStorage.getItem('userId');
@@ -50,6 +61,17 @@ export class STestComponent {
       }
     });
 
+    // โหลดข้อมูลผู้ใช้ปัจจุบัน
+    this.userService.getCurrentUserId().subscribe((userId) => {
+      this.currentUserId = userId;
+      console.log('Current User ID:', this.currentUserId);
+    });
+
+    this.userService.loadCurrentUserId();
+
+    // ตรวจสอบขนาดหน้าจอ
+    this.checkScreenSize();
+
     this.postService.getPosts().subscribe((data: any[]) => {
       // กรองโพสต์ที่ post_id ซ้ำ
       const uniquePosts = data.filter((value, index, self) =>
@@ -57,14 +79,14 @@ export class STestComponent {
       );
       this.allPosts = uniquePosts;
       this.posts = uniquePosts;
-      
+
       // กำหนดค่าเริ่มต้นสำหรับ isLiked ถ้าไม่มี
       this.posts.forEach((post) => {
         if (post.isLiked === undefined) {
           post.isLiked = false;
         }
       });
-      
+
       // ตรวจสอบสถานะการกดใจสำหรับแต่ละโพสต์
       this.posts.forEach((post) => {
         this.checkLikeStatus(post.post_id);
@@ -72,7 +94,7 @@ export class STestComponent {
     });
   }
 
-  onSearch() {
+onSearch() {
     if (this.searchQuery.trim() === '') {
       this.posts = [];
       return;
@@ -138,7 +160,7 @@ export class STestComponent {
 
     this.likePostService.likePost(post.post_id, Number(this.currentUserId)).subscribe({
       next: (response) => {
-        
+
         // ตรวจสอบว่า response มี isLiked หรือไม่
         if (response.hasOwnProperty('isLiked')) {
           post.isLiked = response.isLiked;
@@ -146,7 +168,7 @@ export class STestComponent {
           // ถ้าไม่มี isLiked ใน response ให้สลับสถานะปัจจุบัน
           post.isLiked = !post.isLiked;
         }
-        
+
         // อัพเดตจำนวนไลค์
         if (response.hasOwnProperty('likeCount')) {
           post.likes_count = response.likeCount;
@@ -165,7 +187,7 @@ export class STestComponent {
   checkLikeStatus(postId: number): void {
     this.likePostService.checkLikeStatus(postId).subscribe({
       next: (response) => {
-        
+
         // อัพเดตสถานะการกดใจในโพสต์
         const post = this.posts.find(p => p.post_id === postId);
         if (post) {
@@ -189,7 +211,7 @@ export class STestComponent {
       }
     });
   }
-  
+
   logout(): void {
     localStorage.removeItem('userId');
     localStorage.removeItem('token');

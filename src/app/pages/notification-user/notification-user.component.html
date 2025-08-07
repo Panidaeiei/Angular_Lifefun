@@ -127,8 +127,7 @@
                         <div class="text-content">
                             <div class="title itim-regular">การแจ้งเตือนของระบบ</div>
                         </div>
-                        <span *ngIf="unreadUnbanCount > 0" matBadge="{{ unreadUnbanCount }}" matBadgeColor="warn"
-                            matBadgeSize="small" class="badge">
+                        <span *ngIf="unreadUnbanCount > 0"  class="badge">
                             {{ unreadUnbanCount }}
                         </span>
 
@@ -143,14 +142,13 @@
                             <i class="fa-solid fa-user-check" style="font-size: 22px; color: black;"></i>
                         </div>
                         <div class="text-content">
-                            <div class="title itim-regular">ติดตาม</div>
+                            <div class="title itim-regular">ผู้ติดตาม</div>
                             <div class="subtitle itim-regular">
                                 {{ unreadFollowCount === 0 ? '' : unreadFollowCount === 1 ? latestFollowerName :
                                 latestFollowerName + ' ติดตามคุณ และอีก ' + (unreadFollowCount - 1) + ' คน' }}
                             </div>
                         </div>
-                        <span *ngIf="unreadFollowCount > 0" matBadge="{{ unreadFollowCount }}" matBadgeColor="warn"
-                            matBadgeSize="small" class="badge">
+                        <span *ngIf="unreadFollowCount > 0"  class="badge">
                             {{ unreadFollowCount }}
                         </span>
                     </div>
@@ -167,8 +165,7 @@
                                 latestLikerName : latestLikerName + ' กดถูกใจ' + ' และอีก ' + (unreadLikeCount - 1) + '
                                 คน' }}</div>
                         </div>
-                        <span *ngIf="unreadLikeCount > 0" matBadge="{{ unreadLikeCount }}" matBadgeColor="warn"
-                            matBadgeSize="small" class="badge">{{ unreadLikeCount }}</span>
+                        <span *ngIf="unreadLikeCount > 0" class="badge">{{ unreadLikeCount }}</span>
                     </div>
                 </mat-card>
 
@@ -187,8 +184,7 @@
                             </div>
                         </div>
 
-                        <span *ngIf="unreadShareCount > 0" matBadge="{{ unreadShareCount }}" matBadgeColor="warn"
-                            matBadgeSize="small" class="badge">
+                        <span *ngIf="unreadShareCount > 0"  class="badge">
                             {{ unreadShareCount }}
                         </span>
                     </div>
@@ -210,8 +206,7 @@
                             </div>
                         </div>
 
-                        <span *ngIf="unreadCommentCount > 0" matBadge="{{ unreadCommentCount }}" matBadgeColor="warn"
-                            matBadgeSize="small" class="badge">
+                        <span *ngIf="unreadCommentCount > 0" class="badge">
                             {{ unreadCommentCount }}
                         </span>
                     </div>
@@ -246,7 +241,7 @@
                             <strong>{{ noti.username }}</strong> กดไลค์โพสต์
                             <span>"{{ noti.post_caption }}"</span>
                         </div>
-                        <div class="noti-date">{{ noti.date_time | date: 'short' }}</div>
+                        <div class="noti-date">{{ noti.date_time| formatLocalTime }}</div>
                     </div>
                 </div>
                 <div>
@@ -277,7 +272,7 @@
                         <div class="noti-text">
                             <strong>{{ noti.username }}</strong> ติดตามคุณแล้ว
                         </div>
-                        <div class="noti-date">{{ noti.create_at | date: 'short' }}</div>
+                        <div class="noti-date">{{ noti.create_at.replace('T', ' ').slice(0, 16) }}</div>
                     </div>
                 </div>
             </div>
@@ -306,7 +301,7 @@
                             <strong>{{ noti.username }}</strong> แชร์โพสต์ของคุณ
                             <span>"{{ noti.post_caption }}"</span>
                         </div>
-                        <div class="noti-date">{{ noti.date_time | date: 'short' }}</div>
+                        <div class="noti-date">{{ noti.date_time | formatLocalTime }}</div>
                     </div>
                 </div>
                 <div>
@@ -341,7 +336,7 @@
                             <strong>{{ noti.username }}</strong> แสดงความคิดเห็น
                             <span>"{{ noti.comment_title }}"</span>
                         </div>
-                        <div class="noti-date">{{ noti.date_time | date: 'short' }}</div>
+                        <div class="noti-date">{{ noti.date_time | formatLocalTime }}</div>
                     </div>
                 </div>
                 <div>
@@ -377,10 +372,10 @@
                             สาเหตุ: {{ noti.reason }}
                         </div>
                         <div class="noti-date">
-                            วันที่ระงับ: {{ noti.status_date | date: 'short' }}
+                            วันที่ระงับ: {{ noti.status_date | formatLocalTime }}
                         </div>
                         <div class="noti-date">
-                            วันที่ปลดระงับ: {{ noti.end_date | date: 'shortDate' }}
+                            วันที่ปลดระงับ: {{ noti.end_date | formatLocalTime }}
                         </div>
                     </div>
                 </div>

@@ -28,9 +28,16 @@
 </mat-toolbar>
 
 <div class="background-div">
-    <div style="display: flex; margin-top: 120px; justify-content: center; margin-bottom: 30px; font-size: 25px;">
-        <span>สำหรับคุณ</span>
+    <!-- ===== Category Section (หมวดหมู่) ===== -->
+    <div class="category-section" style="margin-top: 120px;">
+        <div class="category-list single-row">
+            <div class="category-card" *ngFor="let cat of categories" (click)="goToCategory(cat.route, cat.id)">
+                <img [src]="cat.image" alt="{{cat.name}}">
+                <div class="category-name">{{cat.name}}</div>
+            </div>
+        </div>
     </div>
+
 
     <div class="card-container-wrapper">
         <div class="card-container">

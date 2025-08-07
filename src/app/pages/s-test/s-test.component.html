@@ -146,10 +146,9 @@
                     </div>
                 </div>
 
-                <div class="like-row">
-                    <span style="font-size: 25px;">♥️</span>
-                    <span style="font-size: 20px; margin-left: 5px;">{{ post.likes_count != null ? post.likes_count : 0
-                        }}</span>
+                <div class="like-row" style="cursor: pointer;">
+                    <i class="fa fa-heart heart-icon" [class.liked]="post.isLiked" (click)="toggleHeart(post)"></i>
+                    <span style="font-size: 20px; margin-left: 5px;">{{ post.likes_count != null ? post.likes_count : 0 }}</span>
                 </div>
 
                 <div class="post-content">
@@ -161,6 +160,14 @@
                         (click)="toggleShowFull(post.post_id.toString())">
                         {{ showFull[post.post_id.toString()] ? 'ย่อข้อความ' : 'อ่านเพิ่มเติม' }}
                     </button>
+
+                       <!-- ปุ่มดูโพสต์เพิ่มเติม -->
+                    <div class="view-more-container">
+                        <button class="view-more-btn" [routerLink]="['/detail_post']" [queryParams]="{ post_id: post.post_id, user_id: userId }">
+                            <i class="fa fa-eye"></i>
+                            ดูโพสต์เพิ่มเติม
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

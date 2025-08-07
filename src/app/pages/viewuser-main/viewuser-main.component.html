@@ -60,7 +60,7 @@
 </div>
 <div>
     <!-- PROFILE HEADER (responsive) -->
-    <div style="display: flex; flex-direction: column; margin-top: 170px;">
+    <div *ngIf="!isLoading && !errorMessage" style="display: flex; flex-direction: column; margin-top: 170px;">
         <!-- MOBILE IG-style profile header (no story) -->
         <div *ngIf="isMobile" class="profile-header-mobile">
             <div style="display: flex; flex-direction: row; align-items: center; gap: 18px;">

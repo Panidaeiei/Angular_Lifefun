@@ -29,6 +29,7 @@ export class SearchMainComponent {
 
   isMobile = false;
   isDrawerOpen = false;
+  isLoading: boolean = false; // เพิ่ม loading state
 
   constructor(private route: ActivatedRoute,
     private userService: UserService,
@@ -47,17 +48,47 @@ export class SearchMainComponent {
     if (this.searchQuery.trim() === '') {
       this.searchResults = [];
       this.isSearchPerformed = false;
+      this.errorMessage = '';
       return;
     }
 
     this.isSearchPerformed = true;
+    this.isLoading = true;
+    this.errorMessage = '';
 
-    this.userService.searchUsers(this.searchQuery).subscribe({
+    // ตรวจสอบว่ามี token หรือไม่
+    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+
+    if (token) {
+      // ถ้ามี token ให้ใช้ method ที่ต้อง authentication
+      this.userService.searchUsers(this.searchQuery).subscribe({
+        next: (users) => {
+          this.searchResults = users;
+          this.isLoading = false;
+        },
+        error: (error) => {
+          console.error('Error searching users:', error);
+          // ถ้า authentication ล้มเหลว ให้ลองใช้ public search
+          this.searchUsersPublic();
+        },
+      });
+    } else {
+      // ถ้าไม่มี token ให้ใช้ public search
+      this.searchUsersPublic();
+    }
+  }
+
+  private searchUsersPublic(): void {
+    this.userService.searchUsersPublic(this.searchQuery).subscribe({
       next: (users) => {
         this.searchResults = users;
+         this.isLoading = false;
       },
       error: (error) => {
-        console.error('Error searching users:', error);
+        console.error('Error searching users (public):', error);
+        this.searchResults = [];
+        this.isLoading = false;
+        this.errorMessage = 'เกิดข้อผิดพลาดในการค้นหา กรุณาลองใหม่อีกครั้ง';
       },
     });
   }

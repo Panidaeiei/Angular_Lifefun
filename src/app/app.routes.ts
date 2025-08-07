@@ -1,6 +1,5 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './pages/login/login.component';
-import { HomepageAdminComponent } from './pages/homepage-admin/homepage-admin.component';
 import { RegisterComponent } from './pages/register/register.component';
 import { HomepageUserComponent } from './pages/homepage-user/homepage-user.component';
 import { HomepageMainComponent } from './pages/homepage-main/homepage-main.component';
@@ -39,7 +38,6 @@ export const routes: Routes = [
     {path: '', component: HomepageMainComponent},
     {path: 'login', component: LoginComponent},
     {path: 'register', component: RegisterComponent},
-    {path: 'HomepageAdmin', component: HomepageAdminComponent},
     {path: 'HomepageUser', component: HomepageUserComponent, canActivate: [BanStatusGuard]},
     {path: 'Homepagefollow', component: HomeFollowComponent, canActivate: [BanStatusGuard]},
     {path: 'Notification_user', component: NotificationUserComponent, canActivate: [BanStatusGuard]},

@@ -45,6 +45,16 @@ export class HomepageUserComponent implements OnDestroy {
   };
   private notificationSubscription?: Subscription;
 
+  // เพิ่มข้อมูลหมวดหมู่
+  categories = [
+    { name: 'เครื่องสำอาง', image: 'assets/images/istockphoto.jpg', route: '/Post_Cosmetics' },
+    { name: 'แฟชั่น', image: 'https://i.pinimg.com/736x/c1/51/cd/c151cdffa326596504b10c6bd98a9958.jpg', route: '/Post_Fashion' },
+    { name: 'สกินแคร์', image: 'assets/images/skincare.jpg', route: '/Post_Skincare' },
+    { name: 'อาหาร', image: 'assets/images/food.jpg', route: '/Post_Food' },
+    { name: 'สุขภาพ', image: 'assets/images/woman.jpg', route: '/Post_Health' },
+    { name: 'ท่องเที่ยว', image: 'https://i.pinimg.com/736x/3c/39/7a/3c397a110bed100bf40ccd76ad94c922.jpg', route: '/Post_Travel' }
+  ];
+
   constructor(
     private route: ActivatedRoute, 
     private userService: UserService, 
@@ -153,7 +163,6 @@ export class HomepageUserComponent implements OnDestroy {
       this.notificationSubscription = this.notificationService.notificationCounts$.subscribe(
         (counts) => {
           this.notificationCounts = counts;
-          console.log('Notification counts updated:', counts);
         }
       );
     }
@@ -193,8 +202,7 @@ export class HomepageUserComponent implements OnDestroy {
 
   fetchPosts(): void {
     this.postService.getPosts_interests().subscribe(
-      (response: ShowPost[]) => {
-        console.log('Response from API:', response);  // ตรวจสอบข้อมูลที่ได้รับจาก API
+      (response: ShowPost[]) => {    
 
         // กรองโพสต์ที่มี `post_id` ซ้ำ
         const uniquePosts = response.filter((value, index, self) =>
@@ -280,6 +288,11 @@ export class HomepageUserComponent implements OnDestroy {
     sessionStorage.removeItem('userRole');
     sessionStorage.removeItem('currentUserId');
     this.router.navigate(['/login']);
+  }
+
+  // เพิ่มฟังก์ชันสำหรับนำทางไปยังหมวดหมู่
+  goToCategory(route: string) {
+    this.router.navigate([route], { queryParams: { id: this.currentUserId } });
   }
 
   ngOnDestroy(): void {

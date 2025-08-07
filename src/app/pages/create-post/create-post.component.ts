@@ -21,6 +21,7 @@ import { Location } from '@angular/common';
 import { MatSelectModule } from '@angular/material/select';
 import { NotificationService, NotificationCounts } from '../../services/notification.service';
 import { Subscription } from 'rxjs';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 declare module 'leaflet' {
   namespace Control {
@@ -41,7 +42,8 @@ declare const google: any;
     MatChipsModule,
     MatMenuModule,
     MatButtonModule,
-    MatSelectModule
+    MatSelectModule,
+    MatTooltipModule
   ],
   templateUrl: './create-post.component.html',
   styleUrl: './create-post.component.scss',

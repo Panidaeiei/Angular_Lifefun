@@ -39,6 +39,15 @@ export class HomepageMainComponent {
   searchQuery: string = '';
   isMobile = false;
 
+    // เพิ่มข้อมูลหมวดหมู่
+    categories = [
+      { name: 'เครื่องสำอาง', image: 'assets/images/istockphoto.jpg', route: '/Cat_main', id: 1 },
+      { name: 'แฟชั่น', image: 'https://i.pinimg.com/736x/c1/51/cd/c151cdffa326596504b10c6bd98a9958.jpg', route: '/Cat_main', id: 2 },
+      { name: 'สกินแคร์', image: 'assets/images/skincare.jpg', route: '/Cat_main', id: 3 },
+      { name: 'อาหาร', image: 'assets/images/food.jpg', route: '/Cat_main', id: 4 },
+      { name: 'สุขภาพ', image: 'assets/images/woman.jpg', route: '/Cat_main', id: 5 },
+      { name: 'ท่องเที่ยว', image: 'https://i.pinimg.com/736x/3c/39/7a/3c397a110bed100bf40ccd76ad94c922.jpg', route: '/Cat_main', id: 6 }
+    ];
 
   constructor(private postService: PostService, private router: Router) { }
 
@@ -90,6 +99,15 @@ export class HomepageMainComponent {
     return false; // สมมุติว่า user ยังไม่ได้เข้าสู่ระบบ
   }
 
+   // เพิ่มฟังก์ชันสำหรับนำทางไปยังหมวดหมู่
+   goToCategory(route: string, id?: number) {
+    if (id) {
+      this.router.navigate([route, id]);
+    } else {
+      this.router.navigate([route]);
+    }
+  }
+
   openDialog() {
     this.isDialogOpen = true;
   }
@@ -110,6 +128,7 @@ export class HomepageMainComponent {
       return;
     }
 
+    // หน้าผู้ใช้งานทั่วไป - ไปหน้า profile โดยไม่ต้องเข้าสู่ระบบ
     this.router.navigate(['/viewuser_main'], { queryParams: { Profileuser: userId } });
   }
 

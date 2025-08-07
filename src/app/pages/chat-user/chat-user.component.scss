@@ -1444,3 +1444,94 @@ input[disabled] {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+.delete-chat-btn {
+  background: transparent;
+  border: none;
+  color: #e74c3c;
+  padding: 4px 6px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.1em;
+  margin-left: 8px;
+  transition: background 0.2s, color 0.2s;
+  outline: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.delete-chat-btn:hover, .delete-chat-btn:focus {
+  background: rgba(231, 76, 60, 0.08);
+  color: #c0392b;
+}
+.delete-chat-btn-header {
+  margin-left: auto;
+  margin-right: 0;
+}
+
+.chat-menu-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.chat-menu-btn {
+  background: transparent;
+  border: none;
+  color: #888;
+  padding: 4px 6px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.1em;
+  margin-left: 4px;
+  transition: background 0.2s, color 0.2s;
+  outline: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.chat-menu-btn:hover, .chat-menu-btn:focus {
+  background: rgba(0,0,0,0.06);
+  color: #222;
+}
+
+.chat-menu-list {
+  position: absolute;
+  top: 120%;
+  right: 0;
+  min-width: 120px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  padding: 4px 0;
+  margin: 0;
+  z-index: 10;
+  list-style: none;
+  font-size: 0.98em;
+  animation: fadeInMenu 0.18s;
+}
+@keyframes fadeInMenu {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.chat-menu-list li {
+  padding: 8px 16px;
+  color: #e74c3c;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  transition: background 0.18s, color 0.18s;
+}
+.chat-menu-list li:hover {
+  background: rgba(231, 76, 60, 0.08);
+  color: #c0392b;
+}
+
+// สำหรับ header
+.chat-menu-header {
+  margin-left: auto;
+  margin-right: 0;
+}
