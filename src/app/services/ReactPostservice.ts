@@ -74,7 +74,6 @@ export class ReactPostservice {
       username: '',
       image_url: '',
     };
-    console.log('เพิ่มความคิดเห็นเรียบร้อย');
     return this.http.post(`${this.baseUrl}/comments/add-comment`, comment, { headers });
 
   }
@@ -131,7 +130,7 @@ export class ReactPostservice {
     // ส่งคำขอ POST พร้อมข้อมูล SharePostModel
     return this.http.post(`${this.baseUrl}/sharepost/share-or-unshare`, post, { headers }).pipe(
       tap((response) => {
-        console.log('Response :', response); // Log response ที่ได้จาก API
+        // Log response ที่ได้จาก API
       }),
       catchError((error) => {
         console.error('API Error:', error); // Log กรณีเกิดข้อผิดพลาด
@@ -140,7 +139,7 @@ export class ReactPostservice {
     );
   }
 
-  getShareStatus(data: SharePostModel): Observable<{ isShared: boolean }> {
+  getShareStatus(data: SharePostModel): Observable<{ isShared: boolean; share_count?: number }> {
     const token = localStorage.getItem('token'); // JWT Token
     if (!token) {
       throw new Error('Token not found');
@@ -148,26 +147,26 @@ export class ReactPostservice {
 
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
 
-    return this.http.post<{ isShared: boolean }>(
+    return this.http.post<{ isShared: boolean; share_count?: number }>(
       `${this.baseUrl}/sharepost/get-status`,
       data, // ส่ง object SharePostModel
       { headers }
     );
   }
 
-  saveOrUnsavePost(data: SavePostModel): Observable<{ message: string; isSave: boolean }> {
+  saveOrUnsavePost(data: SavePostModel): Observable<{ message: string; isSave: boolean; save_count?: number; share_count?: number }> {
     const token = localStorage.getItem('token'); // JWT Token
     if (!token) {
       throw new Error('Token not found');
     }
 
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-    return this.http.post<{ message: string; isSave: boolean }>(
+    return this.http.post<{ message: string; isSave: boolean; save_count?: number; share_count?: number }>(
       `${this.baseUrl}/savepost/save`,
       data,
       { headers }).pipe(
         tap((response) => {
-          console.log('Response save:', response); // Log response ที่ได้จาก API
+          // Log response ที่ได้จาก API
         }),
         catchError((error) => {
           console.error('API Error:', error); // Log กรณีเกิดข้อผิดพลาด

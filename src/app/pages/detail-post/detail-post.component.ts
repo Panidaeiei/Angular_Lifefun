@@ -55,6 +55,7 @@ export class DetailPostComponent implements OnInit, OnDestroy {
   shareCount: number = 0;
   isShared: boolean = false;
   isSave: boolean = false;
+  saveCount: number = 0; // เพิ่มตัวแปรสำหรับจำนวนการบันทึกโพสต์
   currentUserId: string | null = null;
   viewerId: string = '';
   touchStartX = 0;
@@ -96,7 +97,6 @@ export class DetailPostComponent implements OnInit, OnDestroy {
     const snapshotParams = this.route.snapshot.queryParams;
     if (snapshotParams['post_id']) {
       this.postId = snapshotParams['post_id'];
-      console.log('Post ID from snapshot:', this.postId);
       this.fetchPost(this.postId);
       this.loadComments(Number(this.postId));
       this.loadShareStatus();
@@ -105,7 +105,6 @@ export class DetailPostComponent implements OnInit, OnDestroy {
     
     if (snapshotParams['user_id']) {
       this.userId = snapshotParams['user_id'];
-      console.log('User ID from snapshot:', this.userId);
       this.startNotificationTracking();
     }
     
@@ -113,11 +112,9 @@ export class DetailPostComponent implements OnInit, OnDestroy {
     this.route.queryParams
       .pipe(filter((params: any) => !!params['post_id'] && !!params['user_id']))
       .subscribe((params: any) => {
-        console.log('Detail-post received params:', params);
         
         if (params['post_id']) {
           this.postId = params['post_id'];
-          console.log('Post ID:', this.postId);
           this.fetchPost(this.postId);
           this.loadComments(Number(this.postId));
           this.loadShareStatus();
@@ -126,7 +123,6 @@ export class DetailPostComponent implements OnInit, OnDestroy {
         
         if (params['user_id']) {
           this.userId = params['user_id'];
-          console.log('User ID:', this.userId);
           this.startNotificationTracking();
         }
       });
@@ -134,37 +130,28 @@ export class DetailPostComponent implements OnInit, OnDestroy {
     // ตรวจสอบ userId ใน url กับ userId ที่ล็อกอิน
     this.userService.getCurrentUserId().subscribe((currentUserId: string | null) => {
       const urlUserId = this.route.snapshot.queryParams['user_id'];
-      console.log('URL User ID:', urlUserId);
-      console.log('Current User ID:', currentUserId);
       
       if (urlUserId && currentUserId && urlUserId !== currentUserId) {
-        console.log('❌ URL User ID ไม่ตรงกับ Current User ID - Redirecting to login');
         // ถ้า id ใน url ไม่ตรงกับ id ที่ล็อกอินไว้ ให้ redirect ออก
         this.router.navigate(['/login']);
         return;
-      } else if (urlUserId && currentUserId && urlUserId === currentUserId) {
-        console.log('✅ URL User ID ตรงกับ Current User ID - เข้าถึงได้');
       }
     });
 
     // การ subscribe กับ likeStatus$
     this.reactPostservice.likeStatus$.subscribe((status) => {
-      console.log("Like status updated:", status);
+      // ดำเนินการที่ต้องการเมื่อไลค์เปลี่ยนแปลง
     });
 
     // ดึง currentUserId
     this.userService.getCurrentUserId().subscribe((userId) => {
       this.currentUserId = userId;
-      console.log('Current User ID:', this.currentUserId);
       
       // ตรวจสอบ userId ใน url กับ userId ที่ล็อกอิน
       const urlUserId = this.route.snapshot.queryParams['user_id'];
       if (urlUserId && userId && urlUserId !== userId) {
-        console.log('❌ URL User ID ไม่ตรงกับ Current User ID - Redirecting to login');
         this.router.navigate(['/login']);
         return;
-      } else if (urlUserId && userId && urlUserId === userId) {
-        console.log('✅ URL User ID ตรงกับ Current User ID - เข้าถึงได้');
       }
     });
 
@@ -202,7 +189,6 @@ export class DetailPostComponent implements OnInit, OnDestroy {
       this.notificationSubscription = this.notificationService.notificationCounts$.subscribe(
         (counts) => {
           this.notificationCounts = counts;
-          console.log('Notification counts updated:', counts);
         }
       );
     }
@@ -244,10 +230,6 @@ export class DetailPostComponent implements OnInit, OnDestroy {
   }
 
   goToProfile(userId: string): void {
-    console.log('Current User ID:', this.currentUserId);
-    console.log('Navigating to:', userId);
-    console.log('Query Params ID:', this.userId);
-
     if (String(userId) === String(this.userId)) {
       // หาก userId คือ currentUserId, ไปที่หน้าประวัติของผู้ใช้ (ProfileUser)
       this.router.navigate(['/ProfileUser'], { queryParams: { id: userId } });
@@ -268,7 +250,6 @@ export class DetailPostComponent implements OnInit, OnDestroy {
     this.reactPostservice.getComments(postId).subscribe(
       (response) => {
         this.comments = response.comments || [];
-        console.log('Comments fetched:', this.comments);
       },
       (error) => {
         console.error('Error fetching comments:', error);
@@ -290,11 +271,9 @@ export class DetailPostComponent implements OnInit, OnDestroy {
         this.post = response;
         this.title = this.post.title;  // ตั้งค่า title ที่จะใช้ในการแก้ไข
         this.currentMediaIndex = 0;
-        console.log('Fetched post details:', this.post);
         
         // ตรวจสอบว่ามีรูปหรือวิดีโอหรือไม่
         const totalMedia = (this.post.images?.length || 0) + (this.post.videos?.length || 0);
-        console.log('Total media found:', totalMedia);
         
         this.updateCurrentMedia(); // เรียกอัปเดต media หลังจากโหลดโพสต์
       },
@@ -311,9 +290,21 @@ export class DetailPostComponent implements OnInit, OnDestroy {
     this.reactPostservice.getShareStatus(data).subscribe(
       (response) => {
         this.isShared = response.isShared; // ตั้งค่าสถานะตามข้อมูลจาก API
+        // อัปเดตจำนวนการแชร์จาก response (ถ้ามี) หรือใช้ localStorage
+        if (response.share_count !== undefined) {
+          this.shareCount = response.share_count;
+          // บันทึกลง localStorage เพื่อใช้เป็น fallback
+          const key = `share_count_${this.postId}`;
+          localStorage.setItem(key, this.shareCount.toString());
+        } else {
+          // ใช้ข้อมูลจาก localStorage
+          this.loadShareCountFromStorage();
+        }
       },
       (error) => {
         console.error('Error loading post status:', error);
+        // ใช้ข้อมูลจาก localStorage เมื่อ API error
+        this.loadShareCountFromStorage();
       }
     );
   }
@@ -322,14 +313,56 @@ export class DetailPostComponent implements OnInit, OnDestroy {
     this.reactPostservice.getSaveStatus(Number(this.postId)).subscribe(
       (response) => {
         this.isSave = response.isSave;
-        console.log('Save status loaded:', this.isSave);
+        // โหลดจำนวนการบันทึกจาก localStorage
+        this.loadSaveCountFromStorage();
       },
       (error) => {
         console.error('Error loading save status:', error);
+        // ใช้ข้อมูลจาก localStorage เมื่อ API error
+        this.loadSaveCountFromStorage();
       }
     );
   }
 
+  // เพิ่มฟังก์ชันสำหรับจัดการจำนวนการบันทึกใน localStorage
+  private updateSaveCount(increment: boolean): void {
+    const key = `save_count_${this.postId}`;
+    let currentCount = parseInt(localStorage.getItem(key) || '0');
+    
+    if (increment) {
+      currentCount++;
+    } else {
+      currentCount = Math.max(0, currentCount - 1);
+    }
+    
+    localStorage.setItem(key, currentCount.toString());
+    this.saveCount = currentCount;
+  }
+
+  private loadSaveCountFromStorage(): void {
+    const key = `save_count_${this.postId}`;
+    this.saveCount = parseInt(localStorage.getItem(key) || '0');
+  }
+
+  // เพิ่มฟังก์ชันสำหรับจัดการจำนวนการแชร์ใน localStorage
+  private updateShareCount(increment: boolean): void {
+    const key = `share_count_${this.postId}`;
+    let currentCount = parseInt(localStorage.getItem(key) || '0');
+    
+    if (increment) {
+      currentCount++;
+    } else {
+      currentCount = Math.max(0, currentCount - 1);
+    }
+    
+    localStorage.setItem(key, currentCount.toString());
+    this.shareCount = currentCount;
+  }
+
+  private loadShareCountFromStorage(): void {
+    const key = `share_count_${this.postId}`;
+    this.shareCount = parseInt(localStorage.getItem(key) || '0');
+  }
 
   loadComments(postId: number): void {
     this.reactPostservice.getComments(postId).subscribe({
@@ -356,7 +389,6 @@ export class DetailPostComponent implements OnInit, OnDestroy {
       // ตรวจสอบว่า currentMediaIndex อยู่ในช่วงที่ถูกต้อง
       if (this.currentMediaIndex >= 0 && this.currentMediaIndex < allMedia.length) {
       this.currentMedia = allMedia[this.currentMediaIndex];
-        console.log('Updated current media:', this.currentMedia);
       } else {
         console.error('Invalid media index:', this.currentMediaIndex, 'Total media:', allMedia.length);
         // รีเซ็ตเป็นรูปแรกถ้าดัชนีไม่ถูกต้อง
@@ -373,7 +405,6 @@ export class DetailPostComponent implements OnInit, OnDestroy {
       const totalMedia = this.post.images.length + this.post.videos.length;
       this.currentMediaIndex = (this.currentMediaIndex + 1) % totalMedia;
       this.updateCurrentMedia();
-      console.log('Next media - Index:', this.currentMediaIndex, 'Total:', totalMedia);
     }
   }
 
@@ -382,7 +413,6 @@ export class DetailPostComponent implements OnInit, OnDestroy {
       const totalMedia = this.post.images.length + this.post.videos.length;
       this.currentMediaIndex = (this.currentMediaIndex - 1 + totalMedia) % totalMedia;
       this.updateCurrentMedia();
-      console.log('Previous media - Index:', this.currentMediaIndex, 'Total:', totalMedia);
     }
   }
 
@@ -404,12 +434,10 @@ export class DetailPostComponent implements OnInit, OnDestroy {
 
     // เปลี่ยนสถานะ isLiked
     post.isLiked = !post.isLiked;
-    console.log('Heart icon clicked for post:', post.post_id, 'Liked:', post.isLiked);
 
     // เรียกใช้ LikePostService เพื่ออัปเดตสถานะการไลค์ในฐานข้อมูล
     this.reactPostservice.likePost(post.post_id, Number(userId)).subscribe(
       (response) => {
-        console.log('Post liked successfully:', response);
         post.likes_count = response.likes_count;  // อัปเดตยอดไลค์
       },
       (error) => {
@@ -564,7 +592,17 @@ export class DetailPostComponent implements OnInit, OnDestroy {
     this.reactPostservice.saveOrUnsavePost(data).subscribe(
       (response) => {
         this.isSave = response.isSave;
-
+        
+        // อัปเดตจำนวนการบันทึกจาก response (ถ้ามี) หรือใช้ localStorage
+        if (response.save_count !== undefined) {
+          this.saveCount = response.save_count;
+          // บันทึกลง localStorage เพื่อใช้เป็น fallback
+          const key = `save_count_${this.postId}`;
+          localStorage.setItem(key, this.saveCount.toString());
+        } else {
+          // ใช้ localStorage ถ้า API ไม่ส่ง save_count กลับมา
+          this.updateSaveCount(this.isSave);
+        }
       },
       (error) => {
         console.error('Error saving/unsaving post:', error);
@@ -593,11 +631,13 @@ export class DetailPostComponent implements OnInit, OnDestroy {
       this.reactPostservice.sharePost(data).subscribe(
         (response) => {
           if (response.message === 'Post shared successfully.') {
-            console.log('Post shared successfully:', response);
             this.isShared = true; // ตั้งค่าสถานะว่าแชร์แล้ว
+            // อัปเดตจำนวนการแชร์
+            this.updateShareCount(true);
           } else if (response.message === 'Post unshared successfully.') {
-            console.log('Post unshared successfully:', response);
             this.isShared = false;
+            // อัปเดตจำนวนการแชร์
+            this.updateShareCount(false);
           }
         },
         (error) => {
@@ -605,9 +645,6 @@ export class DetailPostComponent implements OnInit, OnDestroy {
           alert('เกิดข้อผิดพลาดในการดำเนินการ');
         }
       );
-    } else {
-      // ผู้ใช้กดยกเลิกการยืนยัน
-      console.log('การดำเนินการถูกยกเลิกโดยผู้ใช้');
     }
   }
 
@@ -621,7 +658,6 @@ export class DetailPostComponent implements OnInit, OnDestroy {
     event.preventDefault();
     this.touchStartX = event.changedTouches[0].screenX;
     this.touchStartY = event.changedTouches[0].screenY;
-    console.log('Touch start:', this.touchStartX, this.touchStartY);
   }
   
   onTouchMove(event: TouchEvent) {
@@ -646,8 +682,6 @@ export class DetailPostComponent implements OnInit, OnDestroy {
     const deltaX = this.touchStartX - this.touchEndX;
     const deltaY = this.touchStartY - this.touchEndY;
     
-    console.log('Touch end - Delta X:', deltaX, 'Delta Y:', deltaY);
-    
     // ตรวจสอบว่าเป็นการเลื่อนแนวนอนหรือแนวตั้ง
     const isHorizontalSwipe = Math.abs(deltaX) > Math.abs(deltaY);
     
@@ -655,11 +689,9 @@ export class DetailPostComponent implements OnInit, OnDestroy {
     if (isHorizontalSwipe && Math.abs(deltaX) > 50) {
       if (deltaX > 0) {
         // เลื่อนไปทางขวา (รูปถัดไป)
-        console.log('Swiping right - Next media');
         this.nextMedia();
       } else {
         // เลื่อนไปทางซ้าย (รูปก่อนหน้า)
-        console.log('Swiping left - Previous media');
         this.prevMedia();
       }
     }

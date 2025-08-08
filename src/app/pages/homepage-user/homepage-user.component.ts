@@ -78,7 +78,6 @@ export class HomepageUserComponent implements OnDestroy {
     const snapshotParams = this.route.snapshot.queryParams;
     if (snapshotParams['id']) {
       this.userId = snapshotParams['id'];
-      console.log('User ID from snapshot:', this.userId);
       this.loadUserData();
     }
     // Subscribe เฉพาะ params ที่มี id เท่านั้น
@@ -86,23 +85,19 @@ export class HomepageUserComponent implements OnDestroy {
       .pipe(filter(params => !!params['id']))
       .subscribe((params) => {
         this.userId = params['id'];
-        console.log('User ID from observable:', this.userId);
         this.loadUserData();
       });
 
     this.route.queryParamMap.subscribe(params => {
       const viewerId = params.get('viewerId');
-      console.log('Viewer ID (ผู้ใช้ที่กำลังดู):', viewerId);
     });
 
     this.likePostService.likeStatus$.subscribe((status) => {
-      console.log("Like status updated:", status);
       // ดำเนินการที่ต้องการเมื่อไลค์เปลี่ยนแปลง
     });
 
     this.userService.getCurrentUserId().subscribe((userId) => {
       this.currentUserId = userId;
-      console.log('Current User ID loaded:', this.currentUserId);
 
       // ตรวจสอบ userId ใน url กับ userId ที่ล็อกอิน
       const urlUserId = this.route.snapshot.queryParams['id'];
@@ -114,13 +109,9 @@ export class HomepageUserComponent implements OnDestroy {
 
               // ตรวจสอบสถานะไลค์สำหรับโพสต์ที่มีอยู่แล้ว
         if (this.posts.length > 0) {
-          console.log('Checking like status for existing posts...');
           this.posts.forEach(post => {
             this.checkLikeStatusForPost(post);
           });
-        } else {
-          // ถ้ายังไม่มีโพสต์ ให้ตรวจสอบหลังจากโหลดโพสต์เสร็จ
-          console.log('No posts yet, will check like status after posts are loaded');
         }
     });
 
@@ -132,7 +123,6 @@ export class HomepageUserComponent implements OnDestroy {
     this.postService.getViewCounts().subscribe({
       next: (data) => {
         this.viewPosts = data;
-        console.log('View Data:', data);
       },
       error: (err) => {
         console.error('Error loading views:', err);
@@ -149,7 +139,6 @@ export class HomepageUserComponent implements OnDestroy {
       // โหลดข้อมูลผู้ใช้ปัจจุบัน
       this.userService.getCurrentUserId().subscribe((userId) => {
         this.currentUserId = userId;
-        console.log('Current User ID:', this.currentUserId);
       });
 
       this.userService.loadCurrentUserId();
@@ -193,8 +182,6 @@ export class HomepageUserComponent implements OnDestroy {
     // ค้นหาข้อมูลใน viewPosts โดยเปรียบเทียบ post_id
     const view = this.viewPosts.find(v => v.post_id.toString() === postIdString);
 
-    // console.log('View Post ID:', postId, 'View Data:', view); 
-
     // ถ้าไม่พบให้แสดงเป็น 0
     return view?.total_views ? parseInt(view.total_views) : 0;
   }
@@ -226,15 +213,12 @@ export class HomepageUserComponent implements OnDestroy {
         // ตรวจสอบสถานะไลค์สำหรับแต่ละโพสต์ - รอให้ currentUserId พร้อม
         if (this.currentUserId) {
           this.posts.forEach(post => {
-            console.log('Has Multiple Media:', post.hasMultipleMedia);
             this.checkLikeStatusForPost(post);
           });
         } else {
-          console.log('currentUserId not ready yet, will check like status later');
           // ตรวจสอบสถานะไลค์หลังจาก currentUserId พร้อม
           this.userService.getCurrentUserId().subscribe((userId) => {
             if (userId && this.posts.length > 0) {
-              console.log('Now checking like status for posts with userId:', userId);
               this.posts.forEach(post => {
                 this.checkLikeStatusForPost(post);
               });
@@ -251,22 +235,16 @@ export class HomepageUserComponent implements OnDestroy {
   // เพิ่มฟังก์ชันตรวจสอบสถานะไลค์สำหรับแต่ละโพสต์
   private checkLikeStatusForPost(post: ShowPost): void {
     if (!this.currentUserId) {
-      console.log('No currentUserId available for checking like status');
       return;
     }
 
-    console.log('Checking like status for post:', post.post_id, 'with user:', this.currentUserId);
-
     this.likePostService.checkLikeStatus(post.post_id).subscribe({
       next: (response) => {
-        console.log('Like status for post', post.post_id, ':', response);
         // อัพเดตสถานะไลค์ในโพสต์ - ตรวจสอบทั้ง isLiked และ liked
         if (response.isLiked !== undefined) {
           post.isLiked = response.isLiked;
-          console.log('Set post.isLiked to:', post.isLiked);
         } else if (response.liked !== undefined) {
           post.isLiked = response.liked;
-          console.log('Set post.isLiked to:', post.isLiked);
         }
       },
       error: (error) => {
@@ -281,36 +259,27 @@ export class HomepageUserComponent implements OnDestroy {
       return;
     }
 
-    console.log('Before toggle - Post ID:', post.post_id, 'isLiked:', post.isLiked);
-
     // Optimistic update - อัพเดต UI ทันที
     const currentLikedState = post.isLiked;
     post.isLiked = !currentLikedState;
-    console.log('Optimistic update - isLiked changed to:', post.isLiked);
 
     this.likePostService.likePost(post.post_id, Number(this.currentUserId)).subscribe({
       next: (response) => {
-        console.log('Like response:', response);
         
         // อัพเดตจำนวนไลค์ - ตรวจสอบทั้ง likeCount และ likes_count
         if (response.likes_count !== undefined) {
           post.likes_count = response.likes_count;
-          console.log('Updated likes_count to:', post.likes_count);
         } else if (response.likeCount !== undefined) {
           post.likes_count = response.likeCount;
-          console.log('Updated likes_count to:', post.likes_count);
         }
 
         // ตรวจสอบสถานะไลค์ใหม่หลังจาก toggle
         this.likePostService.checkLikeStatus(post.post_id).subscribe({
           next: (statusResponse) => {
-            console.log('Status after toggle:', statusResponse);
             if (statusResponse.isLiked !== undefined) {
               post.isLiked = statusResponse.isLiked;
-              console.log('Updated isLiked to:', post.isLiked);
             } else if (statusResponse.liked !== undefined) {
               post.isLiked = statusResponse.liked;
-              console.log('Updated isLiked to:', post.isLiked);
             }
             // อัปเดตการแจ้งเตือนหลังจากสถานะถูกต้องแล้ว
             if (this.userId) {
@@ -331,7 +300,6 @@ export class HomepageUserComponent implements OnDestroy {
         console.error('Error toggling like:', error);
         // Rollback optimistic update ถ้า API ล้มเหลว
         post.isLiked = currentLikedState;
-        console.log('Rollback isLiked to:', post.isLiked);
       }
     });
   }

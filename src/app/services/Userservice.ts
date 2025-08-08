@@ -94,22 +94,10 @@ export class UserService {
       Authorization: `Bearer ${token}`,
     });
 
-    // Debug: แสดงข้อมูลที่ส่งไป
-    console.log('📤 Sending FormData to backend:');
-    formData.forEach((value, key) => {
-      console.log(`📤 ${key}:`, value);
-    });
-
-    return this.http.put(`${this.baseUrl}/edit_user`, formData, { headers, responseType: 'json' }).pipe(
+    return this.http.put(`${this.baseUrl}/update_user`, formData, { headers }).pipe(
       catchError((error: HttpErrorResponse) => {
-        console.error('❌ Error in updateUser:', error);
-        console.log('📌 Error status:', error.status);
-        console.log('📌 Error statusText:', error.statusText);
-        console.log('📌 Full raw error response:', error);
-        console.log('📌 Parsed error object:', error.error);
-
-        // ถ้า error.error มีค่าให้ใช้มัน ถ้าไม่มีให้ใช้ error เอง
-        return throwError(() => new Error(JSON.stringify(error.error || error)));
+        console.error('Error updating user:', error);
+        return throwError(() => new Error(error.error?.message || 'Failed to update user'));
       })
     );
   }

@@ -244,14 +244,24 @@
                     <span *ngIf="comments.length > 0" style="font-weight: 500; font-size: 25px;">{{ comments.length
                         }}</span>
                 </div>
-                <i style="font-size: 40px; cursor: pointer;" class="fa-solid fa-share" (click)="sharePost()"
-                    [ngClass]="{ 'shared': isShared, 'not-shared': !isShared }" matTooltip="แชร์โพสต์">
-                </i>
+                <div style="display: flex; align-items: center; gap: 5px;">
+                    <i style="font-size: 40px; cursor: pointer;" class="fa-solid fa-share" (click)="sharePost()"
+                        [ngClass]="{ 'shared': isShared, 'not-shared': !isShared }" matTooltip="แชร์โพสต์">
+                    </i>
+                    <span *ngIf="shareCount > 0" style="font-weight: 500; font-size: 20px;">
+                        {{ shareCount }}
+                    </span>
+                </div>
 
             </div>
-            <i style="font-size: 30px; cursor: pointer;" class="fa-regular fa-bookmark"
-                [ngClass]="{ 'saved': isSave, 'not-saved': !isSave }" (click)="toggleSavePost()" 
-                [matTooltip]="isSave ? 'ลบออกจากบันทึก' : 'บันทึกโพสต์'"></i>
+            <div style="display: flex; align-items: center; gap: 5px;">
+                <i style="font-size: 30px; cursor: pointer;" class="fa-regular fa-bookmark"
+                    [ngClass]="{ 'saved': isSave, 'not-saved': !isSave }" (click)="toggleSavePost()" 
+                    [matTooltip]="isSave ? 'ลบออกจากบันทึก' : 'บันทึกโพสต์'"></i>
+                <span *ngIf="saveCount > 0" style="font-weight: 500; font-size: 20px;">
+                    {{ saveCount }}
+                </span>
+            </div>
         </div>
         <div class="post-content">
             <span *ngIf="!isEditing" [innerHTML]="post.title | newlineToBr"></span>

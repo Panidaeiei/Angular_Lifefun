@@ -105,11 +105,11 @@ body {
   
   .user-list {
     width: 100%;
-    max-width: 550px;
+    max-width: 480px;
     margin: 24px auto 0 auto;
     display: flex;
     flex-direction: column;
-    gap: 14px;
+    gap: 12px;
     padding: 0 2vw;
   }
 
@@ -119,8 +119,8 @@ body {
     align-items: flex-start;
     background: #fff;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
-    padding: 12px 14px;
-    gap: 14px;
+    padding: 10px 12px;
+    gap: 12px;
     cursor: pointer;
     border: 1px solid #f0eaea;
     transition: box-shadow 0.18s, transform 0.18s, background 0.18s, border-color 0.18s;
@@ -140,8 +140,8 @@ body {
 }
 
 .user-avatar {
-    width: 54px;
-    height: 54px;
+    width: 48px;
+    height: 48px;
     border-radius: 50%;
     object-fit: cover;
     background: #f7f7f7;
@@ -192,14 +192,14 @@ body {
 
 @media (max-width: 600px) {
     .user-list {
-        max-width: 480px;
+        max-width: 420px;
         margin: 20px auto 0 auto;
         padding: 0 20px;
         box-sizing: border-box;
     }
     .user-avatar {
-        width: 40px;
-        height: 40px;
+        width: 36px;
+        height: 36px;
     }
     .user-name,
     .user-desc,
@@ -499,19 +499,19 @@ body {
   }
   
   .user-list {
-    max-width: 700px;
+    max-width: 600px;
     margin: 32px auto 0 auto;
     padding: 0 4vw;
   }
   
   .user-card {
-    padding: 16px 18px;
-    gap: 16px;
+    padding: 14px 16px;
+    gap: 14px;
   }
   
   .user-avatar {
-    width: 60px;
-    height: 60px;
+    width: 54px;
+    height: 54px;
   }
   
   .user-name {
@@ -539,14 +539,14 @@ body {
 
 @media (max-width: 600px) {
     .user-list {
-        max-width: 480px;
+        max-width: 420px;
         margin: 20px auto 0 auto;
         padding: 0 20px;
         box-sizing: border-box;
     }
     .user-avatar {
-        width: 40px;
-        height: 40px;
+        width: 36px;
+        height: 36px;
     }
     .user-name,
     .user-desc,

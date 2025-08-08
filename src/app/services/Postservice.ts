@@ -57,8 +57,6 @@ export class PostService {
 
     const uid = localStorage.getItem('userId');   // uid ของผู้ใช้ที่ล็อกอิน
 
-    console.log(localStorage.getItem('userId'));
-
     // สร้าง HttpHeaders ที่มี Authorization: Bearer <JWT-TOKEN>
     const headers = new HttpHeaders()
       .set('uid', uid || '');  // ส่ง uid ของผู้ใช้ใน header
@@ -66,8 +64,7 @@ export class PostService {
     // ส่งคำขอ GET ไปที่ API พร้อม Token และ uid
     return this.http.get<ShowPost[]>(`${this.baseUrl}/posts/getPosts`, { headers }).pipe(
       tap((response) => {
-        console.log('Response from API:', response);  // ตรวจสอบข้อมูลที่ได้รับจาก API
-
+        // ตรวจสอบข้อมูลที่ได้รับจาก API
       })
     );
   }
@@ -81,10 +78,6 @@ export class PostService {
       return throwError('Token or UserId not found'); // ถ้าไม่มี Token หรือ uid ให้โยน error
     }
 
-    // ตรวจสอบค่าของ token และ uid
-    console.log(localStorage.getItem('token'));
-    console.log(localStorage.getItem('userId'));
-
     // สร้าง HttpHeaders ที่มี Authorization: Bearer <JWT-TOKEN>
     const headers = new HttpHeaders()
       .set('Authorization', `Bearer ${token}`)
@@ -93,8 +86,7 @@ export class PostService {
     // ส่งคำขอ GET ไปที่ API พร้อม Token และ uid
     return this.http.get<ShowPost[]>(`${this.baseUrl}/posts/getPosts_interests`, { headers }).pipe(
       tap((response) => {
-        console.log('Response from API:', response);  // ตรวจสอบข้อมูลที่ได้รับจาก API
-
+        // ตรวจสอบข้อมูลที่ได้รับจาก API
       })
     );
   }

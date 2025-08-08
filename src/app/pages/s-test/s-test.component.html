@@ -147,7 +147,7 @@
                 </div>
 
                 <div class="like-row" style="cursor: pointer;">
-                    <i class="fa fa-heart heart-icon" [class.liked]="post.isLiked" (click)="toggleHeart(post)"></i>
+                    <i class="fa fa-heart heart-icon" style="font-size: 25px;" [class.liked]="post.isLiked" (click)="toggleHeart(post)"></i>
                     <span style="font-size: 20px; margin-left: 5px;">{{ post.likes_count != null ? post.likes_count : 0 }}</span>
                 </div>
 
