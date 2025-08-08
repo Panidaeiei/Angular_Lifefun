@@ -32,6 +32,8 @@ export class UserListAdminComponent implements OnDestroy {
   searchResults: any[] = [];
   isSearchPerformed: boolean = false;
   filteredUsers: any[] = [];
+  usersPerPage = 12;
+  currentPage = 1;
   notificationCounts: AdminNotificationCounts = {
     report: 0,
     total: 0
@@ -39,13 +41,13 @@ export class UserListAdminComponent implements OnDestroy {
   private notificationSubscription?: Subscription;
 
   constructor(
-    private route: ActivatedRoute, 
-    private userService: UserService, 
-    private adminservice: AdminService, 
+    private route: ActivatedRoute,
+    private userService: UserService,
+    private adminservice: AdminService,
     private router: Router,
     private adminNotificationService: AdminNotificationService,
     private http: HttpClient
-  ) { 
+  ) {
     // ตรวจสอบ adminId ใน constructor
     const adminId = localStorage.getItem('adminId') || sessionStorage.getItem('adminId');
     if (adminId) {
@@ -60,32 +62,32 @@ export class UserListAdminComponent implements OnDestroy {
     const adminIdFromSession = sessionStorage.getItem('adminId');
     const adminTokenFromLocal = localStorage.getItem('adminToken');
     const adminTokenFromSession = sessionStorage.getItem('adminToken');
-    
+
     // เลือกค่าที่มีอยู่
     const adminId = adminIdFromLocal || adminIdFromSession;
     const adminToken = adminTokenFromLocal || adminTokenFromSession;
-    
+
     console.log('AdminId from localStorage:', adminIdFromLocal);
     console.log('AdminId from sessionStorage:', adminIdFromSession);
     console.log('Selected adminId:', adminId);
-    
+
     if (!adminId || !adminToken) {
       console.error('AdminId หรือ AdminToken ไม่พบ');
       this.router.navigate(['/login'], { queryParams: { error: 'unauthorized' } });
       return;
     }
-    
+
     // ตั้งค่า adminId
     this.adminId = adminId;
     console.log('Set adminId to:', this.adminId);
-    
+
     // ตรวจสอบอีกครั้งว่า adminId มีค่าหรือไม่
     if (!this.adminId) {
       console.error('Admin ID ยังคงเป็น null!');
       this.errorMessage = 'ไม่สามารถตั้งค่า Admin ID ได้';
       return;
     }
-    
+
     this.route.queryParams.subscribe(params => {
       const paramId = params['id'];
       console.log('Current adminId:', this.adminId);
@@ -93,11 +95,11 @@ export class UserListAdminComponent implements OnDestroy {
 
     this.userService.getUsers().subscribe({
       next: (data) => {
-    
-        
+
+
         this.users = data.filter(user => user.status !== 0);
         this.filteredUsers = this.users;
-        
+
         // ตรวจสอบ user.uid ของแต่ละ user
         this.users.forEach((user, index) => {
           console.log(`User ${index}:`, {
@@ -108,13 +110,13 @@ export class UserListAdminComponent implements OnDestroy {
             fullUserObject: user
           });
         });
-        
+
         // ตรวจสอบว่ามี user ที่ไม่มี uid หรือไม่
         const usersWithoutUid = this.users.filter(user => !(user as any).uid);
         if (usersWithoutUid.length > 0) {
           console.warn('Users without UID:', usersWithoutUid);
         }
-        
+
         if (this.users.length === 0) {
           this.errorMessage = 'ไม่พบผู้ใช้งาน';
         } else {
@@ -135,10 +137,10 @@ export class UserListAdminComponent implements OnDestroy {
     if (this.adminId) {
       // โหลดการแจ้งเตือนครั้งแรก
       this.adminNotificationService.loadNotificationCounts(this.adminId);
-      
+
       // เริ่มการอัปเดตอัตโนมัติ
       this.adminNotificationService.startAutoUpdate(this.adminId);
-      
+
       // ติดตามการเปลี่ยนแปลงจำนวนการแจ้งเตือน
       this.notificationSubscription = this.adminNotificationService.notificationCounts.subscribe(
         (counts) => {
@@ -175,6 +177,7 @@ export class UserListAdminComponent implements OnDestroy {
     if (this.searchQuery.trim() === '') {
       this.isSearchPerformed = false;
       this.filteredUsers = this.users;
+      this.currentPage = 1;
       return;
     }
 
@@ -184,27 +187,27 @@ export class UserListAdminComponent implements OnDestroy {
       user.username.toLowerCase().includes(query) ||
       (user.email && user.email.toLowerCase().includes(query))
     );
+    this.currentPage = 1;
   }
 
   resetSearch(): void {
     this.searchQuery = '';
     this.isSearchPerformed = false;
-    this.filteredUsers = this.users.filter(user => user.status !== 0);
+    this.filteredUsers = this.users.filter(u => u.status !== 0);
+    this.currentPage = 1;
   }
-
   navigateToUserProfile(userId: number): void {
 
-    
     if (!this.adminId) {
       alert('เกิดข้อผิดพลาด: ไม่พบ Admin ID');
       return;
     }
-    
+
     if (!userId) {
       alert('เกิดข้อผิดพลาด: ไม่พบ User ID');
       return;
     }
-    
+
     const params = { id: userId, adminId: this.adminId };
     console.log('Navigating to /admin_profileuser with params:', params);
     console.log('Params type check:', {
@@ -213,12 +216,12 @@ export class UserListAdminComponent implements OnDestroy {
       idValue: params.id,
       adminIdValue: params.adminId
     });
-    
+
     this.router.navigate(['/admin_profileuser'], {
       queryParams: params
     });
   }
-  
+
   toggleDrawer(): void {
     this.isDrawerOpen = !this.isDrawerOpen;
   }
@@ -270,10 +273,37 @@ export class UserListAdminComponent implements OnDestroy {
   ngOnDestroy(): void {
     // หยุดการติดตามการแจ้งเตือน
     this.adminNotificationService.stopAutoUpdate();
-    
+
     // ยกเลิก subscription
     if (this.notificationSubscription) {
       this.notificationSubscription.unsubscribe();
     }
   }
+
+  // ลิสต์ที่ใช้งานจริง (ทั้งหมดหรือผลค้นหา)
+  get currentList() {
+    return this.isSearchPerformed ? this.filteredUsers : this.users;
+  }
+
+  get totalPages() {
+    return Math.ceil(this.currentList.length / this.usersPerPage) || 1;
+  }
+
+  get totalPagesArray() {
+    return Array.from({ length: this.totalPages }, (_, i) => i + 1);
+  }
+
+  get paginatedUsers() {
+    const startIndex = (this.currentPage - 1) * this.usersPerPage;
+    return this.currentList.slice(startIndex, startIndex + this.usersPerPage);
+  }
+
+  goToPage(page: number) {
+    if (page < 1 || page > this.totalPages) return;
+    this.currentPage = page;
+  }
+
+  nextPage() { this.goToPage(this.currentPage + 1); }
+  prevPage() { this.goToPage(this.currentPage - 1); }
+
 }

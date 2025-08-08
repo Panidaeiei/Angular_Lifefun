@@ -56,22 +56,23 @@ export class HomepageUserComponent implements OnDestroy {
   ];
 
   constructor(
-    private route: ActivatedRoute, 
-    private userService: UserService, 
-    private postService: PostService, 
-    private likePostService: ReactPostservice, 
+    private route: ActivatedRoute,
+    private userService: UserService,
+    private postService: PostService,
+    private likePostService: ReactPostservice,
     private notificationService: NotificationService,
     private router: Router
   ) { }
 
   ngOnInit(): void {
-    // ตรวจสอบการเข้าสู่ระบบก่อน
+    // 1) ต้องมี token + userId ใน storage เท่านั้น
     const loggedInUserId = localStorage.getItem('userId') || sessionStorage.getItem('userId');
     const token = localStorage.getItem('token') || sessionStorage.getItem('token');
     if (!loggedInUserId || !token) {
-      this.router.navigate(['/login']);
+      this.router.navigate(['/login'], { queryParams: { error: 'unauthorized' } });
       return;
     }
+
     this.checkScreenSize();
     // ตรวจสอบ snapshot ครั้งแรก
     const snapshotParams = this.route.snapshot.queryParams;
@@ -87,7 +88,7 @@ export class HomepageUserComponent implements OnDestroy {
         this.userId = params['id'];
         console.log('User ID from observable:', this.userId);
         this.loadUserData();
-    });
+      });
 
     this.route.queryParamMap.subscribe(params => {
       const viewerId = params.get('viewerId');
@@ -129,7 +130,7 @@ export class HomepageUserComponent implements OnDestroy {
         console.error('Error loading views:', err);
       }
     });
-  
+
     // เริ่มการติดตามการแจ้งเตือน
     this.startNotificationTracking();
   }
@@ -142,9 +143,9 @@ export class HomepageUserComponent implements OnDestroy {
         this.currentUserId = userId;
         console.log('Current User ID:', this.currentUserId);
       });
-      
+
       this.userService.loadCurrentUserId();
-      
+
       // โหลดโพสต์
       this.fetchPosts();
     }
@@ -155,10 +156,10 @@ export class HomepageUserComponent implements OnDestroy {
     if (this.userId) {
       // โหลดการแจ้งเตือนครั้งแรก
       this.notificationService.loadNotificationCounts(Number(this.userId));
-      
+
       // เริ่มการอัปเดตอัตโนมัติ
       this.notificationService.startAutoUpdate(Number(this.userId));
-      
+
       // ติดตามการเปลี่ยนแปลงจำนวนการแจ้งเตือน
       this.notificationSubscription = this.notificationService.notificationCounts$.subscribe(
         (counts) => {
@@ -180,16 +181,16 @@ export class HomepageUserComponent implements OnDestroy {
 
   getViewsForPost(postId: string): number {
     const postIdString = postId.toString();
-  
+
     // ค้นหาข้อมูลใน viewPosts โดยเปรียบเทียบ post_id
     const view = this.viewPosts.find(v => v.post_id.toString() === postIdString);
-    
+
     // console.log('View Post ID:', postId, 'View Data:', view); 
-  
+
     // ถ้าไม่พบให้แสดงเป็น 0
-    return view?.total_views ? parseInt(view.total_views) : 0; 
+    return view?.total_views ? parseInt(view.total_views) : 0;
   }
-  
+
   viewPost(postId: string): void {
     this.postService.viewPost(postId).subscribe({
       next: () => {
@@ -202,7 +203,7 @@ export class HomepageUserComponent implements OnDestroy {
 
   fetchPosts(): void {
     this.postService.getPosts_interests().subscribe(
-      (response: ShowPost[]) => {    
+      (response: ShowPost[]) => {
 
         // กรองโพสต์ที่มี `post_id` ซ้ำ
         const uniquePosts = response.filter((value, index, self) =>
@@ -224,7 +225,7 @@ export class HomepageUserComponent implements OnDestroy {
       }
     );
   }
-  
+
   toggleHeart(post: ShowPost): void {
     if (!this.currentUserId) {
       console.error('User ID not found');
@@ -236,12 +237,12 @@ export class HomepageUserComponent implements OnDestroy {
         console.log('Like response:', response);
         post.isLiked = response.isLiked;
         post.likes_count = response.likeCount;
-        
+
         // อัปเดตการแจ้งเตือนแบบทันทีหลังจากไลค์
         if (this.userId) {
           // ใช้ refreshImmediately แทน loadNotificationCounts เพื่อความเร็ว
           this.notificationService.refreshImmediately(Number(this.userId));
-          
+
           // ถ้าเป็นการไลค์ (ไม่ใช่การเลิกไลค์) ให้เพิ่มการแจ้งเตือนทันที
           if (response.isLiked) {
             this.notificationService.addNotificationImmediately('like');
@@ -259,8 +260,8 @@ export class HomepageUserComponent implements OnDestroy {
       console.error('User ID is missing! Navigation aborted.');
       return;
     }
-  
-      this.router.navigate(['/view_user', this.currentUserId], { queryParams: { Profileuser: userId } });
+
+    this.router.navigate(['/view_user', this.currentUserId], { queryParams: { Profileuser: userId } });
   }
 
   toggleDrawer(): void {
@@ -298,7 +299,7 @@ export class HomepageUserComponent implements OnDestroy {
   ngOnDestroy(): void {
     // หยุดการติดตามการแจ้งเตือน
     this.notificationService.stopAutoUpdate();
-    
+
     // ยกเลิก subscription
     if (this.notificationSubscription) {
       this.notificationSubscription.unsubscribe();

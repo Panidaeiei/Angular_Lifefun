@@ -7,6 +7,7 @@ import { HttpClientModule } from '@angular/common/http';
 import Swal from 'sweetalert2';
 import { UserService } from '../../services/Userservice';
 import { CommonModule } from '@angular/common';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-login',
@@ -21,7 +22,9 @@ export class LoginComponent {
   errorMessage: string = '';
   isPasswordVisible: boolean = false;
   isMobile = false;
-
+  private baseUrl = environment.apiBaseUrl; // URL ของ Backend
+// เก็บพาธปลายทางที่มากับ ?redirect=... (ถูก encode มา)
+  private redirectUrl: string | null = null;
   constructor(private http: HttpClient, private router: Router, private userService: UserService, private route: ActivatedRoute) { }
 
   @HostListener('window:resize')
@@ -31,6 +34,10 @@ export class LoginComponent {
 
   ngOnInit() {
     this.checkScreenSize();
+
+    
+    // เก็บ redirect ถ้ามี (เช่น /login?redirect=%2FHomepageUser%3Fid%3D35)
+    this.redirectUrl = this.route.snapshot.queryParamMap.get('redirect')
     // แสดงข้อความเตือนถ้ามี error=unauthorized ใน query param
     this.route.queryParams.subscribe((params: any) => {
       if (params['error'] === 'unauthorized') {
@@ -61,7 +68,7 @@ export class LoginComponent {
       password: this.password,
     };
 
-    this.http.post('https://flim.k0n4n4p4.site/api/login', payload).subscribe(
+    this.http.post(`${this.baseUrl}/login`, payload).subscribe(
       (response: any) => {
         // ตรวจสอบว่ามีสถานะของบัญชีและถูกระงับหรือไม่
         if (response.status === 0) {
@@ -70,7 +77,7 @@ export class LoginComponent {
             title: 'บัญชีถูกระงับ',
             text: 'บัญชีของคุณถูกระงับ กรุณาติดต่อผู้ดูแลระบบ',
           });
-          return;
+          return; 
         }
 
         if (response.role === 'admin') {

@@ -31,7 +31,9 @@ import { ChatUserComponent } from './pages/chat-user/chat-user.component';
 import { NotiAddminComponent } from './pages/noti-addmin/noti-addmin.component';
 import { ReportPostdetailComponent } from './pages/report-postdetail/report-postdetail.component';
 import { BanStatusGuard } from './services/ban-status.guard';
+import { authGuard } from './guards/auth.guard';
 
+const mustLogin = [authGuard, BanStatusGuard];
 
 export const routes: Routes = [
 

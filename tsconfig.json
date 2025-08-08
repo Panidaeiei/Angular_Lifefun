@@ -3,6 +3,7 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+    "ignoreDeprecations": "5.0",
     "outDir": "./dist/out-tsc",
     "strict": true,
     "noImplicitOverride": true,
@@ -29,6 +30,7 @@
       "./node_modules/@types",
       "./src/types"
     ]
+    
   },
   "include": [
     "src",

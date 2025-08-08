@@ -16,6 +16,7 @@ import { ProfileService } from '../../services/Profileservice';
 import { Postme } from '../../models/postme_model';
 import { ReactPostservice } from '../../services/ReactPostservice';
 import { NotificationService, NotificationCounts } from '../../services/notification.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-profile-user',
@@ -63,16 +64,23 @@ export class ProfileUserComponent implements OnInit, OnDestroy {
     private profileService: ProfileService, 
     private reactPostservice: ReactPostservice, 
     private notificationService: NotificationService,
-    private router: Router
+    private router: Router,
+    private auth: AuthService,
   ) { }
 
   ngOnInit(): void {
+    // 1) ต้องมี token + userId ใน storage เท่านั้น
+    if (!this.auth.isTokenValid()) {
+    this.router.navigate(['/login'], { queryParams: { redirect: '/ProfileUser' } });
+    return;
+  }
     const loggedInUserId = localStorage.getItem('userId') || sessionStorage.getItem('userId');
     const token = localStorage.getItem('token') || sessionStorage.getItem('token');
     if (!loggedInUserId || !token) {
       this.router.navigate(['/login'], { queryParams: { error: 'unauthorized' } });
       return;
     }
+
     this.checkScreenSize();
     // Subscribe เฉพาะ params ที่มี id และโหลดข้อมูล user/profile
     this.route.queryParams
@@ -119,7 +127,6 @@ export class ProfileUserComponent implements OnInit, OnDestroy {
       this.notificationSubscription = this.notificationService.notificationCounts$.subscribe(
         (counts) => {
           this.notificationCounts = counts;
-          console.log('Notification counts updated:', counts);
         }
       );
     }
@@ -231,7 +238,7 @@ export class ProfileUserComponent implements OnInit, OnDestroy {
     }
   }
 
-  logout(): void {
+  logout() {
     localStorage.removeItem('userId');
     localStorage.removeItem('token');
     localStorage.removeItem('userRole');

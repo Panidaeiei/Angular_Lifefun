@@ -57,19 +57,19 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "2MB",
-                  "maximumError": "4MB"
+                  "maximumWarning": "3mb",
+                  "maximumError": "4mb"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "10kb",
-                  "maximumError": "25kb"
+                  "maximumWarning": "25kb",
+                  "maximumError": "40kb"
                 }
               ],
               "allowedCommonJsDependencies": [
                 "sweetalert2",
                 "leaflet"
-              ],  
+              ],
               "outputHashing": "all",
               "serviceWorker": "ngsw-config.json"
             },

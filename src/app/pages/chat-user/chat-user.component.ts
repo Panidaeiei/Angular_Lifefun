@@ -392,16 +392,21 @@ export class ChatUserComponent implements OnInit, OnDestroy {
     this.checkScreenSize();
   }
 
-  checkScreenSize() {
-    this.isMobile = window.innerWidth <= 910;
-    if (this.isMobile) {
-      this.showSidebar = true;
-      this.showUserInfo = false;
-    } else {
-      this.showSidebar = true;
-      this.showUserInfo = true;
-    }
+checkScreenSize() {
+  const w = window.innerWidth;
+
+  // นับแท็บเล็ตเป็น mobile ด้วย
+  this.isMobile = w <= 1024;
+
+  // ตั้งค่าการแสดง UI ตามโหมด
+  if (this.isMobile) {
+    this.showSidebar = true;   // ถ้าอยากซ่อน sidebar ให้เป็น false
+    this.showUserInfo = false;
+  } else {
+    this.showSidebar = true;
+    this.showUserInfo = true;
   }
+}
 
   toggleDrawer(): void {
     this.isDrawerOpen = !this.isDrawerOpen;

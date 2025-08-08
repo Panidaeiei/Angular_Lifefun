@@ -51,11 +51,13 @@ body {
   height: 85px;
   background: rgba(247, 220, 220, 0.85);
   backdrop-filter: blur(8px);
-  box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.07);
   border-radius: 0 0 18px 18px;
   padding: 0 18px;
   position: fixed;
-  top: 0; left: 0; width: 100vw;
+  top: 0;
+  left: 0;
+  width: 100vw;
   z-index: 1000;
   transition: all 0.3s ease;
 }
@@ -75,7 +77,7 @@ body {
   width: 56px;
   height: auto;
   border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(233,135,135,0.12);
+  box-shadow: 0 2px 8px rgba(233, 135, 135, 0.12);
   transition: transform 0.2s ease;
 }
 
@@ -100,16 +102,16 @@ body {
   font-weight: 500;
   position: relative;
   overflow: hidden;
-  
-  i { 
-    font-size: 28px; 
-    margin-bottom: 4px; 
+
+  i {
+    font-size: 28px;
+    margin-bottom: 4px;
     color: #222;
     transition: all 0.3s ease;
   }
-  
-  span { 
-    font-size: 15px; 
+
+  span {
+    font-size: 15px;
     color: #222;
     transition: all 0.3s ease;
     font-weight: 500;
@@ -137,7 +139,8 @@ body {
     left: 100%;
   }
 
-  i, span {
+  i,
+  span {
     color: #e27c96;
   }
 }
@@ -147,7 +150,8 @@ body {
   color: #e27c96;
   box-shadow: 0 4px 12px rgba(226, 140, 150, 0.15);
 
-  i, span {
+  i,
+  span {
     color: #e27c96;
   }
 }
@@ -218,6 +222,33 @@ body {
   }
 }
 
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 15px;
+}
+
+.pagination button {
+  background: none;
+  border: none;
+  color: #555;
+  padding: 6px 10px;
+  cursor: pointer;
+  font-size: 14px;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.pagination button:hover {
+  background: #f0f0f0;
+}
+
+.pagination button.active {
+  background: #333;
+  color: #fff;
+}
+
 .toolbar-hamburger {
   display: flex;
   background: none;
@@ -256,7 +287,8 @@ body {
   }
 }
 
-.toolbar-hamburger:active, .toolbar-hamburger:focus {
+.toolbar-hamburger:active,
+.toolbar-hamburger:focus {
   background: #ffe6ee;
   transform: translateY(0);
 }
@@ -267,32 +299,32 @@ body {
     height: 60px;
     padding: 0 8px;
   }
-  
-  .center-menu { 
-    gap: 18px; 
+
+  .center-menu {
+    gap: 18px;
   }
-  
-  .menu-item i { 
-    font-size: 20px; 
+
+  .menu-item i {
+    font-size: 20px;
   }
-  
-  .menu-item span { 
-    font-size: 12px; 
+
+  .menu-item span {
+    font-size: 12px;
   }
-  
+
   .toolbar-hamburger {
     font-size: 24px;
     padding: 6px 10px;
   }
-  
+
   .logout-button {
     font-size: 12px;
     padding: 8px 14px;
-    
+
     span {
       font-size: 12px;
     }
-    
+
     i {
       font-size: 14px;
     }
@@ -305,25 +337,25 @@ body {
     padding: 0 4px;
     border-radius: 0 0 10px 10px;
   }
-  
-  .center-menu { 
-    display: none !important; 
+
+  .center-menu {
+    display: none !important;
   }
-  
+
   .toolbar-hamburger {
     font-size: 30px;
     padding: 8px 12px;
     margin-left: auto;
   }
-  
+
   .logout-button {
     font-size: 11px;
     padding: 6px 10px;
-    
+
     span {
       font-size: 11px;
     }
-    
+
     i {
       font-size: 12px;
     }
@@ -372,10 +404,12 @@ body {
     transform: scale(1);
     opacity: 1;
   }
+
   50% {
     transform: scale(1.2);
     opacity: 0.8;
   }
+
   100% {
     transform: scale(1);
     opacity: 1;
@@ -563,7 +597,7 @@ body {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-}
+  }
 
   p {
     font-size: 16px;
@@ -676,7 +710,7 @@ body {
 
   &.online {
     background: #28a745;
-}
+  }
 
   &.banned {
     background: #dc3545;
@@ -686,7 +720,7 @@ body {
 .user-details {
   flex: 1;
 
-.user-name {
+  .user-name {
     font-size: 20px;
     font-weight: 700;
     color: #2c3e50;
@@ -694,7 +728,8 @@ body {
     line-height: 1.2;
   }
 
-  .user-email, .user-phone {
+  .user-email,
+  .user-phone {
     display: flex;
     align-items: center;
     font-size: 14px;

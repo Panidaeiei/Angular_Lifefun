@@ -5,7 +5,7 @@
     <a [routerLink]="['/HomepageUser']" [queryParams]="{ id: userId }">
         <img src="../../../assets/images/Logoweb.png" alt="Home Icon">
     </a>
-    
+
     <!-- เมนูตรงกลาง -->
     <div class="center-menu" *ngIf="!isMobile">
         <a class="menu-item" [routerLink]="['/HomepageUser']" [queryParams]="{ id: userId}">
@@ -21,7 +21,7 @@
         </a>
         <a class="menu-item" [routerLink]="['/Notification_user']" [queryParams]="{ id: userId }">
             <div class="bell-icon-container">
-            <i class="fa-solid fa-bell"></i>
+                <i class="fa-solid fa-bell"></i>
                 <div class="notification-dot" *ngIf="notificationCounts.total > 0"></div>
             </div>
             <span class="itim-regular">การแจ้งเตือน</span>
@@ -31,7 +31,7 @@
             <span class="itim-regular">โปรไฟล์</span>
         </a>
     </div>
-    
+
     <!-- เมนูขวาสุด -->
     <div class="toolbar-actions">
         <a [routerLink]="['/search_users']" [queryParams]="{ id: userId }" *ngIf="!isMobile">
@@ -69,7 +69,7 @@
             <li>
                 <a [routerLink]="['/Notification_user']" [queryParams]="{ id: userId }">
                     <div class="bell-icon-container">
-                    <i class="fa-solid fa-bell"></i>
+                        <i class="fa-solid fa-bell"></i>
                         <div class="notification-dot" *ngIf="notificationCounts.total > 0"></div>
                     </div>
                     <span class="itim-regular">การแจ้งเตือน</span>
@@ -136,42 +136,65 @@
                             <span style="font-size: 20px; font-weight: bold;">{{ user?.username || 'ชื่อผู้ใช้'
                                 }}</span>
                             <div style="display: flex; gap: 20px; align-items: center; margin-top: 10px;">
-                                <div style="display: flex; align-items: center;">
-                                    <input type="text" [(ngModel)]="postData.location" name="location"
-                                        placeholder="เลือกสถานที่"
-                                        style="padding: 10px; border: 1px solid #ccc; border-radius: 20px; font-size: 14px; width: 100%; max-width: 300px;" />
+                                <div style="display:flex; align-items:center; gap:10px;">
+                                    <!-- มีสถานที่แล้ว: โชว์เป็นลิงก์ + ปุ่มเปลี่ยน/ล้าง -->
+                                    <ng-container *ngIf="locationUrl; else chooseLocation">
+                                        <a [href]="locationUrl" target="_blank" rel="noopener"
+                                            style="display:inline-flex; align-items:center; gap:8px; max-width:300px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                                            <i class="fa-solid fa-location-dot" style="font-size:16px;"></i>
+                                            <span style="overflow:hidden; text-overflow:ellipsis;">{{ postData.location
+                                                || 'เปิดแผนที่' }}</span>
+                                        </a>
 
-                                    <button (click)="openMapDialog()"
-                                        style="padding: 10px 15px; border-radius: 10px; background-color: #ffffff; color: white; border: none;">
-                                        <img src="../../../assets/images/placeholder.png" alt="" width="20px">
-                                    </button>
+                                        <button type="button" (click)="openMapDialog()"
+                                            style="display:inline-flex; align-items:center; gap:6px; padding:10px 15px; border-radius:10px; background:#fff; border:1px solid #ccc;">
+                                            <i class="fa-solid fa-map-location-dot"></i>
+                                            เปลี่ยน
+                                        </button>
+
+                                        <button type="button" (click)="clearLocation()"
+                                            style="display:inline-flex; align-items:center; gap:6px; padding:10px 15px; border-radius:10px; background:#fff; border:1px solid #ccc;">
+                                            <i class="fa-solid fa-eraser"></i>
+                                            ล้าง
+                                        </button>
+                                    </ng-container>
+
+                                    <!-- ยังไม่เลือก: โชว์ปุ่มให้เลือก -->
+                                    <ng-template #chooseLocation>
+                                        <button type="button" (click)="openMapDialog()"
+                                            style="display:inline-flex; align-items:center; gap:6px; padding:10px 15px; border-radius:10px; background:#fff; border:1px solid #ccc;">
+                                            <i class="fa-solid fa-location-dot"></i>
+                                            เลือกสถานที่
+                                        </button>
+                                    </ng-template>
                                 </div>
 
                                 <!-- แผนที่ Dialog -->
                                 <div *ngIf="isMapOpen" class="dialog-overlay" (click)="closeMapDialog()">
                                     <div class="dialog-box" (click)="$event.stopPropagation()">
                                         <button class="close-button" (click)="closeMapDialog()">×</button>
+
                                         <div class="custom-geocoder-container">
-                                            <input
-                                                type="text"
-                                                [(ngModel)]="customSearch"
-                                                (input)="onCustomInput()"
-                                                placeholder="ค้นหาสถานที่"
-                                                class="custom-geocoder-input"
-                                                autocomplete="off"
-                                            />
+                                            <input type="text" [(ngModel)]="customSearch" (input)="onCustomInput()"
+                                                placeholder="ค้นหาสถานที่" class="custom-geocoder-input"
+                                                autocomplete="off" />
                                             <button (click)="onCustomSearch()" class="custom-geocoder-btn">
                                                 <i class="fa fa-search"></i>
                                             </button>
+
                                             <ul *ngIf="customResults.length > 0" class="custom-geocoder-dropdown">
-                                                <li *ngFor="let result of customResults" (click)="selectCustomResult(result)">
+                                                <li *ngFor="let result of customResults"
+                                                    (click)="selectCustomResult(result)">
                                                     {{ result.display_name }}
                                                 </li>
                                             </ul>
                                         </div>
+
                                         <div id="map" style="height: 400px;"></div>
                                     </div>
                                 </div>
+
+
 
                                 <mat-chip [matMenuTriggerFor]="menu"
                                     style="background-color: white; border-radius: 20px; box-shadow: none;">
@@ -189,14 +212,19 @@
                 </mat-card-header>
                 <mat-card-content
                     style="background-color: white; padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; height: 700px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
-                    <div class="file-upload-container" 
-                         (dragover)="onDragOver($event)" 
-                         (dragenter)="onDragEnter($event)" 
-                         (drop)="onDrop($event)">
-                         <button class="add-file-btn" (click)="triggerFileInput()" matTooltip="เพิ่มรูปภาพหรือวิดีโอ">
+                    <div class="file-upload-container" (dragover)="onDragOver($event)" (dragenter)="onDragEnter($event)"
+                        (drop)="onDrop($event)">
+                        <button class="add-file-btn" (click)="triggerFileInput()" matTooltip="เพิ่มรูปภาพหรือวิดีโอ">
                             <i class="fas fa-photo-video" style="font-size: 28px;"></i>
                         </button>
-                        <input id="file-input" type="file" hidden accept="image/*,video/*" multiple (change)="onFileSelected($event)" />
+                        <input id="file-input" type="file" hidden accept="image/*,video/*" multiple
+                            (change)="onFileSelected($event)" />
+
+                        <div *ngIf="files.length === 0"
+                            style="display: flex; flex-direction: column; gap: 10px; align-items: center; justify-content: center; height: 100%; width: 100%; color: gray; font-size: 18px; text-align: center;">
+                            <i class="fas fa-photo-video" style="font-size: 48px;"></i>
+                            เพิ่มรูปภาพหรือวิดีโอของคุณ
+                        </div>
                         <div *ngIf="files.length > 0" class="file-count-badge">{{ files.length }}</div>
 
                         <!-- ปุ่มลบไฟล์ -->
@@ -262,7 +290,8 @@
                     style="background-color: #f2aea3; padding: 10px; height: 50px; display: flex; justify-content: center; align-items: center; cursor: pointer; border-radius: 8px;"
                     (click)="!isLoading && submitPost()" [class.disabled]="isLoading">
                     <span *ngIf="!isLoading" class="itim-regular2" style="color: white;">โพสต์</span>
-                    <span *ngIf="isLoading" class="itim-regular2" style="color: white; display: flex; align-items: center; gap: 8px;">
+                    <span *ngIf="isLoading" class="itim-regular2"
+                        style="color: white; display: flex; align-items: center; gap: 8px;">
                         <i class="fa fa-spinner fa-spin"></i> กำลังโพสต์...
                     </span>
                 </mat-card-footer>
@@ -279,7 +308,8 @@
         </button>
     </div>
     <div class="mobile-user-row">
-        <img [src]="user?.image_url || 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'" class="mobile-avatar" />
+        <img [src]="user?.image_url || 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'"
+            class="mobile-avatar" />
         <input type="text" [(ngModel)]="postData.location" placeholder="สถานที่" class="mobile-location" />
         <button class="map-btn" (click)="openMapDialog()">
             <img src="../../../assets/images/placeholder.png" width="20" />
@@ -299,7 +329,7 @@
         <button class="add-file-btn" (click)="triggerFileInput()">
             +<span *ngIf="files.length > 0" class="file-count-number">{{ files.length }}</span>
         </button>
-                                <input id="file-input" type="file" hidden accept="image/*,video/*" multiple (change)="onFileSelected($event)" />
+        <input id="file-input" type="file" hidden accept="image/*,video/*" multiple (change)="onFileSelected($event)" />
         <div *ngIf="currentFile" class="media-preview">
             <img *ngIf="currentFile.type === 'image'" [src]="currentFile.url" />
             <video *ngIf="currentFile.type === 'video'" [src]="currentFile.url" controls></video>
@@ -327,7 +357,7 @@
             <i class="fa fa-spinner fa-spin"></i> กำลังโพสต์...
         </span>
     </button>
-    
+
     <!-- Loading overlay -->
     <div *ngIf="isLoading" class="loading-overlay">
         <div class="loading-spinner">
@@ -339,14 +369,8 @@
         <div class="dialog-box" (click)="$event.stopPropagation()">
             <button class="close-button" (click)="closeMapDialog()">×</button>
             <div class="custom-geocoder-container">
-                <input
-                    type="text"
-                    [(ngModel)]="customSearch"
-                    (input)="onCustomInput()"
-                    placeholder="ค้นหาสถานที่"
-                    class="custom-geocoder-input"
-                    autocomplete="off"
-                />
+                <input type="text" [(ngModel)]="customSearch" (input)="onCustomInput()" placeholder="ค้นหาสถานที่"
+                    class="custom-geocoder-input" autocomplete="off" />
                 <button (click)="onCustomSearch()" class="custom-geocoder-btn">
                     <i class="fa fa-search"></i>
                 </button>

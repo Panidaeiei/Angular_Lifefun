@@ -1,17 +1,17 @@
 <div class="background-div">
     <mat-toolbar class="admin-toolbar">
         <!-- Logo ด้านซ้าย -->
-        <a  class="logo-link">
+        <a class="logo-link">
             <img src="../../../assets/images/Logoweb.png" alt="Home Icon" class="logo-image">
         </a>
 
         <!-- เมนูตรงกลาง -->
         <div class="center-menu">
             <a class="menu-item active" routerLinkActive="active" [routerLink]="['/userlist']"
-                        [queryParams]="{ id: adminId }">
+                [queryParams]="{ id: adminId }">
                 <i class="fa-solid fa-users"></i>
-                        <span class="itim-regular">ผู้ใช้งาน</span>
-                    </a>
+                <span class="itim-regular">ผู้ใช้งาน</span>
+            </a>
 
             <a class="menu-item" [routerLink]="['/noti_addmin']" [queryParams]="{ id: adminId }">
                 <div class="bell-icon-container">
@@ -58,41 +58,59 @@
             <p>ลองค้นหาด้วยคำค้นอื่น</p>
         </div>
 
-        <div class="user-card" *ngFor="let user of isSearchPerformed ? filteredUsers : users">
-            <div class="user-info" 
-                (click)="navigateToUserProfile(user.uid)"
-                [style.pointer-events]="!user.uid ? 'none' : 'auto'"
-                [style.opacity]="!user.uid ? '0.5' : '1'">
+        <!-- ลิสต์ผู้ใช้ -->
+        <div class="user-card" *ngFor="let user of paginatedUsers">
+            <div class="user-info" (click)="navigateToUserProfile(user.uid)"
+                [style.pointer-events]="!user.uid ? 'none' : 'auto'" [style.opacity]="!user.uid ? '0.5' : '1'">
+
                 <div class="user-avatar-container">
                     <img [src]="user.image_url ? user.image_url : 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'"
                         class="user-avatar" alt="User Avatar">
                     <div class="user-status" [class.online]="user.status === 0" [class.banned]="user.status === 1">
                     </div>
                 </div>
+
                 <div class="user-details">
                     <h3 class="user-name">{{ user.username }}</h3>
+
                     <div class="user-email">
                         <i class="fa-solid fa-envelope"></i>
                         {{ user.email }}
-                        </div>
+                    </div>
+
                     <div class="user-phone">
                         <i class="fa-solid fa-phone"></i>
                         {{ user.phone }}
                     </div>
-                             <div class="user-id" style="font-size: 12px; color: #666;">
-             <i class="fa-solid fa-id-card"></i>
-             ID: {{ user.uid || 'ไม่มี ID' }}
+
+                    <div class="user-id" style="font-size: 12px; color: #666;">
+                        <i class="fa-solid fa-id-card"></i>
+                        ID: {{ user.uid || 'ไม่มี ID' }}
                     </div>
                 </div>
             </div>
+
             <div class="user-actions">
                 <button mat-flat-button class="action-button ban-button" (click)="toggleBanlist(user)">
                     <i class="fa-solid fa-ban"></i>
                     ระงับบัญชี
-            </button>
+                </button>
             </div>
         </div>
-    </div>
 
-    <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
-</div>
+        <!-- Pagination -->
+        <div class="pagination" *ngIf="totalPages > 1">
+            <button (click)="prevPage()" [disabled]="currentPage === 1">‹</button>
+
+            <button *ngFor="let page of totalPagesArray" (click)="goToPage(page)" [class.active]="page === currentPage">
+                {{ page }}
+            </button>
+
+            <button (click)="nextPage()" [disabled]="currentPage === totalPages">›</button>
+        </div>
+
+
+        <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
+
+
+    </div>

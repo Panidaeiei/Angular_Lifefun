@@ -132,7 +132,7 @@
                             <span>
                                 Location:
                                 <a class="location"
-                                    [href]="'https://www.google.com/maps/search/?api=1&query=' + encodeLocation(post.location)">
+                                    [href]="'https://www.google.com/maps/search/?api=1&query=' + encodeLocation(post.location)"  target="_blank" rel="noopener">
                                     {{ post.location.length > 20 ? (post.location.substring(0, 20) + '...') :
                                     post.location }}
                                 </a>
@@ -144,7 +144,7 @@
                             <span>
                                 Location:
                                 <a class="location"
-                                    [href]="'https://www.google.com/maps/search/?api=1&query=' + encodeLocation(post.location)">
+                                    [href]="'https://www.google.com/maps/search/?api=1&query=' + encodeLocation(post.location)"  target="_blank" rel="noopener">
                                     {{ post.location.length > 30 ? (post.location.substring(0, 30) + '...') :
                                     post.location }}
                                 </a>

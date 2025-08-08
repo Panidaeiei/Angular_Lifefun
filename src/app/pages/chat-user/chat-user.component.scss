@@ -14,7 +14,9 @@ body {
 }
 
 @media (max-width: 600px) {
-  html, body {
+
+  html,
+  body {
     overflow: hidden;
     position: fixed;
     width: 100%;
@@ -78,10 +80,12 @@ body {
     transform: scale(1);
     opacity: 1;
   }
+
   50% {
     transform: scale(1.2);
     opacity: 0.8;
   }
+
   100% {
     transform: scale(1);
     opacity: 1;
@@ -95,7 +99,7 @@ body {
   /* ซ่อน Drawer ทางขวา */
   width: 300px;
   height: 100%;
-  background: rgba(255,255,255,0.95);
+  background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(12px);
   box-shadow: -4px 0 20px rgba(0, 0, 0, 0.15);
   transition: right 0.3s ease;
@@ -203,6 +207,7 @@ body {
   height: 40px;
   margin: 18px auto 0 auto;
 }
+
 .add-post-btn {
   display: flex;
   align-items: center;
@@ -219,11 +224,13 @@ body {
   text-decoration: none;
   outline: none;
 
-  &:hover, &:focus {
+  &:hover,
+  &:focus {
     background: #ffe6ee;
     color: #d14b72;
     box-shadow: 0 4px 12px rgba(226, 140, 150, 0.25);
   }
+
   &:active {
     background: #f9c5d1;
     color: #b03a5b;
@@ -234,14 +241,16 @@ body {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  height:85px;
+  height: 85px;
   background: rgba(247, 220, 220, 0.85);
   backdrop-filter: blur(8px);
-  box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.07);
   border-radius: 0 0 18px 18px;
   padding: 0 18px;
   position: fixed;
-  top: 0; left: 0; width: 100vw;
+  top: 0;
+  left: 0;
+  width: 100vw;
   z-index: 1000;
   transition: all 0.3s ease;
 
@@ -249,7 +258,7 @@ body {
     width: 56px;
     height: auto;
     border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(233,135,135,0.12);
+    box-shadow: 0 2px 8px rgba(233, 135, 135, 0.12);
     transition: transform 0.2s ease;
   }
 
@@ -280,16 +289,16 @@ body {
   font-weight: 500;
   position: relative;
   overflow: hidden;
-  
-  i { 
-    font-size: 28px; 
-    margin-bottom: 4px; 
+
+  i {
+    font-size: 28px;
+    margin-bottom: 4px;
     color: #222;
     transition: all 0.3s ease;
   }
-  
-  span { 
-    font-size: 15px; 
+
+  span {
+    font-size: 15px;
     color: #222;
     transition: all 0.3s ease;
     font-weight: 500;
@@ -317,7 +326,8 @@ body {
     left: 100%;
   }
 
-  i, span {
+  i,
+  span {
     color: #e27c96;
   }
 }
@@ -338,7 +348,7 @@ body {
   transition: all 0.3s ease;
   color: #222;
   text-decoration: none;
-  
+
   i {
     font-size: 24px;
     margin-bottom: 2px;
@@ -396,7 +406,8 @@ body {
   }
 }
 
-.toolbar-hamburger:active, .toolbar-hamburger:focus {
+.toolbar-hamburger:active,
+.toolbar-hamburger:focus {
   background: #ffe6ee;
   transform: translateY(0);
 }
@@ -410,78 +421,101 @@ body {
 }
 
 @media (max-width: 1024px) {
-  .fixed-toolbar {
-    height: 60px;
-    padding: 0 8px;
-  }
-  
-  .center-menu { 
-    gap: 18px; 
-  }
-  
-  .menu-item i { 
-    font-size: 20px; 
-  }
-  
-  .menu-item span { 
-    font-size: 12px; 
-  }
-  
-  .toolbar-actions a i {
-    font-size: 20px;
+  /* ให้พื้นที่คอนเทนต์สูงเท่าหน้าจอ - ความสูง toolbar (80px) */
+  .chat-layout {
+    flex-direction: column;
+    position: relative;            /* << เคย fixed */
+    height: calc(100vh - 80px);    /* << เคย 100vh + fixed */
+    margin-top: 80px;              /* << เว้นให้พ้น toolbar ชมพู */
+    overflow: hidden;
+    background: #fff;
   }
 
-  .toolbar-hamburger {
-    font-size: 24px;
-    padding: 6px 10px;
+  /* ซ่อน sidebar เหมือนมือถือ */
+  .chat-sidebar { display: none !important; }
+
+  /* คอนเทนต์หลักไม่ต้องมี margin-top แล้ว */
+  .chat-main {
+    width: 100vw;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    margin-top: 0;                 /* << เคย 55px (ทำให้เกิดช่องว่าง) */
+    max-height: none;
+    overflow: hidden;
+    background: #f9f9f9;
+  }
+
+  /* header ติดบน */
+  .chat-header {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    margin-top: 0;                 /* กันเกิดแถบขาว */
+    padding: 10px 8px;
+    background: #fff;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  /* โซนข้อความ กินพื้นที่ที่เหลือทั้งหมด */
+  .chat-messages {
+    flex: 1 1 0;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 16px;
+    gap: 8px;
+    background: #f9f9f9;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* แถบพิมพ์ติดล่าง */
+  .chat-input {
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 2;
+    background: #fff;
+    border-top: 1px solid #eee;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+    padding: 10px 8px;
+  }
+
+  /* ขนาดฟองแชทเหมือนมือถือ */
+  .message {
+    max-width: 85vw;
+    font-size: 15px;
+    padding: 10px 14px;
+    border-radius: 16px;
+    margin-bottom: 2px;
   }
 }
 
-@media screen and (min-width: 768px) and (max-width: 1024px) and (orientation: portrait) {
-  .fixed-toolbar {
-    height: 65px;
-    padding: 0 12px;
-  }
-  
-  .center-menu { 
-    gap: 24px; 
-    margin-top: 8px;
-  }
-  
-  .menu-item i { 
-    font-size: 24px; 
-  }
-  
-  .menu-item span { 
-    font-size: 13px; 
-  }
-  
-  .toolbar-actions a i {
-    font-size: 22px;
-  }
 
-  .toolbar-hamburger {
-    font-size: 26px;
-    padding: 7px 11px;
-  }
-}
 
 @media screen and (min-width: 1024px) and (max-width: 1366px) and (orientation: landscape) {
   .fixed-toolbar {
     height: 65px;
     padding: 0 16px;
   }
-  
-  .center-menu { 
-    gap: 28px; 
+
+  .center-menu {
+    gap: 28px;
   }
-  
-  .menu-item i { 
-    font-size: 26px; 
+
+  .menu-item i {
+    font-size: 26px;
   }
-  
-  .menu-item span { 
-    font-size: 14px; 
+
+  .menu-item span {
+    font-size: 14px;
   }
 
   .toolbar-hamburger {
@@ -496,30 +530,30 @@ body {
     padding: 0 4px;
     border-radius: 0 0 10px 10px;
   }
-  
-  .center-menu { 
-    display: none !important; 
+
+  .center-menu {
+    display: none !important;
   }
-  
+
   .toolbar-hamburger {
     font-size: 30px;
     padding: 8px 12px;
     margin-left: auto;
   }
-  
+
   .toolbar-actions a i {
     font-size: 18px;
   }
-  
+
   .toolbar-actions {
     gap: 12px;
   }
-  
+
   .toolbar-actions a {
     padding: 6px 10px;
   }
-  
- 
+
+
 }
 
 @media (max-width: 767px) {
@@ -552,65 +586,18 @@ body {
   color: #e27c96;
   box-shadow: 0 4px 12px rgba(226, 140, 150, 0.15);
 
-  i, span {
+  i,
+  span {
     color: #e27c96;
   }
 }
 
 
 
-.noti-list {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 10px;
-  width: 100%;
-}
-
-.noti-card {
-  width: 95%;
-  max-width: 500px;
-  padding: 12px;
-  margin: 5px auto;
-  /* ให้มันอยู่กึ่งกลางแนวนอน */
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0);
-  border-radius: 10px;
-  background-color: #eceada;
-  cursor: pointer;
-  transition: 0.15s ease;
-  z-index: 1100;
-}
-
-.noti-card:hover {
-  background-color: #eceada;
-}
-
-.card-content {
-  display: flex;
-  align-items: center;
-  position: relative;
-}
-
-.avatar {
-  width: 48px;
-  height: 48px;
-  background-color: #ffa384;
-  border-radius: 50%;
-  margin-right: 12px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-}
-
 .avatar .item {
   align-items: center;
   justify-content: center;
 
-}
-
-.text-content {
-  flex: 1;
 }
 
 .title {
@@ -633,26 +620,6 @@ body {
   padding: 3px 8px;
   font-size: 15px;
   border-radius: 10px;
-}
-
-
-
-.content-area {
-  margin-left: 320px;
-  padding: 20px;
-}
-
-//Iphone
-@media screen and (max-width: 430px) {
-  
-
-  .content-area {
-    margin-left: 0;
-  }
-
-  .noti-card:active {
-    background-color: #e5e3d5;
-  }
 }
 
 .chat-layout {
@@ -744,7 +711,8 @@ body {
   transition: background 0.15s;
 }
 
-.chat-list-item:hover, .chat-list-item.active {
+.chat-list-item:hover,
+.chat-list-item.active {
   background: #faddd9;
 }
 
@@ -807,12 +775,12 @@ body {
 .clickable-avatar {
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
-  
+
   &:hover {
     transform: scale(1.05);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   }
-  
+
   &:active {
     transform: scale(0.95);
   }
@@ -833,8 +801,10 @@ body {
   background: #f9f9f9;
   scroll-behavior: smooth;
   position: relative;
-  min-height: 0; /* สำคัญสำหรับ flex container */
-  height: 100%; /* ให้แน่ใจว่ามีความสูงเต็ม */
+  min-height: 0;
+  /* สำคัญสำหรับ flex container */
+  height: 100%;
+  /* ให้แน่ใจว่ามีความสูงเต็ม */
   /* ใช้ scroll แทน justify-content เพื่อให้สามารถ scroll ขึ้นได้ */
 }
 
@@ -855,13 +825,13 @@ body {
   box-shadow: 0 4px 12px rgba(226, 124, 150, 0.3);
   transition: all 0.3s ease;
   z-index: 1000;
-  
+
   &:hover {
     background: #d14b72;
     transform: translateY(-2px);
     box-shadow: 0 6px 16px rgba(226, 124, 150, 0.4);
   }
-  
+
   i {
     font-size: 12px;
   }
@@ -875,7 +845,7 @@ body {
   display: inline-block;
   word-break: break-word;
   margin-bottom: 2px;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
 }
 
 .message.right {
@@ -1052,6 +1022,7 @@ body {
   .chat-info {
     display: none;
   }
+
   .chat-sidebar {
     width: 80px;
     min-width: 60px;
@@ -1075,9 +1046,11 @@ body {
     right: 0;
     bottom: 0;
   }
+
   .chat-sidebar {
     display: none !important;
   }
+
   .chat-main {
     width: 100vw;
     min-width: 0;
@@ -1092,6 +1065,7 @@ body {
     z-index: 1;
     overflow: hidden;
   }
+
   .chat-header {
     margin-top: 25px;
     padding: 10px 8px;
@@ -1104,15 +1078,18 @@ body {
     top: 0;
     z-index: 3;
   }
+
   .chat-header img {
     width: 36px;
     height: 36px;
   }
+
   .chat-header strong {
     font-size: 16px;
     color: #222;
     font-weight: 600;
   }
+
   .chat-messages {
     flex: 1 1 0;
     min-height: 0;
@@ -1122,6 +1099,7 @@ body {
     padding-bottom: 4px;
     -webkit-overflow-scrolling: touch;
   }
+
   .message {
     font-size: 15px;
     padding: 10px 14px;
@@ -1129,16 +1107,19 @@ body {
     margin-bottom: 2px;
     max-width: 85vw;
   }
+
   .message.right {
     background: #e7f1ff;
     align-self: flex-end;
     border-bottom-right-radius: 8px;
   }
+
   .message.left {
     background: #f8d8d8;
     align-self: flex-start;
     border-bottom-left-radius: 8px;
   }
+
   .chat-input {
     position: sticky;
     bottom: 0;
@@ -1153,10 +1134,12 @@ body {
     flex-shrink: 0;
     padding: 10px 8px;
   }
+
   /* Mobile Drawer Overlay - ปรับให้สวยงาม */
   .mobile-drawer-overlay {
     position: fixed;
-    top: 0; left: 0;
+    top: 0;
+    left: 0;
     width: 100vw;
     height: 100vh;
     background: rgba(226, 140, 150, 0.13);
@@ -1168,10 +1151,17 @@ body {
     backdrop-filter: blur(2px);
     animation: fadeInOverlay 0.18s;
   }
+
   @keyframes fadeInOverlay {
-    from { background: rgba(226, 140, 150, 0.01); }
-    to   { background: rgba(226, 140, 150, 0.13); }
+    from {
+      background: rgba(226, 140, 150, 0.01);
+    }
+
+    to {
+      background: rgba(226, 140, 150, 0.13);
+    }
   }
+
   .mobile-drawer {
     width: 80vw;
     max-width: 340px;
@@ -1181,11 +1171,17 @@ body {
     border-radius: 0 18px 18px 0;
     overflow-y: auto;
     padding: 0;
-    animation: slideInDrawer 0.25s cubic-bezier(0.4,0,0.2,1);
+    animation: slideInDrawer 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   }
+
   @keyframes slideInDrawer {
-    from { transform: translateX(-100%); }
-    to   { transform: translateX(0); }
+    from {
+      transform: translateX(-100%);
+    }
+
+    to {
+      transform: translateX(0);
+    }
   }
 }
 
@@ -1197,6 +1193,7 @@ body {
   top: 0;
   z-index: 10;
 }
+
 .mobile-chat-select select {
   width: 100%;
   padding: 10px 14px;
@@ -1207,17 +1204,20 @@ body {
   color: #e28c96;
   outline: none;
   margin-bottom: 8px;
-  box-shadow: 0 1px 4px rgba(226,140,150,0.06);
+  box-shadow: 0 1px 4px rgba(226, 140, 150, 0.06);
   appearance: none;
 }
+
 .mobile-chat-select select:focus {
   border: 2px solid #e28c96;
   background: #fff0f3;
 }
+
 @media (max-width: 600px) {
   .mobile-chat-select {
     display: block;
   }
+
   .chat-sidebar {
     display: none !important;
   }
@@ -1240,6 +1240,7 @@ body {
   position: relative;
   /* overflow: visible; */
 }
+
 /* ฝั่งขวา (ของตัวเอง) */
 .message.right .media-datetime {
   left: auto;
@@ -1275,10 +1276,13 @@ body {
   opacity: 0.80;
   z-index: 1000;
   pointer-events: none;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-  white-space: nowrap;         /* <<< สำคัญ */
-  width: max-content;          /* <<< สำคัญ */
-  min-width: 80px;             /* ป้องกันแถบแคบเกิน */
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  white-space: nowrap;
+  /* <<< สำคัญ */
+  width: max-content;
+  /* <<< สำคัญ */
+  min-width: 80px;
+  /* ป้องกันแถบแคบเกิน */
   text-align: center;
 }
 
@@ -1291,12 +1295,14 @@ body {
   font-family: 'Itim', sans-serif;
   width: fit-content;
 }
-.message.right + .bubble-datetime-mobile {
+
+.message.right+.bubble-datetime-mobile {
   margin-left: auto;
   margin-right: 0;
   text-align: right;
 }
-.message.left + .bubble-datetime-mobile {
+
+.message.left+.bubble-datetime-mobile {
   margin-left: 0;
   margin-right: auto;
   text-align: left;
@@ -1330,17 +1336,21 @@ body {
   position: relative;
   z-index: 10;
 }
-.drawer-btn:hover, .drawer-btn:focus {
+
+.drawer-btn:hover,
+.drawer-btn:focus {
   background: #ffe6ee;
   color: #d14b72;
   box-shadow: 0 4px 16px rgba(226, 140, 150, 0.22);
   transform: scale(1.08);
 }
+
 .drawer-btn:active {
   background: #f9c5d1;
   color: #b03a5b;
   transform: scale(0.97);
 }
+
 .drawer-btn i {
   font-size: 28px;
   transition: color 0.2s, transform 0.15s;
@@ -1387,17 +1397,17 @@ body {
     padding: 30px 15px;
     min-height: 250px;
   }
-  
+
   .no-chats-icon {
     font-size: 48px;
     margin-bottom: 16px;
   }
-  
+
   .no-chats-text h3 {
     font-size: 20px;
     margin-bottom: 8px;
   }
-  
+
   .no-chats-text p {
     font-size: 14px;
   }
@@ -1441,8 +1451,13 @@ input[disabled] {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .delete-chat-btn {
@@ -1460,10 +1475,13 @@ input[disabled] {
   align-items: center;
   justify-content: center;
 }
-.delete-chat-btn:hover, .delete-chat-btn:focus {
+
+.delete-chat-btn:hover,
+.delete-chat-btn:focus {
   background: rgba(231, 76, 60, 0.08);
   color: #c0392b;
 }
+
 .delete-chat-btn-header {
   margin-left: auto;
   margin-right: 0;
@@ -1490,8 +1508,10 @@ input[disabled] {
   align-items: center;
   justify-content: center;
 }
-.chat-menu-btn:hover, .chat-menu-btn:focus {
-  background: rgba(0,0,0,0.06);
+
+.chat-menu-btn:hover,
+.chat-menu-btn:focus {
+  background: rgba(0, 0, 0, 0.06);
   color: #222;
 }
 
@@ -1502,7 +1522,7 @@ input[disabled] {
   min-width: 120px;
   background: #fff;
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   padding: 4px 0;
   margin: 0;
   z-index: 10;
@@ -1510,10 +1530,19 @@ input[disabled] {
   font-size: 0.98em;
   animation: fadeInMenu 0.18s;
 }
+
 @keyframes fadeInMenu {
-  from { opacity: 0; transform: translateY(-8px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
+
 .chat-menu-list li {
   padding: 8px 16px;
   color: #e74c3c;
@@ -1525,6 +1554,7 @@ input[disabled] {
   border: none;
   transition: background 0.18s, color 0.18s;
 }
+
 .chat-menu-list li:hover {
   background: rgba(231, 76, 60, 0.08);
   color: #c0392b;

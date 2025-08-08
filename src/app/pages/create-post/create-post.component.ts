@@ -15,7 +15,6 @@ import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
 import { User } from '../../models/register_model';
 import { PostService } from '../../services/Postservice';
-import * as L from 'leaflet';
 import 'leaflet-control-geocoder';
 import { Location } from '@angular/common';
 import { MatSelectModule } from '@angular/material/select';
@@ -73,6 +72,9 @@ export class CreatePostComponent implements OnInit, OnDestroy {
     unban: 0,
     total: 0
   };
+  locationUrl = '';
+  lat: number | null = null;
+  lon: number | null = null;
   private notificationSubscription?: Subscription;
 
   postData: Post = {
@@ -119,7 +121,38 @@ export class CreatePostComponent implements OnInit, OnDestroy {
       this.placesService = new google.maps.places.PlacesService(this.map);
     }, 100);
   }
-  
+
+  copyLocation() {
+    if (!this.locationUrl) { return; }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(this.locationUrl)
+        .then(() => alert('คัดลอกลิงก์แล้ว'))
+        .catch(() => alert('คัดลอกไม่สำเร็จ'));
+    } else {
+      // fallback เก่าๆ
+      const ta = document.createElement('textarea');
+      ta.value = this.locationUrl;
+      document.body.appendChild(ta);
+      ta.select();
+      try {
+        document.execCommand('copy');
+        alert('คัดลอกลิงก์แล้ว');
+      } catch {
+        alert('คัดลอกไม่สำเร็จ');
+      } finally {
+        document.body.removeChild(ta);
+      }
+    }
+  }
+
+
+  clearLocation() {
+    this.postData.location = '';
+    this.locationUrl = '';
+    this.lat = null;
+    this.lon = null;
+  }
+
 
   closeMapDialog() {
     this.isMapOpen = false;
@@ -170,7 +203,7 @@ export class CreatePostComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     // หยุดการติดตามการแจ้งเตือน
     this.notificationService.stopAutoUpdate();
-    
+
     // ยกเลิก subscription
     if (this.notificationSubscription) {
       this.notificationSubscription.unsubscribe();
@@ -182,10 +215,10 @@ export class CreatePostComponent implements OnInit, OnDestroy {
     if (this.userId) {
       // โหลดการแจ้งเตือนครั้งแรก
       this.notificationService.loadNotificationCounts(Number(this.userId));
-      
+
       // เริ่มการอัปเดตอัตโนมัติ
       this.notificationService.startAutoUpdate(Number(this.userId));
-      
+
       // ติดตามการเปลี่ยนแปลงจำนวนการแจ้งเตือน
       this.notificationSubscription = this.notificationService.notificationCounts$.subscribe(
         (counts) => {
@@ -254,31 +287,31 @@ export class CreatePostComponent implements OnInit, OnDestroy {
       let imageCount = this.files.filter(f => f.type === 'image').length;
       let overLimit = false;
       for (const file of filesArray) {
-      if (file.type.startsWith('image/')) {
+        if (file.type.startsWith('image/')) {
           if (imageCount >= 9) {
             overLimit = true;
             continue;
-        }
-        const reader = new FileReader();
-        reader.onload = () => {
-          this.files.push({ url: reader.result as string, file, type: 'image' });
-        };
-        reader.readAsDataURL(file);
+          }
+          const reader = new FileReader();
+          reader.onload = () => {
+            this.files.push({ url: reader.result as string, file, type: 'image' });
+          };
+          reader.readAsDataURL(file);
           imageCount++;
-      } else if (file.type.startsWith('video/')) {
-        if (this.files.some((f) => f.type === 'video')) {
-          alert('คุณสามารถเลือกวิดีโอได้เพียง 1 ไฟล์');
+        } else if (file.type.startsWith('video/')) {
+          if (this.files.some((f) => f.type === 'video')) {
+            alert('คุณสามารถเลือกวิดีโอได้เพียง 1 ไฟล์');
             continue;
+          }
+          const reader = new FileReader();
+          reader.onload = () => {
+            this.files.push({ url: reader.result as string, file, type: 'video' });
+          };
+          reader.readAsDataURL(file);
+        } else {
+          alert('โปรดเลือกไฟล์ที่เป็นรูปภาพหรือวิดีโอ');
         }
-        const reader = new FileReader();
-        reader.onload = () => {
-          this.files.push({ url: reader.result as string, file, type: 'video' });
-        };
-        reader.readAsDataURL(file);
-      } else {
-        alert('โปรดเลือกไฟล์ที่เป็นรูปภาพหรือวิดีโอ');
       }
-    }
       if (overLimit) {
         alert('คุณสามารถเลือกรูปภาพได้สูงสุด 9 ไฟล์');
       }
@@ -299,8 +332,30 @@ export class CreatePostComponent implements OnInit, OnDestroy {
   }
 
   submitPost(): void {
-    if (!this.postData.title || !this.postData.cat_id) {
-      Swal.fire('กรุณากรอกข้อมูลให้ครบถ้วน');
+    if (
+      !this.postData.title.trim() &&
+      (!this.postData.cat_id || this.postData.cat_id === 0) &&
+      this.files.length === 0
+    ) {
+      alert('กรุณากรอกข้อมูลเพื่อโพสต์');
+      return;
+    }
+
+    // ตรวจสอบข้อความโพสต์
+    if (!this.postData.title.trim()) {
+      alert('กรุณากรอกข้อความโพสต์');
+      return;
+    }
+
+    // ตรวจสอบหมวดหมู่
+    if (!this.postData.cat_id || this.postData.cat_id === 0) {
+      alert('กรุณาเลือกหมวดหมู่ก่อนโพสต์');
+      return;
+    }
+
+    // ตรวจสอบไฟล์
+    if (this.files.length === 0) {
+      alert('กรุณาเพิ่มรูปภาพหรือวิดีโอก่อนโพสต์');
       return;
     }
 
@@ -336,7 +391,7 @@ export class CreatePostComponent implements OnInit, OnDestroy {
           console.log('Full response object:', response); // เพิ่ม debug เพื่อดู response ทั้งหมด
           console.log('Response type:', typeof response);
           console.log('Response keys:', Object.keys(response));
-          
+
           // ลองเข้าถึง postId ในหลายวิธี
           let postId;
           if (response && typeof response === 'object') {
@@ -494,12 +549,12 @@ export class CreatePostComponent implements OnInit, OnDestroy {
   onDrop(event: DragEvent): void {
     event.preventDefault();
     event.stopPropagation();
-    
+
     if (event.dataTransfer?.files) {
       const filesArray = Array.from(event.dataTransfer.files);
       let imageCount = this.files.filter(f => f.type === 'image').length;
       let overLimit = false;
-      
+
       for (const file of filesArray) {
         if (file.type.startsWith('image/')) {
           if (imageCount >= 9) {
@@ -526,7 +581,7 @@ export class CreatePostComponent implements OnInit, OnDestroy {
           alert('โปรดเลือกไฟล์ที่เป็นรูปภาพหรือวิดีโอ');
         }
       }
-      
+
       if (overLimit) {
         alert('คุณสามารถเลือกรูปภาพได้สูงสุด 9 ไฟล์');
       }
