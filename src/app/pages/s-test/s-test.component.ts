@@ -55,7 +55,6 @@ export class STestComponent {
     this.route.queryParams.subscribe((params) => {
       if (params['id']) {
         this.userId = params['id'];
-        console.log('User ID set from queryParams:', this.userId);
       } else {
         console.error('User ID not found in queryParams.');
       }
@@ -64,7 +63,6 @@ export class STestComponent {
     // โหลดข้อมูลผู้ใช้ปัจจุบัน
     this.userService.getCurrentUserId().subscribe((userId) => {
       this.currentUserId = userId;
-      console.log('Current User ID:', this.currentUserId);
     });
 
     this.userService.loadCurrentUserId();
@@ -155,9 +153,6 @@ onSearch() {
       return;
     }
 
-    console.log('Toggling heart for post:', post.post_id, 'User ID:', this.currentUserId);
-    console.log('Current like status:', post.isLiked);
-
     this.likePostService.likePost(post.post_id, Number(this.currentUserId)).subscribe({
       next: (response) => {
 
@@ -202,7 +197,7 @@ onSearch() {
             post.isLiked = response.is_liked;
 
           } else {
-            console.log('No like status found in response for post:', postId);
+            // No like status found in response
           }
         }
       },

@@ -150,7 +150,7 @@
         <!-- Main Chat -->
         <main class="chat-main" *ngIf="selectedChat; else noChatSelected">
             <div class="chat-header">
-                <button *ngIf="isMobile" class="drawer-btn" (click)="openMobileDrawer()"><i
+                <button *ngIf="isMobile || isIPad" class="drawer-btn" (click)="openMobileDrawer()"><i
                         class="fa fa-bars"></i></button>
                 <img [src]="selectedChat?.avatar || 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'"
                     alt="avatar" (click)="goToProfile(selectedChat?.uid)" class="clickable-avatar" />
@@ -244,7 +244,7 @@
     </div>
 
     <!-- Mobile Drawer รายชื่อแชท -->
-    <div *ngIf="isMobile && isDrawerOpenMobile" class="mobile-drawer-overlay" (click)="closeMobileDrawer()">
+    <div *ngIf="isDrawerOpenMobile" class="mobile-drawer-overlay" (click)="closeMobileDrawer()">
         <aside class="mobile-drawer" (click)="$event.stopPropagation()">
             <div class="chat-sidebar-header">
                 <div class="search-container">

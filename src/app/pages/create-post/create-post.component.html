@@ -422,6 +422,11 @@
                 </ul>
             </div>
             <div id="map" style="height: 400px;"></div>
+            <div class="map-actions-minimal">
+                <button type="button" class="map-confirm-btn-minimal" (click)="confirmLocation()" *ngIf="mapMarker" matTooltip="ยืนยันสถานที่">
+                    <i class="fa-solid fa-check"></i>
+                </button>
+            </div>
         </div>
     </div>
 </div>

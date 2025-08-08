@@ -128,11 +128,11 @@
                         <span class="profile-stat-number-mobile">{{ posts.length }}</span>
                         <span class="profile-stat-label-mobile">โพสต์</span>
                     </div>
-                    <div class="profile-stat-mobile">
+                    <div class="profile-stat-mobile" (click)="openFollowersPopup()" style="cursor: pointer;">
                         <span class="profile-stat-number-mobile">{{ followersCount }}</span>
                         <span class="profile-stat-label-mobile">ผู้ติดตาม</span>
                     </div>
-                    <div class="profile-stat-mobile">
+                    <div class="profile-stat-mobile" (click)="openFollowingPopup()" style="cursor: pointer;">
                         <span class="profile-stat-number-mobile">{{ followingCount }}</span>
                         <span class="profile-stat-label-mobile">กำลังติดตาม</span>
                     </div>
@@ -164,11 +164,11 @@
                                         <span class="profile-stat-number">{{ posts.length }}</span>
                                         <span class="profile-stat-label">จำนวนโพสต์</span>
                                     </div>
-                                    <div class="profile-stat">
+                                    <div class="profile-stat" (click)="openFollowersPopup()" style="cursor: pointer;">
                                         <span class="profile-stat-number">{{ followersCount }}</span>
                                         <span class="profile-stat-label">ผู้ติดตาม</span>
                                     </div>
-                                    <div class="profile-stat">
+                                    <div class="profile-stat" (click)="openFollowingPopup()" style="cursor: pointer;">
                                         <span class="profile-stat-number">{{ followingCount }}</span>
                                         <span class="profile-stat-label">กำลังติดตาม</span>
                                     </div>

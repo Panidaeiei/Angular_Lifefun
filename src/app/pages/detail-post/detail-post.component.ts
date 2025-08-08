@@ -307,6 +307,9 @@ export class DetailPostComponent implements OnInit, OnDestroy {
         this.loadShareCountFromStorage();
       }
     );
+
+    // โหลดจำนวนการแชร์จาก API ใหม่
+    this.loadShareCount();
   }
 
   loadSaveStatus(): void {
@@ -322,6 +325,9 @@ export class DetailPostComponent implements OnInit, OnDestroy {
         this.loadSaveCountFromStorage();
       }
     );
+
+    // โหลดจำนวนการเซฟจาก API ใหม่
+    this.loadSaveCount();
   }
 
   // เพิ่มฟังก์ชันสำหรับจัดการจำนวนการบันทึกใน localStorage
@@ -362,6 +368,40 @@ export class DetailPostComponent implements OnInit, OnDestroy {
   private loadShareCountFromStorage(): void {
     const key = `share_count_${this.postId}`;
     this.shareCount = parseInt(localStorage.getItem(key) || '0');
+  }
+
+  // ฟังก์ชันดึงจำนวนการแชร์จาก API
+  loadShareCount(): void {
+    this.reactPostservice.getShareCount(Number(this.postId)).subscribe(
+      (response) => {
+        this.shareCount = response.share_count;
+        // บันทึกลง localStorage
+        const key = `share_count_${this.postId}`;
+        localStorage.setItem(key, this.shareCount.toString());
+      },
+      (error) => {
+        console.error('Error loading share count:', error);
+        // ใช้ข้อมูลจาก localStorage เมื่อ API error
+        this.loadShareCountFromStorage();
+      }
+    );
+  }
+
+  // ฟังก์ชันดึงจำนวนการเซฟจาก API
+  loadSaveCount(): void {
+    this.reactPostservice.getSaveCount(Number(this.postId)).subscribe(
+      (response) => {
+        this.saveCount = response.save_count;
+        // บันทึกลง localStorage
+        const key = `save_count_${this.postId}`;
+        localStorage.setItem(key, this.saveCount.toString());
+      },
+      (error) => {
+        console.error('Error loading save count:', error);
+        // ใช้ข้อมูลจาก localStorage เมื่อ API error
+        this.loadSaveCountFromStorage();
+      }
+    );
   }
 
   loadComments(postId: number): void {
@@ -603,6 +643,9 @@ export class DetailPostComponent implements OnInit, OnDestroy {
           // ใช้ localStorage ถ้า API ไม่ส่ง save_count กลับมา
           this.updateSaveCount(this.isSave);
         }
+        
+        // โหลดจำนวนการเซฟใหม่จาก API
+        this.loadSaveCount();
       },
       (error) => {
         console.error('Error saving/unsaving post:', error);
@@ -639,6 +682,9 @@ export class DetailPostComponent implements OnInit, OnDestroy {
             // อัปเดตจำนวนการแชร์
             this.updateShareCount(false);
           }
+          
+          // โหลดจำนวนการแชร์ใหม่จาก API
+          this.loadShareCount();
         },
         (error) => {
           console.error('Error sharing/unsharing post:', error);

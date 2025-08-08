@@ -113,7 +113,6 @@ export class ViewuserMainComponent {
     this.profileService.getUserProfileByIdPublic(this.Profileuser).subscribe(
       (data) => {
         this.userProfile = data;
-        console.log('Owner Profile Data (Public):', this.userProfile);
         this.isLoading = false;
         // ตรวจสอบว่าเป็น mock data หรือไม่
         if (data.description && data.description.includes('public profile view')) {
@@ -143,7 +142,6 @@ export class ViewuserMainComponent {
         this.profileService.getUserPostsById(this.Profileuser).subscribe(
           (data) => {
             this.userPosts = data.userPosts;
-            console.log('User Posts (จากเจ้าของโปรไฟล์):', this.userPosts);
             this.savedPosts = data.savedPosts;
             this.sharedPosts = data.sharedPosts;
           },
@@ -168,7 +166,6 @@ export class ViewuserMainComponent {
     this.profileService.getUserPostsByIdPublic(this.Profileuser).subscribe(
       (data) => {
         this.userPosts = data.userPosts;
-        console.log('User Posts (Public):', this.userPosts);
         this.savedPosts = data.savedPosts;
         this.sharedPosts = data.sharedPosts;
         this.isLoading = false;

@@ -8,6 +8,8 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
 
 import { User } from '../../models/register_model';
@@ -18,7 +20,7 @@ import { ReactPostservice } from '../../services/ReactPostservice';
 import { UserService } from '../../services/Userservice';
 import { ChatService } from '../../services/chat.service';
 import { NotificationService, NotificationCounts } from '../../services/notification.service';
-import { FormsModule } from '@angular/forms';
+import { FollowersDialogComponent } from '../../components/followers-dialog/followers-dialog.component';
 
 @Component({
   selector: 'app-view-user',
@@ -31,6 +33,7 @@ import { FormsModule } from '@angular/forms';
     MatButtonModule,
     MatIconModule,
     MatTooltipModule,
+    MatDialogModule,
     FormsModule],
   templateUrl: './view-user.component.html',
   styleUrls: ['./view-user.component.scss']
@@ -44,7 +47,8 @@ export class ViewUserComponent implements OnInit, OnDestroy {
     private cdr: ChangeDetectorRef, 
     private chatService: ChatService, 
     private notificationService: NotificationService,
-    private router: Router
+    private router: Router,
+    private dialog: MatDialog
   ) { }
 
   userId: string = '';
@@ -93,7 +97,6 @@ export class ViewUserComponent implements OnInit, OnDestroy {
     this.userService.loadCurrentUserId(); // โหลด userId จาก localStorage เข้า BehaviorSubject
     this.userService.getCurrentUserId().subscribe((userId) => {
       this.currentUserId = userId;
-      console.log('Current User ID:', this.currentUserId);
       if (userId) {
         this.userService.getUserById(userId).subscribe(user => {
           this.currentUserProfile = user;
@@ -104,7 +107,6 @@ export class ViewUserComponent implements OnInit, OnDestroy {
     const storedUserId = sessionStorage.getItem('userId');
     if (storedUserId) {
       this.userId = storedUserId;  // ดึงค่า userId จาก sessionStorage
-      console.log('User ID (ผู้ที่กำลังดูโปรไฟล์):', this.userId);
     } else {
       console.warn('No user ID found in sessionStorage');
     }
@@ -128,11 +130,9 @@ export class ViewUserComponent implements OnInit, OnDestroy {
     // ดึงค่า viewerId จาก query parameters (ค่าที่ส่งมาพร้อม URL เช่น ?viewerId=34)
     this.route.queryParams.subscribe((params) => {
       this.Profileuser = params['Profileuser'] || '';  // รับค่า viewerId จาก query parameter
-      console.log('Profileuser ID (เจ้าของโปรไฟล์):', this.Profileuser);  // แสดง viewerId
       if (this.Profileuser) {
         // เซ็ต followedId เป็น Profileuser เพื่อใช้ในการติดตาม
         this.followedId = this.Profileuser;
-        console.log('Followed ID set to:', this.followedId);
         
         // ดึงข้อมูลของเจ้าของโปรไฟล์
         this.checkFollowStatus();
@@ -159,7 +159,6 @@ export class ViewUserComponent implements OnInit, OnDestroy {
       this.notificationSubscription = this.notificationService.notificationCounts$.subscribe(
         (counts) => {
           this.notificationCounts = counts;
-          console.log('Notification counts updated:', counts);
         }
       );
     }
@@ -187,7 +186,6 @@ export class ViewUserComponent implements OnInit, OnDestroy {
       this.profileService.getUserProfileById(this.Profileuser).subscribe(
         (data) => {
           this.userProfile = data;  // เก็บข้อมูลโปรไฟล์ของเจ้าของโปรไฟล์
-          console.log('Owner Profile Data:', this.userProfile);
         },
         (error) => {
           console.error('Error fetching owner profile:', error);
@@ -204,7 +202,6 @@ export class ViewUserComponent implements OnInit, OnDestroy {
       this.profileService.getUserPostsById(this.Profileuser).subscribe(
         (data) => {
           this.userPosts = data.userPosts;  // โพสต์ของเจ้าของโปรไฟล์
-          console.log('User Posts (จากเจ้าของโปรไฟล์):', this.userPosts);
           this.savedPosts = data.savedPosts;  // โพสต์ที่บันทึก
           this.sharedPosts = data.sharedPosts; // โพสต์ที่แชร์
         },
@@ -232,11 +229,9 @@ export class ViewUserComponent implements OnInit, OnDestroy {
         followed_id: this.Profileuser
       };
   
-      console.log('Toggling follow with data:', followData);
       this.reactPostservice.toggleFollow(followData).subscribe(
         (response) => {
           this.isFollowing = response.isFollowing;
-          console.log('Follow toggled, new status:', this.isFollowing);
           this.loadFollowCount(); //โหลดจำนวนติดตามใหม่
         },
         (error) => {
@@ -254,11 +249,9 @@ export class ViewUserComponent implements OnInit, OnDestroy {
       return;
     }
 
-    console.log('Checking follow status for userId:', this.userId, 'Profileuser:', this.Profileuser);
     this.reactPostservice.checkFollowStatus(this.userId, this.Profileuser).subscribe(
       (response) => {
         this.isFollowing = response.isFollowing;
-        console.log('Follow status:', this.isFollowing);
       },
       (error) => {
         console.error('Error fetching follow status:', error);
@@ -273,12 +266,10 @@ export class ViewUserComponent implements OnInit, OnDestroy {
       return;
     }
 
-    console.log('Loading follow count for Profileuser:', this.Profileuser);
     this.reactPostservice.getFollowCount(this.Profileuser).subscribe(
       (response) => {
         this.followersCount = response.followers;
         this.followingCount = response.following;
-        console.log('Follow count loaded:', { followers: this.followersCount, following: this.followingCount });
       },
       (error) => {
         console.error('Error fetching follow count:', error);
@@ -297,7 +288,6 @@ export class ViewUserComponent implements OnInit, OnDestroy {
   }
 
   toggleChatBox() {
-    console.log('currentUserId:', this.currentUserId, 'Profileuser:', this.Profileuser);
     if (!this.currentUserId || !this.Profileuser) {
       alert('ไม่สามารถเปิดแชทได้: ไม่พบข้อมูลผู้ใช้');
       return;
@@ -312,7 +302,6 @@ export class ViewUserComponent implements OnInit, OnDestroy {
     // รอให้ currentUserId และ Profileuser ถูกเซ็ตก่อน
     if (this.currentUserId && this.Profileuser) {
       this.chatId = this.getChatId();
-      console.log('Chat ID:', this.chatId);
       
       if (this.chatId) {
         // เพิ่ม users เข้า chat index เมื่อเปิดแชทครั้งแรก
@@ -335,7 +324,6 @@ export class ViewUserComponent implements OnInit, OnDestroy {
         this.chatService.listenMessages(this.chatId, (msgs) => {
           this.messages = msgs;
           this.cdr.detectChanges();
-          console.log('Messages updated:', this.messages);
         });
       }
     } else {
@@ -418,7 +406,6 @@ export class ViewUserComponent implements OnInit, OnDestroy {
       this.chatVideo = null;
       this.previewUrl = null;
       this.previewType = null;
-      console.log('Message sent successfully');
     } catch (error) {
       console.error('Error sending message:', error);
     }
@@ -445,5 +432,45 @@ export class ViewUserComponent implements OnInit, OnDestroy {
     sessionStorage.removeItem('userRole');
     sessionStorage.removeItem('currentUserId');
     this.router.navigate(['/login']);
+  }
+
+  openFollowersDialog(): void {
+    if (!this.Profileuser) {
+      console.error('Profileuser is not set for followers dialog');
+      return;
+    }
+    const dialogRef = this.dialog.open(FollowersDialogComponent, {
+      data: { userId: this.Profileuser }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      // Dialog closed
+    });
+  }
+
+  // ฟังก์ชันเปิด popup แสดงรายชื่อผู้ติดตาม
+  openFollowersPopup(): void {
+    const dialogRef = this.dialog.open(FollowersDialogComponent, {
+      width: '400px',
+      maxHeight: '70vh',
+      data: { userId: this.Profileuser, type: 'followers' }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      // Dialog closed
+    });
+  }
+
+  // ฟังก์ชันเปิด popup แสดงรายชื่อผู้ที่เราติดตาม
+  openFollowingPopup(): void {
+    const dialogRef = this.dialog.open(FollowersDialogComponent, {
+      width: '400px',
+      maxHeight: '70vh',
+      data: { userId: this.Profileuser, type: 'following' }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      // Dialog closed
+    });
   }
 }

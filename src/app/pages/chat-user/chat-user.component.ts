@@ -33,6 +33,7 @@ export class ChatUserComponent implements OnInit, OnDestroy {
 
 
   isMobile = false;
+  isIPad = false;
   showSidebar = true;
   showUserInfo = true;
   originalChatList: any[] = [];
@@ -82,7 +83,6 @@ export class ChatUserComponent implements OnInit, OnDestroy {
     this.route.queryParams.subscribe((params: Params) => {
       this.userId = String(params['id']);
       this.fromId = this.userId;
-      console.log('User ID:', this.userId);
       
       if (this.userId) {
         this.loadUserChats();
@@ -122,7 +122,6 @@ export class ChatUserComponent implements OnInit, OnDestroy {
       this.notificationSubscription = this.notificationService.notificationCounts$.subscribe(
         (counts) => {
           this.notificationCounts = counts;
-          console.log('Notification counts updated:', counts);
         }
       );
     }
@@ -139,7 +138,6 @@ export class ChatUserComponent implements OnInit, OnDestroy {
         this.userService.checkUserExists(otherUserId).subscribe({
           next: (exists: boolean) => {
             if (!exists) {
-              console.log(`User ${otherUserId} has been deleted, removing from chat list`);
               // ลบแชทออกจาก Firebase ถ้าผู้ใช้ถูกลบแล้ว
               this.chatService.removeChatFromUser(this.userId, chat.chatId);
             }
@@ -165,17 +163,6 @@ export class ChatUserComponent implements OnInit, OnDestroy {
           uid: chat.other_user || chat.other_user_id || chat.uid || chat.other_id || chat.user_id || chat.id, // เพิ่ม uid
           ...chat
         };
-        // DEBUG LOG
-        console.log('[DEBUG chatList]', {
-          userId: this.userId,
-          chatId: mapped.chatId,
-          lastMessage: mapped.lastMessage,
-          lastMessageSenderId: mapped.lastMessageSenderId,
-          lastMessageSenderName: mapped.lastMessageSenderName,
-          uid: mapped.uid,
-          other_user_id: chat.other_user_id,
-          originalChat: chat
-        });
         return mapped;
       });
       this.originalChatList = [...this.chatList];
@@ -248,6 +235,7 @@ export class ChatUserComponent implements OnInit, OnDestroy {
       }
     });
     
+    // สำหรับ mobile เท่านั้น ให้ซ่อน sidebar
     if (this.isMobile) {
       this.showSidebar = false;
     }
@@ -256,7 +244,6 @@ export class ChatUserComponent implements OnInit, OnDestroy {
   async sendMessage() {
     // ป้องกันการส่งซ้ำ
     if (this.isSending) {
-      console.log('กำลังส่งข้อความอยู่ กรุณารอสักครู่...');
       return;
     }
     
@@ -390,19 +377,44 @@ export class ChatUserComponent implements OnInit, OnDestroy {
   @HostListener('window:resize')
   onResize() {
     this.checkScreenSize();
+    // รีเซ็ต scroll position เมื่อ orientation เปลี่ยน
+    setTimeout(() => {
+      this.scrollToBottom();
+    }, 300);
+  }
+
+  @HostListener('window:orientationchange')
+  onOrientationChange() {
+    // รอให้ orientation เปลี่ยนเสร็จแล้วค่อยปรับ layout
+    setTimeout(() => {
+      this.checkScreenSize();
+      this.scrollToBottom();
+    }, 500);
   }
 
 checkScreenSize() {
   const w = window.innerWidth;
-
-  // นับแท็บเล็ตเป็น mobile ด้วย
-  this.isMobile = w <= 1024;
-
+  const h = window.innerHeight;
+  
+  // ตรวจสอบว่าเป็น iPad หรือไม่
+  this.isIPad = /iPad/.test(navigator.userAgent) || 
+                 (w >= 768 && w <= 1230) || 
+                 (w >= 1024 && w <= 1366 && h <= 1024);
+  
+  // ตั้งค่า mobile สำหรับมือถือเท่านั้น (≤ 600px)
+  this.isMobile = w <= 600;
+  
   // ตั้งค่าการแสดง UI ตามโหมด
   if (this.isMobile) {
-    this.showSidebar = true;   // ถ้าอยากซ่อน sidebar ให้เป็น false
+    // สำหรับมือถือเท่านั้น
+    this.showSidebar = false;
+    this.showUserInfo = false;
+  } else if (this.isIPad) {
+    // สำหรับ iPad ให้ใช้ UI แบบมือถือ (ซ่อน sidebar)
+    this.showSidebar = false;
     this.showUserInfo = false;
   } else {
+    // สำหรับ desktop
     this.showSidebar = true;
     this.showUserInfo = true;
   }
@@ -434,19 +446,18 @@ checkScreenSize() {
 
   openMobileDrawer() {
     this.isDrawerOpenMobile = true;
+    console.log('Opening mobile drawer, isDrawerOpenMobile:', this.isDrawerOpenMobile);
+    console.log('isMobile:', this.isMobile, 'isIPad:', this.isIPad);
   }
 
   closeMobileDrawer() {
     this.isDrawerOpenMobile = false;
+    console.log('Closing mobile drawer, isDrawerOpenMobile:', this.isDrawerOpenMobile);
   }
 
   goToProfile(uid: string) {
-    console.log('goToProfile called with uid:', uid);
     if (uid) {
-      console.log('Navigating to /view_user with uid:', uid);
       this.router.navigate(['/view_user', this.userId], { queryParams: { Profileuser: uid } });
-    } else {
-      console.log('uid is empty or undefined');
     }
   }
 
@@ -475,14 +486,12 @@ checkScreenSize() {
     }
   }
 
-
-
   // ตรวจสอบว่าผู้ใช้อยู่ใกล้ด้านล่างหรือไม่
   checkIfNearBottom(): boolean {
     const chatMessages = document.querySelector('.chat-messages');
     if (chatMessages) {
       const { scrollTop, scrollHeight, clientHeight } = chatMessages;
-      const threshold = 100; // ระยะห่างจากด้านล่าง (pixel)
+      const threshold = 150; // เพิ่มระยะห่างจากด้านล่างสำหรับ iPad
       return scrollHeight - scrollTop - clientHeight < threshold;
     }
     return true;

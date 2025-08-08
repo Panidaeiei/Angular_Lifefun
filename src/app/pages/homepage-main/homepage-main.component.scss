@@ -259,6 +259,9 @@ body {
 }
 
 @media (max-width: 768px) {
+  .background-div{
+    margin-top: 120px !important;
+  }
   .card-container {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -281,6 +284,9 @@ body {
 
 /* สำหรับอุปกรณ์ที่มีความกว้างไม่เกิน 480px (Mobile) */
 @media (max-width: 480px) {
+  .background-div{
+    margin-top: 120px !important;
+  }
   .card-container {
     grid-template-columns: 1fr;
     /* กำหนดให้แถวมี 1 คอลัมน์ */
@@ -305,6 +311,9 @@ body {
 
 /* สำหรับอุปกรณ์ที่มีความกว้างไม่เกิน 480px (Mobile) */
 @media (max-width: 390px) {
+  .background-div{
+    margin-top: 120px !important;
+  }
   .card-container {
     grid-template-columns: 1fr;
     /* กำหนดให้แถวมี 1 คอลัมน์ */
@@ -329,6 +338,9 @@ body {
 
 /* ✅ iPad แนวตั้ง (iPad Gen 9, Air 4, ใกล้เคียง) */
 @media screen and (min-width: 800px) and (max-width: 850px) and (orientation: portrait) {
+  .background-div{
+    margin-top: 120px !important;
+  }
   .card-container {
     grid-template-columns: repeat(2, 1fr) !important;
     gap: 50px !important;
@@ -354,6 +366,9 @@ body {
 
 /* ✅ iPad Air 4 แนวตั้ง (เฉพาะ device-width: 820px) */
 @media screen and (device-width: 820px) and (orientation: portrait) {
+  .background-div{
+    margin-top: 120px !important;
+  }
   .card-container {
     grid-template-columns: repeat(2, 1fr) !important;
     gap: 50px !important;
@@ -379,6 +394,9 @@ body {
 
 /* ✅ iPad แนวนอน (iPad Gen 9, Air 4, ใกล้เคียง) */
 @media screen and (min-width: 1024px) and (max-width: 1194px) and (orientation: landscape) {
+  .background-div{
+    margin-top: 120px !important;
+  }
   .card-container {
     grid-template-columns: repeat(3, 1fr) !important;
     gap: 50px !important;
@@ -449,6 +467,40 @@ body {
     height: 460px !important;
   }
 }
+
+/* Tablet/iPad Portrait */
+@media screen and (min-width: 768px) and (max-width: 1024px) and (orientation: portrait) {
+  .background-div{
+    margin-top: 120px !important;
+  }
+  .fixed-toolbar {
+    height: 65px;
+    padding: 0 12px;
+  }
+  
+  .center-menu { 
+    gap: 24px; 
+    margin-top: 8px;
+  }
+  
+  .menu-item i { 
+    font-size: 24px; 
+  }
+  
+  .menu-item span { 
+    font-size: 13px; 
+  }
+  
+  .toolbar-actions a i {
+    font-size: 22px;
+  }
+
+  .toolbar-hamburger {
+    font-size: 26px;
+    padding: 7px 11px;
+  }
+}
+
 
 /* สำหรับอุปกรณ์ที่มีความกว้างไม่เกิน 480px (Mobile) */
 @media (min-width: 1200px) and (max-width: 1300px) {

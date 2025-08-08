@@ -310,7 +310,18 @@ export class HomepageUserComponent implements OnDestroy {
       return;
     }
 
-    this.router.navigate(['/view_user', this.currentUserId], { queryParams: { Profileuser: userId } });
+    // ตรวจสอบว่าเป็นโปรไฟล์ตัวเองหรือไม่
+    if (userId === this.currentUserId) {
+      // ถ้าเป็นโปรไฟล์ตัวเอง ให้ไปหน้า ProfileUser
+      this.router.navigate(['/ProfileUser'], { 
+        queryParams: { id: userId } 
+      });
+    } else {
+      // ถ้าเป็นโปรไฟล์คนอื่น ให้ไปหน้า view_user
+      this.router.navigate(['/view_user', this.currentUserId], { 
+        queryParams: { Profileuser: userId } 
+      });
+    }
   }
 
   toggleDrawer(): void {

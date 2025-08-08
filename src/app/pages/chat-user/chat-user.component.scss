@@ -13,16 +13,9 @@ body {
   /* ปิดการเลื่อนแนวนอน */
 }
 
-@media (max-width: 600px) {
 
-  html,
-  body {
-    overflow: hidden;
-    position: fixed;
-    width: 100%;
-    height: 100%;
-  }
-}
+
+
 
 :host {
   display: block;
@@ -37,16 +30,7 @@ body {
   background-repeat: no-repeat;
 }
 
-@media (max-width: 600px) {
-  :host {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    overflow: hidden;
-  }
-}
+
 
 body {
   overflow-y: auto;
@@ -524,6 +508,7 @@ body {
   }
 }
 
+/* สำหรับมือถือ (≤ 600px) */
 @media (max-width: 600px) {
   .fixed-toolbar {
     height: 80px;
@@ -552,9 +537,9 @@ body {
   .toolbar-actions a {
     padding: 6px 10px;
   }
-
-
 }
+
+
 
 @media (max-width: 767px) {
   .center-menu {
@@ -562,15 +547,7 @@ body {
   }
 }
 
-@media (min-width: 768px) {
-  .center-menu {
-    display: flex;
-    gap: 50px;
-    align-items: center;
-    justify-content: center;
-    flex-grow: 1;
-  }
-}
+
 
 //font
 .itim-regular {
@@ -714,6 +691,16 @@ body {
 .chat-list-item:hover,
 .chat-list-item.active {
   background: #faddd9;
+}
+
+.chat-list-item.active {
+  border-left: 3px solid #e27c96;
+  background: linear-gradient(90deg, #faddd9 0%, #ffe6ee 100%);
+}
+
+.chat-list-item.active .chat-list-name {
+  color: #e27c96;
+  font-weight: 600;
 }
 
 .chat-list-item img {
@@ -1031,6 +1018,7 @@ body {
   }
 }
 
+/* สำหรับมือถือ (≤ 600px) */
 @media (max-width: 600px) {
   .chat-layout {
     flex-direction: column;
@@ -1061,13 +1049,13 @@ body {
     height: 100%;
     min-height: 0;
     max-height: 100vh;
-    margin-top: 55px;
+    margin-top: 80px;
     z-index: 1;
     overflow: hidden;
   }
 
   .chat-header {
-    margin-top: 25px;
+    margin-top: 0;
     padding: 10px 8px;
     background: #fff;
     border-bottom: 1px solid #eee;
@@ -1134,54 +1122,202 @@ body {
     flex-shrink: 0;
     padding: 10px 8px;
   }
+}
 
-  /* Mobile Drawer Overlay - ปรับให้สวยงาม */
-  .mobile-drawer-overlay {
+/* สำหรับ iPad (768px - 1230px) */
+@media (min-width: 768px) and (max-width: 1230px) {
+  .chat-layout {
+    flex-direction: column;
+    height: 100vh;
+    min-height: 100vh;
+    max-height: 100vh;
+    margin-top: 0;
+    background: #fff;
+    overflow: hidden;
     position: fixed;
     top: 0;
     left: 0;
+    right: 0;
+    bottom: 0;
+  }
+
+  .chat-sidebar {
+    display: none !important;
+  }
+
+  .chat-main {
     width: 100vw;
-    height: 100vh;
-    background: rgba(226, 140, 150, 0.13);
-    z-index: 2000;
+    min-width: 0;
+    flex: 1 1 0;
     display: flex;
-    align-items: flex-start;
-    justify-content: flex-start;
-    transition: background 0.25s;
-    backdrop-filter: blur(2px);
-    animation: fadeInOverlay 0.18s;
+    flex-direction: column;
+    background: #f9f9f9;
+    height: 100%;
+    min-height: 0;
+    max-height: 100vh;
+    margin-top: 0;
+    z-index: 1;
+    overflow: visible;
   }
 
-  @keyframes fadeInOverlay {
-    from {
-      background: rgba(226, 140, 150, 0.01);
-    }
-
-    to {
-      background: rgba(226, 140, 150, 0.13);
-    }
-  }
-
-  .mobile-drawer {
-    width: 80vw;
-    max-width: 340px;
-    height: 100vh;
+  .chat-header {
+    margin-top: 0;
+    padding: 10px 8px;
     background: #fff;
-    box-shadow: 2px 0 16px rgba(226, 140, 150, 0.18);
-    border-radius: 0 18px 18px 0;
-    overflow-y: auto;
-    padding: 0;
-    animation: slideInDrawer 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    border-bottom: 1px solid #eee;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: sticky;
+    top: 0;
+    z-index: 3;
   }
 
-  @keyframes slideInDrawer {
-    from {
-      transform: translateX(-100%);
-    }
+  .chat-header img {
+    width: 36px;
+    height: 36px;
+  }
 
-    to {
-      transform: translateX(0);
-    }
+  .chat-header strong {
+    font-size: 16px;
+    color: #222;
+    font-weight: 600;
+  }
+
+  .chat-messages {
+    flex: 1 1 0;
+    min-height: 0;
+    overflow-y: auto;
+    background: #f9f9f9;
+    gap: 8px;
+    padding-bottom: 4px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .message {
+    font-size: 15px;
+    padding: 10px 14px;
+    border-radius: 16px;
+    margin-bottom: 2px;
+    max-width: 85vw;
+  }
+
+  .message.right {
+    background: #e7f1ff;
+    align-self: flex-end;
+    border-bottom-right-radius: 8px;
+  }
+
+  .message.left {
+    background: #f8d8d8;
+    align-self: flex-start;
+    border-bottom-left-radius: 8px;
+  }
+
+  .chat-input {
+    position: sticky !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    background: #fff !important;
+    border-top: 1px solid #eee !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    z-index: 2 !important;
+    flex-shrink: 0 !important;
+    padding: 10px 8px !important;
+    min-height: 60px !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+
+  .chat-input input {
+    flex: 1 !important;
+    padding: 10px 16px !important;
+    border: 1px solid #e0e0e0 !important;
+    border-radius: 20px !important;
+    font-size: 15px !important;
+    background: #f7f7f7 !important;
+    outline: none !important;
+    transition: border 0.2s !important;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+
+  .chat-input input:focus {
+    border: 1.5px solid #e28c96 !important;
+  }
+
+  .icon-btn {
+    background: none !important;
+    border: none !important;
+    color: #e28c96 !important;
+    font-size: 22px !important;
+    cursor: pointer !important;
+    transition: color 0.2s !important;
+    padding: 8px !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+
+  .icon-btn:hover {
+    color: #c96b6b !important;
+    background: rgba(226, 140, 150, 0.1) !important;
+  }
+}
+
+/* Mobile Drawer Overlay - ปรับให้สวยงาม */
+.mobile-drawer-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(226, 140, 150, 0.13);
+  z-index: 2000;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  transition: background 0.25s;
+  backdrop-filter: blur(2px);
+  animation: fadeInOverlay 0.18s;
+}
+
+@keyframes fadeInOverlay {
+  from {
+    background: rgba(226, 140, 150, 0.01);
+  }
+
+  to {
+    background: rgba(226, 140, 150, 0.13);
+  }
+}
+
+.mobile-drawer {
+  width: 80vw;
+  max-width: 340px;
+  height: 100vh;
+  background: #fff;
+  box-shadow: 2px 0 16px rgba(226, 140, 150, 0.18);
+  border-radius: 0 18px 18px 0;
+  overflow-y: auto;
+  padding: 0;
+  animation: slideInDrawer 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideInDrawer {
+  from {
+    transform: translateX(-100%);
+  }
+
+  to {
+    transform: translateX(0);
   }
 }
 
@@ -1213,6 +1349,7 @@ body {
   background: #fff0f3;
 }
 
+/* สำหรับมือถือ (≤ 600px) */
 @media (max-width: 600px) {
   .mobile-chat-select {
     display: block;
@@ -1224,12 +1361,6 @@ body {
 }
 
 
-@media (max-width: 600px) {
-  .chat-sidebar {
-    display: none !important;
-  }
-
-}
 
 .media-wrapper {
   position: relative;
@@ -1564,4 +1695,568 @@ input[disabled] {
 .chat-menu-header {
   margin-left: auto;
   margin-right: 0;
+}
+
+/* iPad specific styles */
+@media screen and (min-width: 768px) and (max-width: 1024px) {
+  /* iPad Portrait and Landscape */
+  .chat-layout {
+    height: calc(100vh - 85px);
+    margin-top: 85px;
+    flex-direction: row;
+    background: #fff;
+  }
+
+  .chat-sidebar {
+    width: 280px;
+    min-width: 250px;
+    max-width: 320px;
+    background: #fff;
+    border-right: 1px solid #eee;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    padding: 0 0 10px 0;
+  }
+
+  .chat-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: #f9f9f9;
+    min-width: 0;
+    height: 100%;
+  }
+
+  .chat-header {
+    padding: 12px 16px;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+    gap: 12px;
+    position: sticky;
+    top: 0;
+    z-index: 3;
+  }
+
+  .chat-header img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .chat-header strong {
+    font-size: 17px;
+    color: #222;
+    font-weight: 600;
+  }
+
+  .chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px 16px 16px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: #f9f9f9;
+    scroll-behavior: smooth;
+    position: relative;
+    min-height: 0;
+    height: 100%;
+  }
+
+  .message {
+    max-width: 65%;
+    padding: 12px 16px;
+    border-radius: 18px;
+    font-size: 15px;
+    display: inline-block;
+    word-break: break-word;
+    margin-bottom: 2px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  }
+
+  .chat-input {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    background: #fff;
+    border-top: 1px solid #eee;
+    gap: 10px;
+    position: sticky;
+    bottom: 0;
+    z-index: 2;
+  }
+
+  .chat-input input {
+    flex: 1;
+    padding: 10px 16px;
+    border: 1px solid #e0e0e0;
+    border-radius: 20px;
+    font-size: 15px;
+    background: #f7f7f7;
+    outline: none;
+    transition: border 0.2s;
+  }
+
+  /* Search bar for iPad */
+  .chat-search {
+    width: 100%;
+    padding: 10px 16px;
+    border-radius: 20px;
+    border: 1px solid #e0e0e0;
+    font-size: 15px;
+    background: #f7f7f7;
+    padding-right: 40px;
+    outline: none;
+    transition: border 0.2s;
+  }
+
+  /* Chat list items for iPad */
+  .chat-list-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    cursor: pointer;
+    border-bottom: 1px solid #f5f5f5;
+    transition: background 0.15s;
+  }
+
+  .chat-list-item img {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .chat-list-name {
+    font-weight: 500;
+    font-size: 16px;
+    color: #222;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .chat-list-last {
+    margin-top: 4px;
+    font-size: 14px;
+    color: #888;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Media files for iPad */
+  .media-wrapper img,
+  .media-wrapper video {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 12px;
+    background: #f3f3f3;
+  }
+
+  /* Toolbar adjustments for iPad */
+  .fixed-toolbar {
+    height: 85px;
+    padding: 0 20px;
+  }
+
+  .center-menu {
+    gap: 40px;
+  }
+
+  .menu-item i {
+    font-size: 26px;
+  }
+
+  .menu-item span {
+    font-size: 14px;
+  }
+
+  .toolbar-hamburger {
+    font-size: 26px;
+    padding: 8px 12px;
+  }
+}
+
+/* iPad Pro specific improvements */
+@media screen and (min-width: 1024px) and (max-width: 1366px) {
+  .chat-layout {
+    height: calc(100vh - 85px);
+    margin-top: 85px;
+  }
+
+  .chat-sidebar {
+    width: 320px;
+    min-width: 280px;
+    max-width: 360px;
+  }
+
+  .message {
+    max-width: 60%;
+  }
+
+  .media-wrapper img,
+  .media-wrapper video {
+    width: 220px;
+    height: 220px;
+  }
+
+  /* Better spacing for iPad Pro */
+  .chat-messages {
+    padding: 28px 24px 24px 24px;
+  }
+
+  .chat-input {
+    padding: 18px 24px;
+  }
+
+  .chat-input input {
+    padding: 14px 20px;
+    font-size: 16px;
+  }
+
+  /* Larger touch targets for iPad Pro */
+  .icon-btn {
+    min-width: 48px;
+    min-height: 48px;
+    font-size: 26px;
+  }
+
+  .chat-menu-btn {
+    min-width: 48px;
+    min-height: 48px;
+    font-size: 20px;
+  }
+
+  .chat-list-item {
+    min-height: 64px;
+    padding: 18px 24px;
+  }
+
+  .chat-list-item img {
+    width: 56px;
+    height: 56px;
+  }
+
+  /* Improved typography for iPad Pro */
+  .chat-list-name {
+    font-size: 17px;
+  }
+
+  .chat-list-last {
+    font-size: 15px;
+  }
+
+  .chat-header strong {
+    font-size: 18px;
+  }
+
+  .message {
+    font-size: 16px;
+    padding: 14px 18px;
+  }
+}
+
+/* iPad Landscape specific adjustments */
+@media screen and (min-width: 1024px) and (max-width: 1366px) and (orientation: landscape) {
+  .chat-layout {
+    height: calc(100vh - 65px);
+    margin-top: 65px;
+  }
+
+  .fixed-toolbar {
+    height: 65px;
+    padding: 0 16px;
+  }
+
+  .center-menu {
+    gap: 28px;
+  }
+
+  .menu-item i {
+    font-size: 24px;
+  }
+
+  .menu-item span {
+    font-size: 13px;
+  }
+
+  /* Optimized layout for landscape */
+  .chat-sidebar {
+    width: 280px;
+    min-width: 260px;
+    max-width: 320px;
+  }
+
+  .chat-main {
+    flex: 1;
+  }
+
+  .message {
+    max-width: 55%;
+  }
+
+  /* Compact spacing for landscape */
+  .chat-messages {
+    padding: 20px 18px 18px 18px;
+  }
+
+  .chat-input {
+    padding: 14px 18px;
+  }
+
+  .chat-list-item {
+    min-height: 56px;
+    padding: 14px 18px;
+  }
+
+  .chat-list-item img {
+    width: 48px;
+    height: 48px;
+  }
+
+  /* Smaller touch targets for landscape */
+  .icon-btn {
+    min-width: 40px;
+    min-height: 40px;
+    font-size: 22px;
+  }
+
+  .chat-menu-btn {
+    min-width: 40px;
+    min-height: 40px;
+    font-size: 16px;
+  }
+}
+
+/* iPad Portrait specific adjustments */
+@media screen and (min-width: 768px) and (max-width: 1024px) and (orientation: portrait) {
+  .chat-layout {
+    height: calc(100vh - 85px);
+    margin-top: 85px;
+  }
+
+  .chat-sidebar {
+    width: 260px;
+    min-width: 240px;
+    max-width: 300px;
+  }
+
+  .message {
+    max-width: 70%;
+  }
+
+  /* Optimized spacing for portrait */
+  .chat-messages {
+    padding: 24px 20px 20px 20px;
+  }
+
+  .chat-input {
+    padding: 16px 20px;
+  }
+
+  .chat-list-item {
+    min-height: 60px;
+    padding: 16px 20px;
+  }
+
+  .chat-list-item img {
+    width: 52px;
+    height: 52px;
+  }
+
+  /* Larger touch targets for portrait */
+  .icon-btn {
+    min-width: 44px;
+    min-height: 44px;
+    font-size: 24px;
+  }
+
+  .chat-menu-btn {
+    min-width: 44px;
+    min-height: 44px;
+    font-size: 18px;
+  }
+
+  /* Better typography for portrait */
+  .chat-list-name {
+    font-size: 16px;
+  }
+
+  .chat-list-last {
+    font-size: 14px;
+  }
+
+  .chat-header strong {
+    font-size: 17px;
+  }
+
+  .message {
+    font-size: 15px;
+    padding: 12px 16px;
+  }
+}
+
+/* iPad specific touch improvements */
+@media screen and (min-width: 768px) and (max-width: 1024px) {
+  /* Touch-friendly button sizes */
+  .icon-btn {
+    min-width: 44px;
+    min-height: 44px;
+    font-size: 24px;
+  }
+
+  .chat-menu-btn {
+    min-width: 44px;
+    min-height: 44px;
+    font-size: 18px;
+  }
+
+  .search-btn {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  /* Improved touch targets */
+  .chat-list-item {
+    min-height: 60px;
+    padding: 16px 20px;
+  }
+
+  .chat-list-item img {
+    width: 52px;
+    height: 52px;
+  }
+
+  /* Better spacing for iPad */
+  .chat-messages {
+    padding: 24px 20px 20px 20px;
+  }
+
+  .chat-input {
+    padding: 16px 20px;
+  }
+
+  .chat-input input {
+    padding: 12px 18px;
+    font-size: 16px;
+  }
+
+  /* Improved scroll behavior for iPad */
+  .chat-messages {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+  }
+
+  .chat-sidebar {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Better visual feedback for touch */
+  .chat-list-item:active {
+    background: #f0c4c4;
+    transform: scale(0.98);
+  }
+
+  .icon-btn:active {
+    background: rgba(226, 140, 150, 0.2);
+    transform: scale(0.95);
+  }
+
+  /* Improved focus states for accessibility */
+  .chat-search:focus,
+  .chat-input input:focus {
+    border: 2px solid #e27c96;
+    box-shadow: 0 0 0 3px rgba(226, 140, 150, 0.1);
+  }
+}
+
+/* Performance optimizations for iPad */
+@media screen and (min-width: 768px) and (max-width: 1366px) {
+  /* Hardware acceleration for smooth animations */
+  .chat-layout,
+  .chat-sidebar,
+  .chat-main,
+  .chat-messages,
+  .chat-list-item,
+  .message,
+  .icon-btn,
+  .chat-menu-btn {
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+  }
+
+  /* Smooth scrolling for iPad */
+  .chat-messages,
+  .chat-sidebar {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+    overscroll-behavior: contain;
+  }
+
+  /* Optimized animations for iPad */
+  .chat-list-item,
+  .icon-btn,
+  .chat-menu-btn {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Better touch feedback */
+  .chat-list-item:active,
+  .icon-btn:active,
+  .chat-menu-btn:active {
+    transition: all 0.1s ease;
+  }
+
+  /* Improved focus states for iPad */
+  .chat-search:focus,
+  .chat-input input:focus {
+    outline: none;
+    border: 2px solid #e27c96;
+    box-shadow: 0 0 0 3px rgba(226, 140, 150, 0.1);
+  }
+
+  /* Prevent text selection on touch */
+  .chat-list-item,
+  .icon-btn,
+  .chat-menu-btn {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
+  /* Better visual hierarchy for iPad */
+  .chat-list-item.active {
+    background: linear-gradient(135deg, #faddd9 0%, #ffe6ee 100%);
+    border-left: 4px solid #e27c96;
+    box-shadow: 0 2px 8px rgba(226, 140, 150, 0.15);
+  }
+
+  .chat-list-item.active .chat-list-name {
+    color: #e27c96;
+    font-weight: 600;
+  }
+
+  /* Improved message bubbles for iPad */
+  .message {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    border-radius: 20px;
+  }
+
+  .message.right {
+    background: linear-gradient(135deg, #e7f1ff 0%, #d4e8ff 100%);
+  }
+
+  .message.left {
+    background: linear-gradient(135deg, #f8d8d8 0%, #f0c4c4 100%);
+  }
 }

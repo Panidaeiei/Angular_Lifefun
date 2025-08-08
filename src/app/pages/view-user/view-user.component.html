@@ -130,11 +130,11 @@
                             <span class="profile-stat-number-mobile">{{ userPosts.length }}</span>
                             <span class="profile-stat-label-mobile">โพสต์</span>
                         </div>
-                        <div class="profile-stat-mobile">
+                        <div class="profile-stat-mobile" (click)="openFollowersPopup()" style="cursor: pointer;">
                             <span class="profile-stat-number-mobile">{{ followersCount }}</span>
                             <span class="profile-stat-label-mobile">ผู้ติดตาม</span>
                         </div>
-                        <div class="profile-stat-mobile">
+                        <div class="profile-stat-mobile" (click)="openFollowingPopup()" style="cursor: pointer;">
                             <span class="profile-stat-number-mobile">{{ followingCount }}</span>
                             <span class="profile-stat-label-mobile">กำลังติดตาม</span>
                         </div>

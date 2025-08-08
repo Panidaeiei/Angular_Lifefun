@@ -189,6 +189,52 @@ export class ReactPostservice {
     );
   }
 
+  // ฟังก์ชันดึงจำนวนการแชร์โพสต์
+  getShareCount(post_id: number): Observable<{ post_id: number; share_count: number }> {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('Token not found');
+    }
+
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+    return this.http.post<{ post_id: number; share_count: number }>(
+      `http://localhost:3000/api/sharepost/get-share-count`,
+      { post_id },
+      { headers }
+    ).pipe(
+      tap((response) => {
+        console.log('Share count response:', response);
+      }),
+      catchError((error) => {
+        console.error('Error fetching share count:', error);
+        return throwError(error);
+      })
+    );
+  }
+
+  // ฟังก์ชันดึงจำนวนการเซฟโพสต์
+  getSaveCount(post_id: number): Observable<{ post_id: number; save_count: number }> {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('Token not found');
+    }
+
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+    return this.http.post<{ post_id: number; save_count: number }>(
+      `http://localhost:3000/api/savepost/get-save-count`,
+      { post_id },
+      { headers }
+    ).pipe(
+      tap((response) => {
+        console.log('Save count response:', response);
+      }),
+      catchError((error) => {
+        console.error('Error fetching save count:', error);
+        return throwError(error);
+      })
+    );
+  }
+
   toggleFollow(follow: Follow): Observable<any> {
     const headers = new HttpHeaders({
       Authorization: `Bearer ${localStorage.getItem('token')}`,  // ส่ง JWT token ใน header
@@ -290,6 +336,116 @@ export class ReactPostservice {
 
   Noti_Unban(uid: number): Observable<any> {
     return this.http.get(`${this.baseUrl}/noti/notifications_unban/${uid}`, {});
+  }
+
+  // ฟังก์ชันดึงรายชื่อผู้ติดตาม
+  getFollowers(userId: string): Observable<{ followers: any[] }> {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('Token not found');
+    }
+
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+    return this.http.get<{ followers: any[] }>(
+      `http://localhost:3000//follows/followers?userId=${userId}`,
+      { headers }
+    ).pipe(
+      tap((response) => {
+        console.log('Followers response:', response);
+      }),
+      catchError((error) => {
+        console.error('Error fetching followers:', error);
+        return throwError(error);
+      })
+    );
+  }
+
+  // ฟังก์ชันดึงรายชื่อผู้ที่เราติดตาม (ต้อง login)
+  getFollowingList(userId: string): Observable<{ following_list: any[], count: number }> {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      return throwError(() => new Error('Token not found'));
+    }
+
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+    return this.http.get<{ following_list: any[], count: number }>(
+      `http://localhost:3000/api/follows/following-list`,
+      { headers }
+    ).pipe(
+      tap((response) => {
+        console.log('Following list response:', response);
+      }),
+      catchError((error) => {
+        console.error('Error fetching following list:', error);
+        return throwError(error);
+      })
+    );
+  }
+
+  // ฟังก์ชันดึงรายชื่อผู้ที่ติดตามเรา (ต้อง login)
+  getFollowersList(userId: string): Observable<{ followers_list: any[], count: number }> {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      return throwError(() => new Error('Token not found'));
+    }
+
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+    return this.http.get<{ followers_list: any[], count: number }>(
+      `http://localhost:3000/api/follows/followers-list`,
+      { headers }
+    ).pipe(
+      tap((response) => {
+        console.log('Followers list response:', response);
+      }),
+      catchError((error) => {
+        console.error('Error fetching followers list:', error);
+        return throwError(error);
+      })
+    );
+  }
+
+  // ฟังก์ชันดึงรายชื่อผู้ที่ติดตาม userId ที่ระบุ (ต้อง login)
+  getFollowersByUserId(userId: string): Observable<{ followers_list: any[], count: number }> {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      return throwError(() => new Error('Token not found'));
+    }
+
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+    return this.http.get<{ followers_list: any[], count: number }>(
+      `http://localhost:3000/api/follows/followers?userId=${userId}`,
+      { headers }
+    ).pipe(
+      tap((response) => {
+        console.log('Followers by userId response:', response);
+      }),
+      catchError((error) => {
+        console.error('Error fetching followers by userId:', error);
+        return throwError(error);
+      })
+    );
+  }
+
+  // ฟังก์ชันดึงรายชื่อผู้ที่ userId ระบุติดตาม (ต้อง login)
+  getFollowingByUserId(userId: string): Observable<{ following_list: any[], count: number }> {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      return throwError(() => new Error('Token not found'));
+    }
+
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+    return this.http.get<{ following_list: any[], count: number }>(
+      `http://localhost:3000/api/follows/following?userId=${userId}`,
+      { headers }
+    ).pipe(
+      tap((response) => {
+        console.log('Following by userId response:', response);
+      }),
+      catchError((error) => {
+        console.error('Error fetching following by userId:', error);
+        return throwError(error);
+      })
+    );
   }
 
 }

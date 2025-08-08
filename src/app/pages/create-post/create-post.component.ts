@@ -360,7 +360,7 @@ export class CreatePostComponent implements OnInit, OnDestroy {
       this.notificationSubscription = this.notificationService.notificationCounts$.subscribe(
         (counts) => {
           this.notificationCounts = counts;
-          console.log('Notification counts updated:', counts);
+        
         }
       );
     }

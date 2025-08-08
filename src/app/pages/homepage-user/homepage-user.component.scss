@@ -501,17 +501,6 @@ body {
   }
 }
 
-/* ✅ สำหรับ desktop/tablet */
-@media (min-width: 768px) {
-
-  .center-menu {
-    display: flex;
-    gap: 50px;
-    align-items: center;
-    justify-content: center;
-    flex-grow: 1;
-  }
-}
 
 //font
 .itim-regular {
