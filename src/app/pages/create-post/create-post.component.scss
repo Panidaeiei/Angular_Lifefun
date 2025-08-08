@@ -29,6 +29,107 @@ body {
   display: inline-block;
 }
 
+/* ปุ่มในแผนที่ - แบบมินิมอล */
+.map-container {
+  position: relative;
+  width: 100%;
+}
+
+.map-actions-minimal {
+  display: flex;
+  justify-content: center;
+  padding: 10px;
+  background: transparent;
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+}
+
+.map-confirm-btn-minimal {
+  width: 56px;
+  height: 56px;
+  background: #10b981;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.4);
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 1000;
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.map-confirm-btn-minimal:hover {
+  background: #059669;
+  transform: scale(1.1);
+  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+}
+
+.map-confirm-btn-minimal:active {
+  transform: scale(0.95);
+}
+
+/* ปุ่มในแผนที่ - แบบเดิม (เก็บไว้เป็น fallback) */
+.map-actions {
+  display: flex;
+  gap: 10px;
+  padding: 15px;
+  background: white;
+  border-top: 1px solid #e5e7eb;
+}
+
+.map-confirm-btn {
+  flex: 1;
+  padding: 12px 20px;
+  background: #10b981;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.map-confirm-btn:hover {
+  background: #059669;
+  transform: translateY(-1px);
+}
+
+.map-cancel-btn {
+  flex: 1;
+  padding: 12px 20px;
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.map-cancel-btn:hover {
+  background: #dc2626;
+  transform: translateY(-1px);
+}
+
 .notification-dot {
   position: absolute;
   top: -2px;
@@ -1052,10 +1153,194 @@ button {
     font-size: 14px;
   }
 
+  /* Mobile location styles */
+  .mobile-selected-location {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border: 2px solid #e28c96;
+    border-radius: 16px;
+    padding: 8px 12px;
+    box-shadow: 0 2px 8px rgba(226, 140, 150, 0.15);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .mobile-selected-location::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #e28c96, #faddd9);
+  }
+
+  .mobile-location-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    background: linear-gradient(135deg, #e28c96, #faddd9);
+    border-radius: 50%;
+    color: white;
+    font-size: 10px;
+    box-shadow: 0 1px 4px rgba(226, 140, 150, 0.3);
+    flex-shrink: 0;
+  }
+
+  .mobile-location-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .mobile-location-text {
+    font-size: 12px;
+    font-weight: 600;
+    color: #495057;
+    line-height: 1.3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .mobile-location-subtitle {
+    font-size: 10px;
+    color: #6c757d;
+    font-weight: 400;
+    margin-top: 2px;
+  }
+
+  .mobile-location-buttons {
+    display: flex;
+    gap: 6px;
+    margin-left: 8px;
+  }
+
+  .mobile-location-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 4px;
+    border: 1px solid #e2e8f0;
+    background: white;
+    color: #64748b;
+    font-size: 9px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .mobile-location-btn:hover {
+    background: #f8f9fa;
+    border-color: #e28c96;
+    color: #e28c96;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(226, 140, 150, 0.15);
+  }
+
+  .mobile-location-btn.change-btn {
+    background: linear-gradient(135deg, #e28c96, #faddd9);
+    color: white;
+    border-color: #e28c96;
+  }
+
+  .mobile-location-btn.change-btn:hover {
+    background: linear-gradient(135deg, #d17a84, #e8c5c0);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(226, 140, 150, 0.25);
+  }
+
+  .mobile-location-btn.clear-btn {
+    background: #fff5f5;
+    color: #dc3545;
+    border-color: #ffc9c9;
+  }
+
+  .mobile-location-btn.clear-btn:hover {
+    background: #ffe6e6;
+    border-color: #dc3545;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(220, 53, 69, 0.15);
+  }
+
+
+
+  .mobile-choose-location-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    background: #ffffff;
+    color: #64748b;
+    font-size: 11px;
+    font-weight: 400;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .mobile-choose-location-btn:hover {
+    border-color: #e28c96;
+    background: #fef7f7;
+    color: #e28c96;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(226, 140, 150, 0.1);
+  }
+
+  .mobile-choose-location-btn i {
+    font-size: 11px;
+    color: #94a3b8;
+  }
+
+  .mobile-choose-location-btn:hover i {
+    color: #e28c96;
+  }
+
+  .desktop-location-action-btn.change-btn {
+    background: linear-gradient(135deg, #e28c96, #faddd9);
+    color: white;
+    border-color: #e28c96;
+  }
+
+  .desktop-location-action-btn.change-btn:hover {
+    background: linear-gradient(135deg, #d17a84, #e8c5c0);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(226, 140, 150, 0.25);
+  }
+
+  .desktop-location-action-btn.clear-btn {
+    background: #fff5f5;
+    color: #dc3545;
+    border-color: #ffc9c9;
+  }
+
+  .desktop-location-action-btn.clear-btn:hover {
+    background: #ffe6e6;
+    border-color: #dc3545;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(220, 53, 69, 0.15);
+  }
+
   .map-btn {
     background: none;
     border: none;
-    padding: 0;
+    padding: 4px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+  }
+
+  .map-btn:hover {
+    background: rgba(226, 140, 150, 0.1);
+    transform: scale(1.1);
   }
 
   .mobile-file-upload {
@@ -1223,6 +1508,214 @@ button {
 
 .custom-geocoder-dropdown li:hover {
   background: #f0f0f0;
+}
+
+/* สไตล์สำหรับการแสดงผลสถานที่ที่เลือกแล้ว */
+.selected-location-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border: 2px solid #e28c96;
+  border-radius: 20px;
+  padding: 12px 16px;
+  box-shadow: 0 4px 12px rgba(226, 140, 150, 0.15);
+  transition: all 0.3s ease;
+  max-width: 400px;
+  position: relative;
+  overflow: hidden;
+}
+
+.selected-location-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #e28c96, #faddd9);
+}
+
+.selected-location-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, #e28c96, #faddd9);
+  border-radius: 50%;
+  color: white;
+  font-size: 14px;
+  box-shadow: 0 2px 8px rgba(226, 140, 150, 0.3);
+  flex-shrink: 0;
+}
+
+.selected-location-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.selected-location-text {
+  font-size: 14px;
+  font-weight: 600;
+  color: #495057;
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.selected-location-subtitle {
+  font-size: 11px;
+  color: #6c757d;
+  font-weight: 400;
+  margin-top: 2px;
+}
+
+.selected-location-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  color: inherit;
+  flex: 1;
+  min-width: 0;
+}
+
+.selected-location-link:hover {
+  text-decoration: none;
+  color: inherit;
+}
+
+.location-action-buttons {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.location-action-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  background: white;
+  color: #64748b;
+  font-size: 11px;
+  font-weight: 400;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.location-action-btn:hover {
+  background: #f8f9fa;
+  border-color: #e28c96;
+  color: #e28c96;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(226, 140, 150, 0.15);
+}
+
+.location-action-btn.change-btn {
+  background: linear-gradient(135deg, #e28c96, #faddd9);
+  color: white;
+  border-color: #e28c96;
+}
+
+.location-action-btn.change-btn:hover {
+  background: linear-gradient(135deg, #d17a84, #e8c5c0);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(226, 140, 150, 0.25);
+}
+
+.location-action-btn.clear-btn {
+  background: #fff5f5;
+  color: #dc3545;
+  border-color: #ffc9c9;
+}
+
+.location-action-btn.clear-btn:hover {
+  background: #ffe6e6;
+  border-color: #dc3545;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(220, 53, 69, 0.15);
+}
+
+/* สไตล์สำหรับปุ่มเลือกสถานที่ (เมื่อยังไม่ได้เลือก) */
+.choose-location-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 400;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  max-width: 250px;
+  min-width: 120px;
+}
+
+.choose-location-btn span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 180px;
+}
+
+.choose-location-btn:hover {
+  border-color: #e28c96;
+  background: #fef7f7;
+  color: #e28c96;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(226, 140, 150, 0.1);
+}
+
+.choose-location-btn i {
+  font-size: 14px;
+  color: #94a3b8;
+}
+
+.choose-location-btn:hover i {
+  color: #e28c96;
+}
+
+/* สไตล์สำหรับ mobile */
+@media (max-width: 600px) {
+  .selected-location-container {
+    max-width: 100%;
+    padding: 10px 12px;
+    border-radius: 16px;
+  }
+  
+  .selected-location-icon {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
+  }
+  
+  .selected-location-text {
+    font-size: 13px;
+  }
+  
+  .location-action-buttons {
+    gap: 6px;
+  }
+  
+  .location-action-btn {
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+  
+  .choose-location-btn {
+    padding: 10px 14px;
+    font-size: 13px;
+  }
 }
 
 // Loading indicator styles

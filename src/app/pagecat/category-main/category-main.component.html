@@ -121,7 +121,7 @@
                             <!-- ไอคอนหัวใจสำหรับการกดไลค์ -->
                             <div style="display: flex; gap: 5px; align-items: center;">
                                 <i class="fa fa-heart heart-icon" style="font-size: 30px; cursor: pointer;"
-                                    (click)="onHeartClick()">
+                                    (click)=" openDialog()">
                                 </i>
 
                                 <span *ngIf="post.likes_count > 0 && post.likes_count !== null"

@@ -83,26 +83,29 @@ export class CategoryMainComponent {
     return view?.total_views ? parseInt(view.total_views) : 0;
   }
 
-  onCardClick(event: Event) {
+  onCardClick(event: Event, postId?: string) {
     event.preventDefault(); // ป้องกันการเปลี่ยนหน้า
     if (!this.isUserLoggedIn()) {
       this.openDialog();
     } else {
-      // logic สำหรับเปิดโพสต์จริง (ถ้ามี)
-      console.log('User is opening the post.');
+      // ถ้าล็อกอินแล้ว ให้ไปหน้า detail post
+      if (postId) {
+        const currentUserId = localStorage.getItem('userId') || sessionStorage.getItem('userId');
+        this.router.navigate(['/detail_post'], { 
+          queryParams: { 
+            post_id: postId, 
+            user_id: currentUserId 
+          } 
+        });
+      }
     }
   }
 
-  onHeartClick() {
-    if (!this.isUserLoggedIn()) {  // ตรวจสอบว่าเข้าสู่ระบบหรือยัง
-      this.openDialog();
-    } else {
-      console.log("User has liked the post.");
-    }
-  }
 
   isUserLoggedIn(): boolean {
-    return false; // สมมุติว่า user ยังไม่ได้เข้าสู่ระบบ
+    const loggedInUserId = localStorage.getItem('userId') || sessionStorage.getItem('userId');
+    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+    return !!(loggedInUserId && token);
   }
 
   openDialog() {

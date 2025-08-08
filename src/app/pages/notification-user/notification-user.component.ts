@@ -74,7 +74,12 @@ export class NotificationUserComponent {
       this.router.navigate(['/login'], { queryParams: { error: 'unauthorized' } });
       return;
     }
+
     this.checkScreenSize();
+    
+    // โหลด currentUserId จาก localStorage ก่อน
+    this.userService.loadCurrentUserId();
+    
     // ตรวจสอบ snapshot ครั้งแรก
     const snapshotParams = this.route.snapshot.queryParams;
     if (snapshotParams['id']) {
@@ -82,10 +87,7 @@ export class NotificationUserComponent {
       console.log('User ID from snapshot:', this.userId);
       this.loadNotificationData();
     }
-    this.userService.getCurrentUserId().subscribe((userId) => {
-      this.currentUserId = userId;
-      console.log('Current User ID:', this.currentUserId);
-    });
+    
     // Subscribe เฉพาะ params ที่มี id เท่านั้น
     this.route.queryParams
       .pipe(filter(params => !!params['id']))
@@ -94,6 +96,25 @@ export class NotificationUserComponent {
         console.log('User ID from observable:', this.userId);
         this.loadNotificationData();
       });
+
+    // ตรวจสอบ userId ใน url กับ userId ที่ล็อกอิน
+    this.userService.getCurrentUserId().subscribe((currentUserId: string | null) => {
+      const urlUserId = this.route.snapshot.queryParams['id'];
+      console.log('URL User ID:', urlUserId);
+      console.log('Current User ID:', currentUserId);
+      
+      // ตั้งค่า currentUserId สำหรับใช้ใน template
+      this.currentUserId = currentUserId;
+      
+      if (urlUserId && currentUserId && urlUserId !== currentUserId) {
+        console.log('❌ URL User ID ไม่ตรงกับ Current User ID - Redirecting to login');
+        // ถ้า id ใน url ไม่ตรงกับ id ที่ล็อกอินไว้ ให้ redirect ออก
+        this.router.navigate(['/login']);
+        return;
+      } else if (urlUserId && currentUserId && urlUserId === currentUserId) {
+        console.log('✅ URL User ID ตรงกับ Current User ID - เข้าถึงได้');
+      }
+    });
   }
 
   // แยกฟังก์ชันสำหรับโหลดข้อมูลการแจ้งเตือน

@@ -100,12 +100,9 @@ export class HomepageUserComponent implements OnDestroy {
       // ดำเนินการที่ต้องการเมื่อไลค์เปลี่ยนแปลง
     });
 
-    this.posts.forEach((post) => {
-      this.checkLikeStatus(post.post_id);
-    });
-
     this.userService.getCurrentUserId().subscribe((userId) => {
       this.currentUserId = userId;
+      console.log('Current User ID loaded:', this.currentUserId);
 
       // ตรวจสอบ userId ใน url กับ userId ที่ล็อกอิน
       const urlUserId = this.route.snapshot.queryParams['id'];
@@ -114,6 +111,17 @@ export class HomepageUserComponent implements OnDestroy {
         this.router.navigate(['/login']); // หรือหน้า error อื่น ๆ ตามต้องการ
         return;
       }
+
+              // ตรวจสอบสถานะไลค์สำหรับโพสต์ที่มีอยู่แล้ว
+        if (this.posts.length > 0) {
+          console.log('Checking like status for existing posts...');
+          this.posts.forEach(post => {
+            this.checkLikeStatusForPost(post);
+          });
+        } else {
+          // ถ้ายังไม่มีโพสต์ ให้ตรวจสอบหลังจากโหลดโพสต์เสร็จ
+          console.log('No posts yet, will check like status after posts are loaded');
+        }
     });
 
     this.userService.loadCurrentUserId();
@@ -215,15 +223,56 @@ export class HomepageUserComponent implements OnDestroy {
         // อัปเดตค่า posts ที่กรองแล้ว
         this.posts = uniquePosts;
 
-        // เพียงแค่ใช้ค่าของ hasMultipleMedia ที่มาจาก API
-        this.posts.forEach(post => {
-          console.log('Has Multiple Media:', post.hasMultipleMedia);  // ตรวจสอบสถานะ hasMultipleMedia
-        });
+        // ตรวจสอบสถานะไลค์สำหรับแต่ละโพสต์ - รอให้ currentUserId พร้อม
+        if (this.currentUserId) {
+          this.posts.forEach(post => {
+            console.log('Has Multiple Media:', post.hasMultipleMedia);
+            this.checkLikeStatusForPost(post);
+          });
+        } else {
+          console.log('currentUserId not ready yet, will check like status later');
+          // ตรวจสอบสถานะไลค์หลังจาก currentUserId พร้อม
+          this.userService.getCurrentUserId().subscribe((userId) => {
+            if (userId && this.posts.length > 0) {
+              console.log('Now checking like status for posts with userId:', userId);
+              this.posts.forEach(post => {
+                this.checkLikeStatusForPost(post);
+              });
+            }
+          });
+        }
       },
       (error) => {
         console.error('Error fetching posts:', error);
       }
     );
+  }
+
+  // เพิ่มฟังก์ชันตรวจสอบสถานะไลค์สำหรับแต่ละโพสต์
+  private checkLikeStatusForPost(post: ShowPost): void {
+    if (!this.currentUserId) {
+      console.log('No currentUserId available for checking like status');
+      return;
+    }
+
+    console.log('Checking like status for post:', post.post_id, 'with user:', this.currentUserId);
+
+    this.likePostService.checkLikeStatus(post.post_id).subscribe({
+      next: (response) => {
+        console.log('Like status for post', post.post_id, ':', response);
+        // อัพเดตสถานะไลค์ในโพสต์ - ตรวจสอบทั้ง isLiked และ liked
+        if (response.isLiked !== undefined) {
+          post.isLiked = response.isLiked;
+          console.log('Set post.isLiked to:', post.isLiked);
+        } else if (response.liked !== undefined) {
+          post.isLiked = response.liked;
+          console.log('Set post.isLiked to:', post.isLiked);
+        }
+      },
+      error: (error) => {
+        console.error('Error checking like status for post', post.post_id, ':', error);
+      }
+    });
   }
 
   toggleHeart(post: ShowPost): void {
@@ -232,25 +281,57 @@ export class HomepageUserComponent implements OnDestroy {
       return;
     }
 
+    console.log('Before toggle - Post ID:', post.post_id, 'isLiked:', post.isLiked);
+
+    // Optimistic update - อัพเดต UI ทันที
+    const currentLikedState = post.isLiked;
+    post.isLiked = !currentLikedState;
+    console.log('Optimistic update - isLiked changed to:', post.isLiked);
+
     this.likePostService.likePost(post.post_id, Number(this.currentUserId)).subscribe({
       next: (response) => {
         console.log('Like response:', response);
-        post.isLiked = response.isLiked;
-        post.likes_count = response.likeCount;
-
-        // อัปเดตการแจ้งเตือนแบบทันทีหลังจากไลค์
-        if (this.userId) {
-          // ใช้ refreshImmediately แทน loadNotificationCounts เพื่อความเร็ว
-          this.notificationService.refreshImmediately(Number(this.userId));
-
-          // ถ้าเป็นการไลค์ (ไม่ใช่การเลิกไลค์) ให้เพิ่มการแจ้งเตือนทันที
-          if (response.isLiked) {
-            this.notificationService.addNotificationImmediately('like');
-          }
+        
+        // อัพเดตจำนวนไลค์ - ตรวจสอบทั้ง likeCount และ likes_count
+        if (response.likes_count !== undefined) {
+          post.likes_count = response.likes_count;
+          console.log('Updated likes_count to:', post.likes_count);
+        } else if (response.likeCount !== undefined) {
+          post.likes_count = response.likeCount;
+          console.log('Updated likes_count to:', post.likes_count);
         }
+
+        // ตรวจสอบสถานะไลค์ใหม่หลังจาก toggle
+        this.likePostService.checkLikeStatus(post.post_id).subscribe({
+          next: (statusResponse) => {
+            console.log('Status after toggle:', statusResponse);
+            if (statusResponse.isLiked !== undefined) {
+              post.isLiked = statusResponse.isLiked;
+              console.log('Updated isLiked to:', post.isLiked);
+            } else if (statusResponse.liked !== undefined) {
+              post.isLiked = statusResponse.liked;
+              console.log('Updated isLiked to:', post.isLiked);
+            }
+            // อัปเดตการแจ้งเตือนหลังจากสถานะถูกต้องแล้ว
+            if (this.userId) {
+              this.notificationService.refreshImmediately(Number(this.userId));
+              if (post.isLiked) {
+                this.notificationService.addNotificationImmediately('like');
+              }
+            }
+          },
+          error: (statusError) => {
+            console.error('Error checking status after toggle:', statusError);
+          }
+        });
+
+
       },
       error: (error) => {
         console.error('Error toggling like:', error);
+        // Rollback optimistic update ถ้า API ล้มเหลว
+        post.isLiked = currentLikedState;
+        console.log('Rollback isLiked to:', post.isLiked);
       }
     });
   }
@@ -268,16 +349,7 @@ export class HomepageUserComponent implements OnDestroy {
     this.isDrawerOpen = !this.isDrawerOpen; // สลับสถานะเปิด/ปิด
   }
 
-  checkLikeStatus(postId: number): void {
-    this.likePostService.checkLikeStatus(postId).subscribe({
-      next: (response) => {
-        console.log('Like status for post', postId, ':', response);
-      },
-      error: (error) => {
-        console.error('Error checking like status:', error);
-      }
-    });
-  }
+
 
   logout() {
     localStorage.removeItem('userId');

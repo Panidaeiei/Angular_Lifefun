@@ -25,6 +25,7 @@ import { ReportDialogComponent } from '../report-dialog/report-dialog.component'
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { NotificationService, NotificationCounts } from '../../services/notification.service';
 import { Subscription } from 'rxjs';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-detail-post',
@@ -84,44 +85,87 @@ export class DetailPostComponent implements OnInit, OnDestroy {
       this.router.navigate(['/login'], { queryParams: { error: 'unauthorized' } });
       return;
     }
+
     this.checkScreenSize();
     window.addEventListener('resize', this.onResize.bind(this));
-    // ดึงค่าจาก Query Parameters เพียงครั้งเดียว
-    this.route.queryParams.subscribe((params) => {
-      console.log('Detail-post received params:', params); // เพิ่ม debug log
-      // ตรวจสอบว่า post_id และ user_id อยู่ใน query params หรือไม่
-      if (params['post_id']) {
-        this.postId = params['post_id'];
-        console.log('Post ID:', this.postId);
-        this.fetchPost(this.postId); // ดึงข้อมูลโพสต์ตาม postId
-        this.loadComments(Number(this.postId));
-        this.loadShareStatus();
-        this.loadSaveStatus();
-      } else {
-        console.error('Post ID not found in query parameters.');
-      }
+    
+    // โหลด currentUserId จาก localStorage ก่อน
+    this.userService.loadCurrentUserId();
+    
+    // ตรวจสอบ snapshot ครั้งแรก
+    const snapshotParams = this.route.snapshot.queryParams;
+    if (snapshotParams['post_id']) {
+      this.postId = snapshotParams['post_id'];
+      console.log('Post ID from snapshot:', this.postId);
+      this.fetchPost(this.postId);
+      this.loadComments(Number(this.postId));
+      this.loadShareStatus();
+      this.loadSaveStatus();
+    }
+    
+    if (snapshotParams['user_id']) {
+      this.userId = snapshotParams['user_id'];
+      console.log('User ID from snapshot:', this.userId);
+      this.startNotificationTracking();
+    }
+    
+    // Subscribe เฉพาะ params ที่มี post_id และ user_id
+    this.route.queryParams
+      .pipe(filter((params: any) => !!params['post_id'] && !!params['user_id']))
+      .subscribe((params: any) => {
+        console.log('Detail-post received params:', params);
+        
+        if (params['post_id']) {
+          this.postId = params['post_id'];
+          console.log('Post ID:', this.postId);
+          this.fetchPost(this.postId);
+          this.loadComments(Number(this.postId));
+          this.loadShareStatus();
+          this.loadSaveStatus();
+        }
+        
+        if (params['user_id']) {
+          this.userId = params['user_id'];
+          console.log('User ID:', this.userId);
+          this.startNotificationTracking();
+        }
+      });
 
-      if (params['user_id']) {
-        this.userId = params['user_id'];
-        console.log('User ID:', this.userId);
-        // เริ่มการติดตามการแจ้งเตือน
-        this.startNotificationTracking();
-      } else {
-        console.error('User ID not found in query parameters.');
+    // ตรวจสอบ userId ใน url กับ userId ที่ล็อกอิน
+    this.userService.getCurrentUserId().subscribe((currentUserId: string | null) => {
+      const urlUserId = this.route.snapshot.queryParams['user_id'];
+      console.log('URL User ID:', urlUserId);
+      console.log('Current User ID:', currentUserId);
+      
+      if (urlUserId && currentUserId && urlUserId !== currentUserId) {
+        console.log('❌ URL User ID ไม่ตรงกับ Current User ID - Redirecting to login');
+        // ถ้า id ใน url ไม่ตรงกับ id ที่ล็อกอินไว้ ให้ redirect ออก
+        this.router.navigate(['/login']);
+        return;
+      } else if (urlUserId && currentUserId && urlUserId === currentUserId) {
+        console.log('✅ URL User ID ตรงกับ Current User ID - เข้าถึงได้');
       }
-
     });
 
     // การ subscribe กับ likeStatus$
     this.reactPostservice.likeStatus$.subscribe((status) => {
       console.log("Like status updated:", status);
-      // ดำเนินการที่ต้องการเมื่อไลค์เปลี่ยนแปลง
     });
 
     // ดึง currentUserId
     this.userService.getCurrentUserId().subscribe((userId) => {
       this.currentUserId = userId;
-      console.log('Current User ID eiei:', this.currentUserId);
+      console.log('Current User ID:', this.currentUserId);
+      
+      // ตรวจสอบ userId ใน url กับ userId ที่ล็อกอิน
+      const urlUserId = this.route.snapshot.queryParams['user_id'];
+      if (urlUserId && userId && urlUserId !== userId) {
+        console.log('❌ URL User ID ไม่ตรงกับ Current User ID - Redirecting to login');
+        this.router.navigate(['/login']);
+        return;
+      } else if (urlUserId && userId && urlUserId === userId) {
+        console.log('✅ URL User ID ตรงกับ Current User ID - เข้าถึงได้');
+      }
     });
 
     // ตรวจสอบสถานะไลค์ของโพสต์
@@ -129,13 +173,8 @@ export class DetailPostComponent implements OnInit, OnDestroy {
       this.checkLikeStatus(post.post_id);
     });
 
-    // ดึงคอมเมนต์ (ฟังก์ชันนี้ยังคงเรียกเช่นเดิม)
+    // ดึงคอมเมนต์
     this.fetchComments();
-
-    this.userService.getCurrentUserId().subscribe((userId) => {
-      this.currentUserId = userId;
-      console.log('Current User ID eiei:', this.currentUserId);
-    });
   }
 
   ngOnDestroy(): void {

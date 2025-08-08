@@ -31,9 +31,6 @@ import { ChatUserComponent } from './pages/chat-user/chat-user.component';
 import { NotiAddminComponent } from './pages/noti-addmin/noti-addmin.component';
 import { ReportPostdetailComponent } from './pages/report-postdetail/report-postdetail.component';
 import { BanStatusGuard } from './services/ban-status.guard';
-import { authGuard } from './guards/auth.guard';
-
-const mustLogin = [authGuard, BanStatusGuard];
 
 export const routes: Routes = [
 
@@ -63,7 +60,7 @@ export const routes: Routes = [
     {path: 'Post_Skincare', component: UserSkincareComponent, canActivate: [BanStatusGuard]},
     {path: 'Post_Health', component: UserHealthComponent, canActivate: [BanStatusGuard]},
     {path: 'Post_Travel', component: UserTravelComponent, canActivate: [BanStatusGuard]},
-    {path: 'Cat_main/:cat_id', component: CategoryMainComponent, canActivate: [BanStatusGuard]},
+    {path: 'Cat_main/:cat_id', component: CategoryMainComponent},
     {path: 'chat', component: ChatUserComponent, canActivate: [BanStatusGuard]},
     {path: 'noti_addmin', component: NotiAddminComponent},
     {path: 'admin_profileuser', component: ProfileuserAdminComponent},

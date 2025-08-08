@@ -139,35 +139,40 @@
                                 <div style="display:flex; align-items:center; gap:10px;">
                                     <!-- มีสถานที่แล้ว: โชว์เป็นลิงก์ + ปุ่มเปลี่ยน/ล้าง -->
                                     <ng-container *ngIf="locationUrl; else chooseLocation">
-                                        <a [href]="locationUrl" target="_blank" rel="noopener"
-                                            style="display:inline-flex; align-items:center; gap:8px; max-width:300px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
-                                            <i class="fa-solid fa-location-dot" style="font-size:16px;"></i>
-                                            <span style="overflow:hidden; text-overflow:ellipsis;">{{ postData.location
-                                                || 'เปิดแผนที่' }}</span>
-                                        </a>
-
-                                        <button type="button" (click)="openMapDialog()"
-                                            style="display:inline-flex; align-items:center; gap:6px; padding:10px 15px; border-radius:10px; background:#fff; border:1px solid #ccc;">
-                                            <i class="fa-solid fa-map-location-dot"></i>
-                                            เปลี่ยน
-                                        </button>
-
-                                        <button type="button" (click)="clearLocation()"
-                                            style="display:inline-flex; align-items:center; gap:6px; padding:10px 15px; border-radius:10px; background:#fff; border:1px solid #ccc;">
-                                            <i class="fa-solid fa-eraser"></i>
-                                            ล้าง
-                                        </button>
+                                        <div class="selected-location-container">
+                                            <div class="selected-location-icon">
+                                                <i class="fa-solid fa-location-dot"></i>
+                                            </div>
+                                            <a [href]="locationUrl" target="_blank" rel="noopener" class="selected-location-link">
+                                                <div class="selected-location-content">
+                                                    <span class="selected-location-text">{{ (postData.location || 'เปิดแผนที่') | slice:0:20 }}{{ (postData.location || '').length > 20 ? '...' : '' }}</span>
+                                                    <span class="selected-location-subtitle">สถานที่ที่เลือก</span>
+                                                </div>
+                                            </a>
+                                            <div class="location-action-buttons">
+                                                <button type="button" (click)="openMapDialog()" class="location-action-btn change-btn" matTooltip="เปลี่ยนสถานที่">
+                                                    <i class="fa-solid fa-map-location-dot"></i>
+                                                    เปลี่ยน
+                                                </button>
+                                                <button type="button" (click)="clearLocation()" class="location-action-btn clear-btn" matTooltip="ล้างสถานที่">
+                                                    <i class="fa-solid fa-eraser"></i>
+                                                    ล้าง
+                                                </button>
+                                            </div>
+                                        </div>
                                     </ng-container>
 
                                     <!-- ยังไม่เลือก: โชว์ปุ่มให้เลือก -->
                                     <ng-template #chooseLocation>
-                                        <button type="button" (click)="openMapDialog()"
-                                            style="display:inline-flex; align-items:center; gap:6px; padding:10px 15px; border-radius:10px; background:#fff; border:1px solid #ccc;">
+                                        <button type="button" (click)="openMapDialog()" class="choose-location-btn" matTooltip="เลือกสถานที่">
                                             <i class="fa-solid fa-location-dot"></i>
-                                            เลือกสถานที่
+                                            <span *ngIf="postData.location; else defaultLocationText">{{ postData.location | slice:0:20 }}{{ postData.location.length > 20 ? '...' : '' }}</span>
+                                            <ng-template #defaultLocationText>เลือกสถานที่</ng-template>
                                         </button>
                                     </ng-template>
                                 </div>
+
+
 
                                 <!-- แผนที่ Dialog -->
                                 <div *ngIf="isMapOpen" class="dialog-overlay" (click)="closeMapDialog()">
@@ -191,6 +196,11 @@
                                         </div>
 
                                         <div id="map" style="height: 400px;"></div>
+                                        <div class="map-actions-minimal">
+                                            <button type="button" class="map-confirm-btn-minimal" (click)="confirmLocation()" *ngIf="mapMarker" matTooltip="ยืนยันสถานที่">
+                                                <i class="fa-solid fa-check"></i>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -310,9 +320,38 @@
     <div class="mobile-user-row">
         <img [src]="user?.image_url || 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'"
             class="mobile-avatar" />
-        <input type="text" [(ngModel)]="postData.location" placeholder="สถานที่" class="mobile-location" />
-        <button class="map-btn" (click)="openMapDialog()">
-            <img src="../../../assets/images/placeholder.png" width="20" />
+        
+        <!-- Mobile location display -->
+        <ng-container *ngIf="locationUrl; else mobileChooseLocation">
+            <div class="mobile-selected-location">
+                <div class="mobile-location-icon">
+                    <i class="fa-solid fa-location-dot"></i>
+                </div>
+                <div class="mobile-location-content">
+                                                            <span class="mobile-location-text">{{ (postData.location || 'เปิดแผนที่') | slice:0:20 }}{{ (postData.location || '').length > 20 ? '...' : '' }}</span>
+                    <span class="mobile-location-subtitle">สถานที่ที่เลือก</span>
+                </div>
+                <div class="mobile-location-buttons">
+                    <button class="mobile-location-btn change-btn" (click)="openMapDialog()" matTooltip="เปลี่ยนสถานที่">
+                        <i class="fa-solid fa-map-location-dot"></i>
+                    </button>
+                    <button class="mobile-location-btn clear-btn" (click)="clearLocation()" matTooltip="ล้างสถานที่">
+                        <i class="fa-solid fa-eraser"></i>
+                    </button>
+                </div>
+            </div>
+        </ng-container>
+        
+        <ng-template #mobileChooseLocation>
+            <button class="mobile-choose-location-btn" (click)="openMapDialog()" matTooltip="เลือกสถานที่">
+                <i class="fa-solid fa-location-dot"></i>
+                <span *ngIf="postData.location; else mobileDefaultLocationText">{{ postData.location | slice:0:20 }}{{ postData.location.length > 20 ? '...' : '' }}</span>
+                <ng-template #mobileDefaultLocationText>เลือกสถานที่</ng-template>
+            </button>
+        </ng-template>
+        
+        <button class="map-btn" (click)="openMapDialog()" matTooltip="เปิดแผนที่">
+            <i class="fa-solid fa-map-location-dot" style="font-size: 16px; color: #e28c96;"></i>
         </button>
     </div>
     <div class="mobile-category-select-full">
@@ -325,6 +364,8 @@
             </mat-select>
         </mat-form-field>
     </div>
+    
+
     <div class="mobile-file-upload">
         <button class="add-file-btn" (click)="triggerFileInput()">
             +<span *ngIf="files.length > 0" class="file-count-number">{{ files.length }}</span>

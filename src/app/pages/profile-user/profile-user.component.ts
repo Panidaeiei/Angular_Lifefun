@@ -17,6 +17,7 @@ import { Postme } from '../../models/postme_model';
 import { ReactPostservice } from '../../services/ReactPostservice';
 import { NotificationService, NotificationCounts } from '../../services/notification.service';
 import { AuthService } from '../../services/auth.service';
+import { UserService } from '../../services/Userservice';
 
 @Component({
   selector: 'app-profile-user',
@@ -66,6 +67,7 @@ export class ProfileUserComponent implements OnInit, OnDestroy {
     private notificationService: NotificationService,
     private router: Router,
     private auth: AuthService,
+    private userService: UserService,
   ) { }
 
   ngOnInit(): void {
@@ -82,36 +84,42 @@ export class ProfileUserComponent implements OnInit, OnDestroy {
     }
 
     this.checkScreenSize();
-    // Subscribe เฉพาะ params ที่มี id และโหลดข้อมูล user/profile
+    
+    // โหลด currentUserId จาก localStorage ก่อน
+    this.userService.loadCurrentUserId();
+    
+    // ตรวจสอบ snapshot ครั้งแรก
+    const snapshotParams = this.route.snapshot.queryParams;
+    if (snapshotParams['id']) {
+      this.userId = snapshotParams['id'];
+      console.log('User ID from snapshot:', this.userId);
+    }
+    
+    // Subscribe เฉพาะ params ที่มี id เท่านั้น
     this.route.queryParams
-      .pipe(
-        filter(params => !!params['id']),
-        switchMap(params => {
+      .pipe(filter(params => !!params['id']))
+      .subscribe((params) => {
         this.userId = params['id'];
-        console.log('User ID:', this.userId);
-          this.isLoading = true;
-          // โหลด user profile
-          return this.profileService.getUserProfile();
-        })
-      )
-      .subscribe(
-        user => {
-          this.user = user;
-          this.isLoading = false;
-          // โหลดข้อมูลอื่นๆต่อ เช่น post, follow ฯลฯ
-        this.getUserPosts();
-        this.getSharedPosts();
-        this.getSavePosts();
-        this.loadFollowCount();
-        
-        // เริ่มการติดตามการแจ้งเตือน
-        this.startNotificationTracking();
-        },
-        error => {
-          this.isLoading = false;
-          // handle error
+        console.log('User ID from observable:', this.userId);
+      });
+
+    // ตรวจสอบ userId ใน url กับ userId ที่ล็อกอิน
+    this.userService.getCurrentUserId().subscribe((currentUserId: string | null) => {
+      const urlUserId = this.route.snapshot.queryParams['id'];
+      console.log('URL User ID:', urlUserId);
+      console.log('Current User ID:', currentUserId);
+      
+      if (urlUserId && currentUserId && urlUserId !== currentUserId) {
+        console.log('❌ URL User ID ไม่ตรงกับ Current User ID - Redirecting to login');
+        // ถ้า id ใน url ไม่ตรงกับ id ที่ล็อกอินไว้ ให้ redirect ออก
+        this.router.navigate(['/login']);
+        return;
+      } else if (urlUserId && currentUserId && urlUserId === currentUserId) {
+        console.log('✅ URL User ID ตรงกับ Current User ID - เข้าถึงได้');
+        // โหลดข้อมูลหลังจากตรวจสอบผ่านแล้ว
+        this.loadUserData();
       }
-      );
+    });
   }
 
   // เริ่มการติดตามการแจ้งเตือน
@@ -157,7 +165,7 @@ export class ProfileUserComponent implements OnInit, OnDestroy {
   }
 
   getUserPosts(): void {
-    this.profileService.getPostsMe().subscribe(
+    this.profileService.getUserPostsById(this.userId).subscribe(
       (data) => {
         // ตรวจสอบและกรองข้อมูลก่อนอัปเดต
         this.posts = data.userPosts.map((post) => ({
@@ -173,7 +181,7 @@ export class ProfileUserComponent implements OnInit, OnDestroy {
   }
 
   getSharedPosts(): void {
-    this.profileService.getPostsMe().subscribe(
+    this.profileService.getUserPostsById(this.userId).subscribe(
       (data) => {
         this.sharedPosts = data.sharedPosts.map((post) => ({
           ...post,
@@ -188,16 +196,16 @@ export class ProfileUserComponent implements OnInit, OnDestroy {
   }
 
   getSavePosts(): void {
-    this.profileService.getPostsMe().subscribe(
+    this.profileService.getUserPostsById(this.userId).subscribe(
       (data) => {
         this.savePosts = data.savedPosts.map((post) => ({
           ...post,
           hasMultipleMedia: post.hasMultipleMedia || false
         }));
-        console.log('Shared posts:', this.savePosts);
+        console.log('Saved posts:', this.savePosts);
       },
       (error) => {
-        console.error('Error fetching shared posts:', error);
+        console.error('Error fetching saved posts:', error);
       }
     );
   }
@@ -229,12 +237,32 @@ export class ProfileUserComponent implements OnInit, OnDestroy {
   // แยกฟังก์ชันสำหรับโหลดข้อมูลผู้ใช้
   private loadUserData(): void {
     if (this.userId) {
-      // เรียกฟังก์ชันเมื่อมีค่า userId
-      this.getUserProfile();
-      this.getUserPosts();
-      this.getSharedPosts();
-      this.getSavePosts();
-      this.loadFollowCount();
+      console.log('🔄 เริ่มโหลดข้อมูลสำหรับ User ID:', this.userId);
+      this.isLoading = true;
+      
+      // โหลด user profile ตาม userId ที่อยู่ใน URL
+      this.profileService.getUserProfileById(this.userId).subscribe(
+        user => {
+          this.user = user;
+          this.isLoading = false;
+          console.log('✅ โหลดข้อมูลผู้ใช้สำเร็จ:', user);
+          
+          // โหลดข้อมูลอื่นๆต่อ เช่น post, follow ฯลฯ
+          this.getUserPosts();
+          this.getSharedPosts();
+          this.getSavePosts();
+          this.loadFollowCount();
+          
+          // เริ่มการติดตามการแจ้งเตือน
+          this.startNotificationTracking();
+        },
+        error => {
+          this.isLoading = false;
+          console.error('❌ Error loading user profile:', error);
+        }
+      );
+    } else {
+      console.warn('⚠️ ไม่มี User ID สำหรับโหลดข้อมูล');
     }
   }
 

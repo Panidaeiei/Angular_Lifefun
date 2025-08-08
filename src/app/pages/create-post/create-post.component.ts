@@ -21,6 +21,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { NotificationService, NotificationCounts } from '../../services/notification.service';
 import { Subscription } from 'rxjs';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { filter } from 'rxjs/operators';
 
 declare module 'leaflet' {
   namespace Control {
@@ -119,7 +120,77 @@ export class CreatePostComponent implements OnInit, OnDestroy {
       // สร้าง PlacesService
       // @ts-ignore
       this.placesService = new google.maps.places.PlacesService(this.map);
+
+      // เพิ่มการคลิกบนแผนที่เพื่อปักหมุด
+      this.map.addListener('click', (event: any) => {
+        this.handleMapClick(event);
+      });
     }, 100);
+  }
+
+  // ฟังก์ชันจัดการการคลิกบนแผนที่
+  handleMapClick(event: any) {
+    const lat = event.latLng.lat();
+    const lng = event.latLng.lng();
+    
+    console.log('คลิกที่พิกัด:', lat, lng);
+    
+    // ลบ marker เดิมถ้ามี
+    if (this.mapMarker) {
+      this.mapMarker.setMap(null);
+    }
+    
+    // สร้าง marker ใหม่
+    // @ts-ignore
+    this.mapMarker = new google.maps.Marker({
+      position: { lat, lng },
+      map: this.map,
+      title: 'สถานที่ที่เลือก',
+      draggable: true, // ให้สามารถลาก marker ได้
+    });
+    
+    // เพิ่มการลาก marker
+    this.mapMarker.addListener('dragend', (event: any) => {
+      const newLat = event.latLng.lat();
+      const newLng = event.latLng.lng();
+      console.log('ลาก marker ไปที่:', newLat, newLng);
+      this.reverseGeocode(newLat, newLng);
+    });
+    
+    // เรียกใช้ reverse geocoding เพื่อหาชื่อสถานที่
+    this.reverseGeocode(lat, lng);
+  }
+
+  // ฟังก์ชัน reverse geocoding
+  reverseGeocode(lat: number, lng: number) {
+    // @ts-ignore
+    const geocoder = new google.maps.Geocoder();
+    const latlng = { lat, lng };
+    
+    geocoder.geocode({ location: latlng }, (results: any, status: any) => {
+      if (status === 'OK' && results[0]) {
+        const address = results[0].formatted_address;
+        console.log('ชื่อสถานที่:', address);
+        
+        // อัพเดตข้อมูลสถานที่
+        this.postData.location = address;
+        this.lat = lat;
+        this.lon = lng;
+        this.locationUrl = `https://www.google.com/maps?q=${lat},${lng}`;
+        
+        // อัพเดต marker title
+        if (this.mapMarker) {
+          this.mapMarker.setTitle(address);
+        }
+      } else {
+        console.error('ไม่สามารถหาชื่อสถานที่ได้');
+        // ใช้พิกัดเป็นชื่อสถานที่
+        this.postData.location = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+        this.lat = lat;
+        this.lon = lng;
+        this.locationUrl = `https://www.google.com/maps?q=${lat},${lng}`;
+      }
+    });
   }
 
   copyLocation() {
@@ -153,6 +224,34 @@ export class CreatePostComponent implements OnInit, OnDestroy {
     this.lon = null;
   }
 
+  // Mobile location actions
+  openMobileLocationMenu() {
+    // ใช้ SweetAlert2 สำหรับ mobile menu แบบง่าย
+    Swal.fire({
+      title: 'จัดการสถานที่',
+      showDenyButton: true,
+      showCancelButton: true,
+      confirmButtonText: 'เปลี่ยนสถานที่',
+      denyButtonText: 'ล้างสถานที่',
+      cancelButtonText: 'ปิด',
+      confirmButtonColor: '#e28c96',
+      denyButtonColor: '#dc3545',
+      cancelButtonColor: '#6c757d'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.openMapDialog();
+      } else if (result.isDenied) {
+        this.clearLocation();
+      }
+    });
+  }
+
+  openLocationInMap() {
+    if (this.locationUrl) {
+      window.open(this.locationUrl, '_blank');
+    }
+  }
+
 
   closeMapDialog() {
     this.isMapOpen = false;
@@ -162,33 +261,71 @@ export class CreatePostComponent implements OnInit, OnDestroy {
     }
   }
 
+  // ฟังก์ชันยืนยันการเลือกสถานที่
+  confirmLocation() {
+    if (this.mapMarker && this.postData.location) {
+      console.log('ยืนยันสถานที่:', this.postData.location);
+      this.closeMapDialog();
+    } else {
+      alert('กรุณาเลือกสถานที่ก่อนยืนยัน');
+    }
+  }
+
   toggleDrawer(): void {
     this.isDrawerOpen = !this.isDrawerOpen; // สลับสถานะเปิด/ปิด
   }
 
-  ngOnInit(): void {
+    ngOnInit(): void {
     const loggedInUserId = localStorage.getItem('userId') || sessionStorage.getItem('userId');
     const token = localStorage.getItem('token') || sessionStorage.getItem('token');
     if (!loggedInUserId || !token) {
       this.router.navigate(['/login'], { queryParams: { error: 'unauthorized' } });
       return;
     }
-    this.route.queryParams.subscribe((params) => {
-      if (params['id']) {
+    
+    this.checkScreenSize();
+    
+    // โหลด currentUserId จาก localStorage ก่อน
+    this.userService.loadCurrentUserId();
+    
+    // ตรวจสอบ snapshot ครั้งแรก
+    const snapshotParams = this.route.snapshot.queryParams;
+    if (snapshotParams['id']) {
+      this.userId = snapshotParams['id'];
+      this.postData.uid = parseInt(this.userId, 10);
+      console.log('User ID from snapshot:', this.userId);
+      this.loadUserData(this.userId);
+      this.startNotificationTracking();
+    }
+    
+    // Subscribe เฉพาะ params ที่มี id เท่านั้น
+    this.route.queryParams
+      .pipe(filter((params: any) => !!params['id']))
+      .subscribe((params: any) => {
         this.userId = params['id'];
-        this.postData.uid = parseInt(this.userId, 10); // อัปเดต uid
-        console.log('User ID set from queryParams:', this.userId);
+        this.postData.uid = parseInt(this.userId, 10);
+        console.log('User ID from observable:', this.userId);
         this.loadUserData(this.userId);
-        // เริ่มการติดตามการแจ้งเตือน
         this.startNotificationTracking();
-      } else {
-        console.error('User ID not found in queryParams.');
-        this.router.navigate(['/login']); // เปลี่ยนเส้นทางไปหน้า login หากไม่มี userId
+      });
+    
+    // ตรวจสอบ userId ใน url กับ userId ที่ล็อกอิน
+    this.userService.getCurrentUserId().subscribe((currentUserId: string | null) => {
+      const urlUserId = this.route.snapshot.queryParams['id'];
+      console.log('URL User ID:', urlUserId);
+      console.log('Current User ID:', currentUserId);
+      
+      if (urlUserId && currentUserId && urlUserId !== currentUserId) {
+        console.log('❌ URL User ID ไม่ตรงกับ Current User ID - Redirecting to login');
+        // ถ้า id ใน url ไม่ตรงกับ id ที่ล็อกอินไว้ ให้ redirect ออก
+        this.router.navigate(['/login']);
+        return;
+      } else if (urlUserId && currentUserId && urlUserId === currentUserId) {
+        console.log('✅ URL User ID ตรงกับ Current User ID - เข้าถึงได้');
       }
     });
-
+  
     this.loadCategories();
-    this.checkScreenSize();
   }
 
   @HostListener('window:resize')
@@ -517,18 +654,34 @@ export class CreatePostComponent implements OnInit, OnDestroy {
     if (this.map) {
       const lat = parseFloat(result.lat);
       const lon = parseFloat(result.lon);
+      
       // ลบ marker เดิมถ้ามี
       if (this.mapMarker) {
         this.mapMarker.setMap(null);
       }
+      
+      // สร้าง marker ใหม่
       // @ts-ignore
       this.mapMarker = new google.maps.Marker({
         position: { lat, lng: lon },
         map: this.map,
         title: result.display_name,
+        draggable: true, // ให้สามารถลาก marker ได้
       });
+      
+      // เพิ่มการลาก marker
+      this.mapMarker.addListener('dragend', (event: any) => {
+        const newLat = event.latLng.lat();
+        const newLng = event.latLng.lng();
+        console.log('ลาก marker ไปที่:', newLat, newLng);
+        this.reverseGeocode(newLat, newLng);
+      });
+      
       this.map.setCenter({ lat, lng: lon });
       this.postData.location = result.display_name;
+      this.lat = lat;
+      this.lon = lon;
+      this.locationUrl = `https://www.google.com/maps?q=${lat},${lon}`;
       this.customResults = [];
       this.customSearch = result.display_name;
       this.closeMapDialog();

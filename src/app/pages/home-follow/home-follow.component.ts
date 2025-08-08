@@ -72,6 +72,16 @@ export class HomeFollowComponent implements OnDestroy {
     this.userService.getCurrentUserId().subscribe((userId) => {
       this.currentUserId = userId;
       console.log('Current User ID:', this.currentUserId);
+      
+      // ตรวจสอบ userId ใน url กับ userId ที่ล็อกอิน
+      const urlUserId = this.route.snapshot.queryParams['id'];
+      if (urlUserId && userId && urlUserId !== userId) {
+        console.log('❌ URL User ID ไม่ตรงกับ Current User ID - Redirecting to login');
+        this.router.navigate(['/login']);
+        return;
+      } else if (urlUserId && userId && urlUserId === userId) {
+        console.log('✅ URL User ID ตรงกับ Current User ID - เข้าถึงได้');
+      }
     });
     
     // Subscribe เฉพาะ params ที่มี id เท่านั้น
