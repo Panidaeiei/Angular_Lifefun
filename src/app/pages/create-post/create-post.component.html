@@ -43,6 +43,9 @@
     </div>
 </mat-toolbar>
 
+<!-- Drawer Overlay - พื้นหลังสีเทา -->
+<div class="drawer-overlay" [class.open]="isDrawerOpen" (click)="toggleDrawer()"></div>
+
 <!-- Drawer -->
 <div class="drawer" [class.open]="isDrawerOpen">
     <div class="drawer-content">

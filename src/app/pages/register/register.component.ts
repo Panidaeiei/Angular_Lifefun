@@ -51,7 +51,21 @@ export class RegisterComponent {
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
-      this.selectedFile = input.files[0];
+      const file = input.files[0];
+      
+      // ตรวจสอบว่าเป็นไฟล์รูปภาพหรือไม่
+      if (!this.isImageFile(file)) {
+        Swal.fire({
+          icon: 'error',
+          title: 'ไฟล์ไม่ถูกต้อง',
+          text: 'กรุณาเลือกไฟล์รูปภาพเท่านั้น (JPG, PNG, GIF, WebP)',
+          confirmButtonText: 'ตกลง',
+          confirmButtonColor: '#f44336'
+        });
+        return;
+      }
+
+      this.selectedFile = file;
 
       const reader = new FileReader();
       reader.onload = () => {
@@ -89,6 +103,31 @@ export class RegisterComponent {
       };
       reader.readAsDataURL(this.selectedFile); // อ่านไฟล์และแปลงเป็น Base64
     }
+  }
+
+  // ฟังก์ชันตรวจสอบว่าไฟล์เป็นรูปภาพหรือไม่
+  private isImageFile(file: File): boolean {
+    // ตรวจสอบ MIME type
+    const validImageTypes = [
+      'image/jpeg',
+      'image/jpg', 
+      'image/png',
+      'image/gif',
+      'image/webp',
+      'image/bmp',
+      'image/svg+xml'
+    ];
+    
+    // ตรวจสอบนามสกุลไฟล์
+    const validExtensions = [
+      '.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp', '.svg'
+    ];
+    
+    const fileName = file.name.toLowerCase();
+    const fileExtension = fileName.substring(fileName.lastIndexOf('.'));
+    
+    // ตรวจสอบทั้ง MIME type และนามสกุลไฟล์
+    return validImageTypes.includes(file.type) || validExtensions.includes(fileExtension);
   }
 
   
@@ -204,6 +243,18 @@ export class RegisterComponent {
         icon: 'warning',
         text: 'ชื่อผู้ใช้ต้องมีความยาวไม่เกิน 30 ตัวอักษร และใช้ได้เฉพาะ a-z, A-Z, 0-9, จุด (.) และขีดล่าง (_)',
         confirmButtonText: 'ตกลง'
+      });
+      return;
+    }
+
+    // ตรวจสอบรูปโปรไฟล์ (ถ้ามี)
+    if (this.selectedFile && !this.isImageFile(this.selectedFile)) {
+      Swal.fire({
+        icon: 'error',
+        title: 'ไฟล์ไม่ถูกต้อง',
+        text: 'กรุณาเลือกไฟล์รูปภาพเท่านั้น (JPG, PNG, GIF, WebP)',
+        confirmButtonText: 'ตกลง',
+        confirmButtonColor: '#f44336'
       });
       return;
     }

@@ -9,6 +9,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { ChangePasswordDialogComponent } from './change-password-dialog/change-password-dialog.component';
 import { Router } from '@angular/router';
 
 
@@ -107,7 +108,21 @@ export class EditprofileUserComponent implements OnInit {
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files[0]) {
-      this.selectedFile = input.files[0];
+      const file = input.files[0];
+      
+      // ตรวจสอบว่าเป็นไฟล์รูปภาพหรือไม่
+      if (!this.isImageFile(file)) {
+        Swal.fire({
+          icon: 'error',
+          title: 'ไฟล์ไม่ถูกต้อง',
+          text: 'กรุณาเลือกไฟล์รูปภาพเท่านั้น (JPG, PNG, GIF, WebP)',
+          confirmButtonText: 'ตกลง',
+          confirmButtonColor: '#f44336'
+        });
+        return;
+      }
+
+      this.selectedFile = file;
 
       // แสดงตัวอย่างรูปภาพใหม่
       const reader = new FileReader();
@@ -116,6 +131,31 @@ export class EditprofileUserComponent implements OnInit {
       };
       reader.readAsDataURL(this.selectedFile);
     }
+  }
+
+  // ฟังก์ชันตรวจสอบว่าไฟล์เป็นรูปภาพหรือไม่
+  private isImageFile(file: File): boolean {
+    // ตรวจสอบ MIME type
+    const validImageTypes = [
+      'image/jpeg',
+      'image/jpg', 
+      'image/png',
+      'image/gif',
+      'image/webp',
+      'image/bmp',
+      'image/svg+xml'
+    ];
+    
+    // ตรวจสอบนามสกุลไฟล์
+    const validExtensions = [
+      '.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp', '.svg'
+    ];
+    
+    const fileName = file.name.toLowerCase();
+    const fileExtension = fileName.substring(fileName.lastIndexOf('.'));
+    
+    // ตรวจสอบทั้ง MIME type และนามสกุลไฟล์
+    return validImageTypes.includes(file.type) || validExtensions.includes(fileExtension);
   }
 
   uploadProfileImage(): void {
@@ -129,6 +169,22 @@ export class EditprofileUserComponent implements OnInit {
     }
   }
 
+  // เปิด dialog เปลี่ยนรหัสผ่านแบบมินิมอล
+  openChangePasswordDialog(): void {
+    const dialogRef = this.dialog.open(ChangePasswordDialogComponent, {
+      width: '100%',
+      maxWidth: '420px',
+      panelClass: 'minimal-dialog',
+      data: { uid: this.user.uid }
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result === 'changed') {
+        alert('เปลี่ยนรหัสผ่านสำเร็จ');
+      }
+    });
+  }
+
   // บันทึกข้อมูล
   onSaveProfile(): void {
     // ตรวจสอบว่าฟิลด์ที่จำเป็นไม่เป็นค่าว่าง
@@ -137,16 +193,17 @@ export class EditprofileUserComponent implements OnInit {
       return;
     }
 
-    // ตรวจสอบความยาวของชื่อผู้ใช้
-    if (this.user.username.trim().length < 3) {
-      alert('ชื่อผู้ใช้ต้องมีความยาวอย่างน้อย 3 ตัวอักษร');
+    // ตรวจสอบว่า username เป็นไปตามเงื่อนไข (เหมือนกับตอนลงทะเบียน)
+    const usernameRegex = /^[a-zA-Z0-9._]{1,30}$/; // เงื่อนไข username
+    if (!usernameRegex.test(this.user.username)) {
+      Swal.fire({
+        icon: 'warning',
+        text: 'ชื่อผู้ใช้ต้องมีความยาวไม่เกิน 30 ตัวอักษร และใช้ได้เฉพาะ a-z, A-Z, 0-9, จุด (.) และขีดล่าง (_)',
+        confirmButtonText: 'ตกลง'
+      });
       return;
     }
-
-    if (this.user.username.trim().length > 50) {
-      alert('ชื่อผู้ใช้ต้องมีความยาวไม่เกิน 50 ตัวอักษร');
-      return;
-    }
+    
 
     if (!this.user.email || this.user.email.trim() === '') {
       alert('กรุณากรอกอีเมล');
@@ -191,34 +248,22 @@ export class EditprofileUserComponent implements OnInit {
       return;
     }
 
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/; // ต้องมีตัวอักษรและตัวเลขอย่างน้อย 1 ตัว ความยาว ≥ 8
+    // ตัดเรื่องเปลี่ยนรหัสผ่านออกจากฟอร์มนี้ทั้งหมด (ย้ายไป dialog แทน)
+    this.currentPassword = '';
+    this.newPassword = '';
+    this.confirmPassword = '';
 
-    const isChangingPassword = this.newPassword || this.confirmPassword;
-
-    const isTryingToChangePassword =
-      this.currentPassword || this.newPassword || this.confirmPassword;
-
-    if (isTryingToChangePassword) {
-      if (!this.currentPassword || !this.newPassword || !this.confirmPassword) {
-        alert('กรุณากรอกรหัสผ่านให้ครบทุกช่อง');
-        return;
-      }
-      if (this.newPassword === this.currentPassword) {
-        alert('คุณกรอกรหัสผ่านเดิม กรุณาใช้รหัสผ่านใหม่');
-        return;
-      }
-      if (!passwordRegex.test(this.newPassword)) {
-        alert('รหัสผ่านต้องประกอบด้วย:\n- ตัวอักษร (A-Z, a-z)\n- ตัวเลข (0-9)\n- หรือตัวอักษรพิเศษ เช่น @$!%*?&\n- ความยาวอย่างน้อย 8 ตัวอักษร');
-        return;
-      }
-      if (this.newPassword !== this.confirmPassword) {
-        alert('รหัสผ่านไม่ตรงกัน');
-        return;
-      }
-    } else {
-      this.currentPassword = '';
+    // ตรวจสอบรูปโปรไฟล์ (ถ้ามี)
+    if (this.selectedFile && !this.isImageFile(this.selectedFile)) {
+      Swal.fire({
+        icon: 'error',
+        title: 'ไฟล์ไม่ถูกต้อง',
+        text: 'กรุณาเลือกไฟล์รูปภาพเท่านั้น (JPG, PNG, GIF, WebP)',
+        confirmButtonText: 'ตกลง',
+        confirmButtonColor: '#f44336'
+      });
+      return;
     }
-
 
     this.isLoading = true;
     const formData = new FormData();
@@ -238,10 +283,7 @@ export class EditprofileUserComponent implements OnInit {
     }
     // ส่ง description เสมอ (รวมถึงค่าว่างเพื่อลบ description)
     formData.append('description', this.user.description || '');
-    if (this.newPassword) {
-      formData.append('password', this.newPassword);
-      formData.append('old_password', this.currentPassword);
-    }
+    // ไม่แนบรหัสผ่านจากฟอร์มนี้อีกต่อไป
     if (this.selectedFile) {
       formData.append('image', this.selectedFile);
     }

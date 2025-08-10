@@ -63,6 +63,11 @@ body {
   margin-bottom: 8px;
 }
 
+.header-link {
+  margin-right: 12px;
+  text-decoration: underline;
+}
+
 .back-button {
   background: none;
   border: none;
@@ -163,13 +168,25 @@ textarea {
   max-height: 180px;
 }
 
+/* ลบแถวลิงก์เดิมออกแล้ว ย้ายขึ้น header */
+
 .form-actions {
   display: flex;
-  justify-content: center;
+  align-items: center;
+  justify-content: space-between;
   gap: 16px;
   margin-top: 18px;
   width: 100%;
 }
+.link-button {
+  background: transparent;
+  color: #3151e2;
+  border: none;
+  padding: 0;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
 .cancel-button, .save-button {
   width: 48%;
   min-width: 120px;
@@ -341,6 +358,38 @@ textarea {
     border-radius: 5px;
     font-size: 14px;
   }
+
+.username-suggestions {
+  width: 70%;
+  margin-left: auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+.field-hint {
+  width: 70%;
+  margin-left: auto;
+  margin-top: 6px;
+  color: #666;
+  font-size: 12px;
+  line-height: 1.4;
+}
+.username-suggestions .hint {
+  color: #666;
+  font-size: 12px;
+  margin-right: 6px;
+}
+.chip {
+  border: 1px solid #e0e0e0;
+  background: #fafafa;
+  color: #444;
+  border-radius: 14px;
+  padding: 4px 10px;
+  cursor: pointer;
+  font-size: 12px;
+}
+.chip:hover { background: #f0f0f0; }
   
   textarea {
     resize: none;
@@ -383,7 +432,7 @@ textarea {
   }
   
   .save-button {
-    background-color: #3151e2; /* สีเขียว */
+    background-color: #475596; /* สีเขียว */
     color: white;
     border: none;
     border-radius: 5px;

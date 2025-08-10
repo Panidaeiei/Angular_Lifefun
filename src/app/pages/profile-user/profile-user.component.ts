@@ -157,7 +157,6 @@ export class ProfileUserComponent implements OnInit, OnDestroy {
         this.isLoading = false;
       },
       (error) => {
-        console.error('Error fetching user profile:', error);
         this.isLoading = false;
       }
     );
@@ -173,7 +172,7 @@ export class ProfileUserComponent implements OnInit, OnDestroy {
         }));
       },
       (error) => {
-        console.error('Error fetching user posts:', error);
+        // Error handling
       }
     );
   }
@@ -187,7 +186,7 @@ export class ProfileUserComponent implements OnInit, OnDestroy {
         }));
       },
       (error) => {
-        console.error('Error fetching shared posts:', error);
+        // Error handling
       }
     );
   }
@@ -201,7 +200,7 @@ export class ProfileUserComponent implements OnInit, OnDestroy {
         }));
       },
       (error) => {
-        console.error('Error fetching saved posts:', error);
+        // Error handling
       }
     );
   }
@@ -223,7 +222,7 @@ export class ProfileUserComponent implements OnInit, OnDestroy {
         this.followingCount = response.following;
       },
       (error) => {
-        console.error('เกิดข้อผิดพลาดขณะโหลดจำนวนผู้ติดตาม:', error);
+        // Error handling
       }
     );
   }
@@ -246,18 +245,14 @@ export class ProfileUserComponent implements OnInit, OnDestroy {
         },
         error => {
           this.isLoading = false;
-          console.error('❌ Error loading user profile:', error);
         }
       );
-    } else {
-      console.warn('⚠️ ไม่มี User ID สำหรับโหลดข้อมูล');
     }
   }
 
   // ฟังก์ชันใหม่สำหรับโหลดข้อมูลทั้งหมดพร้อมกัน
   private loadAllUserData(): void {
     if (!this.userId) {
-      console.warn('⚠️ ไม่มี User ID สำหรับโหลดข้อมูล');
       this.isLoading = false;
       return;
     }
@@ -265,14 +260,12 @@ export class ProfileUserComponent implements OnInit, OnDestroy {
     // สร้าง observable สำหรับโหลดข้อมูลทั้งหมดพร้อมกัน
     const userPosts$ = this.profileService.getUserPostsById(this.userId).pipe(
       catchError(error => {
-        console.error('Error loading user posts:', error);
         return of({ userPosts: [], sharedPosts: [], savedPosts: [] });
       })
     );
 
     const followCount$ = this.reactPostservice.getFollowCount(this.userId).pipe(
       catchError(error => {
-        console.error('Error loading follow count:', error);
         return of({ followers: 0, following: 0 });
       })
     );
@@ -308,7 +301,6 @@ export class ProfileUserComponent implements OnInit, OnDestroy {
         this.followingCount = data.followCount.following;
       },
       error: (error) => {
-        console.error('❌ Error loading all user data:', error);
         this.isLoading = false;
       }
     });
@@ -322,21 +314,18 @@ export class ProfileUserComponent implements OnInit, OnDestroy {
       // โหลดข้อมูลทั้งหมดพร้อมกันแบบเร็ว
       const userProfile$ = this.profileService.getUserProfileById(this.userId).pipe(
         catchError(error => {
-          console.error('Error loading user profile:', error);
           return of(null);
         })
       );
 
       const userPosts$ = this.profileService.getUserPostsById(this.userId).pipe(
         catchError(error => {
-          console.error('Error loading user posts:', error);
           return of({ userPosts: [], sharedPosts: [], savedPosts: [] });
         })
       );
 
       const followCount$ = this.reactPostservice.getFollowCount(this.userId).pipe(
         catchError(error => {
-          console.error('Error loading follow count:', error);
           return of({ followers: 0, following: 0 });
         })
       );
@@ -379,12 +368,10 @@ export class ProfileUserComponent implements OnInit, OnDestroy {
           this.startNotificationTracking();
         },
         error: (error) => {
-          console.error('❌ Error loading user data fast:', error);
           this.isLoading = false;
         }
       });
     } else {
-      console.warn('⚠️ ไม่มี User ID สำหรับโหลดข้อมูล');
       this.isLoading = false;
     }
   }

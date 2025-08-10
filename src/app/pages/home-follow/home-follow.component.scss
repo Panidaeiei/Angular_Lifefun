@@ -68,6 +68,26 @@ body {
   }
 }
 
+
+/* Drawer & Overlay */
+.drawer-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.drawer-overlay.open {
+  opacity: 1;
+  visibility: visible;
+}
+
 /* สไตล์พื้นฐานของ Drawer */
 .drawer {
   position: fixed;
@@ -84,7 +104,6 @@ body {
   z-index: 1000;
   border-radius: 18px 0 0 18px;
 }
-
 /* Drawer เปิด */
 .drawer.open {
   right: 0;

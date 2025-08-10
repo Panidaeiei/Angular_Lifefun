@@ -1,73 +1,48 @@
-/* สไตล์สำหรับ Dialog */
-.dialog-title {
-    text-align: center;
-    font-size: 24px;
-    font-weight: 600;
-    color: #333;
+/* Minimal, consistent with edit-profile tokens */
+:root {
+  --brand-surface: #ffffff;
+  --brand-text: #222;
+  --brand-muted: #666b73;
+  --brand-danger: #e6636a;
+  --radius: 12px;
+  --shadow: 0 2px 12px rgba(0,0,0,0.08);
 }
 
-.dialog-content {
-    text-align: center;
-    font-size: 18px;
-    color: #555;
-    margin-top: 10px;
+.dialog-wrap {
+  padding: 18px;
+  background: var(--brand-surface);
+  border-radius: var(--radius);
+  text-align: center;
+}
+
+.dialog-title {
+  margin: 0 0 8px 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--brand-text);
 }
 
 .dialog-text {
-    font-size: 16px;
-    color: #666;
-    margin-bottom: 20px;
+  margin: 0 0 16px 0;
+  font-size: 14px;
+  color: var(--brand-muted);
 }
 
-/* สไตล์สำหรับปุ่ม */
 .dialog-actions {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
 }
 
-.cancel-btn, .confirm-btn {
-    border: none; /* ลบเส้นขอบของปุ่ม */
-    outline: none; /* ลบเส้นขอบเมื่อปุ่มได้รับการโฟกัส */
-    padding: 8px 20px;
-    font-weight: bold;
-    transition: background-color 0.3s, box-shadow 0.3s; /* เพิ่มการเปลี่ยนแปลงของเงา */
+.btn {
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  cursor: pointer;
+  font-size: 14px;
 }
 
-/* ปุ่มยกเลิก */
-.cancel-btn {
-    background-color: #f0f0f0;
-    color: #333;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* เงา */
-}
+.btn.btn-muted { background: #eef0f7; color: #606b7a; }
+.btn.btn-danger { background: var(--brand-danger); color: #fff; }
 
-.cancel-btn:hover {
-    background-color: #e0e0e0;
-    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2); /* เพิ่มเงาเข้มขึ้นเมื่อ hover */
-}
-
-/* ปุ่มลบ */
-.confirm-btn {
-    background-color: #e65580; 
-    color: white;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* เงา */
-}
-
-.confirm-btn:hover {
-    background-color: #d32f2f; /* สีแดงเข้มขึ้นเมื่อ hover */
-    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2); /* เพิ่มเงาเข้มขึ้นเมื่อ hover */
-}
-
-.itim-regular {
-    margin-top: 5px;
-    font-family: "Itim", serif;
-    font-weight: 400;
-    font-style: normal;
-  }
-
-  .itim-regular2 {
-    margin-top: 5px;
-    font-family: "Itim", serif;
-    font-weight: 400;
-    font-style: normal;
-  }
+.btn:hover { opacity: .92; }

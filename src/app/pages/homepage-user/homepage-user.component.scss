@@ -68,6 +68,27 @@ body {
   }
 }
 
+
+
+/* Drawer & Overlay */
+.drawer-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.drawer-overlay.open {
+  opacity: 1;
+  visibility: visible;
+}
+
 /* สไตล์พื้นฐานของ Drawer */
 .drawer {
   position: fixed;
@@ -983,8 +1004,12 @@ body {
 }
 
 /* ซ่อนหมวดหมู่บนหน้าจอที่เล็กกว่า PC */
-@media (max-width: 1023px) {
+@media (max-width: 1287px) {
   .category-section {
     display: none !important;
   }
+  .background-div{
+    margin-top: 120px !important;
+  }
 }
+

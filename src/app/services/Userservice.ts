@@ -94,11 +94,34 @@ export class UserService {
       Authorization: `Bearer ${token}`,
     });
 
-    return this.http.put(`${this.baseUrl}/update_user`, formData, { headers }).pipe(
+    return this.http.put(`${this.baseUrl}/edit_user`, formData, { headers }).pipe(
       catchError((error: HttpErrorResponse) => {
         console.error('Error updating user:', error);
         return throwError(() => new Error(error.error?.message || 'Failed to update user'));
       })
+    );
+  }
+
+  // เปลี่ยนรหัสผ่าน (แยกจากการแก้ข้อมูลอื่น เพื่อลดผลกระทบ)
+  changePassword(uid: string, oldPassword: string, newPassword: string): Observable<any> {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      return throwError(() => new Error('Unauthorized: Token not found in LocalStorage'));
+    }
+
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    // ใช้ FormData เพื่อให้เข้ากับ backend ที่รองรับ multer ได้เสมอ
+    const formData = new FormData();
+    formData.append('uid', uid);
+    formData.append('old_password', oldPassword);
+    formData.append('password', newPassword);
+
+    return this.http.put(`${this.baseUrl}/edit_user`, formData, { headers }).pipe(
+      // ส่งต่อ HttpErrorResponse ทั้งก้อน เพื่อให้ฝั่ง UI อ่าน status/message เดิมได้
+      catchError((error: HttpErrorResponse) => throwError(() => error))
     );
   }
 

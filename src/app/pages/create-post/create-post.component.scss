@@ -159,6 +159,27 @@ body {
   }
 }
 
+
+/* Drawer Overlay - พื้นหลังสีเทา */
+.drawer-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  z-index: 999;
+}
+
+.drawer-overlay.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+
 .drawer {
   position: fixed;
   top: 0;

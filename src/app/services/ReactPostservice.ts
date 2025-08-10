@@ -198,7 +198,7 @@ export class ReactPostservice {
 
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
     return this.http.post<{ post_id: number; share_count: number }>(
-      `http://localhost:3000/api/sharepost/get-share-count`,
+      `${this.baseUrl}/sharepost/get-share-count`,
       { post_id },
       { headers }
     ).pipe(
@@ -221,7 +221,7 @@ export class ReactPostservice {
 
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
     return this.http.post<{ post_id: number; save_count: number }>(
-      `http://localhost:3000/api/savepost/get-save-count`,
+      `${this.baseUrl}/savepost/get-save-count`,
       { post_id },
       { headers }
     ).pipe(
@@ -347,7 +347,7 @@ export class ReactPostservice {
 
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
     return this.http.get<{ followers: any[] }>(
-      `http://localhost:3000//follows/followers?userId=${userId}`,
+      `${this.baseUrl}/follows/followers?userId=${userId}`,
       { headers }
     ).pipe(
       tap((response) => {
@@ -369,7 +369,7 @@ export class ReactPostservice {
 
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
     return this.http.get<{ following_list: any[], count: number }>(
-      `http://localhost:3000/api/follows/following-list`,
+      `${this.baseUrl}/follows/following-list`,
       { headers }
     ).pipe(
       tap((response) => {
@@ -391,7 +391,7 @@ export class ReactPostservice {
 
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
     return this.http.get<{ followers_list: any[], count: number }>(
-      `http://localhost:3000/api/follows/followers-list`,
+      `${this.baseUrl}/follows/followers-list`,
       { headers }
     ).pipe(
       tap((response) => {
@@ -413,7 +413,7 @@ export class ReactPostservice {
 
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
     return this.http.get<{ followers_list: any[], count: number }>(
-      `http://localhost:3000/api/follows/followers?userId=${userId}`,
+      `${this.baseUrl}/follows/followers?userId=${userId}`,
       { headers }
     ).pipe(
       tap((response) => {
@@ -435,7 +435,7 @@ export class ReactPostservice {
 
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
     return this.http.get<{ following_list: any[], count: number }>(
-      `http://localhost:3000/api/follows/following?userId=${userId}`,
+      `${this.baseUrl}/follows/following?userId=${userId}`,
       { headers }
     ).pipe(
       tap((response) => {

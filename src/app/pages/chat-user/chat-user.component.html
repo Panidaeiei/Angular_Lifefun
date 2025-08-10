@@ -107,8 +107,8 @@
     <div class="drawer-overlay" [class.open]="isDrawerOpen" (click)="toggleDrawer()"></div>
 
     <div class="chat-layout">
-        <!-- Sidebar รายชื่อ (desktop/tablet) -->
-        <aside class="chat-sidebar" *ngIf="!isMobile">
+        <!-- Sidebar รายชื่อ (desktop เท่านั้น) -->
+        <aside class="chat-sidebar" *ngIf="!isMobile && !isIPad">
             <div class="chat-sidebar-header">
                 <div class="search-container">
                     <input type="text" placeholder="ค้นหา..." class="chat-search" [(ngModel)]="searchQuery"

@@ -84,7 +84,6 @@ export class NotificationUserComponent {
     const snapshotParams = this.route.snapshot.queryParams;
     if (snapshotParams['id']) {
       this.userId = snapshotParams['id'];
-      console.log('User ID from snapshot:', this.userId);
       this.loadNotificationData();
     }
     
@@ -93,26 +92,20 @@ export class NotificationUserComponent {
       .pipe(filter(params => !!params['id']))
       .subscribe((params) => {
         this.userId = params['id'];
-        console.log('User ID from observable:', this.userId);
         this.loadNotificationData();
       });
 
     // ตรวจสอบ userId ใน url กับ userId ที่ล็อกอิน
     this.userService.getCurrentUserId().subscribe((currentUserId: string | null) => {
       const urlUserId = this.route.snapshot.queryParams['id'];
-      console.log('URL User ID:', urlUserId);
-      console.log('Current User ID:', currentUserId);
       
       // ตั้งค่า currentUserId สำหรับใช้ใน template
       this.currentUserId = currentUserId;
       
       if (urlUserId && currentUserId && urlUserId !== currentUserId) {
-        console.log('❌ URL User ID ไม่ตรงกับ Current User ID - Redirecting to login');
         // ถ้า id ใน url ไม่ตรงกับ id ที่ล็อกอินไว้ ให้ redirect ออก
         this.router.navigate(['/login']);
         return;
-      } else if (urlUserId && currentUserId && urlUserId === currentUserId) {
-        console.log('✅ URL User ID ตรงกับ Current User ID - เข้าถึงได้');
       }
     });
   }
@@ -139,7 +132,6 @@ export class NotificationUserComponent {
 
   toggleHeart(): void {
     this.isLiked = !this.isLiked; // สลับสถานะ isLiked เมื่อคลิก
-    console.log('Heart icon clicked. Liked:', this.isLiked);
   }
 
   toggleDrawer(): void {
@@ -187,7 +179,6 @@ export class NotificationUserComponent {
         this.showLikersBox = true;
       },
       err => {
-        console.error('Error loading notifications:', err);
         this.showLikersBox = false;
         this.latestLikerName = '';
         this.unreadLikeCount = 0;
@@ -196,7 +187,6 @@ export class NotificationUserComponent {
   }
 
   onLikeNotificationClick(noti: any): void {
-    console.log('Notification clicked:', noti);
     if (noti.notify === 0) {
       this.notificationService.Noti_Likeread(noti.lid).subscribe({
         next: () => {
@@ -208,10 +198,9 @@ export class NotificationUserComponent {
           if (this.userId) {
             this.globalNotificationService.refreshImmediately(Number(this.userId));
           }
-          console.log('All notifications:', this.notifications);
         },
         error: err => {
-          console.error('Error marking notification as read:', err);
+          // Error handling
         }
       });
     }
@@ -224,14 +213,12 @@ export class NotificationUserComponent {
   loadNotifications_follow(): void {
     this.notificationService.Noti_Follow(Number(this.userId)).subscribe(
       res => {
-        console.log('Follow notifications:', res);
         this.notificationsFollow = res.follows;
         this.showFollowersBox = false;
         this.latestFollowerName = '';
         this.unreadFollowCount = this.notificationsFollow.filter(noti => noti.notify === 1).length; // อัปเดตตรงนี้ด้วย
       },
       err => {
-        console.error('Error loading follow notifications:', err);
         this.showFollowersBox = false;
         this.latestFollowerName = '';
         this.unreadFollowCount = 0;
@@ -240,7 +227,6 @@ export class NotificationUserComponent {
   }
 
   onFollowNotificationClick(noti: any): void {
-    console.log('Follow Notification clicked:', noti);
     if (noti.notify === 1) {
       this.notificationService.Noti_Followread(noti.follow_id).subscribe({
         next: () => {
@@ -253,22 +239,18 @@ export class NotificationUserComponent {
             this.globalNotificationService.refreshImmediately(Number(this.userId));
           }
           this.goToProfile(noti.follow_uid);
-
-          console.log('All follow notifications:', this.notificationsFollow);
         },
         error: err => {
-          console.error('Error marking follow notification as read:', err);
+          // Error handling
         }
       });
     } else {
-      console.warn('Follow notification already read or not applicable:', noti);
       this.goToProfile(noti.follow_uid);
     }
   }
 
   goToProfile(userId: string): void {
     if (!userId) {
-      console.error('User ID is missing! Navigation aborted.');
       return;
     }
 
@@ -283,8 +265,6 @@ export class NotificationUserComponent {
   loadNotifications_share(): void {
     this.notificationService.Noti_Shared(Number(this.userId)).subscribe(
       res => {
-        console.log('Share notifications:', res);
-
         this.notificationsShare = res.shares; // รับข้อมูลการแชร์โพสต์
         const unread = this.notificationsShare.filter(noti => noti.notify === 0);
         this.unreadShareCount = unread.length;
@@ -299,8 +279,6 @@ export class NotificationUserComponent {
         this.showSharedBox = false;
       },
       err => {
-        console.error('Error loading share notifications:', err);
-
         this.notificationsShare = [];
         this.unreadShareCount = 0;
         this.latestSharedName = '';
@@ -310,7 +288,6 @@ export class NotificationUserComponent {
   }
 
   onShareNotificationClick(noti: any): void {
-    console.log('Share Notification clicked:', noti);
     if (noti.notify === 0) {   // <-- เงื่อนไขนี้หมายถึง "ยังไม่อ่าน" (notify=0)
       this.notificationService.Noti_Sharedwread(noti.share_id).subscribe({
         next: () => {
@@ -322,10 +299,9 @@ export class NotificationUserComponent {
           if (this.userId) {
             this.globalNotificationService.refreshImmediately(Number(this.userId));
           }
-          console.log('All share notifications:', this.notificationsShare);
         },
         error: err => {
-          console.error('Error marking share notification as read:', err);
+          // Error handling
         }
       });
     }
@@ -338,8 +314,6 @@ export class NotificationUserComponent {
   loadNotifications_comment(): void {
     this.notificationService.Noti_Comment(Number(this.userId)).subscribe(
       res => {
-        console.log('Comment notifications:', res);
-
         this.notificationsComment = res.comments; // สมมติ API ส่งมาใน key 'comments'
         const unread = this.notificationsComment.filter(noti => noti.notify === 0); // ยังไม่อ่าน
         this.unreadCommentCount = unread.length;
@@ -354,8 +328,6 @@ export class NotificationUserComponent {
         this.showCommentBox = false;
       },
       err => {
-        console.error('Error loading comment notifications:', err);
-
         this.notificationsComment = [];
         this.unreadCommentCount = 0;
         this.latestCommenterName = '';
@@ -365,7 +337,6 @@ export class NotificationUserComponent {
   }
 
   onCommentNotificationClick(noti: any): void {
-    console.log('Comment Notification clicked:', noti);
     if (noti.notify === 0) {  // ยังไม่อ่าน
       this.notificationService.Noti_Commentread(noti.cid).subscribe({
         next: () => {
@@ -377,10 +348,9 @@ export class NotificationUserComponent {
           if (this.userId) {
             this.globalNotificationService.refreshImmediately(Number(this.userId));
           }
-          console.log('All comment notifications:', this.notificationsComment);
         },
         error: err => {
-          console.error('Error marking comment notification as read:', err);
+          // Error handling
         }
       });
     }
@@ -393,14 +363,12 @@ export class NotificationUserComponent {
   loadNotificationsUnban(): void {
     this.notificationService.Noti_Unban(Number(this.userId)).subscribe(
       res => {
-        console.log('Unban notifications:', res);
         this.notificationsUnban = res.unban;
 
         // นับเฉพาะแจ้งเตือนที่ยังไม่อ่าน (notify === 1)
         this.unreadUnbanCount = this.notificationsUnban.filter(n => n.status === "1").length;
       },
       err => {
-        console.error('Error loading unban notifications:', err);
         this.notificationsUnban = [];
         this.unreadUnbanCount = 0;
       }

@@ -14,7 +14,8 @@
   </div>
   <div class="profile-container"  [class.loading]="isLoading">
     <div class="profile-header">
-      <button mat-flat-button style="color: white; background-color: #ff3d3d" (click)="onDeleteUser()">ลบบัญชี</button>
+      <button type="button" class="link-button header-link" style="color: rgb(156, 151, 151); font-size: 16px;" (click)="openChangePasswordDialog()" [disabled]="isLoading">เปลี่ยนรหัสผ่าน</button>
+      <button mat-flat-button style="color: white; background-color: #e26161" (click)="onDeleteUser()">ลบบัญชี</button>
     </div>
 
     <div class="profile-form">
@@ -59,67 +60,11 @@
         <textarea [(ngModel)]="user.description" name="description" placeholder="กรอกคำอธิบายตัวเอง (ไม่บังคับ)"></textarea>
       </div>
       
-      <div class="form-group" style="position: relative; width: 100%;">
-        <label>รหัสผ่านปัจจุบัน</label>
-        <div style="position: relative; display: flex; align-items: center; width: 450px;">
-          <!-- ช่องกรอกรหัสผ่าน -->
-          <input [type]="isPasswordVisible ? 'text' : 'password'" 
-                 [(ngModel)]="currentPassword" 
-                 name="currentPassword" 
-                 placeholder="กรอกรหัสผ่าน" 
-                 required
-                 style="width: 100%; padding-right: 40px;" />
-      
-          <!-- ปุ่มเปิด/ปิดรหัสผ่าน -->
-          <button type="button" (click)="togglePasswordVisibility('pass')" 
-                  style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
-                         background: none; border: none; cursor: pointer;">
-            <i [class]="isPasswordVisible ? 'fa fa-eye' : 'fa fa-eye-slash'"></i>
-          </button>
-        </div>
-      </div>
-      
-
-      <div class="form-group" style="position: relative; width: 100%;">
-        <label>รหัสผ่านใหม่</label>
-        <div style="position: relative; display: flex; align-items: center; width: 450px;">
-          <input [type]="isNewPasswordVisible ? 'text' : 'password'" 
-                 [(ngModel)]="newPassword" 
-                 name="newPassword" 
-                 placeholder="กรอกรหัสผ่านใหม่" 
-                 required
-                 style="width: 100%; padding-right: 40px;" />
-      
-          <!-- ปุ่มเปิด/ปิดรหัสผ่าน -->
-          <button type="button" (click)="togglePasswordVisibility('new')" 
-                  style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
-                         background: none; border: none; cursor: pointer;">
-            <i [class]="isNewPasswordVisible ? 'fa fa-eye' : 'fa fa-eye-slash'"></i>
-          </button>
-        </div>
-      </div>
-      
-      <div class="form-group" style="position: relative; width: 100%; margin-top: 10px;">
-        <label>ยืนยันรหัสผ่าน</label>
-        <div style="position: relative; display: flex; align-items: center; width: 450px;">
-          <input [type]="isConfirmPasswordVisible ? 'text' : 'password'" 
-                 [(ngModel)]="confirmPassword" 
-                 name="confirmPassword" 
-                 placeholder="ยืนยันรหัสผ่านใหม่" 
-                 required
-                 style="width: 100%; padding-right: 40px;" />
-      
-          <!-- ปุ่มเปิด/ปิดรหัสผ่าน -->
-          <button type="button" (click)="togglePasswordVisibility('confirm')" 
-                  style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
-                         background: none; border: none; cursor: pointer;">
-            <i [class]="isConfirmPasswordVisible ? 'fa fa-eye' : 'fa fa-eye-slash'"></i>
-          </button>
-        </div>
-      </div>      
     </div>
 
     <!-- ปุ่ม ยกเลิก และ บันทึกข้อมูล -->
+    
+
     <div class="form-actions">
       <button type="button" class="cancel-button" (click)="onCancel()" [disabled]="isLoading">ยกเลิก</button>
       <button type="submit" class="save-button" (click)="onSaveProfile()" [disabled]="isLoading">

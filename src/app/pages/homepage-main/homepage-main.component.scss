@@ -794,9 +794,11 @@ body {
   }
 }
 
-/* ซ่อนหมวดหมู่บนหน้าจอที่เล็กกว่า PC */
-@media (max-width: 1023px) {
+@media (max-width: 1287px) {
   .category-section {
     display: none !important;
+  }
+  .background-div{
+    margin-top: 120px !important;
   }
 }

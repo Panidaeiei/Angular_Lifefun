@@ -446,13 +446,10 @@ checkScreenSize() {
 
   openMobileDrawer() {
     this.isDrawerOpenMobile = true;
-    console.log('Opening mobile drawer, isDrawerOpenMobile:', this.isDrawerOpenMobile);
-    console.log('isMobile:', this.isMobile, 'isIPad:', this.isIPad);
   }
 
   closeMobileDrawer() {
     this.isDrawerOpenMobile = false;
-    console.log('Closing mobile drawer, isDrawerOpenMobile:', this.isDrawerOpenMobile);
   }
 
   goToProfile(uid: string) {
