@@ -320,6 +320,15 @@
             <i class="fa-solid fa-xmark"></i>
         </button>
     </div>
+    
+    <!-- Loading overlay สำหรับ mobile - อยู่ภายใน container -->
+    <div *ngIf="isLoading" class="loading-overlay-mobile">
+        <div class="loading-spinner">
+            <i class="fa fa-spinner fa-spin"></i>
+            <p>กำลังอัปโหลดโพสต์...</p>
+        </div>
+    </div>
+    
     <div class="mobile-user-row">
         <img [src]="user?.image_url || 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'"
             class="mobile-avatar" />
@@ -402,13 +411,6 @@
         </span>
     </button>
 
-    <!-- Loading overlay -->
-    <div *ngIf="isLoading" class="loading-overlay">
-        <div class="loading-spinner">
-            <i class="fa fa-spinner fa-spin"></i>
-            <p>กำลังอัปโหลดโพสต์...</p>
-        </div>
-    </div>
     <div *ngIf="isMapOpen" class="dialog-overlay" (click)="closeMapDialog()">
         <div class="dialog-box" (click)="$event.stopPropagation()">
             <button class="close-button" (click)="closeMapDialog()">×</button>

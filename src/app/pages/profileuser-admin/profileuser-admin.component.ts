@@ -55,11 +55,13 @@ export class ProfileuserAdminComponent implements OnDestroy {
   ) { }
 
   ngOnInit() {
-    console.log('=== ProfileUserAdmin ngOnInit ===');
-    console.log('localStorage adminId:', localStorage.getItem('adminId'));
-    console.log('localStorage adminToken:', localStorage.getItem('adminToken'));
-    console.log('sessionStorage adminId:', sessionStorage.getItem('adminId'));
-    console.log('sessionStorage adminToken:', sessionStorage.getItem('adminToken'));
+    // ตรวจสอบสิทธิ์ admin ก่อน
+    const adminId = localStorage.getItem('adminId') || sessionStorage.getItem('adminId');
+    const adminToken = localStorage.getItem('adminToken') || sessionStorage.getItem('adminToken');
+    if (!adminId || !adminToken) {
+      this.router.navigate(['/login'], { queryParams: { error: 'unauthorized' } });
+      return;
+    }
     
     this.checkAuthentication();
     
@@ -67,14 +69,8 @@ export class ProfileuserAdminComponent implements OnDestroy {
       this.userId = params['id'];        // ID ของผู้ใช้ที่เลือก
       this.adminId = params['adminId'];  // ID ของแอดมิน
 
-      // แสดงข้อมูล query parameters
-      console.log('Query Parameters:', params);
-      console.log('User ID (ผู้ใช้ที่เลือก):', this.userId);
-      console.log('Admin ID (แอดมิน):', this.adminId);
-      
       // ตรวจสอบ error
       if (!params || Object.keys(params).length === 0) {
-        console.error('No query parameters received');
         this.errorMessage = 'ไม่ได้รับ query parameters';
         return;
       }
@@ -92,7 +88,6 @@ export class ProfileuserAdminComponent implements OnDestroy {
         this.startNotificationTracking();
       } else {
         this.errorMessage = 'ไม่พบ User ID';
-        console.log('No User ID found, staying on page to debug');
       }
     });
 
@@ -118,7 +113,6 @@ export class ProfileuserAdminComponent implements OnDestroy {
       this.notificationSubscription = this.adminNotificationService.notificationCounts.subscribe(
         (counts) => {
           this.notificationCounts = counts;
-          console.log('Admin notification counts updated:', counts);
         }
       );
 
@@ -138,7 +132,6 @@ export class ProfileuserAdminComponent implements OnDestroy {
           report: reportCount,
           total: reportCount
         };
-        console.log('Report notifications loaded:', reportCount);
       },
       error: (err) => {
         console.error('Error loading report notifications:', err);
@@ -148,28 +141,20 @@ export class ProfileuserAdminComponent implements OnDestroy {
 
   // ตรวจสอบการยืนยันตัวตน
   private checkAuthentication(): void {
-    console.log('=== checkAuthentication ===');
     // ตรวจสอบ token จากหลายแหล่ง
     const tokenFromLocal = localStorage.getItem('token');
     const tokenFromSession = sessionStorage.getItem('token');
     const adminTokenFromLocal = localStorage.getItem('adminToken');
     const adminTokenFromSession = sessionStorage.getItem('adminToken');
     
-    console.log('tokenFromLocal:', tokenFromLocal ? 'exists' : 'null');
-    console.log('tokenFromSession:', tokenFromSession ? 'exists' : 'null');
-    console.log('adminTokenFromLocal:', adminTokenFromLocal ? 'exists' : 'null');
-    console.log('adminTokenFromSession:', adminTokenFromSession ? 'exists' : 'null');
-    
     // เลือก token ที่มีอยู่
     const token = tokenFromLocal || tokenFromSession || adminTokenFromLocal || adminTokenFromSession;
     
     if (!token) {
       this.errorMessage = 'Token ไม่พบ กรุณาเข้าสู่ระบบใหม่';
-      console.log('No token found');
       return;
     }
 
-    console.log('Token found:', token.substring(0, 20) + '...');
     this.validateToken(token);
   }
 
@@ -179,7 +164,6 @@ export class ProfileuserAdminComponent implements OnDestroy {
       // ตรวจสอบว่า token เป็น JWT format หรือไม่
       const parts = token.split('.');
       if (parts.length !== 3) {
-        console.log('Invalid token format');
         this.errorMessage = 'Token format ไม่ถูกต้อง';
         return;
       }
@@ -189,16 +173,12 @@ export class ProfileuserAdminComponent implements OnDestroy {
       if (payload.exp) {
         const currentTime = Math.floor(Date.now() / 1000);
         if (currentTime > payload.exp) {
-          console.log('Token expired');
           this.errorMessage = 'Token หมดอายุ';
           return;
         }
       }
 
-      console.log('Token validation passed');
-
     } catch (error) {
-      console.log('Token validation error:', error);
       this.errorMessage = 'Token validation error';
     }
   }
@@ -208,29 +188,22 @@ export class ProfileuserAdminComponent implements OnDestroy {
       this.isLoading = true;
       this.errorMessage = '';
       
-      console.log('Loading profile for user ID (ผู้ใช้ที่เลือก):', this.userId);
-      
       // ใช้ Admin Service
       this.adminservice.getAdminUserProfileById(this.userId).subscribe(
         (data) => {
           this.userProfile = data;
           this.isLoading = false;
-          console.log('Profile loaded successfully:', this.userProfile);
         },
         (error) => {
           this.isLoading = false;
-          console.error('Error loading profile:', error);
           
           if (error.status === 401) {
             this.errorMessage = 'Admin token หมดอายุ กรุณาเข้าสู่ระบบใหม่';
-            console.log('401 Unauthorized error');
           } else if (error.status === 404) {
             this.userProfile = null;
             this.errorMessage = 'ไม่พบข้อมูลผู้ใช้';
-            console.log('404 User not found');
           } else {
             this.errorMessage = 'เกิดข้อผิดพลาดในการโหลดข้อมูลผู้ใช้';
-            console.log('Other error:', error);
           }
         }
       );

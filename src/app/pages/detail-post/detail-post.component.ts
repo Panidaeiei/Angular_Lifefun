@@ -63,6 +63,7 @@ export class DetailPostComponent implements OnInit, OnDestroy {
   touchStartY = 0;
   touchEndY = 0;
   isMobile: boolean = false;
+  isDeletingPost: boolean = false; // เพิ่ม loading state สำหรับการลบโพสต์
   notificationCounts: NotificationCounts = {
     like: 0,
     follow: 0,
@@ -78,6 +79,35 @@ export class DetailPostComponent implements OnInit, OnDestroy {
 
 
   constructor(private route: ActivatedRoute, private router: Router, private userService: UserService, private postService: PostService, private reactPostservice: ReactPostservice, public dialog: MatDialog, private notificationService: NotificationService) { }
+
+  // ฟังก์ชันแปลงชื่อหมวดหมู่เป็นภาษาไทย
+  getCategoryNameThai(categoryName: string): string {
+    const categoryMap: { [key: string]: string } = {
+      'food': 'อาหาร',
+      'travel': 'ท่องเที่ยว',
+      'lifestyle': 'ไลฟ์สไตล์',
+      'technology': 'เทคโนโลยี',
+      'health': 'สุขภาพ',
+      'fashion': 'แฟชั่น',
+      'sports': 'กีฬา',
+      'entertainment': 'บันเทิง',
+      'education': 'การศึกษา',
+      'business': 'ธุรกิจ',
+      'art': 'ศิลปะ',
+      'music': 'ดนตรี',
+      'gaming': 'เกม',
+      'automotive': 'ยานยนต์',
+      'pets': 'สัตว์เลี้ยง',
+      'home': 'บ้านและสวน',
+      'beauty': 'ความงาม',
+      'fitness': 'ฟิตเนส',
+      'photography': 'การถ่ายภาพ',
+      'cooking': 'การทำอาหาร',
+      'other': 'อื่นๆ'
+    };
+    
+    return categoryMap[categoryName.toLowerCase()] || categoryName;
+  }
 
   ngOnInit(): void {
     const loggedInUserId = localStorage.getItem('userId') || sessionStorage.getItem('userId');
@@ -421,14 +451,15 @@ export class DetailPostComponent implements OnInit, OnDestroy {
   }
   updateCurrentMedia(): void {
     if (this.post) {
-      const allMedia = [
-        ...this.post?.images.map((url) => ({ type: 'image', url })),
-        ...this.post?.videos.map((url) => ({ type: 'video', url }))
-      ];
+      // ใช้ฟังก์ชันจัดลำดับอัตโนมัติ
+      const allMedia = this.autoArrangeMedia();
+      
+      console.log('ลำดับไฟล์ที่จัดแล้ว:', allMedia);
+      console.log('ข้อมูลลำดับ:', this.getMediaOrderInfo());
       
       // ตรวจสอบว่า currentMediaIndex อยู่ในช่วงที่ถูกต้อง
       if (this.currentMediaIndex >= 0 && this.currentMediaIndex < allMedia.length) {
-      this.currentMedia = allMedia[this.currentMediaIndex];
+        this.currentMedia = allMedia[this.currentMediaIndex];
       } else {
         console.error('Invalid media index:', this.currentMediaIndex, 'Total media:', allMedia.length);
         // รีเซ็ตเป็นรูปแรกถ้าดัชนีไม่ถูกต้อง
@@ -505,8 +536,61 @@ export class DetailPostComponent implements OnInit, OnDestroy {
     const totalMediaCount = (this.post?.images?.length || 0) + (this.post?.videos?.length || 0);
     return totalMediaCount > 1; // ถ้ามีมากกว่า 1 ให้แสดงปุ่มเลื่อน
   }
+
+  // ฟังก์ชันจัดลำดับไฟล์แบบอัตโนมัติ
+  autoArrangeMedia(): { type: string; url: string }[] {
+    if (!this.post) return [];
+    
+    const allMedia: { type: string; url: string }[] = [];
+    
+    // ตรวจสอบว่ามีวิดีโอหรือไม่
+    const hasVideo = this.post.videos && this.post.videos.length > 0;
+    const hasImage = this.post.images && this.post.images.length > 0;
+    
+    if (hasVideo && hasImage) {
+      // ถ้ามีทั้งวิดีโอและรูปภาพ ให้วิดีโอขึ้นก่อน
+      // ใช้ logic: วิดีโอที่เลือกมาเป็นไฟล์แรก
+      allMedia.push(...this.post.videos.map((url) => ({ type: 'video', url })));
+      allMedia.push(...this.post.images.map((url) => ({ type: 'image', url })));
+      
+      console.log('จัดลำดับอัตโนมัติ: วิดีโอขึ้นก่อน รูปภาพตามหลัง');
+    } else if (hasVideo) {
+      // มีแค่วิดีโอ
+      allMedia.push(...this.post.videos.map((url) => ({ type: 'video', url })));
+      console.log('มีแค่วิดีโอ:', allMedia.length, 'ไฟล์');
+    } else if (hasImage) {
+      // มีแค่รูปภาพ
+      allMedia.push(...this.post.images.map((url) => ({ type: 'image', url })));
+      console.log('มีแค่รูปภาพ:', allMedia.length, 'ไฟล์');
+    }
+    
+    return allMedia;
+  }
+
+  // ฟังก์ชันแสดงข้อมูลลำดับไฟล์
+  getMediaOrderInfo(): string {
+    if (!this.post) return 'ไม่มีข้อมูลโพสต์';
+    
+    const videoCount = this.post.videos?.length || 0;
+    const imageCount = this.post.images?.length || 0;
+    
+    if (videoCount > 0 && imageCount > 0) {
+      return `วิดีโอ ${videoCount} ไฟล์ + รูปภาพ ${imageCount} ไฟล์ (วิดีโอขึ้นก่อน)`;
+    } else if (videoCount > 0) {
+      return `วิดีโอ ${videoCount} ไฟล์`;
+    } else if (imageCount > 0) {
+      return `รูปภาพ ${imageCount} ไฟล์`;
+    } else {
+      return 'ไม่มีไฟล์';
+    }
+  }
   
   deletePost(postId: number): void {
+    // ป้องกันการกดซ้ำถ้ากำลังลบอยู่
+    if (this.isDeletingPost) {
+      return;
+    }
+
     // เปิด dialog เพื่อยืนยันการลบโพสต์ โดยไม่มีการเคลื่อนไหว
     const dialogRef = this.dialog.open(ConfirmDeleteDialogComponent, {
       enterAnimationDuration: '0ms',  // ปิดการเคลื่อนไหวในการเปิด
@@ -515,16 +599,22 @@ export class DetailPostComponent implements OnInit, OnDestroy {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {  // ถ้าผู้ใช้ยืนยัน
-        this.postService.deletePost(postId).subscribe(
-          (response) => {
+        this.isDeletingPost = true; // เริ่มการลบ
+        
+        this.postService.deletePost(postId).subscribe({
+          next: (response) => {
             alert('โพสต์ถูกลบเรียบร้อย');
             this.router.navigate(['/HomepageUser'], { queryParams: { id: this.userId } });
           },
-          (error) => {
-            alert('เกิดข้อผิดพลาดในการลบโพสต์');
-            console.error(error);
+          error: (error) => {
+            console.error('Error deleting post:', error);
+            alert('เกิดข้อผิดพลาดในการลบโพสต์ กรุณาลองใหม่อีกครั้ง');
+            this.isDeletingPost = false; // รีเซ็ตสถานะเมื่อเกิด error
+          },
+          complete: () => {
+            this.isDeletingPost = false; // สิ้นสุดการลบเมื่อเสร็จสิ้น
           }
-        );
+        });
       }
     });
   }

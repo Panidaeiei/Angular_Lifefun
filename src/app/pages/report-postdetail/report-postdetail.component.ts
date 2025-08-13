@@ -8,6 +8,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { PostService } from '../../services/Postservice';
 import { ReactPostservice } from '../../services/ReactPostservice';
 import { NewlineToBrPipe } from '../../newline-to-br.pipe';
@@ -21,7 +22,7 @@ import { ConfirmDeleteDialogComponent } from '../../confirm-delete-dialog/confir
 @Component({
   selector: 'app-report-postdetail',
   standalone: true,
-  imports: [MatToolbarModule, RouterModule, CommonModule, MatTabsModule, MatCardModule, MatButtonModule, MatMenuModule, MatIconModule, NewlineToBrPipe, FormsModule, TimeAgoPipe],
+  imports: [MatToolbarModule, RouterModule, CommonModule, MatTabsModule, MatCardModule, MatButtonModule, MatMenuModule, MatIconModule, MatTooltipModule, NewlineToBrPipe, FormsModule, TimeAgoPipe],
   templateUrl: './report-postdetail.component.html',
   styleUrl: './report-postdetail.component.scss'
 })
@@ -39,6 +40,7 @@ export class ReportPostdetailComponent {
   users: User[] = [];
   filteredUsers: any[] = [];
   errorMessage: string = '';
+  isDeletingPost: boolean = false; // เพิ่มตัวแปรสำหรับจัดการสถานะการลบโพสต์
 
   constructor(private router: Router, private route: ActivatedRoute, private postService: PostService, private reactPostservice: ReactPostservice, private adminservice: AdminService, private userService: UserService, public dialog: MatDialog) { }
 
@@ -149,6 +151,11 @@ export class ReportPostdetailComponent {
   }
 
   deletePost(postId: number): void {
+    // ป้องกันการกดซ้ำถ้ากำลังลบอยู่
+    if (this.isDeletingPost) {
+      return;
+    }
+
     // เปิด dialog เพื่อยืนยันการลบโพสต์ โดยไม่มีการเคลื่อนไหว
     const dialogRef = this.dialog.open(ConfirmDeleteDialogComponent, {
       enterAnimationDuration: '0ms',  // ปิดการเคลื่อนไหวในการเปิด
@@ -157,16 +164,22 @@ export class ReportPostdetailComponent {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {  // ถ้าผู้ใช้ยืนยัน
-        this.postService.deletePost(postId).subscribe(
-          (response) => {
+        this.isDeletingPost = true; // เริ่มการลบ
+        
+        this.postService.deletePost(postId).subscribe({
+          next: (response) => {
             alert('โพสต์ถูกลบเรียบร้อย');
             this.router.navigate(['/noti_addmin'], { queryParams: { id: this.userId } });
           },
-          (error) => {
-            alert('เกิดข้อผิดพลาดในการลบโพสต์');
-            console.error(error);
+          error: (error) => {
+            console.error('Error deleting post:', error);
+            alert('เกิดข้อผิดพลาดในการลบโพสต์ กรุณาลองใหม่อีกครั้ง');
+            this.isDeletingPost = false; // รีเซ็ตสถานะเมื่อเกิด error
+          },
+          complete: () => {
+            this.isDeletingPost = false; // สิ้นสุดการลบเมื่อเสร็จสิ้น
           }
-        );
+        });
       }
     });
   }

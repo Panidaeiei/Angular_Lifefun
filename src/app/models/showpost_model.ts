@@ -13,5 +13,6 @@ export interface ShowPost {
   isLiked?: boolean; // สถานะถูกใจ
   hasMultipleMedia?: boolean; // สถานะว่ามีหลายรูป
   currentImageIndex: number; // รูปภาพที่แสดงในปัจจุบัน
+  
 }
 

@@ -73,18 +73,39 @@ export class HomepageUserComponent implements OnDestroy {
       return;
     }
 
+    // 2) ตรวจสอบความถูกต้องของ token
+    this.validateToken(token);
+
     this.checkScreenSize();
+    
     // ตรวจสอบ snapshot ครั้งแรก
     const snapshotParams = this.route.snapshot.queryParams;
     if (snapshotParams['id']) {
       this.userId = snapshotParams['id'];
+      // ตรวจสอบว่า userId ใน URL ตรงกับ userId ที่ล็อกอิน
+      if (this.userId !== loggedInUserId) {
+        // ถ้าไม่ตรงกัน ให้ใช้ userId ที่ล็อกอินแทน
+        this.userId = loggedInUserId;
+      }
+      this.loadUserData();
+    } else {
+      // ถ้าไม่มี id ใน URL ให้ใช้ userId ที่ล็อกอิน
+      this.userId = loggedInUserId;
       this.loadUserData();
     }
+
     // Subscribe เฉพาะ params ที่มี id เท่านั้น
     this.route.queryParams
       .pipe(filter(params => !!params['id']))
       .subscribe((params) => {
-        this.userId = params['id'];
+        const newUserId = params['id'];
+        // ตรวจสอบสิทธิ์เมื่อ params เปลี่ยน
+        if (newUserId !== loggedInUserId) {
+          // ถ้าไม่ตรงกัน ให้ใช้ userId ที่ล็อกอินแทน
+          this.userId = loggedInUserId;
+        } else {
+          this.userId = newUserId;
+        }
         this.loadUserData();
       });
 
@@ -102,17 +123,18 @@ export class HomepageUserComponent implements OnDestroy {
       // ตรวจสอบ userId ใน url กับ userId ที่ล็อกอิน
       const urlUserId = this.route.snapshot.queryParams['id'];
       if (urlUserId && userId && urlUserId !== userId) {
-        // ถ้า id ใน url ไม่ตรงกับ id ที่ล็อกอินไว้ ให้ redirect ออก
-        this.router.navigate(['/login']); // หรือหน้า error อื่น ๆ ตามต้องการ
+        // ถ้า id ใน url ไม่ตรงกับ id ที่ล็อกอินไว้ ให้ใช้ userId ที่ล็อกอินแทน
+        this.userId = userId;
+        this.loadUserData();
         return;
       }
 
-              // ตรวจสอบสถานะไลค์สำหรับโพสต์ที่มีอยู่แล้ว
-        if (this.posts.length > 0) {
-          this.posts.forEach(post => {
-            this.checkLikeStatusForPost(post);
-          });
-        }
+      // ตรวจสอบสถานะไลค์สำหรับโพสต์ที่มีอยู่แล้ว
+      if (this.posts.length > 0) {
+        this.posts.forEach(post => {
+          this.checkLikeStatusForPost(post);
+        });
+      }
     });
 
     this.userService.loadCurrentUserId();
@@ -199,6 +221,8 @@ export class HomepageUserComponent implements OnDestroy {
   fetchPosts(): void {
     this.postService.getPosts_interests().subscribe(
       (response: ShowPost[]) => {
+        console.log('API Response:', response);
+        console.log('First post data:', response[0]);
 
         // กรองโพสต์ที่มี `post_id` ซ้ำ
         const uniquePosts = response.filter((value, index, self) =>
@@ -209,6 +233,11 @@ export class HomepageUserComponent implements OnDestroy {
 
         // อัปเดตค่า posts ที่กรองแล้ว
         this.posts = uniquePosts;
+
+        // เพียงแค่ใช้ค่าของ hasMultipleMedia ที่มาจาก API
+        this.posts.forEach(post => {
+          console.log('Has Multiple Media:', post.hasMultipleMedia);  // ตรวจสอบสถานะ hasMultipleMedia
+        });
 
         // ตรวจสอบสถานะไลค์สำหรับแต่ละโพสต์ - รอให้ currentUserId พร้อม
         if (this.currentUserId) {
@@ -347,6 +376,10 @@ export class HomepageUserComponent implements OnDestroy {
     this.router.navigate([route], { queryParams: { id: this.currentUserId } });
   }
 
+
+
+
+
   ngOnDestroy(): void {
     // หยุดการติดตามการแจ้งเตือน
     this.notificationService.stopAutoUpdate();
@@ -354,6 +387,36 @@ export class HomepageUserComponent implements OnDestroy {
     // ยกเลิก subscription
     if (this.notificationSubscription) {
       this.notificationSubscription.unsubscribe();
+    }
+  }
+
+  // ตรวจสอบความถูกต้องของ token
+  private validateToken(token: string): void {
+    try {
+      // ตรวจสอบว่า token เป็น JWT format หรือไม่
+      const parts = token.split('.');
+      if (parts.length !== 3) {
+        // ถ้า token format ไม่ถูกต้อง ให้ redirect ไป login
+        this.router.navigate(['/login'], { queryParams: { error: 'invalid_token' } });
+        return;
+      }
+
+      // ตรวจสอบ expiration time (ถ้ามี)
+      const payload = JSON.parse(atob(parts[1]));
+      if (payload.exp) {
+        const currentTime = Math.floor(Date.now() / 1000);
+        if (currentTime > payload.exp) {
+          // ถ้า token หมดอายุ ให้ redirect ไป login
+          this.router.navigate(['/login'], { queryParams: { error: 'token_expired' } });
+          return;
+        }
+      }
+
+      // Token ผ่านการตรวจสอบแล้ว
+
+    } catch (error) {
+      // ถ้าเกิด error ในการตรวจสอบ token ให้ redirect ไป login
+      this.router.navigate(['/login'], { queryParams: { error: 'token_validation_error' } });
     }
   }
 }

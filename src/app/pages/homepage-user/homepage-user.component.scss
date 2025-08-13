@@ -39,6 +39,14 @@ body {
   display: inline-block;
 }
 
+
+
+
+
+
+
+
+
 .notification-dot {
   position: absolute;
   top: -2px;
@@ -847,12 +855,7 @@ body {
   /* ทำให้ข้อความหนาขึ้น */
 }
 
-.multiple-media-icon {
-  top: 10px;
-  right: 10px;
-  padding: 5px;
-  border-radius: 50%;
-}
+
 
 @media (max-width: 600px) {
   .add-post-btn {

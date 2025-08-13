@@ -197,6 +197,8 @@ export class PostService {
       );
   }
 
+
+
   getPostsCosmetics(): Observable<ShowPost[]> {
     const uid = localStorage.getItem('userId');
 

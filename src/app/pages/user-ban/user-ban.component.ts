@@ -56,7 +56,6 @@ export class UserBanComponent implements OnDestroy {
     }
     this.route.queryParams.subscribe(params => {
       this.userId = params['id']; // ดึง ID จาก Query Parameters
-      console.log('User ID:', this.userId);
     });
 
     
@@ -92,7 +91,6 @@ export class UserBanComponent implements OnDestroy {
       this.notificationSubscription = this.adminNotificationService.notificationCounts.subscribe(
         (counts) => {
           this.notificationCounts = counts;
-          console.log('Admin notification counts updated:', counts);
         }
       );
 
@@ -111,7 +109,6 @@ export class UserBanComponent implements OnDestroy {
           report: reportCount,
           total: reportCount
         };
-        console.log('Report notifications loaded:', reportCount);
       },
       error: (err: any) => {
         console.error('Error loading report notifications:', err);
@@ -156,7 +153,6 @@ export class UserBanComponent implements OnDestroy {
           next: (response) => {
             user.status = 1; // เปลี่ยนสถานะเป็นปกติ
             this.filterUsers(); // อัปเดต filteredUsers หลังจากเปลี่ยนสถานะ
-            console.log('ยกเลิกการระงับบัญชี:', response);
             // แจ้งเตือนความสำเร็จและ redirect
             import('sweetalert2').then(Swal => {
               Swal.default.fire({
@@ -182,7 +178,6 @@ export class UserBanComponent implements OnDestroy {
           next: (response) => {
             user.status = 0; // เปลี่ยนสถานะเป็นระงับ
             this.filterUsers(); // อัปเดต filteredUsers หลังจากเปลี่ยนสถานะ
-            console.log('บัญชีผู้ใช้ถูกระงับ:', response);
           },
           error: (error) => {
             console.error('เกิดข้อผิดพลาด:', error);

@@ -903,6 +903,35 @@ button {
     padding: 0;
   }
 
+  /* ซ่อนปุ่มเพิ่มรูปเมื่อกำลังอัปโหลด */
+  .add-file-btn.uploading {
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(0.8);
+  }
+
+  /* ป้องกันการกดปุ่มต่างๆ เมื่อกำลังอัปโหลด */
+  .uploading .add-file-btn,
+  .uploading .remove-file-btn,
+  .uploading .mobile-post-btn,
+  .uploading .post-btn,
+  .uploading .category-select,
+  .uploading .mobile-category-select,
+  .uploading .mobile-category-select-full,
+  .uploading .mobile-textarea,
+  .uploading .desktop-textarea {
+    opacity: 0.5;
+    pointer-events: none;
+    cursor: not-allowed;
+  }
+
+  /* ซ่อนปุ่มลบรูปเมื่อกำลังอัปโหลด */
+  .remove-file-btn.uploading {
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(0.8);
+  }
+
   .file-count-number {
     background: #e28c96;
     color: #fff;
@@ -1395,6 +1424,35 @@ button {
     padding: 0;
   }
 
+  /* ซ่อนปุ่มเพิ่มรูปเมื่อกำลังอัปโหลด */
+  .add-file-btn.uploading {
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(0.8);
+  }
+
+  /* ป้องกันการกดปุ่มต่างๆ เมื่อกำลังอัปโหลด */
+  .uploading .add-file-btn,
+  .uploading .remove-file-btn,
+  .uploading .mobile-post-btn,
+  .uploading .post-btn,
+  .uploading .category-select,
+  .uploading .mobile-category-select,
+  .uploading .mobile-category-select-full,
+  .uploading .mobile-textarea,
+  .uploading .desktop-textarea {
+    opacity: 0.5;
+    pointer-events: none;
+    cursor: not-allowed;
+  }
+
+  /* ซ่อนปุ่มลบรูปเมื่อกำลังอัปโหลด */
+  .remove-file-btn.uploading {
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(0.8);
+  }
+
   .file-count-number {
     background: #e28c96;
     color: #fff;
@@ -1775,46 +1833,84 @@ button {
 }
 
 // Loading overlay for mobile
-.loading-overlay {
-  position: fixed;
-  top: 90px;
-  left: 0;
-  width: 100vw;
-  height: calc(100vh - 90px);
-  background: rgba(255, 255, 255, 0.9);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 999;
-  
-  .loading-spinner {
-    text-align: center;
-    background: white;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-    
-    i {
-      font-size: 48px;
-      color: #e28c96;
-      margin-bottom: 16px;
-      display: block;
-    }
-    
-    p {
-      margin: 0;
-      font-size: 16px;
-      color: #333;
-      font-weight: 500;
-    }
-  }
-}
-
-@media (max-width: 600px) {
+  /* Loading overlay ที่ครอบคลุมปุ่มเพิ่มรูป */
   .loading-overlay {
-    top: 80px;
-    height: calc(100vh - 80px);
+    position: fixed;
+    top: 70px; /* อยู่ใต้ mat-toolbar ที่มีความสูง 70px */
+    left: 0;
+    width: 100vw;
+    height: calc(100vh - 70px); /* ลบความสูงของ toolbar ออก */
+    background-color: rgba(0, 0, 0, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999; /* ต่ำกว่า fixed-toolbar ที่มี z-index: 1000 */
+    backdrop-filter: blur(10px);
   }
+
+  /* Responsive loading overlay สำหรับ mobile */
+  @media (max-width: 600px) {
+    .loading-overlay {
+      top: 80px; /* mobile toolbar มีความสูง 80px */
+      height: calc(100vh - 80px);
+    }
+  }
+
+  @media (max-width: 1024px) {
+    .loading-overlay {
+      top: 60px; /* tablet toolbar มีความสูง 60px */
+      height: calc(100vh - 60px);
+    }
+  }
+
+  .loading-overlay-desktop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 800; /* ต่ำกว่า loading-overlay */
+    backdrop-filter: blur(10px);
+    border-radius: 10px;
+  }
+
+  /* Loading overlay สำหรับ mobile ที่อยู่ภายใน container */
+  .loading-overlay-mobile {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 800;
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+  }
+
+/* ปุ่มต่างๆ จะอยู่ภายใต้ loading overlay */
+.loading-overlay .add-file-btn,
+.loading-overlay .remove-file-btn,
+.loading-overlay .mobile-post-btn,
+.loading-overlay .post-btn,
+.loading-overlay .category-select,
+.loading-overlay .mobile-category-select,
+.loading-overlay .mobile-category-select-full,
+.loading-overlay .mobile-textarea,
+.loading-overlay .desktop-textarea,
+.loading-overlay-desktop .add-file-btn,
+.loading-overlay-desktop .remove-file-btn,
+.loading-overlay-desktop .post-btn,
+.loading-overlay-desktop .category-select,
+.loading-overlay-desktop .desktop-textarea {
+  pointer-events: none;
+  cursor: not-allowed;
 }
 
 // Loading overlay for desktop
@@ -1953,3 +2049,155 @@ mat-card-footer.disabled {
     font-size: 16px;
   }
 }
+
+/* Loading spinner styles */
+.loading-spinner,
+.loading-spinner-container {
+  text-align: center;
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  
+  i {
+    font-size: 48px;
+    color: #e28c96;
+    margin-bottom: 16px;
+    display: block;
+  }
+  
+  p {
+    margin: 0;
+    font-size: 16px;
+    color: #333;
+    font-weight: 500;
+  }
+}
+
+/* Mobile responsive adjustments for loading */
+@media (max-width: 600px) {
+  .loading-spinner {
+    padding: 20px;
+    
+    i {
+      font-size: 36px;
+      margin-bottom: 12px;
+    }
+    
+    p {
+      font-size: 14px;
+    }
+  }
+}
+
+/* Custom SweetAlert2 Styles - Minimal Design */
+:global(.minimal-swal-popup) {
+  border-radius: 16px !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1) !important;
+  border: none !important;
+  padding: 24px !important;
+  max-width: 400px !important;
+  font-family: 'Itim', cursive !important;
+}
+
+:global(.minimal-swal-title) {
+  font-size: 20px !important;
+  font-weight: 600 !important;
+  color: #333 !important;
+  margin-bottom: 8px !important;
+}
+
+:global(.minimal-swal-button) {
+  border-radius: 12px !important;
+  padding: 12px 24px !important;
+  font-size: 16px !important;
+  font-weight: 500 !important;
+  border: none !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 4px 12px rgba(226, 140, 150, 0.2) !important;
+  
+  &:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 16px rgba(226, 140, 150, 0.3) !important;
+  }
+  
+  &:active {
+    transform: translateY(0) !important;
+  }
+}
+
+/* Toast Style SweetAlert2 */
+:global(.swal2-toast) {
+  border-radius: 12px !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1) !important;
+  border: none !important;
+  padding: 16px 20px !important;
+  font-family: 'Itim', cursive !important;
+  font-size: 14px !important;
+}
+
+/* Success Toast */
+:global(.swal2-toast.swal2-icon-success) {
+  background: linear-gradient(135deg, #e28c96, #f8b4c0) !important;
+  color: white !important;
+}
+
+/* Error Toast */
+:global(.swal2-toast.swal2-icon-error) {
+  background: linear-gradient(135deg, #dc3545, #f87171) !important;
+  color: white !important;
+}
+
+/* Progress Bar */
+:global(.swal2-timer-progress-bar) {
+  background: linear-gradient(90deg, #e28c96, #f8b4c0) !important;
+  border-radius: 0 0 16px 16px !important;
+  height: 4px !important;
+}
+
+/* ซ่อนปุ่มเพิ่มรูปและปุ่มอื่นๆ เมื่อมี loading overlay */
+.loading-overlay ~ * .add-file-btn,
+.loading-overlay ~ * .remove-file-btn,
+.loading-overlay ~ * .mobile-post-btn,
+.loading-overlay ~ * .post-btn,
+.loading-overlay ~ * .category-select,
+.loading-overlay ~ * .mobile-category-select,
+.loading-overlay ~ * .mobile-category-select-full,
+.loading-overlay ~ * .mobile-textarea,
+.loading-overlay ~ * .desktop-textarea,
+.loading-overlay-desktop ~ * .add-file-btn,
+.loading-overlay-desktop ~ * .remove-file-btn,
+.loading-overlay-desktop ~ * .post-btn,
+.loading-overlay-desktop ~ * .category-select,
+.loading-overlay-desktop ~ * .desktop-textarea,
+.loading-overlay-mobile ~ * .add-file-btn,
+.loading-overlay-mobile ~ * .remove-file-btn,
+.loading-overlay-mobile ~ * .mobile-post-btn,
+.loading-overlay-mobile ~ * .mobile-category-select,
+.loading-overlay-mobile ~ * .mobile-category-select-full,
+.loading-overlay-mobile ~ * .mobile-textarea {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
+}
+
+/* ซ่อนปุ่มเพิ่มรูปใน desktop เมื่อมี loading overlay */
+.loading-overlay-desktop ~ * .add-file-btn,
+.loading-overlay-desktop ~ * .remove-file-btn,
+.loading-overlay-desktop ~ * .post-btn,
+.loading-overlay-desktop ~ * .category-select,
+.loading-overlay-desktop ~ * .desktop-textarea {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
+}
+
+/* ปรับ z-index ของ loading overlay ให้สูงกว่า toolbar */
+.loading-overlay,
+.loading-overlay-desktop,
+.loading-overlay-mobile {
+  z-index: 999 !important; /* ต่ำกว่า fixed-toolbar ที่มี z-index: 1000 */
+}
+
+/* TODO: ลบ CSS ที่ซ้ำกันออกเพื่อเพิ่มประสิทธิภาพ */
+/* ตรวจสอบและลบส่วนที่ซ้ำกันในบรรทัด 906-933 และ 1427-1454 */

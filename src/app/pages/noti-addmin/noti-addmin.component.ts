@@ -43,6 +43,14 @@ export class NotiAddminComponent implements OnDestroy {
   ) { }
 
   ngOnInit() {
+    // ตรวจสอบสิทธิ์ admin ก่อน
+    const adminId = localStorage.getItem('adminId') || sessionStorage.getItem('adminId');
+    const adminToken = localStorage.getItem('adminToken') || sessionStorage.getItem('adminToken');
+    if (!adminId || !adminToken) {
+      this.router.navigate(['/login'], { queryParams: { error: 'unauthorized' } });
+      return;
+    }
+
     this.route.queryParams.subscribe(params => {
       this.userId = params['id']; // ดึง ID จาก Query Parameters
       console.log('User ID:', this.userId);

@@ -65,22 +65,17 @@ export class HomeFollowComponent implements OnDestroy {
     const snapshotParams = this.route.snapshot.queryParams;
     if (snapshotParams['id']) {
       this.userId = snapshotParams['id'];
-      console.log('User ID from snapshot:', this.userId);
       this.loadUserData();
     }
     
     this.userService.getCurrentUserId().subscribe((userId) => {
       this.currentUserId = userId;
-      console.log('Current User ID:', this.currentUserId);
       
       // ตรวจสอบ userId ใน url กับ userId ที่ล็อกอิน
       const urlUserId = this.route.snapshot.queryParams['id'];
       if (urlUserId && userId && urlUserId !== userId) {
-        console.log('❌ URL User ID ไม่ตรงกับ Current User ID - Redirecting to login');
         this.router.navigate(['/login']);
         return;
-      } else if (urlUserId && userId && urlUserId === userId) {
-        console.log('✅ URL User ID ตรงกับ Current User ID - เข้าถึงได้');
       }
     });
     
@@ -89,13 +84,11 @@ export class HomeFollowComponent implements OnDestroy {
       .pipe(filter(params => !!params['id']))
       .subscribe((params) => {
         this.userId = params['id'];
-        console.log('User ID from observable:', this.userId);
         this.loadUserData();
     });
 
     this.route.queryParamMap.subscribe(params => {
       const viewerId = params.get('viewerId');
-      console.log('Viewer ID (ผู้ใช้ที่กำลังดู):', viewerId);
     });
 
     this.posts.forEach((post) => {
@@ -114,10 +107,9 @@ export class HomeFollowComponent implements OnDestroy {
     this.postService.getViewCounts().subscribe({
       next: (data) => {
         this.viewPosts = data;
-        console.log('View Data:', data);
       },
       error: (err) => {
-        console.error('Error loading views:', err);
+        // Error handling
       }
     });
 
@@ -138,7 +130,6 @@ export class HomeFollowComponent implements OnDestroy {
       this.notificationSubscription = this.notificationService.notificationCounts$.subscribe(
         (counts) => {
           this.notificationCounts = counts;
-          console.log('Notification counts updated:', counts);
         }
       );
     }
@@ -167,7 +158,7 @@ export class HomeFollowComponent implements OnDestroy {
         this.posts = posts;  
       },
       (error) => {
-        console.error('Error loading posts:', error);
+        // Error handling
       }
     );
   }
@@ -177,8 +168,6 @@ export class HomeFollowComponent implements OnDestroy {
   
     // ค้นหาข้อมูลใน viewPosts โดยเปรียบเทียบ post_id
     const view = this.viewPosts.find(v => v.post_id.toString() === postIdString);
-    
-    // console.log('View Post ID:', postId, 'View Data:', view); 
   
     return view?.total_views ? parseInt(view.total_views) : 0; 
   }
@@ -189,7 +178,9 @@ export class HomeFollowComponent implements OnDestroy {
         // เมื่อ API viewPost สำเร็จแล้ว ค่อยเปลี่ยนหน้า
         this.router.navigate(['/detail_post'], { queryParams: { post_id: postId, user_id: this.currentUserId } });
       },
-      error: (err) => console.error('Error updating view count:', err)
+      error: (err) => {
+        // Error handling
+      }
     });
   }
 
@@ -203,19 +194,14 @@ export class HomeFollowComponent implements OnDestroy {
         }
       },
       (error) => {
-        console.error('Error checking like status:', error);
+        // Error handling
       }
     );
   }
 
   
   goToProfile(userId: string): void {
-    console.log('Current User ID:', this.currentUserId);
-    console.log('Navigating to:', userId);
-    console.log('Query Params ID:', this.userId);
-  
     if (!userId || !this.currentUserId) {
-      console.error('User ID is missing! Navigation aborted.');
       return;
     }
   
@@ -230,20 +216,17 @@ export class HomeFollowComponent implements OnDestroy {
 
   toggleHeart(post: ShowPost): void {
     const userId = this.userId;  
-    console.log('userId Like:', userId); 
 
     // เปลี่ยนสถานะ isLiked
     post.isLiked = !post.isLiked;
-    console.log('Heart icon clicked for post:', post.post_id, 'Liked:', post.isLiked);
 
     // เรียกใช้ LikePostService เพื่ออัปเดตสถานะการไลค์ในฐานข้อมูล
     this.likePostService.likePost(post.post_id, Number(userId)).subscribe(
       (response) => {
-        console.log('Post liked successfully:', response);
         post.likes_count = response.likes_count;  // อัปเดตยอดไลค์
       },
       (error) => {
-        console.error('Error liking post:', error);
+        // Error handling
       }
     );
   }

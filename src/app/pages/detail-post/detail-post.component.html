@@ -111,20 +111,39 @@
             </ul>
         </div>
     </div>
-    <div *ngIf="post" class="divpost">
+    <div *ngIf="post" class="divpost" [ngClass]="{'deleting': isDeletingPost}">
+        <!-- Loading indicator เมื่อกำลังลบโพสต์ -->
+        <div *ngIf="isDeletingPost" class="delete-loading-overlay">
+            <div class="loading-content">
+                <div class="spinner"></div>
+                <p class="loading-message">กำลังลบโพสต์...</p>
+                <p class="loading-subtitle">กรุณารอสักครู่</p>
+            </div>
+        </div>
+
         <!-- ส่วนแสดงโปรไฟล์ผู้ใช้ -->
         <div class="profile-section">
             <div class="profile-info">
                 <img class="profile-avatar"
                     [src]="post.user_profile_image || 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'"
                     alt="รูปโปรไฟล์" (click)="goToProfile(post.user_uid.toString())">
+                
                 <div class="profile-details">
-                    <span class="profile-name">{{post.user_name}}</span>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span class="profile-name">{{post.user_name}}</span>
+                                        
+                        <!-- แสดงหมวดหมู่ของโพสต์ -->
+                        <div style="margin-top: 2px;" class="post-category" *ngIf="post.category_name">
+                            <i class="fa fa-tag" style="color: #e28c96; margin-right: 5px;"></i>
+                            <span  class="category-name">{{ getCategoryNameThai(post.category_name) }}</span>
+                        </div>
+                          
+                    </div>
                     <span class="profile-time">
                         {{ post.post_time | timeAgo }} • 
                         {{ post.post_time | formatLocalTime }}
                     </span>
-                      
+
                     <ng-container *ngIf="post.location">
                         <!-- มือถือ -->
                         <div class="profile-location mobile-location">
@@ -161,10 +180,21 @@
                 </svg>
             </a>
             <mat-menu #menu="matMenu">
-                <button mat-menu-item *ngIf="post.user_uid === +userId" (click)="deletePost(post.post_id)">
-                    <i style="margin-right: 5px; font-size: 20px; color: rgb(87, 73, 75);"
-                        class="fa-solid fa-trash"></i>
-                    <span style="font-size: 15px;">ลบโพสต์</span>
+                <button mat-menu-item *ngIf="post.user_uid === +userId" (click)="deletePost(post.post_id)" 
+                    [disabled]="isDeletingPost" 
+                    [ngClass]="{'delete-loading': isDeletingPost}"
+                    class="delete-post-btn"
+                    [matTooltip]="isDeletingPost ? 'กำลังลบโพสต์...' : 'ลบโพสต์'">
+                    <div class="delete-btn-content">
+                        <i *ngIf="!isDeletingPost" style="margin-right: 5px; font-size: 20px; color: rgb(87, 73, 75);"
+                            class="fa-solid fa-trash"></i>
+                        <i *ngIf="isDeletingPost" style="margin-right: 5px; font-size: 20px; color: rgb(87, 73, 75);"
+                            class="fa-solid fa-spinner fa-spin"></i>
+                        <span style="font-size: 15px;">
+                            <span *ngIf="!isDeletingPost">ลบโพสต์</span>
+                            <span *ngIf="isDeletingPost" class="loading-text">กำลังลบ...</span>
+                        </span>
+                    </div>
                 </button>
                 <button mat-menu-item *ngIf="post.user_uid === +userId" (click)="editPost()">
                     <i style="margin-right: 5px; font-size: 20px; color: rgb(87, 73, 75);"
@@ -263,8 +293,18 @@
                 </span>
             </div>
         </div>
-        <div class="post-content">
-            <span *ngIf="!isEditing" [innerHTML]="post.title | newlineToBr"></span>
+        <!-- แสดงหมวดหมู่และเนื้อหาโพสต์ -->
+        <div class="post-content-section">
+            <!-- แสดงหมวดหมู่ด้านบนเนื้อหา -->
+            <div class="post-category-main" *ngIf="post.category_name">
+                <i class="fa fa-tag" style="color: #e28c96; margin-right: 8px;"></i>
+                <span class="category-name-main">{{ getCategoryNameThai(post.category_name) }}  </span>
+            </div>
+            
+            <!-- แสดงเนื้อหาโพสต์ -->
+            <div class="post-content">
+                <span *ngIf="!isEditing" [innerHTML]="post.title | newlineToBr"></span>
+            </div>
         </div>
 
         <!-- ฟอร์มแก้ไข -->

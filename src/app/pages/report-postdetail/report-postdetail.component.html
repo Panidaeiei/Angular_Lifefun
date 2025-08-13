@@ -26,7 +26,16 @@
     </div>
 </mat-toolbar>
 <div style="display: flex; justify-content: center; align-items: center; margin-top: 130PX;">
-    <div *ngIf="post" class="divpost">
+    <div *ngIf="post" class="divpost" [ngClass]="{'deleting': isDeletingPost}">
+        <!-- Loading indicator เมื่อกำลังลบโพสต์ -->
+        <div *ngIf="isDeletingPost" class="delete-loading-overlay">
+            <div class="loading-content">
+                <div class="spinner"></div>
+                <p class="loading-message">กำลังลบโพสต์...</p>
+                <p class="loading-subtitle">กรุณารอสักครู่</p>
+            </div>
+        </div>
+        
         <div class="post-header" style="display: flex; align-items: flex-start; width: 100%;">
             <a (click)="navigateToUserProfile(post.user_uid)" style="cursor: pointer; flex-shrink: 0;">
                 <img [src]="post.user_profile_image || 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'"
@@ -63,10 +72,21 @@
         </a>
 
         <mat-menu #menu="matMenu">
-            <button mat-menu-item (click)="deletePost(post.post_id)">
-                <i class="fa-solid fa-user-slash"
-                    style="margin-right: 5px; font-size: 20px; color: rgb(200, 50, 50);"></i>
-                <span style="font-size: 15px;">ลบโพสต์</span>
+            <button mat-menu-item (click)="deletePost(post.post_id)" 
+                [disabled]="isDeletingPost" 
+                [ngClass]="{'delete-loading': isDeletingPost}"
+                class="delete-post-btn"
+                [matTooltip]="isDeletingPost ? 'กำลังลบโพสต์...' : 'ลบโพสต์'">
+                <div class="delete-btn-content">
+                    <i *ngIf="!isDeletingPost" class="fa-solid fa-user-slash"
+                        style="margin-right: 5px; font-size: 20px; color: rgb(200, 50, 50);"></i>
+                    <i *ngIf="isDeletingPost" class="fa-solid fa-spinner fa-spin"
+                        style="margin-right: 5px; font-size: 20px; color: rgb(200, 50, 50);"></i>
+                    <span style="font-size: 15px;">
+                        <span *ngIf="!isDeletingPost">ลบโพสต์</span>
+                        <span *ngIf="isDeletingPost" class="loading-text">กำลังลบ...</span>
+                    </span>
+                </div>
             </button>
             <!-- <button mat-menu-item >
                 <div style="display: flex; align-items: center; justify-content: center;">

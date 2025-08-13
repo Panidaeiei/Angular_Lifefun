@@ -41,8 +41,7 @@ export class ReportDialogComponent {
         this.dialogRef.close();
       },
       error: err => {
-        console.error('เกิดข้อผิดพลาด:', err);
-        alert('รายงานไม่สำเร็จ');
+        
       }
     });
 

@@ -102,7 +102,7 @@ export class CreatePostComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       const mapElement = document.getElementById('map');
       if (!mapElement) {
-        console.error('Map div ยังไม่ถูกโหลด');
+        // Error handling
         return;
       }
 
@@ -133,8 +133,6 @@ export class CreatePostComponent implements OnInit, OnDestroy {
     const lat = event.latLng.lat();
     const lng = event.latLng.lng();
     
-    console.log('คลิกที่พิกัด:', lat, lng);
-    
     // ลบ marker เดิมถ้ามี
     if (this.mapMarker) {
       this.mapMarker.setMap(null);
@@ -153,7 +151,6 @@ export class CreatePostComponent implements OnInit, OnDestroy {
     this.mapMarker.addListener('dragend', (event: any) => {
       const newLat = event.latLng.lat();
       const newLng = event.latLng.lng();
-      console.log('ลาก marker ไปที่:', newLat, newLng);
       this.reverseGeocode(newLat, newLng);
     });
     
@@ -170,7 +167,6 @@ export class CreatePostComponent implements OnInit, OnDestroy {
     geocoder.geocode({ location: latlng }, (results: any, status: any) => {
       if (status === 'OK' && results[0]) {
         const address = results[0].formatted_address;
-        console.log('ชื่อสถานที่:', address);
         
         // อัพเดตข้อมูลสถานที่
         this.postData.location = address;
@@ -183,7 +179,6 @@ export class CreatePostComponent implements OnInit, OnDestroy {
           this.mapMarker.setTitle(address);
         }
       } else {
-        console.error('ไม่สามารถหาชื่อสถานที่ได้');
         // ใช้พิกัดเป็นชื่อสถานที่
         this.postData.location = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
         this.lat = lat;
@@ -264,7 +259,6 @@ export class CreatePostComponent implements OnInit, OnDestroy {
   // ฟังก์ชันยืนยันการเลือกสถานที่
   confirmLocation() {
     if (this.mapMarker && this.postData.location) {
-      console.log('ยืนยันสถานที่:', this.postData.location);
       this.closeMapDialog();
     } else {
       alert('กรุณาเลือกสถานที่ก่อนยืนยัน');
@@ -293,7 +287,6 @@ export class CreatePostComponent implements OnInit, OnDestroy {
     if (snapshotParams['id']) {
       this.userId = snapshotParams['id'];
       this.postData.uid = parseInt(this.userId, 10);
-      console.log('User ID from snapshot:', this.userId);
       this.loadUserData(this.userId);
       this.startNotificationTracking();
     }
@@ -304,7 +297,6 @@ export class CreatePostComponent implements OnInit, OnDestroy {
       .subscribe((params: any) => {
         this.userId = params['id'];
         this.postData.uid = parseInt(this.userId, 10);
-        console.log('User ID from observable:', this.userId);
         this.loadUserData(this.userId);
         this.startNotificationTracking();
       });
@@ -312,16 +304,11 @@ export class CreatePostComponent implements OnInit, OnDestroy {
     // ตรวจสอบ userId ใน url กับ userId ที่ล็อกอิน
     this.userService.getCurrentUserId().subscribe((currentUserId: string | null) => {
       const urlUserId = this.route.snapshot.queryParams['id'];
-      console.log('URL User ID:', urlUserId);
-      console.log('Current User ID:', currentUserId);
       
       if (urlUserId && currentUserId && urlUserId !== currentUserId) {
-        console.log('❌ URL User ID ไม่ตรงกับ Current User ID - Redirecting to login');
         // ถ้า id ใน url ไม่ตรงกับ id ที่ล็อกอินไว้ ให้ redirect ออก
         this.router.navigate(['/login']);
         return;
-      } else if (urlUserId && currentUserId && urlUserId === currentUserId) {
-        console.log('✅ URL User ID ตรงกับ Current User ID - เข้าถึงได้');
       }
     });
   
@@ -369,13 +356,10 @@ export class CreatePostComponent implements OnInit, OnDestroy {
   loadUserData(userId: string): void {
     this.userService.getUserById(userId).subscribe(
       (response) => {
-        console.log('API Response:', response);
-        console.log(this.user?.image_url);
-        console.log('User data loaded:', response);
         this.user = response;
       },
       (error) => {
-        console.error('Error fetching user data:', error);
+        // Error handling
       }
     );
   }
@@ -384,10 +368,9 @@ export class CreatePostComponent implements OnInit, OnDestroy {
     this.postService.getCategories().subscribe(
       (data: Category[]) => {
         this.categories = data;
-        console.log('Categories loaded:', this.categories);
       },
       (error) => {
-        console.error('Error fetching categories:', error);
+        // Error handling
       }
     );
   }
@@ -404,6 +387,145 @@ export class CreatePostComponent implements OnInit, OnDestroy {
 
   get currentFile() {
     return this.files[this.currentIndex];
+  }
+
+  // ฟังก์ชันสำหรับเปลี่ยนลำดับไฟล์
+  moveFile(fromIndex: number, toIndex: number): void {
+    if (fromIndex < 0 || fromIndex >= this.files.length || 
+        toIndex < 0 || toIndex >= this.files.length) {
+      return;
+    }
+
+    const file = this.files.splice(fromIndex, 1)[0];
+    this.files.splice(toIndex, 0, file);
+
+    // ปรับ currentIndex ถ้าจำเป็น
+    if (this.currentIndex === fromIndex) {
+      this.currentIndex = toIndex;
+    } else if (this.currentIndex > fromIndex && this.currentIndex <= toIndex) {
+      this.currentIndex--;
+    } else if (this.currentIndex < fromIndex && this.currentIndex >= toIndex) {
+      this.currentIndex++;
+    }
+  }
+
+  // ฟังก์ชันย้ายไฟล์ไปข้างหน้า
+  moveFileForward(index: number): void {
+    if (index < this.files.length - 1) {
+      this.moveFile(index, index + 1);
+    }
+  }
+
+  // ฟังก์ชันย้ายไฟล์ไปข้างหลัง
+  moveFileBackward(index: number): void {
+    if (index > 0) {
+      this.moveFile(index, index - 1);
+    }
+  }
+
+  // ฟังก์ชันย้ายไฟล์ไปตำแหน่งแรก
+  moveFileToFirst(index: number): void {
+    this.moveFile(index, 0);
+  }
+
+  // ฟังก์ชันย้ายไฟล์ไปตำแหน่งสุดท้าย
+  moveFileToLast(index: number): void {
+    this.moveFile(index, this.files.length - 1);
+  }
+
+  // ฟังก์ชันสลับตำแหน่งไฟล์กับไฟล์ถัดไป
+  swapWithNext(index: number): void {
+    if (index < this.files.length - 1) {
+      this.moveFile(index, index + 1);
+    }
+  }
+
+  // ฟังก์ชันสลับตำแหน่งไฟล์กับไฟล์ก่อนหน้า
+  swapWithPrevious(index: number): void {
+    if (index > 0) {
+      this.moveFile(index, index - 1);
+    }
+  }
+
+  // ฟังก์ชันย้ายไฟล์ไปตำแหน่งที่กำหนด
+  moveFileToPosition(fromIndex: number, toIndex: number): void {
+    if (fromIndex >= 0 && fromIndex < this.files.length && 
+        toIndex >= 0 && toIndex < this.files.length) {
+      this.moveFile(fromIndex, toIndex);
+    }
+  }
+
+  // ฟังก์ชันแสดงลำดับไฟล์ปัจจุบัน
+  getFileOrderInfo(): string {
+    return this.files.map((file, index) => 
+      `${index + 1}. ${file.type === 'image' ? 'รูปภาพ' : 'วิดีโอ'}`
+    ).join(' | ');
+  }
+
+  // ฟังก์ชันแสดงข้อมูลไฟล์แต่ละไฟล์
+  getFileInfo(index: number): string {
+    if (index < 0 || index >= this.files.length) return '';
+    const file = this.files[index];
+    return `${index + 1}. ${file.type === 'image' ? 'รูปภาพ' : 'วิดีโอ'}`;
+  }
+
+  // ฟังก์ชันแสดงข้อมูลไฟล์แบบละเอียด
+  getDetailedFileInfo(index: number): string {
+    if (index < 0 || index >= this.files.length) return '';
+    const file = this.files[index];
+    const fileSize = (file.file.size / 1024 / 1024).toFixed(2); // MB
+    return `${index + 1}. ${file.type === 'image' ? 'รูปภาพ' : 'วิดีโอ'} (${fileSize} MB)`;
+  }
+
+  // ฟังก์ชันแสดงลำดับไฟล์แบบตาราง
+  getFileOrderTable(): string {
+    return this.files.map((file, index) => {
+      const fileSize = (file.file.size / 1024 / 1024).toFixed(2);
+      return `${index + 1} | ${file.type === 'image' ? 'รูปภาพ' : 'วิดีโอ'} | ${fileSize} MB`;
+    }).join('\n');
+  }
+
+  // ฟังก์ชันตรวจสอบว่าไฟล์ปัจจุบันเป็นไฟล์แรกหรือไม่
+  isFirstFile(): boolean {
+    return this.currentIndex === 0;
+  }
+
+  // ฟังก์ชันตรวจสอบว่าไฟล์ปัจจุบันเป็นไฟล์สุดท้ายหรือไม่
+  isLastFile(): boolean {
+    return this.currentIndex === this.files.length - 1;
+  }
+
+  // ฟังก์ชันตรวจสอบว่าลำดับไฟล์ถูกต้องหรือไม่
+  isFileOrderCorrect(): boolean {
+    // ตรวจสอบว่าวิดีโออยู่ตำแหน่งแรกหรือไม่ (ถ้าผู้ใช้ต้องการ)
+    const firstFile = this.files[0];
+    return firstFile && firstFile.type === 'video';
+  }
+
+  // ฟังก์ชันแสดงคำแนะนำการจัดลำดับ
+  getOrderingAdvice(): string {
+    if (this.files.length === 0) return 'ไม่มีไฟล์';
+    
+    const videoCount = this.files.filter(f => f.type === 'video').length;
+    const imageCount = this.files.filter(f => f.type === 'image').length;
+    
+    if (videoCount > 0 && imageCount > 0) {
+      return `แนะนำ: จัดวิดีโอให้อยู่ตำแหน่งแรก (${videoCount} วิดีโอ, ${imageCount} รูปภาพ)`;
+    } else if (videoCount > 0) {
+      return `วิดีโอ ${videoCount} ไฟล์`;
+    } else {
+      return `รูปภาพ ${imageCount} ไฟล์`;
+    }
+  }
+
+  // ฟังก์ชันจัดลำดับไฟล์อัตโนมัติ (วิดีโอขึ้นก่อน)
+  autoArrangeFiles(): void {
+    const videos = this.files.filter(f => f.type === 'video');
+    const images = this.files.filter(f => f.type === 'image');
+    
+    // จัดวิดีโอขึ้นก่อน แล้วตามด้วยรูปภาพ
+    this.files = [...videos, ...images];
+    this.currentIndex = 0; // รีเซ็ต index กลับไปที่แรก
   }
 
   triggerFileInput(): void {
@@ -423,6 +545,10 @@ export class CreatePostComponent implements OnInit, OnDestroy {
       const filesArray = Array.from(input.files);
       let imageCount = this.files.filter(f => f.type === 'image').length;
       let overLimit = false;
+      
+      // เก็บไฟล์ที่เลือกมาในลำดับที่ถูกต้อง
+      const newFiles: { url: string; file: File; type: 'image' | 'video' }[] = [];
+      
       for (const file of filesArray) {
         if (file.type.startsWith('image/')) {
           if (imageCount >= 9) {
@@ -431,7 +557,14 @@ export class CreatePostComponent implements OnInit, OnDestroy {
           }
           const reader = new FileReader();
           reader.onload = () => {
-            this.files.push({ url: reader.result as string, file, type: 'image' });
+            const newFile = { url: reader.result as string, file, type: 'image' as const };
+            newFiles.push(newFile);
+            
+            // เมื่ออ่านไฟล์เสร็จแล้ว ให้เพิ่มเข้าไปใน this.files ตามลำดับ
+            if (newFiles.length === filesArray.length) {
+              this.files = [...this.files, ...newFiles];
+              console.log('ลำดับไฟล์ที่เลือก:', this.getFileOrderInfo());
+            }
           };
           reader.readAsDataURL(file);
           imageCount++;
@@ -442,13 +575,21 @@ export class CreatePostComponent implements OnInit, OnDestroy {
           }
           const reader = new FileReader();
           reader.onload = () => {
-            this.files.push({ url: reader.result as string, file, type: 'video' });
+            const newFile = { url: reader.result as string, file, type: 'video' as const };
+            newFiles.push(newFile);
+            
+            // เมื่ออ่านไฟล์เสร็จแล้ว ให้เพิ่มเข้าไปใน this.files ตามลำดับ
+            if (newFiles.length === filesArray.length) {
+              this.files = [...this.files, ...newFiles];
+              console.log('ลำดับไฟล์ที่เลือก:', this.getFileOrderInfo());
+            }
           };
           reader.readAsDataURL(file);
         } else {
           alert('โปรดเลือกไฟล์ที่เป็นรูปภาพหรือวิดีโอ');
         }
       }
+      
       if (overLimit) {
         alert('คุณสามารถเลือกรูปภาพได้สูงสุด 9 ไฟล์');
       }
@@ -502,7 +643,11 @@ export class CreatePostComponent implements OnInit, OnDestroy {
     formData.append('cat_id', this.postData.cat_id.toString());
     formData.append('uid', this.postData.uid.toString());
 
-    this.files.forEach(file => {
+    // จัดลำดับไฟล์ใน Frontend ก่อนส่งไป Backend
+    const orderedFiles = [...this.files]; // สร้าง copy ของ array
+    
+    // ส่งไฟล์ตามลำดับที่ผู้ใช้เลือก
+    orderedFiles.forEach((file, index) => {
       if (file.type === 'image') {
         formData.append('images', file.file);
       } else if (file.type === 'video') {
@@ -510,26 +655,57 @@ export class CreatePostComponent implements OnInit, OnDestroy {
       }
     });
 
+    // เพิ่มข้อมูลลำดับไฟล์ใน comment เพื่อให้ Backend ทราบลำดับ
+    const fileOrderInfo = orderedFiles.map((file, index) => ({
+      order: index,
+      type: file.type,
+      fileName: file.file.name
+    }));
+    formData.append('fileOrderInfo', JSON.stringify(fileOrderInfo));
+
+    // Debug: แสดงลำดับไฟล์ที่จะส่ง
+    console.log('ลำดับไฟล์ที่จะส่ง:', this.getFileOrderInfo());
+    console.log('จำนวนไฟล์ทั้งหมด:', this.files.length);
+    console.log('รายละเอียดไฟล์:', this.files.map((file, index) => ({
+      order: index + 1,
+      type: file.type,
+      fileName: file.file.name,
+      fileSize: (file.file.size / 1024 / 1024).toFixed(2) + ' MB'
+    })));
+
     this.isLoading = true; // เปิดสถานะการโหลด
-    console.log('Request Body:', this.postData);
-    console.log('Files:', this.files);
-    console.log('Form Data:', formData);
 
     this.postService.addPost(formData).subscribe(
       (response) => {
         this.isLoading = false; // ปิดสถานะการโหลด
-        console.log('Response from addPost:', response); // เพิ่ม log เพื่อดู response
+        
+        // แสดง SweetAlert2 ที่มินิมอลและสวยงาม
         Swal.fire({
-          title: 'เพิ่มโพสต์สำเร็จ',
+          title: 'โพสต์สำเร็จ',
+          text: 'โพสต์ของคุณถูกสร้างเรียบร้อยแล้ว',
           icon: 'success',
+          confirmButtonText: 'ตกลง',
+          confirmButtonColor: '#e28c96',
+          showClass: {
+            popup: 'animate__animated animate__fadeInDown'
+          },
+          hideClass: {
+            popup: 'animate__animated animate__fadeOutUp'
+          },
+          timer: 2000,
+          timerProgressBar: true,
+          toast: true,
+          position: 'top-end',
+          background: '#f8f9fa',
+          color: '#333',
+          customClass: {
+            popup: 'minimal-swal-popup',
+            title: 'minimal-swal-title',
+            confirmButton: 'minimal-swal-button'
+          }
         }).then(() => {
           this.resetForm();
           // ใช้ postID จาก response (ตามที่ backend ส่งกลับมา)
-          console.log('Full response object:', response); // เพิ่ม debug เพื่อดู response ทั้งหมด
-          console.log('Response type:', typeof response);
-          console.log('Response keys:', Object.keys(response));
-
-          // ลองเข้าถึง postId ในหลายวิธี
           let postId;
           if (response && typeof response === 'object') {
             postId = response.postId || response.data?.postId || response.post_id || response.insertId || response.id;
@@ -540,17 +716,35 @@ export class CreatePostComponent implements OnInit, OnDestroy {
               const parsedResponse = JSON.parse(response);
               postId = parsedResponse.postId || parsedResponse.post_id || parsedResponse.insertId || parsedResponse.id;
             } catch (e) {
-              console.error('Error parsing response:', e);
+              // Error handling
             }
           }
-          console.log('Extracted postId:', postId, 'from response.postId:', response.postId);
-          console.log('Navigating to detail_post with postId:', postId, 'userId:', this.userId);
           this.router.navigate(['/detail_post'], { queryParams: { post_id: postId, user_id: this.userId } });
         });
       },
       (error) => {
         this.isLoading = false; // ปิดสถานะการโหลดในกรณีที่เกิดข้อผิดพลาด
-        console.error('Error adding post:', error);
+        
+        // แสดง SweetAlert2 สำหรับ error ที่มินิมอล
+        Swal.fire({
+          title: 'เกิดข้อผิดพลาด',
+          text: 'ไม่สามารถโพสต์ได้ กรุณาลองใหม่อีกครั้ง',
+          icon: 'error',
+          confirmButtonText: 'ตกลง',
+          confirmButtonColor: '#dc3545',
+          showClass: {
+            popup: 'animate__animated animate__fadeInDown'
+          },
+          hideClass: {
+            popup: 'animate__animated animate__fadeOutUp'
+          },
+          timer: 3000,
+          timerProgressBar: true,
+          toast: true,
+          position: 'top-end',
+          background: '#fff5f5',
+          color: '#dc3545'
+        });
       }
     );
   }
@@ -673,7 +867,6 @@ export class CreatePostComponent implements OnInit, OnDestroy {
       this.mapMarker.addListener('dragend', (event: any) => {
         const newLat = event.latLng.lat();
         const newLng = event.latLng.lng();
-        console.log('ลาก marker ไปที่:', newLat, newLng);
         this.reverseGeocode(newLat, newLng);
       });
       
@@ -708,6 +901,9 @@ export class CreatePostComponent implements OnInit, OnDestroy {
       let imageCount = this.files.filter(f => f.type === 'image').length;
       let overLimit = false;
 
+      // เก็บไฟล์ที่เลือกมาในลำดับที่ถูกต้อง
+      const newFiles: { url: string; file: File; type: 'image' | 'video' }[] = [];
+
       for (const file of filesArray) {
         if (file.type.startsWith('image/')) {
           if (imageCount >= 9) {
@@ -716,7 +912,14 @@ export class CreatePostComponent implements OnInit, OnDestroy {
           }
           const reader = new FileReader();
           reader.onload = () => {
-            this.files.push({ url: reader.result as string, file, type: 'image' });
+            const newFile = { url: reader.result as string, file, type: 'image' as const };
+            newFiles.push(newFile);
+            
+            // เมื่ออ่านไฟล์เสร็จแล้ว ให้เพิ่มเข้าไปใน this.files ตามลำดับ
+            if (newFiles.length === filesArray.length) {
+              this.files = [...this.files, ...newFiles];
+              console.log('ลำดับไฟล์ที่เลือก (Drag & Drop):', this.getFileOrderInfo());
+            }
           };
           reader.readAsDataURL(file);
           imageCount++;
@@ -727,7 +930,14 @@ export class CreatePostComponent implements OnInit, OnDestroy {
           }
           const reader = new FileReader();
           reader.onload = () => {
-            this.files.push({ url: reader.result as string, file, type: 'video' });
+            const newFile = { url: reader.result as string, file, type: 'video' as const };
+            newFiles.push(newFile);
+            
+            // เมื่ออ่านไฟล์เสร็จแล้ว ให้เพิ่มเข้าไปใน this.files ตามลำดับ
+            if (newFiles.length === filesArray.length) {
+              this.files = [...this.files, ...newFiles];
+              console.log('ลำดับไฟล์ที่เลือก (Drag & Drop):', this.getFileOrderInfo());
+            }
           };
           reader.readAsDataURL(file);
         } else {

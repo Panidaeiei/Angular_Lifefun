@@ -52,7 +52,6 @@ export class UserListAdminComponent implements OnDestroy {
     const adminId = localStorage.getItem('adminId') || sessionStorage.getItem('adminId');
     if (adminId) {
       this.adminId = adminId;
-      console.log('Constructor: Set adminId to', this.adminId);
     }
   }
 
@@ -67,55 +66,28 @@ export class UserListAdminComponent implements OnDestroy {
     const adminId = adminIdFromLocal || adminIdFromSession;
     const adminToken = adminTokenFromLocal || adminTokenFromSession;
 
-    console.log('AdminId from localStorage:', adminIdFromLocal);
-    console.log('AdminId from sessionStorage:', adminIdFromSession);
-    console.log('Selected adminId:', adminId);
-
     if (!adminId || !adminToken) {
-      console.error('AdminId หรือ AdminToken ไม่พบ');
       this.router.navigate(['/login'], { queryParams: { error: 'unauthorized' } });
       return;
     }
 
     // ตั้งค่า adminId
     this.adminId = adminId;
-    console.log('Set adminId to:', this.adminId);
 
     // ตรวจสอบอีกครั้งว่า adminId มีค่าหรือไม่
     if (!this.adminId) {
-      console.error('Admin ID ยังคงเป็น null!');
       this.errorMessage = 'ไม่สามารถตั้งค่า Admin ID ได้';
       return;
     }
 
     this.route.queryParams.subscribe(params => {
       const paramId = params['id'];
-      console.log('Current adminId:', this.adminId);
     });
 
     this.userService.getUsers().subscribe({
       next: (data) => {
-
-
         this.users = data.filter(user => user.status !== 0);
         this.filteredUsers = this.users;
-
-        // ตรวจสอบ user.uid ของแต่ละ user
-        this.users.forEach((user, index) => {
-          console.log(`User ${index}:`, {
-            username: user.username,
-            uid: (user as any).uid,
-            uidType: typeof (user as any).uid,
-            hasUid: (user as any).uid !== undefined && (user as any).uid !== null,
-            fullUserObject: user
-          });
-        });
-
-        // ตรวจสอบว่ามี user ที่ไม่มี uid หรือไม่
-        const usersWithoutUid = this.users.filter(user => !(user as any).uid);
-        if (usersWithoutUid.length > 0) {
-          console.warn('Users without UID:', usersWithoutUid);
-        }
 
         if (this.users.length === 0) {
           this.errorMessage = 'ไม่พบผู้ใช้งาน';
@@ -145,7 +117,6 @@ export class UserListAdminComponent implements OnDestroy {
       this.notificationSubscription = this.adminNotificationService.notificationCounts.subscribe(
         (counts) => {
           this.notificationCounts = counts;
-          console.log('Admin notification counts updated:', counts);
         }
       );
 
@@ -165,7 +136,6 @@ export class UserListAdminComponent implements OnDestroy {
           report: reportCount,
           total: reportCount
         };
-        console.log('Report notifications loaded:', reportCount);
       },
       error: (err) => {
         console.error('Error loading report notifications:', err);
@@ -209,13 +179,6 @@ export class UserListAdminComponent implements OnDestroy {
     }
 
     const params = { id: userId, adminId: this.adminId };
-    console.log('Navigating to /admin_profileuser with params:', params);
-    console.log('Params type check:', {
-      idType: typeof params.id,
-      adminIdType: typeof params.adminId,
-      idValue: params.id,
-      adminIdValue: params.adminId
-    });
 
     this.router.navigate(['/admin_profileuser'], {
       queryParams: params

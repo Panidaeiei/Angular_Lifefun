@@ -135,22 +135,24 @@
         <mat-card class="cardpost">
           <div style="display: flex; flex-direction: column; position: relative;">
 
-            <!-- แสดงรูปภาพหรือวิดีโอ -->
-            <a (click)="viewPost(post.post_id.toString())">
-              <ng-container *ngIf="post.media_type === 'image'; else videoTemplate">
-                <img [src]="post.media_url || 'https://via.placeholder.com/360x300'" class="imgpost" alt="รูปที่โพสต์">
-              </ng-container>
-              <ng-template #videoTemplate>
-                <video [src]="post.media_url" controls class="imgpost">
-                </video>
-              </ng-template>
-            </a>
+                          <!-- แสดงรูปภาพหรือวิดีโอ -->
+              <a (click)="viewPost(post.post_id.toString())">
+                <ng-container *ngIf="post.media_type === 'image'; else videoTemplate">
+                  <img [src]="post.media_url" class="imgpost" alt="รูปที่โพสต์">
+                </ng-container>
+                <ng-template #videoTemplate>
+                  <video [src]="post.media_url" controls class="imgpost">
+                  </video>
+                </ng-template>
+              </a>
 
-            <!-- ไอคอนแสดงว่ามีหลายรูป -->
-            <div *ngIf="post.hasMultipleMedia" class="multiple-media-icon">
-              <i class="fa fa-clone"
-                style="font-size: 30px; color: white; position: absolute; top: 10px; right: 10px; padding: 5px; border-radius: 50%;"></i>
-            </div>
+                          <!-- ไอคอนแสดงว่ามีหลายรูป -->
+              <div *ngIf="post.hasMultipleMedia" class="multiple-media-icon">
+                <i class="fa fa-clone"
+                    style="font-size: 30px; color: white; position: absolute; top: 10px; right: 10px; padding: 5px; border-radius: 50%;"></i>
+              </div>
+              
+
 
             <!-- ข้อมูลโพสต์ -->
             <div style="display: flex; align-items: center; justify-content: space-between; margin-right: 10px;">
