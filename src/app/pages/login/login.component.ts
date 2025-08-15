@@ -68,7 +68,7 @@ export class LoginComponent {
       password: this.password,
     };
 
-    this.http.post(`${environment.apiBaseUrl}/login`, payload).subscribe(
+    this.http.post(`${this.baseUrl}/login`, payload).subscribe(
       (response: any) => {
         // ตรวจสอบว่ามีสถานะของบัญชีและถูกระงับหรือไม่
         if (response.status === 0) {
