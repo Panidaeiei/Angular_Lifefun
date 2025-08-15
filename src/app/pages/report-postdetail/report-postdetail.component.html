@@ -105,11 +105,11 @@
                     <div *ngIf="currentMediaIndex >= 0 && currentMedia">
                         <ng-container *ngIf="currentMedia.type === 'image'; else videoTemplate">
                             <img [src]="currentMedia.url" alt="โพสต์รูปภาพ"
-                                style="width: 100%; height: auto; max-height: 500px; object-fit: cover; ">
+                            style="width: 100%; height: auto; max-height: 500px; object-fit: cover; ">
                         </ng-container>
                         <ng-template #videoTemplate>
                             <video [src]="currentMedia.url" controls
-                                style="width: 100%; height: auto; max-height: 500px; object-fit: cover;  margin-bottom: 10px; touch-action: pan-y pinch-zoom;"></video>
+                            style="width: 100%; height: auto; max-height: 500px; object-fit: cover; "></video>
                         </ng-template>
                     </div>
 
@@ -137,9 +137,13 @@
 
         <!-- Post Content -->
         <div class="post-content">
+            <div class="likes-section">
+                <i class="fa fa-heart"></i>
+                <span *ngIf="post.likes_count > 0" class="likes-count">{{ post.likes_count }}</span>
+            </div>
             
             <div class="post-text">
-                <span style="font-size: 20px;" [innerHTML]="post.title | newlineToBr"></span>
+                <span [innerHTML]="post.title | newlineToBr"></span>
             </div>
         </div>
 

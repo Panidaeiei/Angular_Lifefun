@@ -126,7 +126,7 @@ export class ProfileUserComponent implements OnInit, OnDestroy {
   private startNotificationTracking(): void {
     if (this.userId) {
       // โหลดข้อมูลจาก localStorage เท่านั้น (ไม่เรียก backend)
-      this.loadNotificationCountsFromStorage();
+      // this.loadNotificationCountsFromStorage();
       
       // ไม่เรียก API อีกต่อไป - ใช้ข้อมูลจาก localStorage เท่านั้น
       // this.notificationService.loadNotificationCounts(Number(this.userId));
@@ -437,19 +437,19 @@ export class ProfileUserComponent implements OnInit, OnDestroy {
     }
   }
 
-  // เพิ่มฟังก์ชันบันทึกข้อมูลลง localStorage
-  private saveNotificationCountsToStorage(): void {
-    const countsToSave = {
-      like: this.notificationCounts.like || 0,
-      follow: this.notificationCounts.follow || 0,
-      share: this.notificationCounts.share || 0,
-      comment: this.notificationCounts.comment || 0,
-      unban: this.notificationCounts.unban || 0,
-      total: (this.notificationCounts.like || 0) + (this.notificationCounts.follow || 0) + (this.notificationCounts.share || 0) + (this.notificationCounts.comment || 0) + (this.notificationCounts.unban || 0)
-    };
+  // // เพิ่มฟังก์ชันบันทึกข้อมูลลง localStorage
+  // private saveNotificationCountsToStorage(): void {
+  //   const countsToSave = {
+  //     like: this.notificationCounts.like || 0,
+  //     follow: this.notificationCounts.follow || 0,
+  //     share: this.notificationCounts.share || 0,
+  //     comment: this.notificationCounts.comment || 0,
+  //     unban: this.notificationCounts.unban || 0,
+  //     total: (this.notificationCounts.like || 0) + (this.notificationCounts.follow || 0) + (this.notificationCounts.share || 0) + (this.notificationCounts.comment || 0) + (this.notificationCounts.unban || 0)
+  //   };
     
-    localStorage.setItem(`notificationCounts_${this.userId}`, JSON.stringify(countsToSave));
-    this.notificationCounts = countsToSave;
-    console.log('Saved notification counts to storage:', countsToSave);
-  }
+  //   localStorage.setItem(`notificationCounts_${this.userId}`, JSON.stringify(countsToSave));
+  //   this.notificationCounts = countsToSave;
+  //   console.log('Saved notification counts to storage:', countsToSave);
+  // }
 }

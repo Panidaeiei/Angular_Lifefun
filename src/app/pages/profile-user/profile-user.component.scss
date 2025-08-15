@@ -1076,3 +1076,41 @@ body {
     min-height: 160px !important;
   }
 }
+
+/* Responsive Description Container */
+.description-container {
+  width: 100px !important;
+  margin-top: 10px;
+  
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 1200px) {
+  .description-container {
+    max-width: 450px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .description-container {
+    max-width: 400px;
+  }
+}
+
+@media (max-width: 768px) {
+  .description-container {
+    max-width: 350px;
+  }
+}
+
+@media (max-width: 600px) {
+  .description-container {
+    max-width: 300px;
+  }
+}
+
+@media (max-width: 480px) {
+  .description-container {
+    max-width: 250px;
+  }
+}

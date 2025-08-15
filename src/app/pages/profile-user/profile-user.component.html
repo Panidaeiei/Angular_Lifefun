@@ -28,7 +28,7 @@
             <a class="menu-item" [routerLink]="['/Notification_user']" [queryParams]="{ id: userId }">
                 <div class="bell-icon-container">
                 <i class="fa-solid fa-bell"></i>
-                    <div class="notification-dot" *ngIf="notificationCounts.total > 0"></div>
+                    <!-- <div class="notification-dot" *ngIf="notificationCounts.total > 0"></div> -->
                 </div>
                 <span class="itim-regular">การแจ้งเตือน</span>
             </a>
@@ -176,7 +176,9 @@
                                         <span class="profile-stat-label">กำลังติดตาม</span>
                                     </div>
                                 </div>
-                                <span class="profile-description">{{ user?.description || '' }}</span>
+                                <div class="description-container">
+                                    <span class="profile-description">{{ user?.description || '' }}</span>
+                                </div>
                             </div>
                         </div>
                     </div>

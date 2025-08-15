@@ -109,7 +109,7 @@ export class EditprofileUserComponent implements OnInit {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files[0]) {
       const file = input.files[0];
-      
+
       // ตรวจสอบว่าเป็นไฟล์รูปภาพหรือไม่
       if (!this.isImageFile(file)) {
         Swal.fire({
@@ -138,22 +138,22 @@ export class EditprofileUserComponent implements OnInit {
     // ตรวจสอบ MIME type
     const validImageTypes = [
       'image/jpeg',
-      'image/jpg', 
+      'image/jpg',
       'image/png',
       'image/gif',
       'image/webp',
       'image/bmp',
       'image/svg+xml'
     ];
-    
+
     // ตรวจสอบนามสกุลไฟล์
     const validExtensions = [
       '.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp', '.svg'
     ];
-    
+
     const fileName = file.name.toLowerCase();
     const fileExtension = fileName.substring(fileName.lastIndexOf('.'));
-    
+
     // ตรวจสอบทั้ง MIME type และนามสกุลไฟล์
     return validImageTypes.includes(file.type) || validExtensions.includes(fileExtension);
   }
@@ -185,6 +185,7 @@ export class EditprofileUserComponent implements OnInit {
     });
   }
 
+
   // บันทึกข้อมูล
   onSaveProfile(): void {
     // ตรวจสอบว่าฟิลด์ที่จำเป็นไม่เป็นค่าว่าง
@@ -203,7 +204,12 @@ export class EditprofileUserComponent implements OnInit {
       });
       return;
     }
-    
+
+    // เปลี่ยนจาก SweetAlert2 เป็น alert ธรรมดา
+    if (this.user.description && this.user.description.length > 300) {
+      alert('คำอธิบายใต้โปรไฟล์ต้องไม่เกิน 300 ตัวอักษร (ปัจจุบัน: ' + this.user.description.length + ' ตัวอักษร)');
+      return;
+    }
 
     if (!this.user.email || this.user.email.trim() === '') {
       alert('กรุณากรอกอีเมล');
@@ -264,6 +270,8 @@ export class EditprofileUserComponent implements OnInit {
       });
       return;
     }
+
+
 
     this.isLoading = true;
     const formData = new FormData();
