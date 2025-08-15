@@ -77,41 +77,38 @@ export class NotificationUserComponent {
 
     this.checkScreenSize();
     
-    // โหลด currentUserId จาก localStorage ก่อน
+    // โหลด currentUserId เพื่อใช้ในการนำทาง
     this.userService.loadCurrentUserId();
+    this.userService.getCurrentUserId().subscribe((userId) => {
+      this.currentUserId = userId;
+    });
     
-    // ตรวจสอบ snapshot ครั้งแรก
+    // ตรวจสอบ UID แค่ครั้งเดียว
     const snapshotParams = this.route.snapshot.queryParams;
     if (snapshotParams['id']) {
       this.userId = snapshotParams['id'];
+      // ตรวจสอบว่า userId ใน URL ตรงกับ userId ที่ล็อกอิน
+      if (this.userId !== loggedInUserId) {
+        this.clearStoredData();
+        this.router.navigate(['/login'], { 
+          queryParams: { error: 'uid_mismatch' },
+          replaceUrl: true
+        });
+        return;
+      }
+      // เรียก API แค่ครั้งเดียว
       this.loadNotificationData();
     }
     
-    // Subscribe เฉพาะ params ที่มี id เท่านั้น
-    this.route.queryParams
-      .pipe(filter(params => !!params['id']))
-      .subscribe((params) => {
-        this.userId = params['id'];
-        this.loadNotificationData();
-      });
-
-    // ตรวจสอบ userId ใน url กับ userId ที่ล็อกอิน
-    this.userService.getCurrentUserId().subscribe((currentUserId: string | null) => {
-      const urlUserId = this.route.snapshot.queryParams['id'];
-      
-      // ตั้งค่า currentUserId สำหรับใช้ใน template
-      this.currentUserId = currentUserId;
-      
-      if (urlUserId && currentUserId && urlUserId !== currentUserId) {
-        // ถ้า id ใน url ไม่ตรงกับ id ที่ล็อกอินไว้ ให้ redirect ออก
-        this.router.navigate(['/login']);
-        return;
-      }
-    });
+    // ลบ subscription ที่ทำให้เรียก API ซ้ำออก
+    // ไม่ต้อง subscribe queryParams เพราะจะทำให้เรียก API ซ้ำ
   }
 
   // แยกฟังก์ชันสำหรับโหลดข้อมูลการแจ้งเตือน
   private loadNotificationData(): void {
+    // ตรวจสอบ UID ก่อนโหลดข้อมูล
+    if (!this.validateCurrentUser()) return;
+    
     if (this.userId) {
         this.loadNotifications_like();
         this.loadNotifications_follow();
@@ -119,6 +116,23 @@ export class NotificationUserComponent {
         this.loadNotifications_comment();
         this.loadNotificationsUnban();
       }
+  }
+
+  // เพิ่มฟังก์ชันตรวจสอบ UID
+  private validateCurrentUser(): boolean {
+    const loggedInUserId = localStorage.getItem('userId') || sessionStorage.getItem('userId');
+    
+    if (!loggedInUserId || !this.userId || loggedInUserId !== this.userId) {
+      console.warn('UID validation failed, redirecting to login');
+      this.clearStoredData();
+      this.router.navigate(['/login'], { 
+        queryParams: { error: 'uid_validation_failed' },
+        replaceUrl: true
+      });
+      return false;
+    }
+    
+    return true;
   }
 
   @HostListener('window:resize', ['$event'])
@@ -187,6 +201,9 @@ export class NotificationUserComponent {
   }
 
   onLikeNotificationClick(noti: any): void {
+    // ตรวจสอบ UID ก่อนดำเนินการ
+    if (!this.validateCurrentUser()) return;
+    
     if (noti.notify === 0) {
       this.notificationService.Noti_Likeread(noti.lid).subscribe({
         next: () => {
@@ -227,6 +244,9 @@ export class NotificationUserComponent {
   }
 
   onFollowNotificationClick(noti: any): void {
+    // ตรวจสอบ UID ก่อนดำเนินการ
+    if (!this.validateCurrentUser()) return;
+    
     if (noti.notify === 1) {
       this.notificationService.Noti_Followread(noti.follow_id).subscribe({
         next: () => {
@@ -250,6 +270,9 @@ export class NotificationUserComponent {
   }
 
   goToProfile(userId: string): void {
+    // ตรวจสอบ UID ก่อนดำเนินการ
+    if (!this.validateCurrentUser()) return;
+    
     if (!userId) {
       return;
     }
@@ -288,6 +311,9 @@ export class NotificationUserComponent {
   }
 
   onShareNotificationClick(noti: any): void {
+    // ตรวจสอบ UID ก่อนดำเนินการ
+    if (!this.validateCurrentUser()) return;
+    
     if (noti.notify === 0) {   // <-- เงื่อนไขนี้หมายถึง "ยังไม่อ่าน" (notify=0)
       this.notificationService.Noti_Sharedwread(noti.share_id).subscribe({
         next: () => {
@@ -337,6 +363,9 @@ export class NotificationUserComponent {
   }
 
   onCommentNotificationClick(noti: any): void {
+    // ตรวจสอบ UID ก่อนดำเนินการ
+    if (!this.validateCurrentUser()) return;
+    
     if (noti.notify === 0) {  // ยังไม่อ่าน
       this.notificationService.Noti_Commentread(noti.cid).subscribe({
         next: () => {
@@ -376,6 +405,7 @@ export class NotificationUserComponent {
   }
 
   logout() {
+    this.clearStoredData();
     localStorage.removeItem('userId');
     localStorage.removeItem('token');
     localStorage.removeItem('userRole');
@@ -387,4 +417,26 @@ export class NotificationUserComponent {
     this.router.navigate(['/login']);
   }
 
+  private clearStoredData(): void {
+    this.userId = '';
+    this.notifications = [];
+    this.notificationsFollow = [];
+    this.likers = [];
+    this.showLikersBox = false;
+    this.latestLikerName = '';
+    this.showFollowersBox = false;
+    this.unreadLikeCount = 0;
+    this.latestFollowerName = '';
+    this.unreadFollowCount = 0;
+    this.notificationsShare = [];
+    this.unreadShareCount = 0;
+    this.latestSharedName = '';
+    this.showSharedBox = false;
+    this.notificationsComment = [];
+    this.unreadCommentCount = 0;
+    this.latestCommenterName = '';
+    this.showCommentBox = false;
+    this.notificationsUnban = [];
+    this.unreadUnbanCount = 0;
+  }
 }

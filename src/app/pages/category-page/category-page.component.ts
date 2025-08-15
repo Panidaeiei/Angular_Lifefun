@@ -49,7 +49,18 @@ export class CategoryPageComponent implements OnInit, OnDestroy {
         this.cat_id = +params['cat_id'];
         console.log('User ID set from queryParams:', this.userId);
         // เริ่มการติดตามการแจ้งเตือน
-        this.startNotificationTracking();
+        this.notificationService.loadNotificationCounts(Number(this.userId));
+        
+        // ลบการอัปเดตอัตโนมัติออก (ไม่ให้เรียก API ซ้ำ)
+        // this.notificationService.startAutoUpdate(Number(this.userId));
+      
+        // ติดตามการเปลี่ยนแปลงจำนวนการแจ้งเตือน
+        this.notificationSubscription = this.notificationService.notificationCounts$.subscribe(
+          (counts) => {
+            this.notificationCounts = counts;
+            console.log('Notification counts updated:', counts);
+          }
+        );
       } else {
         console.error('User ID not found in queryParams.');
       }

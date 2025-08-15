@@ -84,7 +84,7 @@ export class PostService {
       .set('uid', uid || '');  // ส่ง uid ของผู้ใช้ใน header
 
     // ส่งคำขอ GET ไปที่ API พร้อม Token และ uid
-    return this.http.get<ShowPost[]>(`${this.baseUrl}/posts/getPosts_interests`, { headers }).pipe(
+    return this.http.get<ShowPost[]>(`http://localhost:3000/api/posts/getPosts_interests`, { headers }).pipe(
       tap((response) => {
         // ตรวจสอบข้อมูลที่ได้รับจาก API
       })
@@ -171,7 +171,6 @@ export class PostService {
     return this.http.put(`${this.baseUrl}/posts/editPost/${postId}`, editData, { headers });
   }
 
-
   // profile.service.ts
   viewPost(postId: string): Observable<any> {
     const headers = new HttpHeaders({
@@ -196,7 +195,6 @@ export class PostService {
         })
       );
   }
-
 
 
   getPostsCosmetics(): Observable<ShowPost[]> {

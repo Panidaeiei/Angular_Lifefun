@@ -41,20 +41,49 @@
 
     <div class="card-container-wrapper">
         <div class="card-container">
-            <div *ngFor="let post of posts" class="card-wrapper">
+            <div *ngFor="let post of posts" class="card-wrapper" (click)="onHeartClick()">
                 <mat-card class="cardpost">
                     <div style="display: flex; flex-direction: column; position: relative;">
 
                         <!-- แสดงรูปภาพหรือวิดีโอ -->
-                        <a (click)="onHeartClick()">
-                            <ng-container *ngIf="post.media_type === 'image'; else videoTemplate">
-                                <img [src]="post.media_url" class="imgpost" alt="รูปที่โพสต์">
-                            </ng-container>
-                            <ng-template #videoTemplate>
-                                <video [src]="post.media_url" controls class="imgpost">
-                                </video>
-                            </ng-template>
-                        </a>
+                        <div class="media-container" style="position: relative;"
+                             (touchstart)="onTouchStart($event, post)"
+                             (touchend)="onTouchEnd($event, post)"
+                             (mousedown)="onMouseDown($event, post)">
+                            <a (click)="viewPost(post.post_id.toString())">
+                                <ng-container *ngIf="post.media_type === 'image'; else videoTemplate">
+                                    <img [src]="post.media_url" class="imgpost" alt="รูปที่โพสต์">
+                                </ng-container>
+                                <ng-template #videoTemplate>
+                                    <video [src]="post.media_url" controls class="imgpost">
+                                    </video>
+                                </ng-template>
+                            </a>
+
+                            <!-- ปุ่มเลื่อนไฟล์ (แสดงเมื่อมีหลายไฟล์) -->
+                            <div *ngIf="post.hasMultipleMedia === true" class="media-controls">
+                                <button class="media-nav-btn" (click)="prevMedia(post, $event)" [disabled]="!post.allMedia || post.allMedia.length <= 1">
+                                    <i class="fa fa-chevron-left"></i>
+                                </button>
+                                <button class="media-nav-btn" (click)="nextMedia(post, $event)" [disabled]="!post.allMedia || post.allMedia.length <= 1">
+                                    <i class="fa fa-chevron-right"></i>
+                                </button>
+                            </div>
+
+                            <!-- จุดแสดงตำแหน่งไฟล์ปัจจุบัน (แสดงเมื่อมีหลายไฟล์) -->
+                            <div *ngIf="post.hasMultipleMedia === true" class="media-dots">
+                                <div *ngFor="let media of post.allMedia; let i = index"
+                                     class="dot"
+                                     [class.active]="i === post.currentImageIndex"
+                                     (click)="goToMedia(post, i, $event)">
+                                </div>
+                            </div>
+
+                            <!-- ตัวบ่งชี้จำนวนไฟล์ -->
+                            <div *ngIf="post.hasMultipleMedia === true" class="media-indicator">
+                                <span class="indicator-text">{{ (post.currentImageIndex || 0) + 1 }}/{{ post.allMedia?.length || 0 }}</span>
+                            </div>
+                        </div>
 
                         <!-- ไอคอนแสดงว่ามีหลายรูป -->
                         <div *ngIf="post.hasMultipleMedia" class="multiple-media-icon">
@@ -69,8 +98,8 @@
                                 {{ post.title | slice:0:15 }}{{ post.title.length > 15 ? '...' : '' }}
                             </span>
                             <div
-                                style="display: flex; align-items: center; justify-content: space-between; margin-right: 10px;">
-                                <a [routerLink]="['']" class="hover-link"
+                                style="display: flex; align-items: center; justify-content: space-between; margin-right: 10px;" (click)="onHeartClick()">
+                                <a [routerLink]="['']" class="hover-link" 
                                     style="color: #e96e7e; font-size: 20px; text-decoration: none;">
                                     View
                                 </a>
@@ -111,15 +140,17 @@
                         </div>
                     </div>
                 </mat-card>
-                <div *ngIf="isDialogOpen" class="dialog-overlay" (click)="closeDialog()">
-                    <div class="dialog-box" (click)="$event.stopPropagation()">
-                        <button class="close-button" (click)="closeDialog()">×</button>
-                        <img src="../../../assets/images/Logoweb.png" alt="Home Icon" width="140px">
-                        <h3>กรุณาเข้าสู่ระบบ/สมัครสมาชิก</h3>
-                        <button class="button1" (click)="navigateToLogin()">เข้าสู่ระบบ</button>
-                    </div>
-                </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Dialog แยกออกมาจาก loop -->
+    <div *ngIf="isDialogOpen" class="dialog-overlay" (click)="closeDialog()">
+        <div class="dialog-box" (click)="$event.stopPropagation()">
+            <button class="close-button" (click)="closeDialog()" type="button">×</button>
+            <img src="../../../assets/images/Logoweb.png" alt="Home Icon" width="140px">
+            <h3>กรุณาเข้าสู่ระบบ/สมัครสมาชิก</h3>
+            <button class="button1" (click)="navigateToLogin()" type="button">เข้าสู่ระบบ</button>
         </div>
     </div>
     <div style="height: 30px;"></div>

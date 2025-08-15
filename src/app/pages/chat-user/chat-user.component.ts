@@ -87,7 +87,10 @@ export class ChatUserComponent implements OnInit, OnDestroy {
       if (this.userId) {
         this.loadUserChats();
         // เริ่มการติดตามการแจ้งเตือน
-        this.startNotificationTracking();
+        this.notificationService.loadNotificationCounts(Number(this.userId));
+        
+        // ลบการอัปเดตอัตโนมัติออก (ไม่ให้เรียก API ซ้ำ)
+        // this.notificationService.startAutoUpdate(Number(this.userId));
       }
     });
     

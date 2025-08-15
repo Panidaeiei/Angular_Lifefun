@@ -74,8 +74,10 @@ export class UserBanComponent implements OnDestroy {
       }
     });
 
-    // เริ่มการติดตามการแจ้งเตือน
-    this.startNotificationTracking();
+    // ปิดการติดตามการแจ้งเตือนเพื่อลด database connections
+    // if (this.userId) {
+    //   this.startNotificationTracking();
+    // }
   }
 
   // เริ่มการติดตามการแจ้งเตือน
@@ -84,7 +86,7 @@ export class UserBanComponent implements OnDestroy {
       // โหลดการแจ้งเตือนครั้งแรก
       this.adminNotificationService.loadNotificationCounts(this.userId);
       
-      // เริ่มการอัปเดตอัตโนมัติ
+      // เริ่มการอัปเดตอัตโนมัติ (ลดความถี่ลง)
       this.adminNotificationService.startAutoUpdate(this.userId);
       
       // ติดตามการเปลี่ยนแปลงจำนวนการแจ้งเตือน
@@ -94,8 +96,9 @@ export class UserBanComponent implements OnDestroy {
         }
       );
 
-      // โหลดข้อมูลการแจ้งเตือนจาก API ที่มีอยู่
-      this.loadReportNotifications();
+      // โหลดข้อมูลการแจ้งเตือนจาก API ครั้งเดียวตอนเริ่มต้น
+      // ไม่ต้องโหลดซ้ำเพราะ adminNotificationService จัดการแล้ว
+      // this.loadReportNotifications(); // ลบออก
     }
   }
 
@@ -203,8 +206,8 @@ export class UserBanComponent implements OnDestroy {
   }
 
   ngOnDestroy(): void {
-    // หยุดการติดตามการแจ้งเตือน
-    this.adminNotificationService.stopAutoUpdate();
+    // ปิดการติดตามการแจ้งเตือนเพื่อลด database connections
+    // this.adminNotificationService.stopAutoUpdate();
     
     // ยกเลิก subscription
     if (this.notificationSubscription) {

@@ -25,129 +25,129 @@
         </button>
     </div>
 </mat-toolbar>
-<div style="display: flex; justify-content: center; align-items: center; margin-top: 130PX;">
-    <div *ngIf="post" class="divpost" [ngClass]="{'deleting': isDeletingPost}">
-        <!-- Loading indicator เมื่อกำลังลบโพสต์ -->
-        <div *ngIf="isDeletingPost" class="delete-loading-overlay">
+
+<!-- Main Content Container -->
+<div class="admin-content-container">
+    <!-- Post Management Header -->
+    <div class="management-header">
+        <h1 class="page-title">จัดการโพสต์ที่ถูกรายงาน</h1>
+        <p class="page-subtitle">ตรวจสอบและดำเนินการกับโพสต์ที่ไม่เหมาะสม</p>
+    </div>
+
+    <!-- Post Card -->
+    <div *ngIf="post" class="post-card" [ngClass]="{'deleting': isDeletingPost}">
+        <!-- Loading Overlay -->
+        <div *ngIf="isDeletingPost" class="loading-overlay">
             <div class="loading-content">
                 <div class="spinner"></div>
-                <p class="loading-message">กำลังลบโพสต์...</p>
-                <p class="loading-subtitle">กรุณารอสักครู่</p>
+                <p>กำลังดำเนินการ...</p>
             </div>
         </div>
-        
-        <div class="post-header" style="display: flex; align-items: flex-start; width: 100%;">
-            <a (click)="navigateToUserProfile(post.user_uid)" style="cursor: pointer; flex-shrink: 0;">
+
+        <!-- User Info Section -->
+        <div class="user-info-section">
+            <div class="user-profile">
                 <img [src]="post.user_profile_image || 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'"
-                    alt="รูปโปรไฟล์" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover;">
-            </a>
-
-            <div style="display: flex; flex-direction: column; flex: 1; margin-left: 20px;">
-                <span style="font-size: 30px; font-weight: 500;">
-                    {{ post.user_name }}
-                </span>
-                <span style="color: #7e7776; margin-top: 5px; margin-bottom: 10px;">
-                    {{ post.post_time | timeAgo }}
-                </span>
-                <div *ngIf="post.location">
-                    <i class="fa-solid fa-location-dot"
-                        style="margin-right: 5px; font-size: 20px; color: rgb(228, 63, 91);"></i>
-                    <a class="location" [href]="post.location" target="_blank">
-                        Location:
-                        {{ post.location.length > 30 ? (post.location.substring(0, 30) + '...') :
-                        post.location
-                        }}
-                    </a>
+                    alt="รูปโปรไฟล์" class="profile-image">
+                <div class="user-details">
+                    <h3 class="username">{{ post.user_name }}</h3>
+                    <p class="post-time">{{ post.post_time | timeAgo }}</p>
+                    <div *ngIf="post.location" class="location-info">
+                        <i class="fa-solid fa-location-dot"></i>
+                        <a [href]="post.location" target="_blank" class="location-link">
+                            {{ post.location.length > 30 ? (post.location.substring(0, 30) + '...') : post.location }}
+                        </a>
+                    </div>
                 </div>
             </div>
 
-            <a mat-button [matMenuTriggerFor]="menu"
-            style="display: flex; align-items: center; justify-content: center; padding: 0; flex-shrink: 0;">
-            <svg xmlns="http://www.w3.org/2000/svg" height="30" viewBox="0 0 24 24" width="30"
-                fill="black">
-                <circle cx="12" cy="5" r="2"></circle>
-                <circle cx="12" cy="12" r="2"></circle>
-                <circle cx="12" cy="19" r="2"></circle>
-            </svg>
-        </a>
+            <!-- Admin Actions Menu -->
+            <div class="admin-actions">
+                <button mat-icon-button [matMenuTriggerFor]="adminMenu" class="action-button">
+                    <i class="fa-solid fa-ellipsis-vertical"></i>
+                </button>
 
-        <mat-menu #menu="matMenu">
-            <button mat-menu-item (click)="deletePost(post.post_id)" 
-                [disabled]="isDeletingPost" 
-                [ngClass]="{'delete-loading': isDeletingPost}"
-                class="delete-post-btn"
-                [matTooltip]="isDeletingPost ? 'กำลังลบโพสต์...' : 'ลบโพสต์'">
-                <div class="delete-btn-content">
-                    <i *ngIf="!isDeletingPost" class="fa-solid fa-user-slash"
-                        style="margin-right: 5px; font-size: 20px; color: rgb(200, 50, 50);"></i>
-                    <i *ngIf="isDeletingPost" class="fa-solid fa-spinner fa-spin"
-                        style="margin-right: 5px; font-size: 20px; color: rgb(200, 50, 50);"></i>
-                    <span style="font-size: 15px;">
-                        <span *ngIf="!isDeletingPost">ลบโพสต์</span>
-                        <span *ngIf="isDeletingPost" class="loading-text">กำลังลบ...</span>
-                    </span>
-                </div>
-            </button>
-            <!-- <button mat-menu-item >
-                <div style="display: flex; align-items: center; justify-content: center;">
-                    <i class="fa-solid fa-xmark"
-                        style="margin-right: 5px; font-size: 30px; color: #d9534f;"></i>
-                    <span style="font-size: 15px;">ปฏิเสธการรายงาน</span>
-                </div>
-            </button> -->
-        </mat-menu>
+                <mat-menu #adminMenu="matMenu" class="admin-menu">
+                    <!-- Ban User Option -->
+                    <button mat-menu-item (click)="banUser(post.user_uid, post.user_name)" 
+                            class="ban-user-btn"
+                            [disabled]="isBanningUser"
+                            [matTooltip]="isBanningUser ? 'กำลังระงับบัญชี...' : 'ระงับบัญชีผู้ใช้'">
+                        <i class="fa-solid fa-user-slash"></i>
+                        <span>{{ isBanningUser ? 'กำลังระงับ...' : 'ระงับบัญชีผู้ใช้' }}</span>
+                    </button>
+
+                    <!-- Delete Post Option -->
+                    <button mat-menu-item (click)="deletePost(post.post_id)" 
+                            class="delete-post-btn"
+                            [disabled]="isDeletingPost" 
+                            [matTooltip]="isDeletingPost ? 'กำลังลบโพสต์...' : 'ลบโพสต์'">
+                        <i class="fa-solid fa-trash"></i>
+                        <span>{{ isDeletingPost ? 'กำลังลบ...' : 'ลบโพสต์' }}</span>
+                    </button>
+
+                    <!-- View User Profile -->
+                    <button mat-menu-item (click)="viewUserProfile(post.user_uid)" class="view-profile-btn">
+                        <i class="fa-solid fa-user"></i>
+                        <span>ดูโปรไฟล์ผู้ใช้</span>
+                    </button>
+                </mat-menu>
+            </div>
         </div>
 
-        <!-- รูปภาพ/วิดีโอ -->
-        <div *ngIf="post" class="media-slider">
-            <div class="media-container" style="position: relative;">
-                <ng-container *ngIf="post.images.length || post.videos.length">
-                    <div *ngIf="currentMediaIndex >= 0">
+        <!-- Media Content -->
+        <div class="media-section">
+            <div *ngIf="post.images.length || post.videos.length" class="media-slider" 
+                 (mouseenter)="showControls()" (mouseleave)="hideControls()"
+                 (touchstart)="onTouchStart($event)" (touchmove)="onTouchMove($event)" (touchend)="onTouchEnd($event)"
+                 style="touch-action: pan-y pinch-zoom;">
+                <div class="media-container" style="position: relative;">
+                    <div *ngIf="currentMediaIndex >= 0 && currentMedia">
                         <ng-container *ngIf="currentMedia.type === 'image'; else videoTemplate">
                             <img [src]="currentMedia.url" alt="โพสต์รูปภาพ"
-                                style="width: 800px; height: 750px; object-fit: cover; margin-bottom: 10px;">
+                                style="width: 100%; height: auto; max-height: 500px; object-fit: cover; ">
                         </ng-container>
                         <ng-template #videoTemplate>
                             <video [src]="currentMedia.url" controls
-                                style="width: 800px; height: 750px; object-fit: cover; background-color: black; margin-bottom: 10px;"></video>
+                                style="width: 100%; height: auto; max-height: 500px; object-fit: cover;  margin-bottom: 10px; touch-action: pan-y pinch-zoom;"></video>
                         </ng-template>
                     </div>
-                </ng-container>
-            </div>
-        </div>
 
+                    <!-- ปุ่มเลื่อน (Previous/Next) -->
+                    <div class="slider-controls" *ngIf="(post.images.length + post.videos.length) > 1">
+                        <button (click)="prevMedia()" class="prev-btn" style="touch-action: manipulation;"
+                            [disabled]="currentMediaIndex === 0" matTooltip="รูปก่อนหน้า">❮</button>
+                        <button (click)="nextMedia()" class="next-btn" style="touch-action: manipulation;"
+                            [disabled]="currentMediaIndex === (post.images.length + post.videos.length - 1)" matTooltip="รูปถัดไป">❯</button>
+                    </div>
 
-        <div style="display: flex; align-items: center; gap: 10px; margin: 15px;">
-            <i class="fa fa-heart" style="font-size: 30px; color: rgb(109, 105, 106);"></i>
-            <span *ngIf="post.likes_count > 0" style="font-weight: 500; font-size: 22px;">
-                {{ post.likes_count }}
-            </span>
-        </div>
-        <!-- คำบรรยาย -->
-        <div style="width: 760px; padding: 0px 20px; font-size: 22px; margin-bottom: 20px;">
-            <span [innerHTML]="post.title | newlineToBr"></span>
-        </div>
+                    <!-- แสดงสถานะการเลื่อน (จำนวนรูป/วิดีโอ) -->
+                    <div class="media-indicator" *ngIf="(post.images.length + post.videos.length) > 1">
+                        <span class="indicator-text">{{ currentMediaIndex + 1 }} / {{ post.images.length + post.videos.length }}</span>
+                    </div>
 
-        <div *ngFor="let comment of (showAllComments ? comments : comments.slice(0, 2))" style="margin-bottom: 20px;">
-            <div style="display: flex; gap: 10px; margin-left: 20px; justify-content: space-between;">
-                <div style="display: flex; gap: 15px;">
-                    <img style="width: 60px; height: 60px; object-fit: cover; border-radius: 50%; cursor: pointer;"
-                        [src]="comment.image_url || 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'"
-                        alt="">
-                    <div style="display: flex; flex-direction: column;  width: 450px; ">
-                        <div style="margin-bottom: 5px;">
-                            <span style="font-size: 20px; font-weight: 500;" title="username">{{
-                                comment.username}}</span>
-
-                            <span style="margin-left: 10px; color: #949090;">{{ comment.date_time | timeAgo }}</span>
-                        </div>
-                        <span
-                            style="font-size: 20px; white-space: pre-line; word-wrap: break-word; word-break: break-word;"
-                            title="comment">{{ comment.title }}</span>
+                    <!-- Dots Indicator (แสดงเฉพาะถ้ามี media > 1) -->
+                    <div class="media-dots" *ngIf="(post.images.length + post.videos.length) > 1">
+                        <span *ngFor="let m of [].constructor(post.images.length + post.videos.length); let i = index"
+                            [class.active]="i === currentMediaIndex" class="dot"></span>
                     </div>
                 </div>
-
             </div>
         </div>
+
+        <!-- Post Content -->
+        <div class="post-content">
+            
+            <div class="post-text">
+                <span style="font-size: 20px;" [innerHTML]="post.title | newlineToBr"></span>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- No Post Message -->
+    <div *ngIf="!post" class="no-post-message">
+        <i class="fa-solid fa-exclamation-triangle"></i>
+        <p>ไม่พบข้อมูลโพสต์</p>
     </div>
 </div>

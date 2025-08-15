@@ -125,18 +125,18 @@ export class ProfileUserComponent implements OnInit, OnDestroy {
   // เริ่มการติดตามการแจ้งเตือน
   private startNotificationTracking(): void {
     if (this.userId) {
-      // โหลดการแจ้งเตือนครั้งแรก
-      this.notificationService.loadNotificationCounts(Number(this.userId));
+      // โหลดข้อมูลจาก localStorage เท่านั้น (ไม่เรียก backend)
+      this.loadNotificationCountsFromStorage();
       
-      // เริ่มการอัปเดตอัตโนมัติ
-      this.notificationService.startAutoUpdate(Number(this.userId));
+      // ไม่เรียก API อีกต่อไป - ใช้ข้อมูลจาก localStorage เท่านั้น
+      // this.notificationService.loadNotificationCounts(Number(this.userId));
       
-      // ติดตามการเปลี่ยนแปลงจำนวนการแจ้งเตือน
-      this.notificationSubscription = this.notificationService.notificationCounts$.subscribe(
-        (counts) => {
-          this.notificationCounts = counts;
-        }
-      );
+      // ไม่ต้อง subscribe อีกต่อไป - ใช้ข้อมูลจาก localStorage เท่านั้น
+      // this.notificationSubscription = this.notificationService.notificationCounts$.subscribe(
+      //   (counts) => {
+      //     this.notificationCounts = counts;
+      //   }
+      // );
     }
   }
 
@@ -422,5 +422,34 @@ export class ProfileUserComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe(result => {
       // Dialog closed
     });
+  }
+
+  // เพิ่มฟังก์ชันโหลดข้อมูลจาก localStorage
+  private loadNotificationCountsFromStorage(): void {
+    const storedCounts = localStorage.getItem(`notificationCounts_${this.userId}`);
+    if (storedCounts) {
+      try {
+        this.notificationCounts = JSON.parse(storedCounts);
+        console.log('Loaded notification counts from storage:', this.notificationCounts);
+      } catch (error) {
+        console.error('Error parsing stored notification counts:', error);
+      }
+    }
+  }
+
+  // เพิ่มฟังก์ชันบันทึกข้อมูลลง localStorage
+  private saveNotificationCountsToStorage(): void {
+    const countsToSave = {
+      like: this.notificationCounts.like || 0,
+      follow: this.notificationCounts.follow || 0,
+      share: this.notificationCounts.share || 0,
+      comment: this.notificationCounts.comment || 0,
+      unban: this.notificationCounts.unban || 0,
+      total: (this.notificationCounts.like || 0) + (this.notificationCounts.follow || 0) + (this.notificationCounts.share || 0) + (this.notificationCounts.comment || 0) + (this.notificationCounts.unban || 0)
+    };
+    
+    localStorage.setItem(`notificationCounts_${this.userId}`, JSON.stringify(countsToSave));
+    this.notificationCounts = countsToSave;
+    console.log('Saved notification counts to storage:', countsToSave);
   }
 }

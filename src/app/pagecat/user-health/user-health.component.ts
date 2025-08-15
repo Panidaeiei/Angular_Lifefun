@@ -55,6 +55,7 @@ export class UserHealthComponent {
     this.checkScreenSize();
     window.addEventListener('resize', () => this.checkScreenSize());
 
+    // เรียก getCurrentUserId เพียงครั้งเดียว
     this.userService.getCurrentUserId().subscribe((userId) => {
       this.currentUserId = userId;
       console.log('Current User ID:', this.currentUserId);
@@ -68,7 +69,12 @@ export class UserHealthComponent {
       } else if (urlUserId && userId && urlUserId === userId) {
         console.log('✅ URL User ID ตรงกับ Current User ID - เข้าถึงได้');
       }
+      
+      // โหลดข้อมูลหลังจากได้ currentUserId แล้ว
+      this.loadPosts();
+      this.loadViewCounts();
     });
+
     //ดึงค่าจาก Query Parameters
     this.route.queryParams.subscribe((params) => {
       this.postId = params['post_id'] || ''; // ดึง post_id
@@ -76,8 +82,6 @@ export class UserHealthComponent {
 
       if (this.postId) {
         this.viewPost(this.postId); // ✅ อัพเดตจำนวนการดูโพสต์
-      } else {
-
       }
     });
 
@@ -86,28 +90,12 @@ export class UserHealthComponent {
       console.log('Viewer ID (ผู้ใช้ที่กำลังดู):', viewerId);
     });
 
-    this.posts.forEach((post) => {
-      this.checkLikeStatus(post.post_id);
-    });
-
-    this.userService.getCurrentUserId().subscribe((userId) => {
-      this.currentUserId = userId;
-
-    });
-
-    this.userService.loadCurrentUserId();
-
-    this.loadPosts();
-
-    this.postService.getViewCounts().subscribe({
-      next: (data) => {
-        this.viewPosts = data;
-        console.log('View Data:', data);
-      },
-      error: (err) => {
-        console.error('Error loading views:', err);
-      }
-    });
+    // ลบการเรียก API ที่ไม่จำเป็น
+    // this.posts.forEach((post) => { this.checkLikeStatus(post.post_id); }); // ลบออก
+    // this.userService.getCurrentUserId().subscribe((userId) => { this.currentUserId = userId; }); // ลบออก
+    // this.userService.loadCurrentUserId(); // ลบออก
+    // this.loadPosts(); // ย้ายไปใน getCurrentUserId callback
+    // this.postService.getViewCounts().subscribe({ ... }); // ย้ายไปใน loadViewCounts
   }
 
   loadPosts(): void {
@@ -213,5 +201,18 @@ export class UserHealthComponent {
     sessionStorage.removeItem('token');
     sessionStorage.removeItem('userRole');
     this.router.navigate(['/login']);
+  }
+
+  // เพิ่มเมธอดช่วยสำหรับโหลด view counts
+  private loadViewCounts(): void {
+    this.postService.getViewCounts().subscribe({
+      next: (data) => {
+        this.viewPosts = data;
+        console.log('View Data:', data);
+      },
+      error: (err) => {
+        console.error('Error loading views:', err);
+      }
+    });
   }
 }

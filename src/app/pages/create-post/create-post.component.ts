@@ -100,9 +100,17 @@ export class CreatePostComponent implements OnInit, OnDestroy {
     this.isMapOpen = true;
 
     setTimeout(() => {
+      // ตรวจสอบว่า Google Maps API โหลดเสร็จแล้วหรือไม่
+      if (typeof google === 'undefined' || !google.maps) {
+        console.error('Google Maps API ยังไม่โหลดเสร็จ');
+        alert('กรุณารอสักครู่ให้แผนที่โหลดเสร็จก่อน');
+        this.isMapOpen = false;
+        return;
+      }
+
       const mapElement = document.getElementById('map');
       if (!mapElement) {
-        // Error handling
+        console.error('ไม่พบ element map');
         return;
       }
 
@@ -111,25 +119,35 @@ export class CreatePostComponent implements OnInit, OnDestroy {
       }
 
       // สร้างแผนที่ Google Maps
-      // @ts-ignore
-      this.map = new google.maps.Map(mapElement, {
-        center: { lat: 13.736717, lng: 100.523186 },
-        zoom: 13,
-      });
+      try {
+        this.map = new google.maps.Map(mapElement, {
+          center: { lat: 13.736717, lng: 100.523186 },
+          zoom: 13,
+        });
 
-      // สร้าง PlacesService
-      // @ts-ignore
-      this.placesService = new google.maps.places.PlacesService(this.map);
+        // สร้าง PlacesService
+        this.placesService = new google.maps.places.PlacesService(this.map);
 
-      // เพิ่มการคลิกบนแผนที่เพื่อปักหมุด
-      this.map.addListener('click', (event: any) => {
-        this.handleMapClick(event);
-      });
+        // เพิ่มการคลิกบนแผนที่เพื่อปักหมุด
+        this.map.addListener('click', (event: any) => {
+          this.handleMapClick(event);
+        });
+      } catch (error) {
+        console.error('เกิดข้อผิดพลาดในการสร้างแผนที่:', error);
+        alert('เกิดข้อผิดพลาดในการโหลดแผนที่ กรุณาลองใหม่อีกครั้ง');
+        this.isMapOpen = false;
+      }
     }, 100);
   }
 
   // ฟังก์ชันจัดการการคลิกบนแผนที่
   handleMapClick(event: any) {
+    // ตรวจสอบว่า Google Maps API โหลดเสร็จแล้วหรือไม่
+    if (typeof google === 'undefined' || !google.maps) {
+      console.error('Google Maps API ยังไม่โหลดเสร็จ');
+      return;
+    }
+
     const lat = event.latLng.lat();
     const lng = event.latLng.lng();
     
@@ -139,53 +157,65 @@ export class CreatePostComponent implements OnInit, OnDestroy {
     }
     
     // สร้าง marker ใหม่
-    // @ts-ignore
-    this.mapMarker = new google.maps.Marker({
-      position: { lat, lng },
-      map: this.map,
-      title: 'สถานที่ที่เลือก',
-      draggable: true, // ให้สามารถลาก marker ได้
-    });
-    
-    // เพิ่มการลาก marker
-    this.mapMarker.addListener('dragend', (event: any) => {
-      const newLat = event.latLng.lat();
-      const newLng = event.latLng.lng();
-      this.reverseGeocode(newLat, newLng);
-    });
-    
-    // เรียกใช้ reverse geocoding เพื่อหาชื่อสถานที่
-    this.reverseGeocode(lat, lng);
+    try {
+      this.mapMarker = new google.maps.Marker({
+        position: { lat, lng },
+        map: this.map,
+        title: 'สถานที่ที่เลือก',
+        draggable: true, // ให้สามารถลาก marker ได้
+      });
+      
+      // เพิ่มการลาก marker
+      this.mapMarker.addListener('dragend', (event: any) => {
+        const newLat = event.latLng.lat();
+        const newLng = event.latLng.lng();
+        this.reverseGeocode(newLat, newLng);
+      });
+      
+      // เรียกใช้ reverse geocoding เพื่อหาชื่อสถานที่
+      this.reverseGeocode(lat, lng);
+    } catch (error) {
+      console.error('เกิดข้อผิดพลาดในการสร้าง marker:', error);
+    }
   }
 
   // ฟังก์ชัน reverse geocoding
   reverseGeocode(lat: number, lng: number) {
-    // @ts-ignore
-    const geocoder = new google.maps.Geocoder();
-    const latlng = { lat, lng };
-    
-    geocoder.geocode({ location: latlng }, (results: any, status: any) => {
-      if (status === 'OK' && results[0]) {
-        const address = results[0].formatted_address;
-        
-        // อัพเดตข้อมูลสถานที่
-        this.postData.location = address;
-        this.lat = lat;
-        this.lon = lng;
-        this.locationUrl = `https://www.google.com/maps?q=${lat},${lng}`;
-        
-        // อัพเดต marker title
-        if (this.mapMarker) {
-          this.mapMarker.setTitle(address);
+    // ตรวจสอบว่า Google Maps API โหลดเสร็จแล้วหรือไม่
+    if (typeof google === 'undefined' || !google.maps) {
+      console.error('Google Maps API ยังไม่โหลดเสร็จ');
+      return;
+    }
+
+    try {
+      const geocoder = new google.maps.Geocoder();
+      const latlng = { lat, lng };
+      
+      geocoder.geocode({ location: latlng }, (results: any, status: any) => {
+        if (status === 'OK' && results[0]) {
+          const address = results[0].formatted_address;
+          
+          // อัพเดตข้อมูลสถานที่
+          this.postData.location = address;
+          this.lat = lat;
+          this.lon = lng;
+          this.locationUrl = `https://www.google.com/maps?q=${lat},${lng}`;
+          
+          // อัพเดต marker title
+          if (this.mapMarker) {
+            this.mapMarker.setTitle(address);
+          }
+        } else {
+          // ใช้พิกัดเป็นชื่อสถานที่
+          this.postData.location = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+          this.lat = lat;
+          this.lon = lng;
+          this.locationUrl = `https://www.google.com/maps?q=${lat},${lng}`;
         }
-      } else {
-        // ใช้พิกัดเป็นชื่อสถานที่
-        this.postData.location = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
-        this.lat = lat;
-        this.lon = lng;
-        this.locationUrl = `https://www.google.com/maps?q=${lat},${lng}`;
-      }
-    });
+      });
+    } catch (error) {
+      console.error('เกิดข้อผิดพลาดในการ reverse geocoding:', error);
+    }
   }
 
   copyLocation() {
@@ -325,10 +355,10 @@ export class CreatePostComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    // หยุดการติดตามการแจ้งเตือน
-    this.notificationService.stopAutoUpdate();
+    // ไม่ต้องหยุดการติดตามการแจ้งเตือนอีกต่อไป - ใช้ localStorage เท่านั้น
+    // this.notificationService.stopAutoUpdate();
 
-    // ยกเลิก subscription
+    // ยกเลิก subscription (ถ้ามี)
     if (this.notificationSubscription) {
       this.notificationSubscription.unsubscribe();
     }
@@ -337,20 +367,48 @@ export class CreatePostComponent implements OnInit, OnDestroy {
   // เริ่มการติดตามการแจ้งเตือน
   private startNotificationTracking(): void {
     if (this.userId) {
-      // โหลดการแจ้งเตือนครั้งแรก
-      this.notificationService.loadNotificationCounts(Number(this.userId));
-
-      // เริ่มการอัปเดตอัตโนมัติ
-      this.notificationService.startAutoUpdate(Number(this.userId));
-
-      // ติดตามการเปลี่ยนแปลงจำนวนการแจ้งเตือน
-      this.notificationSubscription = this.notificationService.notificationCounts$.subscribe(
-        (counts) => {
-          this.notificationCounts = counts;
-        
-        }
-      );
+      // โหลดข้อมูลจาก localStorage เท่านั้น (ไม่เรียก backend)
+      this.loadNotificationCountsFromStorage();
+      
+      // ไม่เรียก API อีกต่อไป - ใช้ข้อมูลจาก localStorage เท่านั้น
+      // this.notificationService.loadNotificationCounts(Number(this.userId));
+      
+      // ไม่ต้อง subscribe อีกต่อไป - ใช้ข้อมูลจาก localStorage เท่านั้น
+      // this.notificationSubscription = this.notificationService.notificationCounts$.subscribe(
+      //   (counts) => {
+      //     this.notificationCounts = counts;
+      //   }
+      // );
     }
+  }
+
+  // เพิ่มฟังก์ชันโหลดข้อมูลจาก localStorage
+  private loadNotificationCountsFromStorage(): void {
+    const storedCounts = localStorage.getItem(`notificationCounts_${this.userId}`);
+    if (storedCounts) {
+      try {
+        this.notificationCounts = JSON.parse(storedCounts);
+        console.log('Loaded notification counts from storage:', this.notificationCounts);
+      } catch (error) {
+        console.error('Error parsing stored notification counts:', error);
+      }
+    }
+  }
+
+  // เพิ่มฟังก์ชันบันทึกข้อมูลลง localStorage
+  private saveNotificationCountsToStorage(): void {
+    const countsToSave = {
+      like: this.notificationCounts.like || 0,
+      follow: this.notificationCounts.follow || 0,
+      share: this.notificationCounts.share || 0,
+      comment: this.notificationCounts.comment || 0,
+      unban: this.notificationCounts.unban || 0,
+      total: (this.notificationCounts.like || 0) + (this.notificationCounts.follow || 0) + (this.notificationCounts.share || 0) + (this.notificationCounts.comment || 0) + (this.notificationCounts.unban || 0)
+    };
+    
+    localStorage.setItem(`notificationCounts_${this.userId}`, JSON.stringify(countsToSave));
+    this.notificationCounts = countsToSave;
+    console.log('Saved notification counts to storage:', countsToSave);
   }
 
   loadUserData(userId: string): void {
@@ -824,26 +882,41 @@ export class CreatePostComponent implements OnInit, OnDestroy {
   }
 
   fetchCustomGeocode(query: string) {
-    if (!this.placesService) return;
-    const request = {
-      query: query,
-      fields: ['name', 'geometry', 'formatted_address'],
-    };
-    // @ts-ignore
-    this.placesService.findPlaceFromQuery(request, (results: any, status: any) => {
-      if (status === google.maps.places.PlacesServiceStatus.OK) {
-        this.customResults = results.map((place: any) => ({
-          display_name: place.name + (place.formatted_address ? ' - ' + place.formatted_address : ''),
-          lat: place.geometry.location.lat(),
-          lon: place.geometry.location.lng(),
-        }));
-      } else {
-        this.customResults = [];
-      }
-    });
+    // ตรวจสอบว่า Google Maps API โหลดเสร็จแล้วหรือไม่
+    if (typeof google === 'undefined' || !google.maps || !this.placesService) {
+      console.error('Google Maps API ยังไม่โหลดเสร็จ');
+      return;
+    }
+
+    try {
+      const request = {
+        query: query,
+        fields: ['name', 'geometry', 'formatted_address'],
+      };
+      
+      this.placesService.findPlaceFromQuery(request, (results: any, status: any) => {
+        if (status === google.maps.places.PlacesServiceStatus.OK) {
+          this.customResults = results.map((place: any) => ({
+            display_name: place.name + (place.formatted_address ? ' - ' + place.formatted_address : ''),
+            lat: place.geometry.location.lat(),
+            lon: place.geometry.location.lng(),
+          }));
+        } else {
+          this.customResults = [];
+        }
+      });
+    } catch (error) {
+      console.error('เกิดข้อผิดพลาดในการค้นหาสถานที่:', error);
+    }
   }
 
   selectCustomResult(result: any) {
+    // ตรวจสอบว่า Google Maps API โหลดเสร็จแล้วหรือไม่
+    if (typeof google === 'undefined' || !google.maps) {
+      console.error('Google Maps API ยังไม่โหลดเสร็จ');
+      return;
+    }
+
     // Center map and add marker
     if (this.map) {
       const lat = parseFloat(result.lat);
@@ -855,29 +928,32 @@ export class CreatePostComponent implements OnInit, OnDestroy {
       }
       
       // สร้าง marker ใหม่
-      // @ts-ignore
-      this.mapMarker = new google.maps.Marker({
-        position: { lat, lng: lon },
-        map: this.map,
-        title: result.display_name,
-        draggable: true, // ให้สามารถลาก marker ได้
-      });
-      
-      // เพิ่มการลาก marker
-      this.mapMarker.addListener('dragend', (event: any) => {
-        const newLat = event.latLng.lat();
-        const newLng = event.latLng.lng();
-        this.reverseGeocode(newLat, newLng);
-      });
-      
-      this.map.setCenter({ lat, lng: lon });
-      this.postData.location = result.display_name;
-      this.lat = lat;
-      this.lon = lon;
-      this.locationUrl = `https://www.google.com/maps?q=${lat},${lon}`;
-      this.customResults = [];
-      this.customSearch = result.display_name;
-      this.closeMapDialog();
+      try {
+        this.mapMarker = new google.maps.Marker({
+          position: { lat, lng: lon },
+          map: this.map,
+          title: result.display_name,
+          draggable: true, // ให้สามารถลาก marker ได้
+        });
+        
+        // เพิ่มการลาก marker
+        this.mapMarker.addListener('dragend', (event: any) => {
+          const newLat = event.latLng.lat();
+          const newLng = event.latLng.lng();
+          this.reverseGeocode(newLat, newLng);
+        });
+        
+        this.map.setCenter({ lat, lng: lon });
+        this.postData.location = result.display_name;
+        this.lat = lat;
+        this.lon = lon;
+        this.locationUrl = `https://www.google.com/maps?q=${lat},${lon}`;
+        this.customResults = [];
+        this.customSearch = result.display_name;
+        this.closeMapDialog();
+      } catch (error) {
+        console.error('เกิดข้อผิดพลาดในการสร้าง marker:', error);
+      }
     }
   }
 

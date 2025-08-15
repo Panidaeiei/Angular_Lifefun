@@ -35,16 +35,27 @@ export class ReportPostdetailComponent {
   post: any;
   currentMedia: { type: string; url: string } = { type: '', url: '' };
   currentMediaIndex: number = 0; // ตัวแปรนี้ใช้สำหรับการเลื่อนดูสื่อ
-  comments: any[] = []; // คอมเมนต์ที่ดึงมา
   reportNotifications: any[] = [];
   users: User[] = [];
   filteredUsers: any[] = [];
   errorMessage: string = '';
   isDeletingPost: boolean = false; // เพิ่มตัวแปรสำหรับจัดการสถานะการลบโพสต์
+  isBanningUser: boolean = false; // เพิ่มตัวแปรสำหรับจัดการสถานะการระงับบัญชี
+  isGridView: boolean = false; // เพิ่มตัวแปรสำหรับสลับโหมดการดู
+  currentVideoIndex: number = 0; // เพิ่มตัวแปรสำหรับดัชนีวิดีโอปัจจุบัน
 
   constructor(private router: Router, private route: ActivatedRoute, private postService: PostService, private reactPostservice: ReactPostservice, private adminservice: AdminService, private userService: UserService, public dialog: MatDialog) { }
 
   ngOnInit() {
+    // ตรวจสอบการเข้าสู่ระบบของแอดมินก่อน
+    const adminId = localStorage.getItem('adminId') || sessionStorage.getItem('adminId');
+    const adminToken = localStorage.getItem('adminToken') || sessionStorage.getItem('adminToken');
+    
+    if (!adminId || !adminToken) {
+      this.router.navigate(['/login'], { queryParams: { error: 'unauthorized' } });
+      return;
+    }
+
     this.route.queryParams.subscribe(params => {
       this.postId = params['post_id'];     // รับ post_id จาก query
       this.userId = params['user_id'];
@@ -52,9 +63,15 @@ export class ReportPostdetailComponent {
 
       // ถ้าไม่มี adminId ใน query params ให้ดึงจาก storage
       if (!this.adminId) {
-        const adminIdFromStorage = localStorage.getItem('adminId') || sessionStorage.getItem('adminId');
-        this.adminId = adminIdFromStorage || '';
+        this.adminId = adminId;
         console.log('AdminId from storage:', this.adminId);
+      }
+
+      // ตรวจสอบว่า adminId ที่ได้รับตรงกับที่เข้าสู่ระบบหรือไม่
+      if (this.adminId !== adminId) {
+        console.error('Admin ID mismatch. Expected:', adminId, 'Received:', this.adminId);
+        this.router.navigate(['/login'], { queryParams: { error: 'unauthorized' } });
+        return;
       }
 
       this.fetchPost(this.postId);
@@ -69,10 +86,6 @@ export class ReportPostdetailComponent {
       },
       error: (error) => this.errorMessage = error.message
     });
-
-    this.fetchComments();
-    console.log('โพสต์ที่โหลด:', this.post);
-
   }
 
   toggleDrawer(): void {
@@ -101,29 +114,119 @@ export class ReportPostdetailComponent {
 
   }
 
-  fetchComments(): void {
-    const postId = Number(this.postId);
 
-    if (isNaN(postId)) {
-      console.error('Invalid postId for comments:', this.postId);
+
+
+  // เพิ่มเมธอดสำหรับการจัดการ media
+  hasMultipleMedia(): boolean {
+    const totalMediaCount = (this.post?.images?.length || 0) + (this.post?.videos?.length || 0);
+    return totalMediaCount > 1;
+  }
+
+  getTotalMediaCount(): number {
+    return (this.post?.images?.length || 0) + (this.post?.videos?.length || 0);
+  }
+
+  // เพิ่มเมธอดสำหรับการระงับบัญชีผู้ใช้
+  banUser(userId: string, username: string): void {
+    // ตรวจสอบการเข้าสู่ระบบก่อนดำเนินการ
+    const adminId = localStorage.getItem('adminId') || sessionStorage.getItem('adminId');
+    const adminToken = localStorage.getItem('adminToken') || sessionStorage.getItem('adminToken');
+    
+    if (!adminId || !adminToken || adminId !== this.adminId) {
+      alert('เกิดข้อผิดพลาด: ไม่ได้รับอนุญาตให้ดำเนินการ');
+      this.router.navigate(['/login'], { queryParams: { error: 'unauthorized' } });
       return;
     }
 
-    this.reactPostservice.getComments(postId).subscribe(
-      (response) => {
-        this.comments = response.comments || [];
-        console.log('Comments fetched:', this.comments);
-      },
-      (error) => {
-        console.error('Error fetching comments:', error);
-      }
-    );
+    if (this.isBanningUser) {
+      return;
+    }
+
+    const confirmMessage = `คุณแน่ใจหรือไม่ว่าต้องการระงับบัญชีของ ${username}?`;
+    const userConfirmed = window.confirm(confirmMessage);
+
+    if (userConfirmed) {
+      this.isBanningUser = true;
+      
+      this.adminservice.banUser(Number(userId), 'โพสต์ไม่เหมาะสม', '2025-12-31').subscribe({
+        next: (response) => {
+          alert(`บัญชีของ ${username} ถูกระงับเรียบร้อยแล้ว`);
+          this.isBanningUser = false;
+          // รีเฟรชข้อมูลผู้ใช้
+          this.userService.getUsers().subscribe({
+            next: (data) => {
+              this.users = data.filter(user => user.status !== 0);
+              this.filteredUsers = this.users;
+            },
+            error: (error) => this.errorMessage = error.message
+          });
+        },
+        error: (error) => {
+          console.error('Error banning user:', error);
+          alert('เกิดข้อผิดพลาดในการระงับบัญชี');
+          this.isBanningUser = false;
+        }
+      });
+    }
   }
 
-  showAllComments: boolean = false; // กำหนดค่าเริ่มต้นให้แสดงคอมเมนต์แค่ 4 อันแรก
+  // เพิ่มเมธอดสำหรับดูโปรไฟล์ผู้ใช้
+  viewUserProfile(userId: string): void {
+    // ตรวจสอบการเข้าสู่ระบบก่อนดำเนินการ
+    const adminId = localStorage.getItem('adminId') || sessionStorage.getItem('adminId');
+    const adminToken = localStorage.getItem('adminToken') || sessionStorage.getItem('adminToken');
+    
+    if (!adminId || !adminToken || adminId !== this.adminId) {
+      alert('เกิดข้อผิดพลาด: ไม่ได้รับอนุญาตให้ดำเนินการ');
+      this.router.navigate(['/login'], { queryParams: { error: 'unauthorized' } });
+      return;
+    }
+    
+    this.router.navigate(['/admin_profileuser'], {
+      queryParams: { id: userId, adminId: this.adminId }
+    });
+  }
 
-  toggleShowComments(): void {
-    this.showAllComments = !this.showAllComments;
+  // เพิ่มเมธอดสำหรับสลับโหมดการดู
+  toggleViewMode(): void {
+    this.isGridView = !this.isGridView;
+  }
+
+  // เพิ่มเมธอดสำหรับเลือกรูปภาพจาก grid
+  selectImage(imageIndex: number): void {
+    this.currentMediaIndex = imageIndex;
+    this.currentMedia = { type: 'image', url: this.post.images[imageIndex] };
+    this.isGridView = false; // กลับไปดูเดี่ยว
+  }
+
+  // เพิ่มเมธอดสำหรับเลือกวิดีโอจาก grid
+  selectVideo(videoIndex: number): void {
+    this.currentVideoIndex = videoIndex;
+    this.currentMedia = { type: 'video', url: this.post.videos[videoIndex] };
+    this.isGridView = false; // กลับไปดูเดี่ยว
+  }
+
+  // เพิ่มเมธอดสำหรับการควบคุม media slider
+  showControls(): void {
+    // แสดงปุ่มควบคุมเมื่อ hover
+  }
+
+  hideControls(): void {
+    // ซ่อนปุ่มควบคุมเมื่อไม่ hover
+  }
+
+  // เพิ่มเมธอดสำหรับการจัดการ touch events
+  onTouchStart(event: TouchEvent): void {
+    // จัดการการเริ่มต้น touch
+  }
+
+  onTouchMove(event: TouchEvent): void {
+    // จัดการการเคลื่อนไหว touch
+  }
+
+  onTouchEnd(event: TouchEvent): void {
+    // จัดการการสิ้นสุด touch
   }
 
   updateCurrentMedia(): void {
@@ -151,6 +254,16 @@ export class ReportPostdetailComponent {
   }
 
   deletePost(postId: number): void {
+    // ตรวจสอบการเข้าสู่ระบบก่อนดำเนินการ
+    const adminId = localStorage.getItem('adminId') || sessionStorage.getItem('adminId');
+    const adminToken = localStorage.getItem('adminToken') || sessionStorage.getItem('adminToken');
+    
+    if (!adminId || !adminToken || adminId !== this.adminId) {
+      alert('เกิดข้อผิดพลาด: ไม่ได้รับอนุญาตให้ดำเนินการ');
+      this.router.navigate(['/login'], { queryParams: { error: 'unauthorized' } });
+      return;
+    }
+
     // ป้องกันการกดซ้ำถ้ากำลังลบอยู่
     if (this.isDeletingPost) {
       return;
@@ -185,16 +298,21 @@ export class ReportPostdetailComponent {
   }
 
   navigateToUserProfile(userId: number): void {
+    // ตรวจสอบการเข้าสู่ระบบก่อนดำเนินการ
+    const adminId = localStorage.getItem('adminId') || sessionStorage.getItem('adminId');
+    const adminToken = localStorage.getItem('adminToken') || sessionStorage.getItem('adminToken');
+    
+    if (!adminId || !adminToken || adminId !== this.adminId) {
+      alert('เกิดข้อผิดพลาด: ไม่ได้รับอนุญาตให้ดำเนินการ');
+      this.router.navigate(['/login'], { queryParams: { error: 'unauthorized' } });
+      return;
+    }
+
     console.log('=== Navigate To User Profile ===');
     console.log('userId (ผู้ใช้ที่เลือก):', userId);
     console.log('userId type:', typeof userId);
     console.log('this.adminId (แอดมิน):', this.adminId);
     console.log('this.adminId type:', typeof this.adminId);
-    
-    if (!this.adminId) {
-      alert('เกิดข้อผิดพลาด: ไม่พบ Admin ID');
-      return;
-    }
     
     if (!userId) {
       alert('เกิดข้อผิดพลาด: ไม่พบ User ID');

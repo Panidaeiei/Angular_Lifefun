@@ -426,7 +426,7 @@ button[disabled] .fa-regular {
 
 .center-menu {
   display: flex;
-  gap: 50px;
+  gap: 36px;
   align-items: center;
   justify-content: center;
   margin: 0;
@@ -577,7 +577,7 @@ button[disabled] .fa-regular {
   .toolbar-actions a { padding: 6px 10px; }
 }
 @media (max-width: 767px) { .center-menu { display: none; } }
-@media (min-width: 768px) { .center-menu { display: flex; gap: 50px; align-items: center; justify-content: center; flex-grow: 1; } }
+
 
 /* ✅ เมนูกลาง (ปุ่มหลัก) — ซ่อนไปเมื่อจอแคบ */
 @media (max-width: 767px) {

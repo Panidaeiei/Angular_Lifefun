@@ -66,7 +66,18 @@ export class DetailPostmainComponent implements OnDestroy {
         this.userId = params['id'];
         console.log('User ID:', this.userId);
         // เริ่มการติดตามการแจ้งเตือน
-        this.startNotificationTracking();
+        this.notificationService.loadNotificationCounts(Number(this.userId));
+        
+        // ลบการอัปเดตอัตโนมัติออก (ไม่ให้เรียก API ซ้ำ)
+        // this.notificationService.startAutoUpdate(Number(this.userId));
+      
+        // ติดตามการเปลี่ยนแปลงจำนวนการแจ้งเตือน
+        this.notificationSubscription = this.notificationService.notificationCounts$.subscribe(
+          (counts) => {
+            this.notificationCounts = counts;
+            console.log('Notification counts updated:', counts);
+          }
+        );
       }
     });
 

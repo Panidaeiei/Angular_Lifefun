@@ -62,8 +62,6 @@ export class HomepageMainComponent {
   fetchPosts(): void {
     this.postService.getPosts().subscribe(
       (response: ShowPost[]) => {
-        console.log('Response from API:', response);  // ตรวจสอบข้อมูลที่ได้รับจาก API
-
         // กรองโพสต์ที่มี `post_id` ซ้ำ
         const uniquePosts = response.filter((value, index, self) =>
           index === self.findIndex((t) => (
@@ -71,14 +69,28 @@ export class HomepageMainComponent {
           ))
         );
 
-        console.log('Unique Posts:', uniquePosts); // ตรวจสอบโพสต์ที่กรองออกมา
-
         // อัปเดตค่า posts ที่กรองแล้ว
         this.posts = uniquePosts;
 
-        // เพียงแค่ใช้ค่าของ hasMultipleMedia ที่มาจาก API
+        // จัดการข้อมูลไฟล์หลายไฟล์ที่มาจาก Backend
         this.posts.forEach(post => {
-          console.log('Has Multiple Media:', post.hasMultipleMedia);  // ตรวจสอบสถานะ hasMultipleMedia
+          // ตรวจสอบและตั้งค่า currentImageIndex ถ้าไม่มี
+          if (post.currentImageIndex === undefined) {
+            post.currentImageIndex = 0;
+          }
+          
+          // จัดลำดับไฟล์ใหม่ตาม logic ของ detail-post (วิดีโอขึ้นก่อน รูปภาพตามหลัง)
+          if (post.allMedia && post.allMedia.length > 0) {
+            const reorderedMedia = this.reorderMediaFiles(post.allMedia);
+            post.allMedia = reorderedMedia;
+            
+            // อัปเดต media_url และ media_type จากไฟล์แรกที่จัดลำดับแล้ว
+            if (post.allMedia && post.allMedia.length > 0) {
+              const firstMedia = post.allMedia[0];
+              post.media_url = firstMedia.url;
+              post.media_type = firstMedia.type as 'image' | 'video';
+            }
+          }
         });
       },
       (error) => {
@@ -144,4 +156,110 @@ export class HomepageMainComponent {
 
   toggleDrawer() { this.isDrawerOpen = !this.isDrawerOpen; }
 
+  // ฟังก์ชันจัดการไฟล์หลายไฟล์
+  private updateMediaDisplay(post: ShowPost): void {
+    if (!post || !post.allMedia || post.allMedia.length === 0) return;
+
+    // อัปเดต media_url และ media_type เป็นไฟล์ปัจจุบัน
+    const currentIndex = post.currentImageIndex || 0;
+    const currentMedia = post.allMedia[currentIndex];
+    if (currentMedia) {
+      post.media_url = currentMedia.url;
+      post.media_type = currentMedia.type as 'image' | 'video';
+    }
+  }
+
+  // ฟังก์ชันเลื่อนไปไฟล์ถัดไป
+  nextMedia(post: ShowPost, event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+    }
+    if (!post.allMedia || post.allMedia.length <= 1) return;
+    
+    const currentIndex = post.currentImageIndex || 0;
+    post.currentImageIndex = (currentIndex + 1) % post.allMedia.length;
+    this.updateMediaDisplay(post);
+  }
+
+  // ฟังก์ชันเลื่อนไปไฟล์ก่อนหน้า
+  prevMedia(post: ShowPost, event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+    }
+    if (!post.allMedia || post.allMedia.length <= 1) return;
+    
+    const currentIndex = post.currentImageIndex || 0;
+    post.currentImageIndex = currentIndex === 0 
+      ? post.allMedia.length - 1 
+      : currentIndex - 1;
+    this.updateMediaDisplay(post);
+  }
+
+  // ฟังก์ชันไปยังไฟล์ที่ระบุ
+  goToMedia(post: ShowPost, index: number, event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+    }
+    if (!post.allMedia || index < 0 || index >= post.allMedia.length) return;
+    
+    post.currentImageIndex = index;
+    this.updateMediaDisplay(post);
+  }
+
+  // ฟังก์ชันการเลื่อนด้วยเมาส์
+  private touchStartX: number = 0;
+  private touchEndX: number = 0;
+
+  onTouchStart(event: TouchEvent, post: ShowPost): void {
+    if (!post.allMedia || post.allMedia.length <= 1) return;
+    this.touchStartX = event.touches[0].clientX;
+  }
+
+  onTouchEnd(event: TouchEvent, post: ShowPost): void {
+    if (!post.allMedia || post.allMedia.length <= 1) return;
+    this.touchEndX = event.changedTouches[0].clientX;
+    this.handleSwipe(post);
+  }
+
+  onMouseDown(event: MouseEvent, post: ShowPost): void {
+    if (!post.allMedia || post.allMedia.length <= 1) return;
+    this.touchStartX = event.clientX;
+    document.addEventListener('mouseup', (e) => this.onMouseUp(e, post), { once: true });
+  }
+
+  onMouseUp(event: MouseEvent, post: ShowPost): void {
+    if (!post.allMedia || post.allMedia.length <= 1) return;
+    this.touchEndX = event.clientX;
+    this.handleSwipe(post);
+  }
+
+  private handleSwipe(post: ShowPost): void {
+    const swipeThreshold = 50; // ความไวในการเลื่อน
+    const diff = this.touchStartX - this.touchEndX;
+
+    if (Math.abs(diff) > swipeThreshold) {
+      if (diff > 0) {
+        // เลื่อนไปขวา (ไฟล์ถัดไป)
+        this.nextMedia(post);
+      } else {
+        // เลื่อนไปซ้าย (ไฟล์ก่อนหน้า)
+        this.prevMedia(post);
+      }
+    }
+  }
+
+  // ฟังก์ชันจัดลำดับไฟล์ตาม logic ของ detail-post (วิดีโอขึ้นก่อน รูปภาพตามหลัง)
+  private reorderMediaFiles(allMedia: { type: string; url: string }[]): { type: string; url: string }[] {
+    if (!allMedia || allMedia.length === 0) return allMedia;
+    
+    const videos = allMedia.filter(media => media.type === 'video');
+    const images = allMedia.filter(media => media.type === 'image');
+    
+    // จัดลำดับ: วิดีโอขึ้นก่อน รูปภาพตามหลัง
+    const reorderedMedia: { type: string; url: string }[] = [];
+    reorderedMedia.push(...videos);
+    reorderedMedia.push(...images);
+    
+    return reorderedMedia;
+  }
 }

@@ -120,6 +120,17 @@
         <a class="tab" [routerLink]="['/stest']" [queryParams]="{ id: userId }" routerLinkActive="active">โพสต์</a>
     </div>
 
+    <!-- แสดงข้อความแนะนำเมื่อไม่มีการค้นหา -->
+    <div *ngIf="searchResults.length === 0 && !isSearchPerformed" class="welcome-message">
+        <div class="welcome-content">
+            <div class="welcome-icon">
+                <i class="fa fa-users"></i>
+            </div>
+            <h3 class="welcome-title">ค้นหาผู้ใช้งานที่คุณสนใจ</h3>
+            <p class="welcome-description">พิมพ์ชื่อผู้ใช้หรือคำค้นหาในช่องด้านบนเพื่อค้นหาผู้ใช้งาน</p>
+        </div>
+    </div>
+
     <div class="user-list" *ngIf="searchResults !== null">
         <div *ngIf="searchResults.length > 0; else noResults">
             <div class="user-card" *ngFor="let user of searchResults" (click)="goToProfile(user.uid)">

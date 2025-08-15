@@ -121,7 +121,10 @@ export class ViewUserComponent implements OnInit, OnDestroy {
         this.loadUserPosts();
         
         // เริ่มการติดตามการแจ้งเตือน
-        this.startNotificationTracking();
+        this.notificationService.loadNotificationCounts(Number(this.userId));
+        
+        // ลบการอัปเดตอัตโนมัติออก (ไม่ให้เรียก API ซ้ำ)
+        // this.notificationService.startAutoUpdate(Number(this.userId));
       } else {
         console.warn('User ID not found in path parameters.');
       }

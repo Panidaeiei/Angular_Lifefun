@@ -123,6 +123,25 @@
 
     <div *ngIf="loading" class="loading">⏳ กำลังค้นหา...</div>
 
+    <!-- แสดงข้อความแนะนำเมื่อไม่มีโพสต์และไม่มีการค้นหา -->
+    <div *ngIf="posts.length === 0 && searchQuery.trim() === '' && !postsLoaded" class="welcome-message">
+        <div class="welcome-content">
+            <div class="welcome-icon">
+                <i class="fa fa-search"></i>
+            </div>
+            <h3 class="welcome-title">ยินดีต้อนรับสู่การค้นหาโพสต์</h3>
+            <p class="welcome-description">พิมพ์คำค้นหาในช่องด้านบนเพื่อค้นหาโพสต์ที่คุณสนใจ</p>
+        </div>
+    </div>
+
+    <!-- ลบปุ่มโหลดเพิ่มเติมออก - ไม่ใช้แล้ว -->
+    <!-- <div *ngIf="posts.length > 0 && postsLoaded && posts.length < allPosts.length" class="load-more-container">
+        <button class="load-more-btn" (click)="loadMorePosts()" [disabled]="loading">
+            <i class="fa fa-plus"></i>
+            {{ loading ? 'กำลังโหลด...' : 'โหลดโพสต์เพิ่มเติม' }}
+        </button>
+    </div> -->
+
     <div *ngIf="posts.length > 0">
         <div class="post-grid">
             <div *ngFor="let post of posts" class="post-card">
@@ -134,13 +153,18 @@
                     </div>
                 </div>
 
-                <div class="media-container">
+                <div class="media-container" style="position: relative;"
+                     (touchstart)="onTouchStart($event, post)"
+                     (touchend)="onTouchEnd($event, post)"
+                     (mousedown)="onMouseDown($event, post)">
                     <a [routerLink]="['/detail_post']" [queryParams]="{ post_id: post.post_id, user_id: userId }">
                         <img *ngIf="post.media_type === 'image'" [src]="post.media_url" alt="Post Image">
                     </a>
                     <a [routerLink]="['/detail_post']" [queryParams]="{ post_id: post.post_id, user_id: userId }">
                         <video *ngIf="post.media_type === 'video'" [src]="post.media_url" controls></video>
                     </a>
+
+                    <!-- ไอคอนแสดงว่ามีหลายรูป (แสดงเมื่อมีหลายไฟล์) -->
                     <div *ngIf="post.hasMultipleMedia" class="multiple-media-icon">
                         <i class="fa fa-clone" style="font-size: 24px; color: white;"></i>
                     </div>
@@ -156,7 +180,7 @@
                         {{ showFull[post.post_id.toString()] ? post.title : (post.title | slice:0:90) +
                         (post.title.length > 90 ? '...' : '') }}
                     </p>
-                    <button *ngIf="post.title.length > 40" class="show-more-btn"
+                    <button *ngIf="post.title.length > 90" class="show-more-btn"
                         (click)="toggleShowFull(post.post_id.toString())">
                         {{ showFull[post.post_id.toString()] ? 'ย่อข้อความ' : 'อ่านเพิ่มเติม' }}
                     </button>

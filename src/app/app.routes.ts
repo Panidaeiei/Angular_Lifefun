@@ -44,6 +44,7 @@ export const routes: Routes = [
     {path: 'CreatePost', component: CreatePostComponent, canActivate: [BanStatusGuard]},
     {path: 'category', component: CategoryPageComponent, canActivate: [BanStatusGuard]},
     {path: 'detail_post', component: DetailPostComponent, canActivate: [BanStatusGuard]},
+    {path: 'detail_postmain', component: DetailPostComponent},
     {path: 'editprofile', component: EditprofileUserComponent, canActivate: [BanStatusGuard]},
     {path: 'view_user/:userId', component: ViewUserComponent, canActivate: [BanStatusGuard]},
     {path: 'userlist', component: UserListAdminComponent},

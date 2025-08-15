@@ -77,37 +77,31 @@ export class HomepageUserComponent implements OnDestroy {
     this.validateToken(token);
 
     this.checkScreenSize();
-    
+
     // ตรวจสอบ snapshot ครั้งแรก
     const snapshotParams = this.route.snapshot.queryParams;
     if (snapshotParams['id']) {
       this.userId = snapshotParams['id'];
       // ตรวจสอบว่า userId ใน URL ตรงกับ userId ที่ล็อกอิน
       if (this.userId !== loggedInUserId) {
-        // ถ้าไม่ตรงกัน ให้ใช้ userId ที่ล็อกอินแทน
-        this.userId = loggedInUserId;
+        // ถ้าไม่ตรงกัน ให้เด้งไปหน้า login ทันที
+        this.clearStoredData();
+        this.router.navigate(['/login'], { 
+          queryParams: { error: 'uid_mismatch' },
+          replaceUrl: true // ลบ URL เก่าออก
+        });
+        return;
       }
-      this.loadUserData();
     } else {
       // ถ้าไม่มี id ใน URL ให้ใช้ userId ที่ล็อกอิน
       this.userId = loggedInUserId;
-      this.loadUserData();
     }
 
-    // Subscribe เฉพาะ params ที่มี id เท่านั้น
-    this.route.queryParams
-      .pipe(filter(params => !!params['id']))
-      .subscribe((params) => {
-        const newUserId = params['id'];
-        // ตรวจสอบสิทธิ์เมื่อ params เปลี่ยน
-        if (newUserId !== loggedInUserId) {
-          // ถ้าไม่ตรงกัน ให้ใช้ userId ที่ล็อกอินแทน
-          this.userId = loggedInUserId;
-        } else {
-          this.userId = newUserId;
-        }
-        this.loadUserData();
-      });
+    // เรียก API แค่ครั้งเดียว
+    this.loadUserData();
+
+    // ลบ subscription ที่ทำให้เรียก API ซ้ำออก
+    // this.route.queryParams.subscribe() - ลบออก
 
     this.route.queryParamMap.subscribe(params => {
       const viewerId = params.get('viewerId');
@@ -125,22 +119,23 @@ export class HomepageUserComponent implements OnDestroy {
       if (urlUserId && userId && urlUserId !== userId) {
         // ถ้า id ใน url ไม่ตรงกับ id ที่ล็อกอินไว้ ให้ใช้ userId ที่ล็อกอินแทน
         this.userId = userId;
-        this.loadUserData();
+        // ไม่ต้องเรียก loadUserData() อีก เพราะเรียกไปแล้ว
         return;
       }
 
       // ตรวจสอบสถานะไลค์สำหรับโพสต์ที่มีอยู่แล้ว
       if (this.posts.length > 0) {
-        this.posts.forEach(post => {
-          this.checkLikeStatusForPost(post);
-        });
+        // ลบการเรียก API checkLikeStatus ทุกโพสต์ออก
+        // this.posts.forEach(post => {
+        //   this.checkLikeStatusForPost(post);
+        // });
       }
     });
 
     this.userService.loadCurrentUserId();
 
-    // ดึงโพสต์จาก Backend
-    this.fetchPosts();
+    // ลบการเรียก fetchPosts ซ้ำออก
+    // this.fetchPosts(); - ลบออก เพราะเรียกใน loadUserData() แล้ว
 
     this.postService.getViewCounts().subscribe({
       next: (data) => {
@@ -170,21 +165,41 @@ export class HomepageUserComponent implements OnDestroy {
     }
   }
 
+  // เพิ่มฟังก์ชันโหลดข้อมูลจาก localStorage
+  private loadNotificationCountsFromStorage(): void {
+    const storedCounts = localStorage.getItem(`notificationCounts_${this.userId}`);
+    if (storedCounts) {
+      try {
+        this.notificationCounts = JSON.parse(storedCounts);
+        console.log('Loaded notification counts from storage:', this.notificationCounts);
+      } catch (error) {
+        console.error('Error parsing stored notification counts:', error);
+      }
+    }
+  }
+
+  // เพิ่มฟังก์ชันบันทึกข้อมูลลง localStorage
+  private saveNotificationCountsToStorage(): void {
+    const countsToSave = {
+      like: this.notificationCounts.like || 0,
+      follow: this.notificationCounts.follow || 0,
+      share: this.notificationCounts.share || 0,
+      comment: this.notificationCounts.comment || 0,
+      unban: this.notificationCounts.unban || 0,
+      total: (this.notificationCounts.like || 0) + (this.notificationCounts.follow || 0) + (this.notificationCounts.share || 0) + (this.notificationCounts.comment || 0) + (this.notificationCounts.unban || 0)
+    };
+    
+    localStorage.setItem(`notificationCounts_${this.userId}`, JSON.stringify(countsToSave));
+    this.notificationCounts = countsToSave;
+    console.log('Saved notification counts to storage:', countsToSave);
+  }
+
   // เริ่มการติดตามการแจ้งเตือน
   private startNotificationTracking(): void {
     if (this.userId) {
-      // โหลดการแจ้งเตือนครั้งแรก
-      this.notificationService.loadNotificationCounts(Number(this.userId));
-
-      // เริ่มการอัปเดตอัตโนมัติ
-      this.notificationService.startAutoUpdate(Number(this.userId));
-
-      // ติดตามการเปลี่ยนแปลงจำนวนการแจ้งเตือน
-      this.notificationSubscription = this.notificationService.notificationCounts$.subscribe(
-        (counts) => {
-          this.notificationCounts = counts;
-        }
-      );
+      // โหลดข้อมูลจาก localStorage เท่านั้น (ไม่เรียก backend)
+      this.loadNotificationCountsFromStorage();
+      
     }
   }
 
@@ -221,8 +236,6 @@ export class HomepageUserComponent implements OnDestroy {
   fetchPosts(): void {
     this.postService.getPosts_interests().subscribe(
       (response: ShowPost[]) => {
-        console.log('API Response:', response);
-        console.log('First post data:', response[0]);
 
         // กรองโพสต์ที่มี `post_id` ซ้ำ
         const uniquePosts = response.filter((value, index, self) =>
@@ -234,23 +247,41 @@ export class HomepageUserComponent implements OnDestroy {
         // อัปเดตค่า posts ที่กรองแล้ว
         this.posts = uniquePosts;
 
-        // เพียงแค่ใช้ค่าของ hasMultipleMedia ที่มาจาก API
+        // จัดการข้อมูลไฟล์หลายไฟล์ที่มาจาก Backend
         this.posts.forEach(post => {
-          console.log('Has Multiple Media:', post.hasMultipleMedia);  // ตรวจสอบสถานะ hasMultipleMedia
+          // ตรวจสอบและตั้งค่า currentImageIndex ถ้าไม่มี
+          if (post.currentImageIndex === undefined) {
+            post.currentImageIndex = 0;
+          }
+
+          // จัดลำดับไฟล์ใหม่ตาม logic ของ detail-post (วิดีโอขึ้นก่อน รูปภาพตามหลัง)
+          if (post.allMedia && post.allMedia.length > 0) {
+            const reorderedMedia = this.reorderMediaFiles(post.allMedia);
+            post.allMedia = reorderedMedia;
+
+            // อัปเดต media_url และ media_type จากไฟล์แรกที่จัดลำดับแล้ว
+            if (post.allMedia && post.allMedia.length > 0) {
+              const firstMedia = post.allMedia[0];
+              post.media_url = firstMedia.url;
+              post.media_type = firstMedia.type as 'image' | 'video';
+            }
+          }
         });
 
         // ตรวจสอบสถานะไลค์สำหรับแต่ละโพสต์ - รอให้ currentUserId พร้อม
         if (this.currentUserId) {
-          this.posts.forEach(post => {
-            this.checkLikeStatusForPost(post);
-          });
+          // ลบการเรียก API checkLikeStatus ทุกโพสต์ออก
+          // this.posts.forEach(post => {
+          //   this.checkLikeStatusForPost(post);
+          // });
         } else {
           // ตรวจสอบสถานะไลค์หลังจาก currentUserId พร้อม
           this.userService.getCurrentUserId().subscribe((userId) => {
             if (userId && this.posts.length > 0) {
-              this.posts.forEach(post => {
-                this.checkLikeStatusForPost(post);
-              });
+              // ลบการเรียก API checkLikeStatus ทุกโพสต์ออก
+              // this.posts.forEach(post => {
+              //   this.checkLikeStatusForPost(post);
+              // });
             }
           });
         }
@@ -294,7 +325,7 @@ export class HomepageUserComponent implements OnDestroy {
 
     this.likePostService.likePost(post.post_id, Number(this.currentUserId)).subscribe({
       next: (response) => {
-        
+
         // อัพเดตจำนวนไลค์ - ตรวจสอบทั้ง likeCount และ likes_count
         if (response.likes_count !== undefined) {
           post.likes_count = response.likes_count;
@@ -310,11 +341,29 @@ export class HomepageUserComponent implements OnDestroy {
             } else if (statusResponse.liked !== undefined) {
               post.isLiked = statusResponse.liked;
             }
-            // อัปเดตการแจ้งเตือนหลังจากสถานะถูกต้องแล้ว
-            if (this.userId) {
-              this.notificationService.refreshImmediately(Number(this.userId));
-              if (post.isLiked) {
-                this.notificationService.addNotificationImmediately('like');
+            // ไม่เรียก global notification service อีกต่อไป - อัปเดต localStorage เท่านั้น
+            // if (this.userId) {
+            //   this.notificationService.refreshImmediately(Number(this.userId));
+            //   if (post.isLiked) {
+            //     this.notificationService.addNotificationImmediately('like');
+            //   }
+            // }
+            
+            // อัปเดต localStorage แทนการเรียก API
+            if (this.userId && post.isLiked) {
+              // เพิ่มจำนวนไลค์ใน localStorage
+              const storedCounts = localStorage.getItem(`notificationCounts_${this.userId}`);
+              if (storedCounts) {
+                try {
+                  const counts = JSON.parse(storedCounts);
+                  counts.like = (counts.like || 0) + 1;
+                  counts.total = (counts.total || 0) + 1;
+                  localStorage.setItem(`notificationCounts_${this.userId}`, JSON.stringify(counts));
+                  this.notificationCounts = counts;
+                  console.log('Updated notification counts in localStorage:', counts);
+                } catch (error) {
+                  console.error('Error updating notification counts in localStorage:', error);
+                }
               }
             }
           },
@@ -342,13 +391,13 @@ export class HomepageUserComponent implements OnDestroy {
     // ตรวจสอบว่าเป็นโปรไฟล์ตัวเองหรือไม่
     if (userId === this.currentUserId) {
       // ถ้าเป็นโปรไฟล์ตัวเอง ให้ไปหน้า ProfileUser
-      this.router.navigate(['/ProfileUser'], { 
-        queryParams: { id: userId } 
+      this.router.navigate(['/ProfileUser'], {
+        queryParams: { id: userId }
       });
     } else {
       // ถ้าเป็นโปรไฟล์คนอื่น ให้ไปหน้า view_user
-      this.router.navigate(['/view_user', this.currentUserId], { 
-        queryParams: { Profileuser: userId } 
+      this.router.navigate(['/view_user', this.currentUserId], {
+        queryParams: { Profileuser: userId }
       });
     }
   }
@@ -360,14 +409,7 @@ export class HomepageUserComponent implements OnDestroy {
 
 
   logout() {
-    localStorage.removeItem('userId');
-    localStorage.removeItem('token');
-    localStorage.removeItem('userRole');
-    localStorage.removeItem('currentUserId');
-    sessionStorage.removeItem('userId');
-    sessionStorage.removeItem('token');
-    sessionStorage.removeItem('userRole');
-    sessionStorage.removeItem('currentUserId');
+    this.clearStoredData();
     this.router.navigate(['/login']);
   }
 
@@ -376,15 +418,119 @@ export class HomepageUserComponent implements OnDestroy {
     this.router.navigate([route], { queryParams: { id: this.currentUserId } });
   }
 
+  // ฟังก์ชันจัดการไฟล์หลายไฟล์
+  private updateMediaDisplay(post: ShowPost): void {
+    if (!post || !post.allMedia || post.allMedia.length === 0) return;
 
+    // อัปเดต media_url และ media_type เป็นไฟล์ปัจจุบัน
+    const currentIndex = post.currentImageIndex || 0;
+    const currentMedia = post.allMedia[currentIndex];
+    if (currentMedia) {
+      post.media_url = currentMedia.url;
+      post.media_type = currentMedia.type as 'image' | 'video';
+    }
+  }
 
+  // ฟังก์ชันเลื่อนไปไฟล์ถัดไป
+  nextMedia(post: ShowPost, event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+    }
+    if (!post.allMedia || post.allMedia.length <= 1) return;
+
+    const currentIndex = post.currentImageIndex || 0;
+    post.currentImageIndex = (currentIndex + 1) % post.allMedia.length;
+    this.updateMediaDisplay(post);
+  }
+
+  // ฟังก์ชันเลื่อนไปไฟล์ก่อนหน้า
+  prevMedia(post: ShowPost, event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+    }
+    if (!post.allMedia || post.allMedia.length <= 1) return;
+
+    const currentIndex = post.currentImageIndex || 0;
+    post.currentImageIndex = currentIndex === 0
+      ? post.allMedia.length - 1
+      : currentIndex - 1;
+    this.updateMediaDisplay(post);
+  }
+
+  // ฟังก์ชันไปยังไฟล์ที่ระบุ
+  goToMedia(post: ShowPost, index: number, event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+    }
+    if (!post.allMedia || index < 0 || index >= post.allMedia.length) return;
+
+    post.currentImageIndex = index;
+    this.updateMediaDisplay(post);
+  }
+
+  // เพิ่มฟังก์ชันการเลื่อนด้วยเมาส์
+  private touchStartX: number = 0;
+  private touchEndX: number = 0;
+
+  onTouchStart(event: TouchEvent, post: ShowPost): void {
+    if (!post.allMedia || post.allMedia.length <= 1) return;
+    this.touchStartX = event.touches[0].clientX;
+  }
+
+  onTouchEnd(event: TouchEvent, post: ShowPost): void {
+    if (!post.allMedia || post.allMedia.length <= 1) return;
+    this.touchEndX = event.changedTouches[0].clientX;
+    this.handleSwipe(post);
+  }
+
+  onMouseDown(event: MouseEvent, post: ShowPost): void {
+    if (!post.allMedia || post.allMedia.length <= 1) return;
+    this.touchStartX = event.clientX;
+    document.addEventListener('mouseup', (e) => this.onMouseUp(e, post), { once: true });
+  }
+
+  onMouseUp(event: MouseEvent, post: ShowPost): void {
+    if (!post.allMedia || post.allMedia.length <= 1) return;
+    this.touchEndX = event.clientX;
+    this.handleSwipe(post);
+  }
+
+  private handleSwipe(post: ShowPost): void {
+    const swipeThreshold = 50; // ความไวในการเลื่อน
+    const diff = this.touchStartX - this.touchEndX;
+
+    if (Math.abs(diff) > swipeThreshold) {
+      if (diff > 0) {
+        // เลื่อนไปขวา (ไฟล์ถัดไป)
+        this.nextMedia(post);
+      } else {
+        // เลื่อนไปซ้าย (ไฟล์ก่อนหน้า)
+        this.prevMedia(post);
+      }
+    }
+  }
+
+  // ฟังก์ชันจัดลำดับไฟล์ตาม logic ของ detail-post (วิดีโอขึ้นก่อน รูปภาพตามหลัง)
+  private reorderMediaFiles(allMedia: { type: string; url: string }[]): { type: string; url: string }[] {
+    if (!allMedia || allMedia.length === 0) return allMedia;
+
+    const videos = allMedia.filter(media => media.type === 'video');
+    const images = allMedia.filter(media => media.type === 'image');
+
+    // จัดลำดับ: วิดีโอขึ้นก่อน รูปภาพตามหลัง
+    const reorderedMedia: { type: string; url: string }[] = [];
+    reorderedMedia.push(...videos);
+    reorderedMedia.push(...images);
+
+    return reorderedMedia;
+  }
 
 
   ngOnDestroy(): void {
-    // หยุดการติดตามการแจ้งเตือน
-    this.notificationService.stopAutoUpdate();
+    // ไม่ต้องหยุดการติดตามการแจ้งเตือนอีกต่อไป - ใช้ localStorage เท่านั้น
+    // this.notificationService.stopAutoUpdate();
 
-    // ยกเลิก subscription
+    // ยกเลิก subscription (ถ้ามี)
     if (this.notificationSubscription) {
       this.notificationSubscription.unsubscribe();
     }
@@ -418,5 +564,16 @@ export class HomepageUserComponent implements OnDestroy {
       // ถ้าเกิด error ในการตรวจสอบ token ให้ redirect ไป login
       this.router.navigate(['/login'], { queryParams: { error: 'token_validation_error' } });
     }
+  }
+
+  private clearStoredData(): void {
+    localStorage.removeItem('userId');
+    localStorage.removeItem('token');
+    localStorage.removeItem('userRole');
+    localStorage.removeItem('currentUserId');
+    sessionStorage.removeItem('userId');
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('userRole');
+    sessionStorage.removeItem('currentUserId');
   }
 }

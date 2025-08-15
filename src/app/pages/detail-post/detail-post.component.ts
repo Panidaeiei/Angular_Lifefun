@@ -85,25 +85,10 @@ export class DetailPostComponent implements OnInit, OnDestroy {
     const categoryMap: { [key: string]: string } = {
       'food': 'อาหาร',
       'travel': 'ท่องเที่ยว',
-      'lifestyle': 'ไลฟ์สไตล์',
-      'technology': 'เทคโนโลยี',
       'health': 'สุขภาพ',
       'fashion': 'แฟชั่น',
-      'sports': 'กีฬา',
-      'entertainment': 'บันเทิง',
-      'education': 'การศึกษา',
-      'business': 'ธุรกิจ',
-      'art': 'ศิลปะ',
-      'music': 'ดนตรี',
-      'gaming': 'เกม',
-      'automotive': 'ยานยนต์',
-      'pets': 'สัตว์เลี้ยง',
-      'home': 'บ้านและสวน',
-      'beauty': 'ความงาม',
-      'fitness': 'ฟิตเนส',
-      'photography': 'การถ่ายภาพ',
-      'cooking': 'การทำอาหาร',
-      'other': 'อื่นๆ'
+      'skincare': 'สกินแคร์',
+      'cosmetics': 'เครื่องสำอาง',
     };
     
     return categoryMap[categoryName.toLowerCase()] || categoryName;
@@ -125,35 +110,20 @@ export class DetailPostComponent implements OnInit, OnDestroy {
     
     // ตรวจสอบ snapshot ครั้งแรก
     const snapshotParams = this.route.snapshot.queryParams;
-    if (snapshotParams['post_id']) {
+    if (snapshotParams['post_id'] && snapshotParams['user_id']) {
       this.postId = snapshotParams['post_id'];
-      this.fetchPost(this.postId);
-      this.loadComments(Number(this.postId));
-      this.loadShareStatus();
-      this.loadSaveStatus();
-    }
-    
-    if (snapshotParams['user_id']) {
       this.userId = snapshotParams['user_id'];
-      this.startNotificationTracking();
+      this.initializePostData();
     }
     
-    // Subscribe เฉพาะ params ที่มี post_id และ user_id
+    // Subscribe เฉพาะเมื่อ params เปลี่ยน
     this.route.queryParams
       .pipe(filter((params: any) => !!params['post_id'] && !!params['user_id']))
       .subscribe((params: any) => {
-        
-        if (params['post_id']) {
+        if (params['post_id'] !== this.postId || params['user_id'] !== this.userId) {
           this.postId = params['post_id'];
-          this.fetchPost(this.postId);
-          this.loadComments(Number(this.postId));
-          this.loadShareStatus();
-          this.loadSaveStatus();
-        }
-        
-        if (params['user_id']) {
           this.userId = params['user_id'];
-          this.startNotificationTracking();
+          this.initializePostData();
         }
       });
 
@@ -184,23 +154,24 @@ export class DetailPostComponent implements OnInit, OnDestroy {
         return;
       }
     });
+  }
 
-    // ตรวจสอบสถานะไลค์ของโพสต์
-    this.posts.forEach((post) => {
-      this.checkLikeStatus(post.post_id);
-    });
-
-    // ดึงคอมเมนต์
-    this.fetchComments();
+  // เพิ่มเมธอดช่วยสำหรับเริ่มต้นข้อมูลโพสต์
+  private initializePostData(): void {
+    this.fetchPost(this.postId);
+    this.loadComments(Number(this.postId));
+    this.loadShareStatus();
+    this.loadSaveStatus();
+    this.startNotificationTracking();
   }
 
   ngOnDestroy(): void {
     window.removeEventListener('resize', this.onResize.bind(this));
     
-    // หยุดการติดตามการแจ้งเตือน
-    this.notificationService.stopAutoUpdate();
+    // ไม่ต้องหยุดการติดตามการแจ้งเตือนอีกต่อไป - ใช้ localStorage เท่านั้น
+    // this.notificationService.stopAutoUpdate();
     
-    // ยกเลิก subscription
+    // ยกเลิก subscription (ถ้ามี)
     if (this.notificationSubscription) {
       this.notificationSubscription.unsubscribe();
     }
@@ -209,19 +180,48 @@ export class DetailPostComponent implements OnInit, OnDestroy {
   // เริ่มการติดตามการแจ้งเตือน
   private startNotificationTracking(): void {
     if (this.userId) {
-      // โหลดการแจ้งเตือนครั้งแรก
-      this.notificationService.loadNotificationCounts(Number(this.userId));
+      // โหลดข้อมูลจาก localStorage เท่านั้น (ไม่เรียก backend)
+      this.loadNotificationCountsFromStorage();
       
-      // เริ่มการอัปเดตอัตโนมัติ
-      this.notificationService.startAutoUpdate(Number(this.userId));
+      // ไม่เรียก API อีกต่อไป - ใช้ข้อมูลจาก localStorage เท่านั้น
+      // this.notificationService.loadNotificationCounts(Number(this.userId));
       
-      // ติดตามการเปลี่ยนแปลงจำนวนการแจ้งเตือน
-      this.notificationSubscription = this.notificationService.notificationCounts$.subscribe(
-        (counts) => {
-          this.notificationCounts = counts;
-        }
-      );
+      // ไม่ต้อง subscribe อีกต่อไป - ใช้ข้อมูลจาก localStorage เท่านั้น
+      // this.notificationSubscription = this.notificationService.notificationCounts$.subscribe(
+      //   (counts) => {
+      //     this.notificationCounts = counts;
+      //   }
+      // );
     }
+  }
+
+  // เพิ่มฟังก์ชันโหลดข้อมูลจาก localStorage
+  private loadNotificationCountsFromStorage(): void {
+    const storedCounts = localStorage.getItem(`notificationCounts_${this.userId}`);
+    if (storedCounts) {
+      try {
+        this.notificationCounts = JSON.parse(storedCounts);
+        console.log('Loaded notification counts from storage:', this.notificationCounts);
+      } catch (error) {
+        console.error('Error parsing stored notification counts:', error);
+      }
+    }
+  }
+
+  // เพิ่มฟังก์ชันบันทึกข้อมูลลง localStorage
+  private saveNotificationCountsToStorage(): void {
+    const countsToSave = {
+      like: this.notificationCounts.like || 0,
+      follow: this.notificationCounts.follow || 0,
+      share: this.notificationCounts.share || 0,
+      comment: this.notificationCounts.comment || 0,
+      unban: this.notificationCounts.unban || 0,
+      total: (this.notificationCounts.like || 0) + (this.notificationCounts.follow || 0) + (this.notificationCounts.share || 0) + (this.notificationCounts.comment || 0) + (this.notificationCounts.unban || 0)
+    };
+    
+    localStorage.setItem(`notificationCounts_${this.userId}`, JSON.stringify(countsToSave));
+    this.notificationCounts = countsToSave;
+    console.log('Saved notification counts to storage:', countsToSave);
   }
 
   checkScreenSize() {
@@ -375,6 +375,13 @@ export class DetailPostComponent implements OnInit, OnDestroy {
     this.saveCount = currentCount;
   }
 
+  // เพิ่มเมธอดช่วยสำหรับอัปเดตจำนวนการบันทึกใน localStorage
+  private updateSaveCountInStorage(count: number): void {
+    const key = `save_count_${this.postId}`;
+    localStorage.setItem(key, count.toString());
+    this.saveCount = count;
+  }
+
   private loadSaveCountFromStorage(): void {
     const key = `save_count_${this.postId}`;
     this.saveCount = parseInt(localStorage.getItem(key) || '0');
@@ -395,6 +402,13 @@ export class DetailPostComponent implements OnInit, OnDestroy {
     this.shareCount = currentCount;
   }
 
+  // เพิ่มเมธอดช่วยสำหรับอัปเดตจำนวนการแชร์ใน localStorage
+  private updateShareCountInStorage(count: number): void {
+    const key = `share_count_${this.postId}`;
+    localStorage.setItem(key, count.toString());
+    this.shareCount = count;
+  }
+
   private loadShareCountFromStorage(): void {
     const key = `share_count_${this.postId}`;
     this.shareCount = parseInt(localStorage.getItem(key) || '0');
@@ -402,12 +416,13 @@ export class DetailPostComponent implements OnInit, OnDestroy {
 
   // ฟังก์ชันดึงจำนวนการแชร์จาก API
   loadShareCount(): void {
+    // ใช้เฉพาะเมื่อต้องการโหลดข้อมูลใหม่จาก server
+    // ไม่ควรเรียกบ่อยเกินไปเพื่อลดการใช้งาน API
     this.reactPostservice.getShareCount(Number(this.postId)).subscribe(
       (response) => {
         this.shareCount = response.share_count;
         // บันทึกลง localStorage
-        const key = `share_count_${this.postId}`;
-        localStorage.setItem(key, this.shareCount.toString());
+        this.updateShareCountInStorage(this.shareCount);
       },
       (error) => {
         console.error('Error loading share count:', error);
@@ -419,12 +434,13 @@ export class DetailPostComponent implements OnInit, OnDestroy {
 
   // ฟังก์ชันดึงจำนวนการเซฟจาก API
   loadSaveCount(): void {
+    // ใช้เฉพาะเมื่อต้องการโหลดข้อมูลใหม่จาก server
+    // ไม่ควรเรียกบ่อยเกินไปเพื่อลดการใช้งาน API
     this.reactPostservice.getSaveCount(Number(this.postId)).subscribe(
       (response) => {
         this.saveCount = response.save_count;
         // บันทึกลง localStorage
-        const key = `save_count_${this.postId}`;
-        localStorage.setItem(key, this.saveCount.toString());
+        this.updateSaveCountInStorage(this.saveCount);
       },
       (error) => {
         console.error('Error loading save count:', error);
@@ -445,6 +461,7 @@ export class DetailPostComponent implements OnInit, OnDestroy {
       }
     });
   }
+
 
   encodeLocation(location: string): string {
     return encodeURIComponent(location);
@@ -725,17 +742,14 @@ export class DetailPostComponent implements OnInit, OnDestroy {
         
         // อัปเดตจำนวนการบันทึกจาก response (ถ้ามี) หรือใช้ localStorage
         if (response.save_count !== undefined) {
-          this.saveCount = response.save_count;
-          // บันทึกลง localStorage เพื่อใช้เป็น fallback
-          const key = `save_count_${this.postId}`;
-          localStorage.setItem(key, this.saveCount.toString());
+          this.updateSaveCountInStorage(response.save_count);
         } else {
           // ใช้ localStorage ถ้า API ไม่ส่ง save_count กลับมา
           this.updateSaveCount(this.isSave);
         }
         
-        // โหลดจำนวนการเซฟใหม่จาก API
-        this.loadSaveCount();
+        // ไม่ต้องเรียก API ซ้ำ - ใช้ข้อมูลจาก response แทน
+        // this.loadSaveCount();
       },
       (error) => {
         console.error('Error saving/unsaving post:', error);
@@ -773,8 +787,8 @@ export class DetailPostComponent implements OnInit, OnDestroy {
             this.updateShareCount(false);
           }
           
-          // โหลดจำนวนการแชร์ใหม่จาก API
-          this.loadShareCount();
+          // ไม่ต้องเรียก API ซ้ำ - ใช้ข้อมูลจาก localStorage แทน
+          // this.loadShareCount();
         },
         (error) => {
           console.error('Error sharing/unsharing post:', error);
