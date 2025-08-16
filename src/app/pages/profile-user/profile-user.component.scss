@@ -797,6 +797,16 @@ body {
   }
 }
 
+.description-container{
+  width: 400px !important;
+  word-wrap: break-word;
+}
+
+.profile-description-mobile{
+  width: 220px !important;
+  word-wrap: break-word;
+}
+
 // Responsive Design
 @media (max-width: 1024px) {
   .profile-header {
@@ -959,6 +969,7 @@ body {
   .profile-header {
     gap: 60px;
   }
+
   
   .profile-avatar {
     width: 180px;
@@ -1022,6 +1033,8 @@ body {
   .background-div > div:last-child {
     margin-top: 100px !important;
   }
+
+  
 }
 
 @media (max-width: 1024px) {
@@ -1066,6 +1079,11 @@ body {
   ::ng-deep .mat-mdc-tab-body-content {
     min-height: 260px !important;
   }
+  .description-container{
+    width: 300px !important;
+    word-wrap: break-word;
+  }
+  
 }
 
 @media (max-width: 600px) {
@@ -1077,40 +1095,3 @@ body {
   }
 }
 
-/* Responsive Description Container */
-.description-container {
-  width: 100px !important;
-  margin-top: 10px;
-  
-}
-
-/* Responsive Breakpoints */
-@media (max-width: 1200px) {
-  .description-container {
-    max-width: 450px;
-  }
-}
-
-@media (max-width: 1024px) {
-  .description-container {
-    max-width: 400px;
-  }
-}
-
-@media (max-width: 768px) {
-  .description-container {
-    max-width: 350px;
-  }
-}
-
-@media (max-width: 600px) {
-  .description-container {
-    max-width: 300px;
-  }
-}
-
-@media (max-width: 480px) {
-  .description-container {
-    max-width: 250px;
-  }
-}
