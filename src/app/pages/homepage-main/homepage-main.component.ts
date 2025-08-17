@@ -63,14 +63,14 @@ export class HomepageMainComponent {
     this.postService.getPosts().subscribe(
       (response: ShowPost[]) => {
         // กรองโพสต์ที่มี `post_id` ซ้ำ
-        const uniquePosts = response.filter((value, index, self) =>
-          index === self.findIndex((t) => (
-            t.post_id === value.post_id
-          ))
-        );
+        // const uniquePosts = response.filter((value, index, self) =>
+        //   index === self.findIndex((t) => (
+        //     t.post_id === value.post_id
+        //   ))
+        // );
 
         // อัปเดตค่า posts ที่กรองแล้ว
-        this.posts = uniquePosts;
+        this.posts = response;
 
         // จัดการข้อมูลไฟล์หลายไฟล์ที่มาจาก Backend
         this.posts.forEach(post => {

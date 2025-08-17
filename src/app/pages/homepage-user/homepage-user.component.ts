@@ -102,7 +102,7 @@ export class HomepageUserComponent implements OnDestroy {
       this.userId = loggedInUserId;
     }
 
-    // เริ่มการติดตามการแจ้งเตือน (ใช้ localStorage เท่านั้น)
+    // // เริ่มการติดตามการแจ้งเตือน (ใช้ localStorage เท่านั้น)
     this.startNotificationTracking();
 
     // โหลดข้อมูลแบบ Parallel เพื่อเพิ่มประสิทธิภาพ
@@ -153,19 +153,19 @@ export class HomepageUserComponent implements OnDestroy {
     this.postService.getPosts_interests().subscribe(
       (response: ShowPost[]) => {
         // กรองโพสต์ที่มี `post_id` ซ้ำ
-        const uniquePosts = response.filter((value, index, self) =>
-          index === self.findIndex((t) => (
-            t.post_id === value.post_id
-          ))
-        );
+        // const uniquePosts = response.filter((value, index, self) =>
+        //   index === self.findIndex((t) => (
+        //     t.post_id === value.post_id
+        //   ))
+        // );
 
         // อัปเดตค่า posts ที่กรองแล้ว
-        this.posts = uniquePosts;
+        this.posts = response;
 
         // จัดการข้อมูลไฟล์หลายไฟล์แบบ Optimized
-        this.optimizePostMedia(uniquePosts);
+        console.log(this.posts);
         
-        // ปิด loading state
+        // // ปิด loading state
         this.postsLoading = false;
         this.loading = false;
       },

@@ -157,9 +157,11 @@ export class NotificationUserComponent {
 
         // จัดการข้อมูลการแจ้งเตือนแบบติดตาม
         this.notificationsFollow = response.follows || [];
+        console.log('Follow notifications from combined API:', this.notificationsFollow);
         this.showFollowersBox = false;
         this.latestFollowerName = '';
         this.unreadFollowCount = this.notificationsFollow.filter(noti => noti.notify === 1).length;
+        console.log('Unread follow count from combined API:', this.unreadFollowCount);
 
         // จัดการข้อมูลการแจ้งเตือนแบบแชร์
         this.notificationsShare = response.shares || [];
@@ -496,7 +498,9 @@ export class NotificationUserComponent {
     
     this.notificationService.Noti_Follow(Number(this.userId)).subscribe({
       next: (response: any) => {
+        console.log('Follow notifications response:', response);
         this.notificationsFollow = response.follows || [];
+        console.log('Processed follow notifications:', this.notificationsFollow);
         this.showFollowersBox = true;
         
         // หาผู้ติดตามล่าสุด
@@ -506,6 +510,7 @@ export class NotificationUserComponent {
           this.latestFollowerName = '';
         }
         this.unreadFollowCount = this.notificationsFollow.filter(noti => noti.notify === 1).length;
+        console.log('Unread follow count:', this.unreadFollowCount);
       },
       error: (error: any) => {
         console.error('Error loading follow notifications:', error);
@@ -593,6 +598,11 @@ export class NotificationUserComponent {
         this.updateNotificationCounts();
       }
     });
+  }
+
+  // เพิ่มฟังก์ชัน trackBy สำหรับ ngFor optimization
+  trackByFollowId(index: number, noti: any): number {
+    return noti.follow_id || index;
   }
 
   logout() {
