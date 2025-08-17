@@ -144,15 +144,15 @@ export class HomepageMainComponent {
     this.router.navigate(['/viewuser_main'], { queryParams: { Profileuser: userId } });
   }
 
-    viewPost(postId: string): void {
-    this.postService.viewPost(postId).subscribe({
-      next: () => {
-        // เมื่อ API viewPost สำเร็จแล้ว ค่อยเปลี่ยนหน้า
-        this.router.navigate(['/detail_postmain'], { queryParams: { post_id: postId} });
-      },
-      error: (err) => console.error('Error updating view count:', err)
-    });
-  }
+  //   viewPost(postId: string): void {
+  //   this.postService.viewPost(postId).subscribe({
+  //     next: () => {
+  //       // เมื่อ API viewPost สำเร็จแล้ว ค่อยเปลี่ยนหน้า
+  //       this.router.navigate(['/detail_postmain'], { queryParams: { post_id: postId} });
+  //     },
+  //     error: (err) => console.error('Error updating view count:', err)
+  //   });
+  // }
 
   toggleDrawer() { this.isDrawerOpen = !this.isDrawerOpen; }
 

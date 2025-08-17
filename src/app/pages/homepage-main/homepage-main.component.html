@@ -50,7 +50,7 @@
                              (touchstart)="onTouchStart($event, post)"
                              (touchend)="onTouchEnd($event, post)"
                              (mousedown)="onMouseDown($event, post)">
-                            <a (click)="viewPost(post.post_id.toString())">
+                            <a >
                                 <ng-container *ngIf="post.media_type === 'image'; else videoTemplate">
                                     <img [src]="post.media_url" class="imgpost" alt="รูปที่โพสต์">
                                 </ng-container>

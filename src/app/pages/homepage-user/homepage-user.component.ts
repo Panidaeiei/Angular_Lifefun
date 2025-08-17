@@ -35,6 +35,8 @@ export class HomepageUserComponent implements OnDestroy {
   postId: string = '';
   viewPosts: any[] = [];
   isMobile: boolean = false; // เพิ่มตัวแปรสำหรับตรวจสอบ mobile
+  loading: boolean = false; // เพิ่ม loading state
+  postsLoading: boolean = false; // เพิ่ม loading state สำหรับโพสต์
   notificationCounts: NotificationCounts = {
     like: 0,
     follow: 0,
@@ -44,6 +46,9 @@ export class HomepageUserComponent implements OnDestroy {
     total: 0
   };
   private notificationSubscription?: Subscription;
+  
+  // เพิ่ม Map เพื่อติดตามโพสต์ที่ optimize แล้ว
+  private optimizedPosts = new Set<number>();
 
   // เพิ่มข้อมูลหมวดหมู่
   categories = [
@@ -97,13 +102,26 @@ export class HomepageUserComponent implements OnDestroy {
       this.userId = loggedInUserId;
     }
 
-    // เรียก loadCurrentUserId เพียงครั้งเดียว
-    this.userService.loadCurrentUserId();
+    // เริ่มการติดตามการแจ้งเตือน (ใช้ localStorage เท่านั้น)
+    this.startNotificationTracking();
 
-    // เรียก getCurrentUserId เพียงครั้งเดียวและจัดการทุกอย่างในนั้น
+    // โหลดข้อมูลแบบ Parallel เพื่อเพิ่มประสิทธิภาพ
+    this.loadDataInParallel();
+  }
+
+  // เพิ่มฟังก์ชันโหลดข้อมูลแบบ Parallel
+  private loadDataInParallel(): void {
+    // ตั้งค่า loading state
+    this.loading = true;
+    this.postsLoading = true;
+    
+    // เรียก API ทั้งหมดพร้อมกันแทนการรอแบบ Sequential
+    this.userService.loadCurrentUserId();
+    
+    // โหลด currentUserId และ view counts พร้อมกัน
     this.userService.getCurrentUserId().subscribe((userId) => {
       this.currentUserId = userId;
-
+      
       // ตรวจสอบ userId ใน url กับ userId ที่ล็อกอิน
       const urlUserId = this.route.snapshot.queryParams['id'];
       if (urlUserId && userId && urlUserId !== userId) {
@@ -111,33 +129,109 @@ export class HomepageUserComponent implements OnDestroy {
         this.userId = userId;
         return;
       }
-
-      // โหลดข้อมูลหลังจากได้ currentUserId แล้ว
-      this.loadUserData();
     });
 
-    this.likePostService.likeStatus$.subscribe((status) => {
-      // ดำเนินการที่ต้องการเมื่อไลค์เปลี่ยนแปลง
-    });
-
+    // โหลด view counts พร้อมกัน (ไม่ต้องรอ currentUserId)
     this.postService.getViewCounts().subscribe({
       next: (data) => {
         this.viewPosts = data;
       },
       error: (err) => {
-        console.error('Error loading views:', err);
+        // ใช้ error handling ที่เหมาะสมแทน console.error
+        this.handleApiError(err, 'non-critical');
       }
     });
 
-    // เริ่มการติดตามการแจ้งเตือน
-    this.startNotificationTracking();
+    // โหลดโพสต์ทันที (ไม่ต้องรอ currentUserId)
+    this.fetchPostsOptimized();
+  }
+
+  // เพิ่มฟังก์ชันโหลดโพสต์แบบ Optimized
+  private fetchPostsOptimized(): void {
+    this.postsLoading = true;
+    
+    this.postService.getPosts_interests().subscribe(
+      (response: ShowPost[]) => {
+        // กรองโพสต์ที่มี `post_id` ซ้ำ
+        const uniquePosts = response.filter((value, index, self) =>
+          index === self.findIndex((t) => (
+            t.post_id === value.post_id
+          ))
+        );
+
+        // อัปเดตค่า posts ที่กรองแล้ว
+        this.posts = uniquePosts;
+
+        // จัดการข้อมูลไฟล์หลายไฟล์แบบ Optimized
+        this.optimizePostMedia(uniquePosts);
+        
+        // ปิด loading state
+        this.postsLoading = false;
+        this.loading = false;
+      },
+      (error) => {
+        // ใช้ error handling ที่เหมาะสมแทน console.error
+        this.handleApiError(error, 'critical');
+        this.postsLoading = false;
+        this.loading = false;
+      }
+    );
+  }
+
+  // เพิ่มฟังก์ชันจัดการ media แบบ Optimized
+  private optimizePostMedia(posts: ShowPost[]): void {
+    // ใช้ requestAnimationFrame เพื่อไม่บล็อก UI thread
+    requestAnimationFrame(() => {
+      // แบ่งการประมวลผลเป็น chunks เพื่อไม่บล็อก UI
+      this.processPostsInChunks(posts, 0);
+    });
+  }
+
+  // เพิ่มฟังก์ชันประมวลผลโพสต์แบบ Chunked
+  private processPostsInChunks(posts: ShowPost[], startIndex: number): void {
+    const chunkSize = 10; // ประมวลผลครั้งละ 10 โพสต์
+    const endIndex = Math.min(startIndex + chunkSize, posts.length);
+    
+    // ประมวลผล chunk ปัจจุบัน
+    for (let i = startIndex; i < endIndex; i++) {
+      const post = posts[i];
+      
+      // ตรวจสอบและตั้งค่า currentImageIndex ถ้าไม่มี
+      if (post.currentImageIndex === undefined) {
+        post.currentImageIndex = 0;
+      }
+
+      // จัดลำดับไฟล์ใหม่เฉพาะเมื่อจำเป็น
+      if (post.allMedia && post.allMedia.length > 0) {
+        // ตรวจสอบว่าจัดลำดับแล้วหรือยัง
+        if (!this.optimizedPosts.has(post.post_id)) {
+          const reorderedMedia = this.reorderMediaFiles(post.allMedia);
+          post.allMedia = reorderedMedia;
+          this.optimizedPosts.add(post.post_id); // เพิ่ม post_id ใน Set
+        }
+
+        // อัปเดต media_url และ media_type จากไฟล์แรก
+        if (post.allMedia && post.allMedia.length > 0) {
+          const firstMedia = post.allMedia[0];
+          post.media_url = firstMedia.url;
+          post.media_type = firstMedia.type as 'image' | 'video';
+        }
+      }
+    }
+    
+    // ถ้ายังมีโพสต์ที่ต้องประมวลผล ให้ประมวลผล chunk ถัดไป
+    if (endIndex < posts.length) {
+      requestAnimationFrame(() => {
+        this.processPostsInChunks(posts, endIndex);
+      });
+    }
   }
 
   // แยกฟังก์ชันสำหรับโหลดข้อมูลผู้ใช้
   private loadUserData(): void {
     if (this.userId) {
       // โหลดโพสต์ (ไม่ต้องเรียก getCurrentUserId อีก เพราะเรียกไปแล้วใน ngOnInit)
-      this.fetchPosts();
+      this.fetchPostsOptimized();
     }
   }
 
@@ -147,9 +241,10 @@ export class HomepageUserComponent implements OnDestroy {
     if (storedCounts) {
       try {
         this.notificationCounts = JSON.parse(storedCounts);
-        console.log('Loaded notification counts from storage:', this.notificationCounts);
+        // ลบ console.log ที่ไม่จำเป็น
       } catch (error) {
-        console.error('Error parsing stored notification counts:', error);
+        // ใช้ error handling ที่เหมาะสมแทน console.error
+        this.handleStorageError('Failed to load notification counts from storage');
       }
     }
   }
@@ -165,9 +260,13 @@ export class HomepageUserComponent implements OnDestroy {
       total: (this.notificationCounts.like || 0) + (this.notificationCounts.follow || 0) + (this.notificationCounts.share || 0) + (this.notificationCounts.comment || 0) + (this.notificationCounts.unban || 0)
     };
     
-    localStorage.setItem(`notificationCounts_${this.userId}`, JSON.stringify(countsToSave));
-    this.notificationCounts = countsToSave;
-    console.log('Saved notification counts to storage:', countsToSave);
+    try {
+      localStorage.setItem(`notificationCounts_${this.userId}`, JSON.stringify(countsToSave));
+      this.notificationCounts = countsToSave;
+      // ลบ console.log ที่ไม่จำเป็น
+    } catch (error) {
+      this.handleStorageError('Failed to save notification counts to storage');
+    }
   }
 
   // เริ่มการติดตามการแจ้งเตือน
@@ -205,67 +304,11 @@ export class HomepageUserComponent implements OnDestroy {
         // เมื่อ API viewPost สำเร็จแล้ว ค่อยเปลี่ยนหน้า
         this.router.navigate(['/detail_post'], { queryParams: { post_id: postId, user_id: this.currentUserId } });
       },
-      error: (err) => console.error('Error updating view count:', err)
-    });
-  }
-
-  fetchPosts(): void {
-    this.postService.getPosts_interests().subscribe(
-      (response: ShowPost[]) => {
-
-        // กรองโพสต์ที่มี `post_id` ซ้ำ
-        const uniquePosts = response.filter((value, index, self) =>
-          index === self.findIndex((t) => (
-            t.post_id === value.post_id
-          ))
-        );
-
-        // อัปเดตค่า posts ที่กรองแล้ว
-        this.posts = uniquePosts;
-
-        // จัดการข้อมูลไฟล์หลายไฟล์ที่มาจาก Backend
-        this.posts.forEach(post => {
-          // ตรวจสอบและตั้งค่า currentImageIndex ถ้าไม่มี
-          if (post.currentImageIndex === undefined) {
-            post.currentImageIndex = 0;
-          }
-
-          // จัดลำดับไฟล์ใหม่ตาม logic ของ detail-post (วิดีโอขึ้นก่อน รูปภาพตามหลัง)
-          if (post.allMedia && post.allMedia.length > 0) {
-            const reorderedMedia = this.reorderMediaFiles(post.allMedia);
-            post.allMedia = reorderedMedia;
-
-            // อัปเดต media_url และ media_type จากไฟล์แรกที่จัดลำดับแล้ว
-            if (post.allMedia && post.allMedia.length > 0) {
-              const firstMedia = post.allMedia[0];
-              post.media_url = firstMedia.url;
-              post.media_type = firstMedia.type as 'image' | 'video';
-            }
-          }
-        });
-
-        // ตรวจสอบสถานะไลค์สำหรับแต่ละโพสต์ - รอให้ currentUserId พร้อม
-        if (this.currentUserId) {
-          // ลบการเรียก API checkLikeStatus ทุกโพสต์ออก
-          // this.posts.forEach(post => {
-          //   this.checkLikeStatusForPost(post);
-          // });
-        } else {
-          // ตรวจสอบสถานะไลค์หลังจาก currentUserId พร้อม
-          this.userService.getCurrentUserId().subscribe((userId) => {
-            if (userId && this.posts.length > 0) {
-              // ลบการเรียก API checkLikeStatus ทุกโพสต์ออก
-              // this.posts.forEach(post => {
-              //   this.checkLikeStatusForPost(post);
-              // });
-            }
-          });
-        }
-      },
-      (error) => {
-        console.error('Error fetching posts:', error);
+      error: (err) => {
+        // ใช้ error handling ที่เหมาะสมแทน console.error
+        this.handleApiError(err, 'non-critical');
       }
-    );
+    });
   }
 
   // เพิ่มฟังก์ชันตรวจสอบสถานะไลค์สำหรับแต่ละโพสต์
@@ -284,14 +327,16 @@ export class HomepageUserComponent implements OnDestroy {
         }
       },
       error: (error) => {
-        console.error('Error checking like status for post', post.post_id, ':', error);
+        // ใช้ error handling ที่เหมาะสมแทน console.error
+        this.handleApiError(error, 'non-critical');
       }
     });
   }
 
   toggleHeart(post: ShowPost): void {
     if (!this.currentUserId) {
-      console.error('User ID not found');
+      // ใช้ error handling ที่เหมาะสมแทน console.error
+      this.handleValidationError('ไม่พบข้อมูลผู้ใช้');
       return;
     }
 
@@ -321,9 +366,10 @@ export class HomepageUserComponent implements OnDestroy {
               counts.total = (counts.total || 0) + 1;
               localStorage.setItem(`notificationCounts_${this.userId}`, JSON.stringify(counts));
               this.notificationCounts = counts;
-              console.log('Updated notification counts in localStorage:', counts);
+              // ลบ console.log ที่ไม่จำเป็น
             } catch (error) {
-              console.error('Error updating notification counts in localStorage:', error);
+              // ใช้ error handling ที่เหมาะสมแทน console.error
+              this.handleStorageError('ไม่สามารถอัปเดตจำนวนไลค์ได้');
             }
           }
         }
@@ -331,7 +377,8 @@ export class HomepageUserComponent implements OnDestroy {
 
       },
       error: (error) => {
-        console.error('Error toggling like:', error);
+        // ใช้ error handling ที่เหมาะสมแทน console.error
+        this.handleApiError(error, 'critical');
         // Rollback optimistic update ถ้า API ล้มเหลว
         post.isLiked = currentLikedState;
       }
@@ -340,7 +387,8 @@ export class HomepageUserComponent implements OnDestroy {
 
   goToProfile(userId: string): void {
     if (!userId) {
-      console.error('User ID is missing! Navigation aborted.');
+      // ใช้ error handling ที่เหมาะสมแทน console.error
+      this.handleValidationError('ไม่พบข้อมูลผู้ใช้');
       return;
     }
 
@@ -481,6 +529,18 @@ export class HomepageUserComponent implements OnDestroy {
     return reorderedMedia;
   }
 
+  // เพิ่มฟังก์ชัน trackBy สำหรับ ngFor optimization
+  trackByPostId(index: number, post: ShowPost): number {
+    return post.post_id;
+  }
+
+  // เพิ่มฟังก์ชันจัดการการโหลดรูปภาพ
+  onImageLoad(post: ShowPost): void {
+    // เมื่อรูปภาพโหลดเสร็จแล้ว สามารถเพิ่ม logic เพิ่มเติมได้
+    // เช่น อัปเดต loading state หรือ animation
+    // ลบ console.log ที่ไม่จำเป็น
+  }
+
 
   ngOnDestroy(): void {
     // ไม่ต้องหยุดการติดตามการแจ้งเตือนอีกต่อไป - ใช้ localStorage เท่านั้น
@@ -531,5 +591,53 @@ export class HomepageUserComponent implements OnDestroy {
     sessionStorage.removeItem('token');
     sessionStorage.removeItem('userRole');
     sessionStorage.removeItem('currentUserId');
+  }
+
+  // เพิ่มฟังก์ชันจัดการ error ที่เหมาะสม
+  private handleStorageError(message: string): void {
+    // ใช้ SweetAlert2 แทน console.error เพื่อให้ผู้ใช้เห็น
+    Swal.fire({
+      icon: 'warning',
+      title: 'คำเตือน',
+      text: message,
+      confirmButtonText: 'ตกลง'
+    });
+  }
+
+  private handleApiError(error: any, operation: string): void {
+    // จัดการ API error ที่เหมาะสม
+    let errorMessage = 'เกิดข้อผิดพลาดในการดำเนินการ';
+    
+    if (error.status === 0) {
+      errorMessage = 'ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้';
+    } else if (error.status === 401) {
+      errorMessage = 'เซสชันหมดอายุ กรุณาเข้าสู่ระบบใหม่';
+    } else if (error.status === 403) {
+      errorMessage = 'ไม่มีสิทธิ์เข้าถึง';
+    } else if (error.status === 404) {
+      errorMessage = 'ไม่พบข้อมูลที่ต้องการ';
+    } else if (error.status >= 500) {
+      errorMessage = 'เกิดข้อผิดพลาดที่เซิร์ฟเวอร์';
+    }
+
+    // แสดง error message เฉพาะเมื่อจำเป็น
+    if (operation === 'critical') {
+      Swal.fire({
+        icon: 'error',
+        title: 'ข้อผิดพลาด',
+        text: errorMessage,
+        confirmButtonText: 'ตกลง'
+      });
+    }
+  }
+
+  private handleValidationError(message: string): void {
+    // จัดการ validation error
+    Swal.fire({
+      icon: 'warning',
+      title: 'ข้อมูลไม่ถูกต้อง',
+      text: message,
+      confirmButtonText: 'ตกลง'
+    });
   }
 }

@@ -128,10 +128,41 @@
 </div>
 
 <div class="background-div">
+  <!-- Loading Overlay -->
+  <div *ngIf="loading" class="loading-overlay">
+    <div class="loading-spinner">
+      <i class="fa fa-spinner fa-spin"></i>
+      <p>กำลังโหลดข้อมูล...</p>
+    </div>
+  </div>
 
-  <div class="card-container-wrapper">
+  <!-- Skeleton Loading สำหรับโพสต์ -->
+  <div *ngIf="postsLoading && posts.length === 0" class="skeleton-container">
+    <div class="card-container-wrapper">
+      <div class="card-container">
+        <div *ngFor="let item of [1,2,3,4,5]" class="card-wrapper">
+          <mat-card class="cardpost skeleton-card">
+            <div class="skeleton-media"></div>
+            <div class="skeleton-content">
+              <div class="skeleton-title"></div>
+              <div class="skeleton-profile">
+                <div class="skeleton-avatar"></div>
+                <div class="skeleton-text">
+                  <div class="skeleton-name"></div>
+                  <div class="skeleton-time"></div>
+                </div>
+              </div>
+            </div>
+          </mat-card>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- โพสต์จริง -->
+  <div class="card-container-wrapper" *ngIf="!postsLoading || posts.length > 0">
     <div class="card-container">
-      <div *ngFor="let post of posts" class="card-wrapper">
+      <div *ngFor="let post of posts; trackBy: trackByPostId" class="card-wrapper">
         <mat-card class="cardpost">
           <div style="display: flex; flex-direction: column; position: relative;">
 
@@ -140,10 +171,11 @@
               (touchend)="onTouchEnd($event, post)" (mousedown)="onMouseDown($event, post)">
               <a (click)="viewPost(post.post_id.toString())">
                 <ng-container *ngIf="post.media_type === 'image'; else videoTemplate">
-                  <img [src]="post.media_url" class="imgpost" alt="รูปที่โพสต์">
+                  <img [src]="post.media_url" class="imgpost" alt="รูปที่โพสต์" 
+                       loading="lazy" (load)="onImageLoad(post)">
                 </ng-container>
                 <ng-template #videoTemplate>
-                  <video [src]="post.media_url" controls class="imgpost">
+                  <video [src]="post.media_url" controls class="imgpost" preload="none">
                   </video>
                 </ng-template>
               </a>
@@ -202,7 +234,7 @@
                 <img
                   [src]="post.user_profile_image || 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'"
                   alt="รูปโปรไฟล์" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;"
-                  (click)="goToProfile(post.user_uid.toString())">
+                  (click)="goToProfile(post.user_uid.toString())" loading="lazy">
                 <div style="display: flex; flex-direction: column;">
                   <span style="font-weight: 600; font-size: 20px;">
                     {{ post.user_name }}
