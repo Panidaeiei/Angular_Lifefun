@@ -97,20 +97,10 @@ export class HomepageUserComponent implements OnDestroy {
       this.userId = loggedInUserId;
     }
 
-    // เรียก API แค่ครั้งเดียว
-    this.loadUserData();
+    // เรียก loadCurrentUserId เพียงครั้งเดียว
+    this.userService.loadCurrentUserId();
 
-    // ลบ subscription ที่ทำให้เรียก API ซ้ำออก
-    // this.route.queryParams.subscribe() - ลบออก
-
-    this.route.queryParamMap.subscribe(params => {
-      const viewerId = params.get('viewerId');
-    });
-
-    this.likePostService.likeStatus$.subscribe((status) => {
-      // ดำเนินการที่ต้องการเมื่อไลค์เปลี่ยนแปลง
-    });
-
+    // เรียก getCurrentUserId เพียงครั้งเดียวและจัดการทุกอย่างในนั้น
     this.userService.getCurrentUserId().subscribe((userId) => {
       this.currentUserId = userId;
 
@@ -119,23 +109,16 @@ export class HomepageUserComponent implements OnDestroy {
       if (urlUserId && userId && urlUserId !== userId) {
         // ถ้า id ใน url ไม่ตรงกับ id ที่ล็อกอินไว้ ให้ใช้ userId ที่ล็อกอินแทน
         this.userId = userId;
-        // ไม่ต้องเรียก loadUserData() อีก เพราะเรียกไปแล้ว
         return;
       }
 
-      // ตรวจสอบสถานะไลค์สำหรับโพสต์ที่มีอยู่แล้ว
-      if (this.posts.length > 0) {
-        // ลบการเรียก API checkLikeStatus ทุกโพสต์ออก
-        // this.posts.forEach(post => {
-        //   this.checkLikeStatusForPost(post);
-        // });
-      }
+      // โหลดข้อมูลหลังจากได้ currentUserId แล้ว
+      this.loadUserData();
     });
 
-    this.userService.loadCurrentUserId();
-
-    // ลบการเรียก fetchPosts ซ้ำออก
-    // this.fetchPosts(); - ลบออก เพราะเรียกใน loadUserData() แล้ว
+    this.likePostService.likeStatus$.subscribe((status) => {
+      // ดำเนินการที่ต้องการเมื่อไลค์เปลี่ยนแปลง
+    });
 
     this.postService.getViewCounts().subscribe({
       next: (data) => {
@@ -153,14 +136,7 @@ export class HomepageUserComponent implements OnDestroy {
   // แยกฟังก์ชันสำหรับโหลดข้อมูลผู้ใช้
   private loadUserData(): void {
     if (this.userId) {
-      // โหลดข้อมูลผู้ใช้ปัจจุบัน
-      this.userService.getCurrentUserId().subscribe((userId) => {
-        this.currentUserId = userId;
-      });
-
-      this.userService.loadCurrentUserId();
-
-      // โหลดโพสต์
+      // โหลดโพสต์ (ไม่ต้องเรียก getCurrentUserId อีก เพราะเรียกไปแล้วใน ngOnInit)
       this.fetchPosts();
     }
   }
@@ -333,44 +309,24 @@ export class HomepageUserComponent implements OnDestroy {
           post.likes_count = response.likeCount;
         }
 
-        // ตรวจสอบสถานะไลค์ใหม่หลังจาก toggle
-        this.likePostService.checkLikeStatus(post.post_id).subscribe({
-          next: (statusResponse) => {
-            if (statusResponse.isLiked !== undefined) {
-              post.isLiked = statusResponse.isLiked;
-            } else if (statusResponse.liked !== undefined) {
-              post.isLiked = statusResponse.liked;
+        // ไม่ต้องเรียก checkLikeStatus ซ้ำ เพราะ response จาก likePost มีข้อมูลครบแล้ว
+        // อัปเดต localStorage โดยตรง
+        if (this.userId && post.isLiked) {
+          // เพิ่มจำนวนไลค์ใน localStorage
+          const storedCounts = localStorage.getItem(`notificationCounts_${this.userId}`);
+          if (storedCounts) {
+            try {
+              const counts = JSON.parse(storedCounts);
+              counts.like = (counts.like || 0) + 1;
+              counts.total = (counts.total || 0) + 1;
+              localStorage.setItem(`notificationCounts_${this.userId}`, JSON.stringify(counts));
+              this.notificationCounts = counts;
+              console.log('Updated notification counts in localStorage:', counts);
+            } catch (error) {
+              console.error('Error updating notification counts in localStorage:', error);
             }
-            // ไม่เรียก global notification service อีกต่อไป - อัปเดต localStorage เท่านั้น
-            // if (this.userId) {
-            //   this.notificationService.refreshImmediately(Number(this.userId));
-            //   if (post.isLiked) {
-            //     this.notificationService.addNotificationImmediately('like');
-            //   }
-            // }
-            
-            // อัปเดต localStorage แทนการเรียก API
-            if (this.userId && post.isLiked) {
-              // เพิ่มจำนวนไลค์ใน localStorage
-              const storedCounts = localStorage.getItem(`notificationCounts_${this.userId}`);
-              if (storedCounts) {
-                try {
-                  const counts = JSON.parse(storedCounts);
-                  counts.like = (counts.like || 0) + 1;
-                  counts.total = (counts.total || 0) + 1;
-                  localStorage.setItem(`notificationCounts_${this.userId}`, JSON.stringify(counts));
-                  this.notificationCounts = counts;
-                  console.log('Updated notification counts in localStorage:', counts);
-                } catch (error) {
-                  console.error('Error updating notification counts in localStorage:', error);
-                }
-              }
-            }
-          },
-          error: (statusError) => {
-            console.error('Error checking status after toggle:', statusError);
           }
-        });
+        }
 
 
       },

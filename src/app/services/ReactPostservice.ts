@@ -448,4 +448,99 @@ export class ReactPostservice {
     );
   }
 
+  // ===== ฟังก์ชันใหม่สำหรับการแจ้งเตือนแบบรวม =====
+
+  // ดึงการแจ้งเตือนทั้งหมดในครั้งเดียว (แทนการเรียก 5 ครั้ง)
+  getAllNotifications(userId: string): Observable<{
+    likes: any[];
+    follows: any[];
+    shares: any[];
+    comments: any[];
+    all: any[];
+  }> {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      return throwError(() => new Error('Token not found'));
+    }
+
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+    return this.http.get<{
+      likes: any[];
+      follows: any[];
+      shares: any[];
+      comments: any[];
+      all: any[];
+    }>(`${this.baseUrl}/noti/notifications_all/${userId}`, { headers }).pipe(
+      tap((response) => {
+        console.log('All notifications response:', response);
+      }),
+      catchError((error) => {
+        console.error('Error fetching all notifications:', error);
+        return throwError(error);
+      })
+    );
+  }
+
+  // Mark as read การแจ้งเตือนทั้งหมดในครั้งเดียว
+  markAllNotificationsAsRead(userId: string): Observable<{
+    message: string;
+    affectedRows: {
+      likes: number;
+      follows: number;
+      shares: number;
+      comments: number;
+    };
+  }> {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      return throwError(() => new Error('Token not found'));
+    }
+
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+    return this.http.put<{
+      message: string;
+      affectedRows: {
+        likes: number;
+        follows: number;
+        shares: number;
+        comments: number;
+      };
+    }>(`${this.baseUrl}/noti/notifications_all/read/${userId}`, {}, { headers }).pipe(
+      tap((response) => {
+        console.log('Mark all notifications as read response:', response);
+      }),
+      catchError((error) => {
+        console.error('Error marking all notifications as read:', error);
+        return throwError(error);
+      })
+    );
+  }
+
+  // ===== ฟังก์ชันใหม่สำหรับการแจ้งเตือนแบบรวม (ไม่ต้องมี token) =====
+
+  // ดึงการแจ้งเตือนทั้งหมดแบบ public (ไม่ต้องมี token)
+  getAllNotificationsPublic(userId: string): Observable<{
+    likes: any[];
+    follows: any[];
+    shares: any[];
+    comments: any[];
+    all: any[];
+  }> {
+    return this.http.get<{
+      likes: any[];
+      follows: any[];
+      shares: any[];
+      comments: any[];
+      all: any[];
+    }>(`${this.baseUrl}/notifications_all/${userId}`).pipe(
+      tap((response) => {
+        console.log('All notifications public response:', response);
+      }),
+      catchError((error) => {
+        console.error('Error fetching all notifications (public):', error);
+        return throwError(error);
+      })
+    );
+  }
+
 }

@@ -30,7 +30,8 @@
                 "glob": "**/*",
                 "input": "node_modules/@fortawesome/fontawesome-free/webfonts",
                 "output": "assets/webfonts"
-              }
+              },
+              "src/firebase-messaging-sw.js"
             ],
             "outputPath": "dist/lifefun-project",
             "index": "src/index.html",

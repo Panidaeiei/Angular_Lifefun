@@ -90,6 +90,17 @@
             <!-- Loading State -->
             <div *ngIf="loading" class="loading">⏳ กำลังค้นหา...</div>
 
+            <!-- Welcome Message เมื่อไม่มีโพสต์และไม่มีการค้นหา -->
+            <div *ngIf="posts.length === 0 && searchQuery.trim() === '' && !postsLoaded" class="welcome-message">
+                <div class="welcome-content">
+                    <div class="welcome-icon">
+                        <i class="fa fa-search"></i>
+                    </div>
+                    <h3 class="welcome-title">ยินดีต้อนรับสู่การค้นหาโพสต์</h3>
+                    <p class="welcome-description">พิมพ์คำค้นหาในช่องด้านบนเพื่อค้นหาโพสต์ที่คุณสนใจ</p>
+                </div>
+            </div>
+
             <!-- Posts Grid -->
             <div *ngIf="posts.length > 0" class="post-grid">
                 <div *ngFor="let post of posts" class="post-card">

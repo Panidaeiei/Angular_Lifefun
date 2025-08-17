@@ -9,6 +9,8 @@ import { Router, RouterModule } from '@angular/router';
 import { PostService } from '../../services/Postservice';
 import { ShowPost } from '../../models/showpost_model';
 import { TimeAgoPipe } from '../../pipes/time-ago.pipe';
+import { Subject, Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
   selector: 'app-searctpost-main',
@@ -32,6 +34,10 @@ export class SearctpostMainComponent implements OnInit {
   isDrawerOpen = false;
   showFull: { [postId: string]: boolean } = {};
   allPosts: ShowPost[] = [];
+  postsLoaded = false; // เพิ่มตัวแปรนี้
+  
+  // เพิ่ม debounced search
+  private searchSubject = new Subject<string>();
 
   @HostListener('window:resize', ['$event'])
   onResize() {
@@ -56,15 +62,37 @@ export class SearctpostMainComponent implements OnInit {
   }
 
   ngOnInit() {
+    // ไม่โหลดโพสต์ทันที - รอให้ user ค้นหา
+    this.setupDebouncedSearch();
+  }
+
+  // เพิ่มฟังก์ชันตั้งค่า debounced search
+  private setupDebouncedSearch(): void {
+    this.searchSubject.pipe(
+      debounceTime(300), // รอ 300ms หลังหยุดพิมพ์
+      distinctUntilChanged() // เรียกเฉพาะเมื่อ query เปลี่ยน
+    ).subscribe(query => {
+      this.performSearch(query);
+    });
+  }
+
+  // แยกฟังก์ชันการค้นหาจริง
+  private performSearch(query: string): void {
+    if (query.trim() === '') {
+      this.posts = [];
+      this.postsLoaded = false;
+      return;
+    }
+
     this.loading = true;
-    this.postService.getPosts().subscribe({
+    this.postService.searchPosts(query).subscribe({
       next: (data) => {
         // กรองโพสต์ที่ post_id ซ้ำ
         const uniquePosts = data.filter((value, index, self) =>
           index === self.findIndex((t) => t.post_id === value.post_id)
         );
-        this.allPosts = uniquePosts;
         this.posts = uniquePosts;
+        this.postsLoaded = true;
         this.loading = false;
       },
       error: (error) => {
@@ -75,26 +103,8 @@ export class SearctpostMainComponent implements OnInit {
   }
 
   onSearch() {
-    if (this.searchQuery.trim() === '') {
-      this.posts = [];
-      return;
-    }
-
-    this.loading = true;
-    this.postService.searchPosts(this.searchQuery).subscribe({
-      next: (data) => {
-        // กรองโพสต์ที่ post_id ซ้ำ
-        const uniquePosts = data.filter((value, index, self) =>
-          index === self.findIndex((t) => t.post_id === value.post_id)
-        );
-        this.posts = uniquePosts;
-        this.loading = false;
-      },
-      error: (error) => {
-        this.errorMessage = error.message;
-        this.loading = false;
-      }
-    });
+    // ใช้ debounced search แทนการเรียก API ทันที
+    this.searchSubject.next(this.searchQuery);
   }
 
   onloginClick(): void {

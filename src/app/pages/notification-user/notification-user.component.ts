@@ -68,54 +68,172 @@ export class NotificationUserComponent {
   ) { }
 
   ngOnInit(): void {
-    const loggedInUserId = localStorage.getItem('userId') || sessionStorage.getItem('userId');
-    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-    if (!loggedInUserId || !token) {
-      this.router.navigate(['/login'], { queryParams: { error: 'unauthorized' } });
-      return;
-    }
-
-    this.checkScreenSize();
-    
-    // โหลด currentUserId เพื่อใช้ในการนำทาง
-    this.userService.loadCurrentUserId();
-    this.userService.getCurrentUserId().subscribe((userId) => {
-      this.currentUserId = userId;
-    });
-    
-    // ตรวจสอบ UID แค่ครั้งเดียว
-    const snapshotParams = this.route.snapshot.queryParams;
-    if (snapshotParams['id']) {
-      this.userId = snapshotParams['id'];
-      // ตรวจสอบว่า userId ใน URL ตรงกับ userId ที่ล็อกอิน
-      if (this.userId !== loggedInUserId) {
-        this.clearStoredData();
-        this.router.navigate(['/login'], { 
-          queryParams: { error: 'uid_mismatch' },
-          replaceUrl: true
-        });
+    try {
+      const loggedInUserId = localStorage.getItem('userId') || sessionStorage.getItem('userId');
+      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+      
+      if (!loggedInUserId || !token) {
+        console.warn('No user ID or token found, redirecting to login');
+        this.router.navigate(['/login'], { queryParams: { error: 'unauthorized' } });
         return;
       }
-      // เรียก API แค่ครั้งเดียว
-      this.loadNotificationData();
+
+      this.checkScreenSize();
+      
+      // โหลด currentUserId เพื่อใช้ในการนำทาง
+      this.userService.loadCurrentUserId();
+      this.userService.getCurrentUserId().subscribe({
+        next: (userId) => {
+          this.currentUserId = userId;
+        },
+        error: (error) => {
+          console.error('Error loading current user ID:', error);
+        }
+      });
+      
+      // ตรวจสอบ UID แค่ครั้งเดียว
+      const snapshotParams = this.route.snapshot.queryParams;
+      if (snapshotParams['id']) {
+        this.userId = snapshotParams['id'];
+        
+        // ตรวจสอบว่า userId ใน URL ตรงกับ userId ที่ล็อกอิน
+        if (this.userId !== loggedInUserId) {
+          console.warn('UID mismatch, redirecting to login');
+          this.clearStoredData();
+          this.router.navigate(['/login'], { 
+            queryParams: { error: 'uid_mismatch' },
+            replaceUrl: true
+          });
+          return;
+        }
+        
+        // เรียก API แค่ครั้งเดียว
+        this.loadNotificationData();
+      } else {
+        console.warn('No ID parameter found in URL');
+      }
+      
+    } catch (error) {
+      console.error('Error in ngOnInit:', error);
+      // ลองรีเซ็ตและโหลดใหม่
+      this.resetNotificationData();
     }
-    
-    // ลบ subscription ที่ทำให้เรียก API ซ้ำออก
-    // ไม่ต้อง subscribe queryParams เพราะจะทำให้เรียก API ซ้ำ
   }
 
   // แยกฟังก์ชันสำหรับโหลดข้อมูลการแจ้งเตือน
   private loadNotificationData(): void {
-    // ตรวจสอบ UID ก่อนโหลดข้อมูล
-    if (!this.validateCurrentUser()) return;
-    
-    if (this.userId) {
-        this.loadNotifications_like();
-        this.loadNotifications_follow();
-        this.loadNotifications_share();
-        this.loadNotifications_comment();
-        this.loadNotificationsUnban();
+    try {
+      // ตรวจสอบ UID ก่อนโหลดข้อมูล
+      if (!this.validateCurrentUser()) return;
+      
+      if (this.userId) {
+        // ใช้ API ใหม่ที่ดึงการแจ้งเตือนทั้งหมดในครั้งเดียว
+        this.loadAllNotifications();
+      } else {
+        console.warn('No userId available for loading notifications');
       }
+    } catch (error) {
+      console.error('Error in loadNotificationData:', error);
+      this.resetNotificationData();
+    }
+  }
+
+  // ฟังก์ชันใหม่: โหลดการแจ้งเตือนทั้งหมดในครั้งเดียว
+  private loadAllNotifications(): void {
+    this.notificationService.getAllNotifications(this.userId).subscribe({
+      next: (response) => {
+        // จัดการข้อมูลการแจ้งเตือนแบบไลค์
+        this.notifications = response.likes || [];
+        this.updateUnreadCount();
+        
+        // หาไลค์ล่าสุด
+        if (this.notifications.length > 0) {
+          this.latestLikerName = this.notifications[0].username;
+        } else {
+          this.latestLikerName = '';
+        }
+        this.unreadLikeCount = this.notifications.filter(noti => noti.notify === 0).length;
+        this.showLikersBox = true;
+
+        // จัดการข้อมูลการแจ้งเตือนแบบติดตาม
+        this.notificationsFollow = response.follows || [];
+        this.showFollowersBox = false;
+        this.latestFollowerName = '';
+        this.unreadFollowCount = this.notificationsFollow.filter(noti => noti.notify === 1).length;
+
+        // จัดการข้อมูลการแจ้งเตือนแบบแชร์
+        this.notificationsShare = response.shares || [];
+        const unreadShares = this.notificationsShare.filter(noti => noti.notify === 0);
+        this.unreadShareCount = unreadShares.length;
+        if (unreadShares.length > 0) {
+          this.latestSharedName = unreadShares[0].username;
+        } else {
+          this.latestSharedName = '';
+        }
+        this.showSharedBox = false;
+
+        // จัดการข้อมูลการแจ้งเตือนแบบคอมเมนต์
+        this.notificationsComment = response.comments || [];
+        const unreadComments = this.notificationsComment.filter(noti => noti.notify === 0);
+        this.unreadCommentCount = unreadComments.length;
+        if (unreadComments.length > 0) {
+          this.latestCommenterName = unreadComments[0].username;
+        } else {
+          this.latestCommenterName = '';
+        }
+        this.showCommentBox = false;
+
+        // โหลดการแจ้งเตือนของระบบ (unban) ก่อนอัปเดตจำนวนรวม
+        this.loadNotificationsUnban();
+        
+        console.log('All notifications loaded successfully:', response);
+        console.log('Initial counts:', {
+          like: this.unreadLikeCount,
+          follow: this.unreadFollowCount,
+          share: this.unreadShareCount,
+          comment: this.unreadCommentCount,
+          unban: this.unreadUnbanCount
+        });
+      },
+      error: (error) => {
+        console.error('Error loading all notifications:', error);
+        // ตั้งค่าเริ่มต้นเมื่อเกิดข้อผิดพลาด
+        this.resetNotificationData();
+      }
+    });
+  }
+
+  // ฟังก์ชันใหม่: อัปเดต notificationCounts
+  private updateNotificationCounts(): void {
+    this.notificationCounts = {
+      like: this.unreadLikeCount,
+      follow: this.unreadFollowCount,
+      share: this.unreadShareCount,
+      comment: this.unreadCommentCount,
+      unban: this.unreadUnbanCount,
+      total: this.unreadLikeCount + this.unreadFollowCount + this.unreadShareCount + this.unreadCommentCount + this.unreadUnbanCount
+    };
+  }
+
+  // ฟังก์ชันใหม่: รีเซ็ตข้อมูลการแจ้งเตือน
+  private resetNotificationData(): void {
+    this.notifications = [];
+    this.notificationsFollow = [];
+    this.notificationsShare = [];
+    this.notificationsComment = [];
+    this.showLikersBox = false;
+    this.showFollowersBox = false;
+    this.showSharedBox = false;
+    this.showCommentBox = false;
+    this.latestLikerName = '';
+    this.latestFollowerName = '';
+    this.latestSharedName = '';
+    this.latestCommenterName = '';
+    this.unreadLikeCount = 0;
+    this.unreadFollowCount = 0;
+    this.unreadShareCount = 0;
+    this.unreadCommentCount = 0;
+    this.updateNotificationCounts();
   }
 
   // เพิ่มฟังก์ชันตรวจสอบ UID
@@ -160,45 +278,31 @@ export class NotificationUserComponent {
     this.selectedCard = cardType;
     this.isNotiDrawerOpen = false;
 
+    // เรียก API แยกตามประเภทการแจ้งเตือนเพื่อเช็คสถานะ read/unread
     if (cardType === 'like') {
+      this.showLikersBox = true;
+      // เรียก API แยกเพื่อเช็คสถานะ
       this.loadNotifications_like();
     } else if (cardType === 'follow') {
+      this.showFollowersBox = true;
+      // เรียก API แยกเพื่อเช็คสถานะ
       this.loadNotifications_follow();
     } else if (cardType === 'share') {
+      this.showSharedBox = true;
+      // เรียก API แยกเพื่อเช็คสถานะ
       this.loadNotifications_share();
     } else if (cardType === 'comment') {
+      this.showCommentBox = true;
+      // เรียก API แยกเพื่อเช็คสถานะ
       this.loadNotifications_comment();
     } else if (cardType === 'unban') {
+      // unban ยังคงต้องโหลดแยก เพราะไม่ได้รวมใน API ใหม่
       this.loadNotificationsUnban();
     }
   }
 
 
-  loadNotifications_like(): void {
-    this.notificationService.Noti_Like(Number(this.userId)).subscribe(
-      res => {
-        this.notifications = res.likes;
-        this.updateUnreadCount();
 
-        // หาไลค์ล่าสุด (สมมติข้อมูลถูกจัดเรียงวันที่ล่าสุดอยู่ด้านบน)
-        if (this.notifications.length > 0) {
-          this.latestLikerName = this.notifications[0].username;
-        } else {
-          this.latestLikerName = '';
-        }
-
-        // นับจำนวนการแจ้งเตือนที่ยังไม่อ่าน (notify === 0)
-        this.unreadLikeCount = this.notifications.filter(noti => noti.notify === 0).length;
-
-        this.showLikersBox = true;
-      },
-      err => {
-        this.showLikersBox = false;
-        this.latestLikerName = '';
-        this.unreadLikeCount = 0;
-      }
-    );
-  }
 
   onLikeNotificationClick(noti: any): void {
     // ตรวจสอบ UID ก่อนดำเนินการ
@@ -227,21 +331,7 @@ export class NotificationUserComponent {
     this.unreadLikeCount = this.notifications.filter(noti => noti.notify === 0).length;
   }
 
-  loadNotifications_follow(): void {
-    this.notificationService.Noti_Follow(Number(this.userId)).subscribe(
-      res => {
-        this.notificationsFollow = res.follows;
-        this.showFollowersBox = false;
-        this.latestFollowerName = '';
-        this.unreadFollowCount = this.notificationsFollow.filter(noti => noti.notify === 1).length; // อัปเดตตรงนี้ด้วย
-      },
-      err => {
-        this.showFollowersBox = false;
-        this.latestFollowerName = '';
-        this.unreadFollowCount = 0;
-      }
-    );
-  }
+
 
   onFollowNotificationClick(noti: any): void {
     // ตรวจสอบ UID ก่อนดำเนินการ
@@ -285,30 +375,7 @@ export class NotificationUserComponent {
     this.unreadFollowCount = this.notificationsFollow.filter(noti => noti.notify === 1).length;
   }
 
-  loadNotifications_share(): void {
-    this.notificationService.Noti_Shared(Number(this.userId)).subscribe(
-      res => {
-        this.notificationsShare = res.shares; // รับข้อมูลการแชร์โพสต์
-        const unread = this.notificationsShare.filter(noti => noti.notify === 0);
-        this.unreadShareCount = unread.length;
 
-        // เก็บชื่อของผู้ที่แชร์ล่าสุด (เฉพาะ noti ที่ยังไม่อ่าน)
-        if (unread.length > 0) {
-          this.latestSharedName = unread[0].username;
-        } else {
-          this.latestSharedName = '';
-        }
-
-        this.showSharedBox = false;
-      },
-      err => {
-        this.notificationsShare = [];
-        this.unreadShareCount = 0;
-        this.latestSharedName = '';
-        this.showSharedBox = false;
-      }
-    );
-  }
 
   onShareNotificationClick(noti: any): void {
     // ตรวจสอบ UID ก่อนดำเนินการ
@@ -337,30 +404,7 @@ export class NotificationUserComponent {
     this.unreadShareCount = this.notificationsShare.filter(noti => noti.notify === 1).length;
   }
 
-  loadNotifications_comment(): void {
-    this.notificationService.Noti_Comment(Number(this.userId)).subscribe(
-      res => {
-        this.notificationsComment = res.comments; // สมมติ API ส่งมาใน key 'comments'
-        const unread = this.notificationsComment.filter(noti => noti.notify === 0); // ยังไม่อ่าน
-        this.unreadCommentCount = unread.length;
 
-        // เก็บชื่อผู้คอมเมนต์ล่าสุด (เฉพาะที่ยังไม่อ่าน)
-        if (unread.length > 0) {
-          this.latestCommenterName = unread[0].username;
-        } else {
-          this.latestCommenterName = '';
-        }
-
-        this.showCommentBox = false;
-      },
-      err => {
-        this.notificationsComment = [];
-        this.unreadCommentCount = 0;
-        this.latestCommenterName = '';
-        this.showCommentBox = false;
-      }
-    );
-  }
 
   onCommentNotificationClick(noti: any): void {
     // ตรวจสอบ UID ก่อนดำเนินการ
@@ -389,19 +433,166 @@ export class NotificationUserComponent {
     this.unreadCommentCount = this.notificationsComment.filter(noti => noti.notify === 0).length;
   }
 
-  loadNotificationsUnban(): void {
-    this.notificationService.Noti_Unban(Number(this.userId)).subscribe(
-      res => {
-        this.notificationsUnban = res.unban;
+  // ฟังก์ชันใหม่: Mark as read การแจ้งเตือนทั้งหมด
+  markAllNotificationsAsRead(): void {
+    if (!this.validateCurrentUser()) return;
 
-        // นับเฉพาะแจ้งเตือนที่ยังไม่อ่าน (notify === 1)
-        this.unreadUnbanCount = this.notificationsUnban.filter(n => n.status === "1").length;
+    this.notificationService.markAllNotificationsAsRead(this.userId).subscribe({
+      next: (response) => {
+        console.log('All notifications marked as read:', response);
+        
+        // อัปเดตสถานะ notify เป็น 1 (หรือ 0 ตามที่ backend ใช้) ในข้อมูลที่มีอยู่
+        this.notifications.forEach(noti => noti.notify = 1);
+        this.notificationsFollow.forEach(noti => noti.notify = 0); // follow ใช้ notify = 0
+        this.notificationsShare.forEach(noti => noti.notify = 1);
+        this.notificationsComment.forEach(noti => noti.notify = 1);
+        
+        // อัปเดตจำนวนการแจ้งเตือนที่ยังไม่อ่าน
+        this.updateUnreadCount();
+        this.updateUnreadFollowCount();
+        this.updateUnreadShareCount();
+        this.updateUnreadCommentCount();
+        this.updateNotificationCounts();
+        
+        // อัปเดต global notification service
+        if (this.userId) {
+          this.globalNotificationService.refreshImmediately(Number(this.userId));
+        }
       },
-      err => {
+      error: (error) => {
+        console.error('Error marking all notifications as read:', error);
+      }
+    });
+  }
+
+  // ฟังก์ชันโหลดการแจ้งเตือนแบบไลค์ (แยก)
+  private loadNotifications_like(): void {
+    if (!this.validateCurrentUser()) return;
+    
+    this.notificationService.Noti_Like(Number(this.userId)).subscribe({
+      next: (response: any) => {
+        this.notifications = response.likes || [];
+        this.updateUnreadCount();
+        
+        // หาไลค์ล่าสุด
+        if (this.notifications.length > 0) {
+          this.latestLikerName = this.notifications[0].username;
+        } else {
+          this.latestLikerName = '';
+        }
+        this.showLikersBox = true;
+      },
+      error: (error: any) => {
+        console.error('Error loading like notifications:', error);
+        this.notifications = [];
+        this.showLikersBox = false;
+      }
+    });
+  }
+
+  // ฟังก์ชันโหลดการแจ้งเตือนแบบติดตาม (แยก)
+  private loadNotifications_follow(): void {
+    if (!this.validateCurrentUser()) return;
+    
+    this.notificationService.Noti_Follow(Number(this.userId)).subscribe({
+      next: (response: any) => {
+        this.notificationsFollow = response.follows || [];
+        this.showFollowersBox = true;
+        
+        // หาผู้ติดตามล่าสุด
+        if (this.notificationsFollow.length > 0) {
+          this.latestFollowerName = this.notificationsFollow[0].username;
+        } else {
+          this.latestFollowerName = '';
+        }
+        this.unreadFollowCount = this.notificationsFollow.filter(noti => noti.notify === 1).length;
+      },
+      error: (error: any) => {
+        console.error('Error loading follow notifications:', error);
+        this.notificationsFollow = [];
+        this.showFollowersBox = false;
+      }
+    });
+  }
+
+  // ฟังก์ชันโหลดการแจ้งเตือนแบบแชร์ (แยก)
+  private loadNotifications_share(): void {
+    if (!this.validateCurrentUser()) return;
+    
+    this.notificationService.Noti_Shared(Number(this.userId)).subscribe({
+      next: (response: any) => {
+        this.notificationsShare = response.shares || [];
+        this.showSharedBox = true;
+        
+        // หาการแชร์ล่าสุด
+        const unreadShares = this.notificationsShare.filter(noti => noti.notify === 0);
+        this.unreadShareCount = unreadShares.length;
+        if (unreadShares.length > 0) {
+          this.latestSharedName = unreadShares[0].username;
+        } else {
+          this.latestSharedName = '';
+        }
+      },
+      error: (error: any) => {
+        console.error('Error loading share notifications:', error);
+        this.notificationsShare = [];
+        this.showSharedBox = false;
+      }
+    });
+  }
+
+  // ฟังก์ชันโหลดการแจ้งเตือนแบบคอมเมนต์ (แยก)
+  private loadNotifications_comment(): void {
+    if (!this.validateCurrentUser()) return;
+    
+    this.notificationService.Noti_Comment(Number(this.userId)).subscribe({
+      next: (response: any) => {
+        this.notificationsComment = response.comments || [];
+        this.showCommentBox = true;
+        
+        // หาคอมเมนต์ล่าสุด
+        const unreadComments = this.notificationsComment.filter(noti => noti.notify === 0);
+        this.unreadCommentCount = unreadComments.length;
+        if (unreadComments.length > 0) {
+          this.latestCommenterName = unreadComments[0].username;
+        } else {
+          this.latestCommenterName = '';
+        }
+      },
+      error: (error: any) => {
+        console.error('Error loading comment notifications:', error);
+        this.notificationsComment = [];
+        this.showCommentBox = false;
+      }
+    });
+  }
+
+  loadNotificationsUnban(): void {
+    this.notificationService.Noti_Unban(Number(this.userId)).subscribe({
+      next: (res) => {
+        this.notificationsUnban = res.unban || [];
+
+        // นับเฉพาะแจ้งเตือนที่ยังไม่อ่าน (status === "1")
+        this.unreadUnbanCount = this.notificationsUnban.filter(n => n.status === "1").length;
+        
+        // อัปเดต notificationCounts หลังจากโหลด unban เสร็จ
+        this.updateNotificationCounts();
+        
+        console.log('Unban notifications loaded:', {
+          total: this.notificationsUnban.length,
+          unread: this.unreadUnbanCount,
+          finalCounts: this.notificationCounts
+        });
+      },
+      error: (err) => {
+        console.error('Error loading unban notifications:', err);
         this.notificationsUnban = [];
         this.unreadUnbanCount = 0;
+        
+        // อัปเดต notificationCounts แม้จะเกิด error
+        this.updateNotificationCounts();
       }
-    );
+    });
   }
 
   logout() {

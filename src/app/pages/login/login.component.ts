@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
+import { RouterModule } from '@angular/router';
 import Swal from 'sweetalert2';
 import { UserService } from '../../services/Userservice';
 import { CommonModule } from '@angular/common';
@@ -14,7 +15,7 @@ import { environment } from '../../../environments/environment';
   standalone: true,
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
-  imports: [FormsModule, HttpClientModule, CommonModule]
+  imports: [FormsModule, HttpClientModule, CommonModule, RouterModule]
 })
 export class LoginComponent {
   identifier: string = ''; // ตัวแปรสำหรับเก็บ Email หรือ Username
@@ -48,7 +49,10 @@ export class LoginComponent {
         });
       }
     });
+
   }
+
+
 
   checkScreenSize() {
     this.isMobile = window.innerWidth <= 900;
@@ -68,8 +72,21 @@ export class LoginComponent {
       password: this.password,
     };
 
+    // เพิ่ม logging เพื่อ debug
+    console.log('🔐 Login attempt:', {
+      identifier: this.identifier,
+      isEmail: this.isEmail(this.identifier),
+      payload: payload,
+      baseUrl: this.baseUrl
+    });
+
+    // ตรวจสอบว่า backend ทำงานอยู่หรือไม่
+    console.log('🌐 Checking backend connection...');
+
     this.http.post(`${this.baseUrl}/login`, payload).subscribe(
       (response: any) => {
+        console.log('✅ Login successful:', response);
+        
         // ตรวจสอบว่ามีสถานะของบัญชีและถูกระงับหรือไม่
         if (response.status === 0) {
           Swal.fire({
@@ -88,7 +105,7 @@ export class LoginComponent {
           sessionStorage.removeItem('userId');
           sessionStorage.removeItem('userRole');
           sessionStorage.removeItem('token');
-          // set key ของ admin
+          // set key ของ admin - ใช้ response.id ที่ backend ส่งมา
           localStorage.setItem('adminId', response.id);
           localStorage.setItem('adminRole', 'admin');
           localStorage.setItem('adminToken', response.token);
@@ -105,7 +122,7 @@ export class LoginComponent {
           sessionStorage.removeItem('adminId');
           sessionStorage.removeItem('adminRole');
           sessionStorage.removeItem('adminToken');
-          // set key ของ user
+          // set key ของ user - ใช้ response.id ที่ backend ส่งมา
           localStorage.setItem('userId', response.id);
           localStorage.setItem('userRole', 'user');
           localStorage.setItem('token', response.token);
@@ -117,11 +134,30 @@ export class LoginComponent {
         }
       },
       (error) => {
+        console.error("❌ Login error:", error);
         console.log("เกิดข้อผิดพลาด:", error); // 🔍 ตรวจสอบค่าที่ API ส่งกลับมา
         console.log("error.error:", error.error); // ดูค่าที่อยู่ใน error.error
         console.log("error.error.status:", error.error?.status); // ดูค่าที่ API ส่งมา
+        console.log("error.status:", error.status); // ดู HTTP status code
+        console.log("error.message:", error.message); // ดู error message
 
-        if (error.status === 403 && error.error.end_date) {
+        // ตรวจสอบประเภทของ error
+        if (error.status === 0) {
+          // Network error หรือ backend ไม่ทำงาน
+          Swal.fire({
+            icon: 'error',
+            title: 'ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้',
+            text: 'กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต หรือลองใหม่อีกครั้ง',
+          });
+          console.error('🌐 Network error - Backend might be down');
+        } else if (error.status === 400) {
+          // Bad Request - ข้อมูลไม่ครบ
+          Swal.fire({
+            icon: 'error',
+            title: 'ข้อมูลไม่ครบถ้วน',
+            text: error.error?.error || 'กรุณากรอกข้อมูลให้ครบถ้วน',
+          });
+        } else if (error.status === 403 && error.error.end_date) {
           const endDate = new Date(error.error.end_date);
           const now = new Date();
           const diff = endDate.getTime() - now.getTime();
@@ -154,6 +190,12 @@ export class LoginComponent {
             icon: 'error',
             title: 'ไม่พบผู้ใช้',
             text: error.error?.error || 'ไม่พบอีเมลหรือชื่อผู้ใช้นี้ในระบบ',
+          });
+        } else if (error.status === 500) {
+          Swal.fire({
+            icon: 'error',
+            title: 'เกิดข้อผิดพลาดที่เซิร์ฟเวอร์',
+            text: 'กรุณาลองใหม่อีกครั้ง หรือติดต่อผู้ดูแลระบบ',
           });
         } else {
           Swal.fire({

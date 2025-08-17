@@ -7,6 +7,9 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { registerLocaleData } from '@angular/common';
 import localeTh from '@angular/common/locales/th';
 import { provideServiceWorker } from '@angular/service-worker';
+import { provideMessaging, getMessaging } from '@angular/fire/messaging';
+import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
+import { environment } from '../environments/environment';
 
 // ลงทะเบียน locale ไทย
 registerLocaleData(localeTh);
@@ -18,8 +21,10 @@ export const appConfig: ApplicationConfig = {
     provideAnimations(),
     provideAnimationsAsync(),
     provideServiceWorker('ngsw-worker.js', {
-            enabled: !isDevMode(),
-            registrationStrategy: 'registerWhenStable:30000'
-          }),
+      enabled: !isDevMode(),
+      registrationStrategy: 'registerWhenStable:30000'
+    }),
+    provideMessaging(() => getMessaging()),
+    provideFirebaseApp(() => initializeApp(environment.firebase)),
   ],
 };

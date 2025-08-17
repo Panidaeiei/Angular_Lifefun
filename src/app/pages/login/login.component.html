@@ -1,6 +1,14 @@
 <link href="https://fonts.googleapis.com/css2?family=Itim&display=swap" rel="stylesheet">
 
 <body>
+  <!-- ปุ่มกลับหน้าหลัก มุมบนซ้าย -->
+  <div class="home-button-container">
+    <a [routerLink]="['/']" class="home-button">
+      <i class="fa fa-home"></i>
+      <span class="home-text" *ngIf="!isMobile">หน้าหลัก</span>
+    </a>
+  </div>
+
   <div class="login-title-row">
     <span class="itim-regular login-title">เข้าสู่ระบบ</span>
   </div>
