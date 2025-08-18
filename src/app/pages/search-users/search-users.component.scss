@@ -99,137 +99,7 @@ body {
   overflow: hidden;
 }
 
-// Welcome message styling
-.welcome-message {
-  text-align: center;
-  padding: 40px 20px;
-  margin: 20px 0;
-  max-width: 500px;
-  width: 100%;
-  margin-left: auto;
-  margin-right: auto;
-  
-  // Responsive padding
-  @media (max-width: 768px) {
-    padding: 30px 16px;
-    margin: 16px 0;
-  }
-  
-  @media (max-width: 480px) {
-    padding: 24px 12px;
-    margin: 12px 0;
-  }
-}
 
-.welcome-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  
-  @media (max-width: 480px) {
-    gap: 8px;
-  }
-}
-
-.welcome-icon {
-  margin-bottom: 20px;
-  
-  i {
-    font-size: 48px;
-    color: #e27c96;
-    opacity: 0.8;
-    
-    @media (max-width: 768px) {
-      font-size: 40px;
-    }
-    
-    @media (max-width: 480px) {
-      font-size: 36px;
-    }
-  }
-}
-
-.welcome-title {
-  color: #5a4633;
-  margin-bottom: 16px;
-  font-size: 24px;
-  font-weight: 600;
-  
-  @media (max-width: 768px) {
-    font-size: 22px;
-    margin-bottom: 14px;
-  }
-  
-  @media (max-width: 480px) {
-    font-size: 20px;
-    margin-bottom: 12px;
-  }
-}
-
-.welcome-description {
-  color: #a08b6f;
-  margin-bottom: 20px;
-  line-height: 1.6;
-  font-size: 16px;
-  
-  @media (max-width: 768px) {
-    font-size: 15px;
-    margin-bottom: 18px;
-  }
-  
-  @media (max-width: 480px) {
-    font-size: 14px;
-    margin-bottom: 16px;
-  }
-}
-
-.welcome-examples {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 8px;
-  margin-top: 20px;
-  
-  @media (max-width: 768px) {
-    gap: 6px;
-    margin-top: 18px;
-  }
-  
-  @media (max-width: 480px) {
-    gap: 4px;
-    margin-top: 16px;
-    flex-direction: column;
-    align-items: center;
-  }
-}
-
-.example-tag {
-  background: #e27c96;
-  color: white;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  
-  &:hover {
-    background: #c96a7f;
-    transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(226, 124, 150, 0.3);
-  }
-  
-  @media (max-width: 768px) {
-    padding: 5px 10px;
-    font-size: 13px;
-  }
-  
-  @media (max-width: 480px) {
-    padding: 4px 8px;
-    font-size: 12px;
-    border-radius: 16px;
-  }
-}
 
 // Welcome message styling
 .welcome-message {
@@ -245,12 +115,14 @@ body {
   @media (max-width: 768px) {
     padding: 30px 16px;
     margin: 16px 0;
+    margin-left: 100px;
   }
   
   @media (max-width: 480px) {
     padding: 24px 12px;
     margin: 12px 0;
   }
+
 }
 
 .welcome-content {
@@ -1057,5 +929,107 @@ body {
     width: 44px;
     height: 44px;
     font-size: 26px;
+  }
+}
+
+/* Responsive Design for Welcome Message */
+@media screen and (min-width: 768px) and (max-width: 1024px) {
+  .welcome-message {
+    max-width: 600px;
+    padding: 50px 30px;
+    margin: 30px auto;
+  }
+  
+  .welcome-icon i {
+    font-size: 52px;
+  }
+  
+  .welcome-title {
+    font-size: 26px;
+  }
+  
+  .welcome-description {
+    font-size: 17px;
+  }
+}
+
+@media screen and (min-width: 1024px) and (max-width: 1366px) {
+  .welcome-message {
+    max-width: 700px;
+    padding: 60px 40px;
+    margin: 40px auto;
+  }
+  
+  .welcome-icon i {
+    font-size: 56px;
+  }
+  
+  .welcome-title {
+    font-size: 28px;
+  }
+  
+  .welcome-description {
+    font-size: 18px;
+  }
+}
+
+/* iPad Air specific responsive (820px x 1180px) */
+@media screen and (width: 820px) and (height: 1180px) {
+  .welcome-message {
+    max-width: 650px;
+    padding: 55px 35px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  
+  .welcome-icon i {
+    font-size: 54px;
+  }
+  
+  .welcome-title {
+    font-size: 27px;
+  }
+  
+  .welcome-description {
+    font-size: 17.5px;
+  }
+}
+
+@media screen and (width: 1180px) and (height: 820px) {
+  .welcome-message {
+    max-width: 650px;
+    padding: 55px 35px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  
+  .welcome-icon i {
+    font-size: 54px;
+  }
+  
+  .welcome-title {
+    font-size: 27px;
+  }
+  
+  .welcome-description {
+    font-size: 17.5px;
+  }
+}
+
+/* iPad Air alternative responsive */
+@media screen and (min-width: 800px) and (max-width: 900px) {
+  .welcome-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;  
   }
 }
