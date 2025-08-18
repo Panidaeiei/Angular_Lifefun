@@ -336,11 +336,11 @@
                             title="comment">{{ comment.title }}</span>
                     </div>
                 </div>
-                <button mat-icon-button [matMenuTriggerFor]="menu2" class="comment-menu-btn" matTooltip="ตัวเลือกเพิ่มเติม">
+                <button mat-icon-button [matMenuTriggerFor]="menu2" class="comment-menu-btn" matTooltip="ตัวเลือกเพิ่มเติม" *ngIf="comment.uid === +userId || post.user_uid === +userId">
                     <mat-icon>more_vert</mat-icon>
                 </button>
                 <mat-menu #menu2="matMenu">
-                    <button mat-menu-item *ngIf="comment.uid === +userId" (click)="deleteComment(comment.cid)">
+                    <button mat-menu-item (click)="deleteComment(comment.cid)">
                         <i style="margin-right: 5px; font-size: 20px; color: rgb(87, 73, 75);"
                             class="fa-solid fa-trash"></i>
                         ลบ
