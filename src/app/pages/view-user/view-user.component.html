@@ -139,8 +139,8 @@
                             <span class="profile-stat-label-mobile">กำลังติดตาม</span>
                         </div>
                     </div>
-                    <div class="profile-description-mobile">
-                        {{ userProfile?.description || '' }}
+                    <div class="description-container-mobile">
+                        <span class="profile-description-mobile">{{ userProfile?.description || '' }}</span>
                     </div>
                 </div>
             </div>
@@ -178,7 +178,9 @@
                                         <span class="profile-stat-label">กำลังติดตาม</span>
                                     </div>
                                 </div>
-                                <span class="profile-description">{{ userProfile?.description || '' }}</span>
+                                <div class="description-container">
+                                    <span class="profile-description">{{ userProfile?.description || '' }}</span>
+                                </div>
                             </div>
                         </div>
                     </div>

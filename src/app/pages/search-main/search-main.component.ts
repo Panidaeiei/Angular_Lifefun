@@ -19,7 +19,7 @@ import { UserService } from '../../services/Userservice';
 })
 export class SearchMainComponent {
 
-  searchResults: SearchUser[] = [];
+  searchResults: SearchUser[] | null = null;
   searchQuery: string = '';
   Profileuser: string = '';
   errorMessage: string = '';
@@ -46,7 +46,7 @@ export class SearchMainComponent {
 
   onSearch(): void {
     if (this.searchQuery.trim() === '') {
-      this.searchResults = [];
+      this.searchResults = null;
       this.isSearchPerformed = false;
       this.errorMessage = '';
       return;
@@ -86,7 +86,7 @@ export class SearchMainComponent {
       },
       error: (error) => {
         console.error('Error searching users (public):', error);
-        this.searchResults = [];
+        this.searchResults = null;
         this.isLoading = false;
         this.errorMessage = 'เกิดข้อผิดพลาดในการค้นหา กรุณาลองใหม่อีกครั้ง';
       },

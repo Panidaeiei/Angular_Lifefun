@@ -121,7 +121,7 @@
                         </div>
                     </div>
                     <div class="like-row">
-                        <span style="font-size: 25px;">♥️</span>
+                        <i (click)="onloginClick()" class="fa fa-heart heart-icon" style="font-size: 25px; color: #9e9797;" ></i>
                         <span style="font-size: 20px; margin-left: 5px;">{{ post.likes_count != null ? post.likes_count
                             : 0 }}</span>
                     </div>

@@ -6,11 +6,8 @@ body {
   width: 100%;
   height: 100%;
   background-color: rgb(249, 241, 239);
-  /* สีพื้นหลัง */
   box-sizing: border-box;
-  /* คำนวณขนาดไม่เกินขอบ */
   overflow-x: hidden;
-  /* ปิดการเลื่อนแนวนอน */
 }
 
 :host {
@@ -18,9 +15,7 @@ body {
   min-height: 100vh;
   align-items: center;
   justify-content: center;
-  /* ครอบคลุมความสูงเต็มหน้าจอ */
   background-color: rgb(249, 241, 239);
-  /* สีพื้นหลัง */
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -28,231 +23,279 @@ body {
 
 body {
   overflow-y: auto;
-  /* เปิดใช้งานการเลื่อนแนวตั้ง */
   background-color: rgb(249, 241, 239);
-  /* สีพื้นหลังเหมือนกัน */
 }
 
-.search-container {
-    display: flex;
-    align-items: center;
-    background-color: rgb(230, 200, 211);
-    /* สีพื้นหลังของช่องค้นหา */
-    border-radius: 30px;
-    /* ขอบมน */
-    padding: 10px 10px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    height: 30px;
-    width: 220px;
-    /* ความกว้างของช่องค้นหา */
+// Welcome message styling
+.welcome-message {
+  text-align: center;
+  padding: 40px 20px;
+  margin: 20px 0;
+  max-width: 500px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  
+  @media (max-width: 768px) {
+    padding: 30px 16px;
+    margin: 16px 0;
   }
   
-  .search-container i {
-    font-size: 16px;
-    color: black;
-    /* สีไอคอน */
-    margin-right: 10px;
-    /* ระยะห่างระหว่างไอคอนกับช่อง */
+  @media (max-width: 480px) {
+    padding: 24px 12px;
+    margin: 12px 0;
   }
-  
-  .search-input {
-    border: none;
-    outline: none;
-    /* ซ่อนขอบตอนคลิก */
-    font-size: 16px;
-    width: 100%;
-    background: transparent;
-    /* พื้นหลังโปร่งใส */
-  }
-  
-  .menu-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-decoration: none;
-    position: relative;
-  }
-  
-  .menu-item span {
-    font-size: 14px;
-    margin-top: 5px;
-  }
-  
-  .menu-item.active i,
-  .menu-item.active span {
-    color: #000000;
-    /* เปลี่ยนสีเมื่อ active */
-  }
-  
-  .menu-item2 {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-decoration: none;
-    position: relative;
-  }
-  
-  .menu-item2 span {
-    font-size: 14px;
-    margin-top: 5px;
-  }
-  
-  .menu-item2.active i,
-  .menu-item2.active span {
-    color: #000000;
-    /* เปลี่ยนสีเมื่อ active */
-  }
-  
-  .user-list {
-    width: 100%;
-    max-width: 480px;
-    margin: 24px auto 0 auto;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    padding: 0 2vw;
-  }
-
-.user-card {
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    background: #fff;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
-    padding: 10px 12px;
-    gap: 12px;
-    cursor: pointer;
-    border: 1px solid #f0eaea;
-    transition: box-shadow 0.18s, transform 0.18s, background 0.18s, border-color 0.18s;
 }
 
-.user-card:hover,
-.user-card:focus {
-    background: #fff0f6;
-    box-shadow: 0 6px 24px rgba(226, 124, 150, 0.13);
-    border-color: #e27c96;
-    outline: none;
-}
-
-.user-card:active {
-    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.12);
-    transform: scale(0.98);
-}
-
-.user-avatar {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    object-fit: cover;
-    background: #f7f7f7;
-    flex-shrink: 0;
-    border: 1.5px solid #f3eaea;
-}
-
-.user-info {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    min-width: 0;
-    flex: 1;
-}
-
-.user-name {
-    font-weight: 700;
-    font-size: 1.08rem;
-    color: #222;
-    margin-bottom: 1px;
-    word-break: break-all;
-}
-
-.user-desc {
-    color: #666;
-    font-size: 0.97rem;
-    margin-bottom: 2px;
-    max-width: 100%;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.user-stats {
-    display: flex;
+.welcome-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  
+  @media (max-width: 480px) {
     gap: 8px;
-    font-size: 0.95rem;
-    color: #888;
-    align-items: center;
+  }
 }
 
-.no-results {
-    text-align: center;
-    font-size: 1.08rem;
-    color: #888;
-    margin-top: 18px;
-}
-
-@media (max-width: 600px) {
-    .user-list {
-        max-width: 420px;
-        margin: 20px auto 0 auto;
-        padding: 0 20px;
-        box-sizing: border-box;
+.welcome-icon {
+  margin-bottom: 20px;
+  
+  i {
+    font-size: 48px;
+    color: #e27c96;
+    opacity: 0.8;
+    
+    @media (max-width: 768px) {
+      font-size: 40px;
     }
-    .user-avatar {
-        width: 36px;
-        height: 36px;
+    
+    @media (max-width: 480px) {
+      font-size: 36px;
     }
-    .user-name,
-    .user-desc,
-    .user-stats {
-        font-size: 0.93rem;
-    }
+  }
 }
 
-.login-link {
-  background: none; /* ไม่มีสีพื้นหลัง */
-  border: none; /* ไม่มีเส้นขอบ */
-  outline: none; /* ไม่มีเส้นขอบเมื่อคลิก */
-  transition: box-shadow 0.3s ease; 
-  cursor: pointer;
+.welcome-title {
+  color: #5a4633;
+  margin-bottom: 16px;
+  font-size: 24px;
+  font-weight: 600;
+  
+  @media (max-width: 768px) {
+    font-size: 22px;
+    margin-bottom: 14px;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 20px;
+    margin-bottom: 12px;
+  }
 }
 
-.login-link:hover {
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* เงาเมื่อเอาเมาส์เข้า */
+.welcome-description {
+  color: #a08b6f;
+  margin-bottom: 20px;
+  line-height: 1.6;
+  font-size: 16px;
+  
+  @media (max-width: 768px) {
+    font-size: 15px;
+    margin-bottom: 18px;
+  }
+  
+  @media (max-width: 480px) {
+    font-size: 14px;
+    margin-bottom: 16px;
+  }
 }
 
 .search-container {
   display: flex;
   align-items: center;
   background-color: rgb(233, 223, 213);
-  /* สีพื้นหลังของช่องค้นหา */
   border-radius: 30px;
-  /* ขอบมน */
   padding: 10px 10px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   height: 40px;
   width: 300px;
-  /* ความกว้างของช่องค้นหา */
 }
 
 .search-container i {
   font-size: 16px;
   color: black;
-  /* สีไอคอน */
   margin-right: 10px;
-  /* ระยะห่างระหว่างไอคอนกับช่อง */
 }
 
 .search-input {
   border: none;
   outline: none;
-  /* ซ่อนขอบตอนคลิก */
   font-size: 16px;
   width: 100%;
   background: transparent;
-  /* พื้นหลังโปร่งใส */
 }
 
-/* Modern Toolbar & Drawer Responsive Styles (นำเข้าจาก homepage-main.component.scss) */
+.search-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: none;
+  color: #222;
+  border: none;
+  box-shadow: none;
+  font-size: 20px;
+  margin-left: 8px;
+  cursor: pointer;
+  transition: color 0.18s, transform 0.13s;
+}
+
+.search-btn i {
+  color: #222;
+  font-size: 22px;
+}
+
+.search-btn:hover, .search-btn:focus {
+  color: #111;
+  outline: none;
+  transform: scale(1.07);
+  background: none;
+}
+
+.search-btn:active {
+  color: #111;
+  transform: scale(0.97);
+  background: none;
+}
+
+/* Modern Tabs */
+.modern-tabs {
+  display: flex;
+  gap: 36px;
+  justify-content: center;
+  margin-bottom: 32px;
+}
+
+.tab {
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: #444;
+  padding: 8px 28px;
+  border-radius: 24px 24px 0 0;
+  background: transparent;
+  transition: background 0.18s, color 0.18s;
+  cursor: pointer;
+  position: relative;
+  text-decoration: none;
+}
+
+.tab:hover,
+.tab.active {
+  background: #fff;
+  color: #e27c96;
+}
+
+.tab.active::after {
+  content: '';
+  display: block;
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #e27c96 60%, #bfa48a 100%);
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  bottom: -8px;
+}
+
+/* User List */
+.user-list {
+  width: 100%;
+  max-width: 480px;
+  margin: 24px auto 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 0 2vw;
+}
+
+.user-card {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  background: #fff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+  padding: 10px 12px;
+  gap: 12px;
+  cursor: pointer;
+  border: 1px solid #f0eaea;
+  transition: box-shadow 0.18s, transform 0.18s, background 0.18s, border-color 0.18s;
+}
+
+.user-card:hover,
+.user-card:focus {
+  background: #fff0f6;
+  box-shadow: 0 6px 24px rgba(226, 124, 150, 0.13);
+  border-color: #e27c96;
+  outline: none;
+}
+
+.user-card:active {
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.12);
+  transform: scale(0.98);
+}
+
+.user-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #f7f7f7;
+  flex-shrink: 0;
+  border: 1.5px solid #f3eaea;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  flex: 1;
+}
+
+.user-name {
+  font-weight: 700;
+  font-size: 1.08rem;
+  color: #222;
+  margin-bottom: 1px;
+  word-break: break-all;
+}
+
+.user-desc {
+  color: #666;
+  font-size: 0.97rem;
+  margin-bottom: 2px;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.user-stats {
+  display: flex;
+  gap: 8px;
+  font-size: 0.95rem;
+  color: #888;
+  align-items: center;
+}
+
+.no-results {
+  text-align: center;
+  font-size: 1.08rem;
+  color: #888;
+  margin-top: 18px;
+}
+
+/* Modern Toolbar */
 .fixed-toolbar.modern-toolbar {
   display: flex;
   align-items: center;
@@ -301,14 +344,23 @@ body {
   color: #222;
   text-decoration: none;
   font-weight: 500;
-  i { font-size: 28px; margin-bottom: 2px; }
-  span { font-size: 15px; }
+  
+  i { 
+    font-size: 28px; 
+    margin-bottom: 2px; 
+  }
+  
+  span { 
+    font-size: 15px; 
+  }
 }
+
 .menu-item:hover, .menu-item.active {
   background: #ffe6ee;
   color: #e27c96;
   box-shadow: 0 2px 8px rgba(226, 140, 150, 0.10);
 }
+
 .menu-item.active i, .menu-item.active span {
   color: #e27c96;
 }
@@ -326,11 +378,17 @@ body {
   font-size: 16px;
   box-shadow: 0 2px 8px rgba(226, 140, 150, 0.10);
   transition: background 0.2s, box-shadow 0.2s;
-  .material-icons { font-size: 22px; margin-right: 6px; }
+  cursor: pointer;
 }
+
 .login-link.modern-login:hover {
   background: linear-gradient(90deg, #e27c96 80%, #faddd9 100%);
   box-shadow: 0 4px 16px rgba(226, 140, 150, 0.18);
+}
+
+.login-link.modern-login .material-icons {
+  font-size: 22px;
+  margin-right: 6px;
 }
 
 .toolbar-hamburger {
@@ -343,12 +401,14 @@ body {
   border-radius: 8px;
   padding: 6px 10px;
   transition: background 0.2s;
+  cursor: pointer;
 }
+
 .toolbar-hamburger:active, .toolbar-hamburger:focus {
   background: #ffe6ee;
 }
 
-/* Drawer Styles */
+/* Drawer */
 .drawer {
   position: fixed;
   top: 0;
@@ -360,134 +420,51 @@ body {
   transition: right 0.3s ease;
   z-index: 1000;
 }
+
 .drawer.open {
   right: 0;
 }
+
 .drawer-content {
   padding: 20px;
 }
+
 .drawer-content h3 {
   margin-top: 0;
 }
+
 .drawer-content ul {
   list-style-type: none;
   padding: 0;
 }
+
 .drawer-content ul li {
   margin: 10px 0;
 }
 
+/* Responsive Design */
 @media (max-width: 1024px) {
   .fixed-toolbar.modern-toolbar {
     height: 60px;
     padding: 0 8px;
   }
-  .toolbar-logo { margin-right: 8px; }
-  .toolbar-center-menu { gap: 18px; }
-  .menu-item i { font-size: 20px; }
-  .menu-item span { font-size: 12px; }
-}
-
-@media (max-width: 600px) {
-  .fixed-toolbar.modern-toolbar {
-    height: 80px;
-    padding: 0 4px;
-    border-radius: 0 0 10px 10px;
+  
+  .toolbar-logo { 
+    margin-right: 8px; 
   }
-  .toolbar-logo { margin-right: 4px; }
-  .toolbar-center-menu { display: none; }
-  .toolbar-hamburger {
-    display: flex;
-    align-items: center;
-    margin-left: auto;
+  
+  .toolbar-center-menu { 
+    gap: 18px; 
   }
-  .login-link span { display: none; }
-}
-
-/* Modern Tabs (เหมือน search-users) */
-.modern-tabs {
-  display: flex;
-  gap: 36px;
-  justify-content: center;
-  margin-bottom: 32px;
-}
-
-.tab {
-  font-size: 1.2rem;
-  font-weight: 500;
-  color: #444;
-  padding: 8px 28px 8px 28px;
-  border-radius: 24px 24px 0 0;
-  background: transparent;
-  transition: background 0.18s, color 0.18s;
-  cursor: pointer;
-  position: relative;
-  text-decoration: none;
-}
-
-.tab:hover,
-.tab.active {
-  background: #fff;
-  color: #e27c96;
-}
-
-.tab.active::after {
-  content: '';
-  display: block;
-  height: 4px;
-  border-radius: 2px;
-  background: linear-gradient(90deg, #e27c96 60%, #bfa48a 100%);
-  position: absolute;
-  left: 18px;
-  right: 18px;
-  bottom: -8px;
-}
-
-@media (max-width: 600px) {
-  .modern-tabs {
-    gap: 30px;
-    margin-bottom: 18px;
-    margin-right: 30px;
+  
+  .menu-item i { 
+    font-size: 20px; 
   }
-  .tab {
-    font-size: 1.01rem;
-    padding: 7px 10px 7px 10px;
+  
+  .menu-item span { 
+    font-size: 12px; 
   }
-}
-
-.search-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  background: none;
-  color: #222;
-  border: none;
-  box-shadow: none;
-  font-size: 20px;
-  margin-left: 8px;
-  cursor: pointer;
-  transition: color 0.18s, transform 0.13s;
-}
-.search-btn i {
-  color: #222;
-  font-size: 22px;
-}
-.search-btn:hover, .search-btn:focus {
-  color: #111;
-  outline: none;
-  transform: scale(1.07);
-  background: none;
-}
-.search-btn:active {
-  color: #111;
-  transform: scale(0.97);
-  background: none;
-}
-
-/* Responsive styles for iPad/Tablet */
-@media (min-width: 601px) and (max-width: 1024px) {
+  
   .search-container {
     width: 400px;
     height: 45px;
@@ -538,19 +515,56 @@ body {
 }
 
 @media (max-width: 600px) {
-    .user-list {
-        max-width: 420px;
-        margin: 20px auto 0 auto;
-        padding: 0 20px;
-        box-sizing: border-box;
-    }
-    .user-avatar {
-        width: 36px;
-        height: 36px;
-    }
-    .user-name,
-    .user-desc,
-    .user-stats {
-        font-size: 0.93rem;
-    }
+  .fixed-toolbar.modern-toolbar {
+    height: 80px;
+    padding: 0 4px;
+    border-radius: 0 0 10px 10px;
+  }
+  
+  .toolbar-logo { 
+    margin-right: 4px; 
+  }
+  
+  .toolbar-center-menu { 
+    display: none; 
+  }
+  
+  .toolbar-hamburger {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+  }
+  
+  .login-link span { 
+    display: none; 
+  }
+  
+  .modern-tabs {
+    gap: 30px;
+    margin-bottom: 18px;
+    margin-right: 30px;
+  }
+  
+  .tab {
+    font-size: 1.01rem;
+    padding: 7px 10px;
+  }
+  
+  .user-list {
+    max-width: 420px;
+    margin: 20px auto 0 auto;
+    padding: 0 20px;
+    box-sizing: border-box;
+  }
+  
+  .user-avatar {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .user-name,
+  .user-desc,
+  .user-stats {
+    font-size: 0.93rem;
+  }
 }

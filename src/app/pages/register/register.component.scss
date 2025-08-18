@@ -304,6 +304,54 @@ input[type="password"]::-ms-credentials-auto-fill-button {
   }
 }
 
+/* Cancel Image Button */
+.cancel-image-container {
+  text-align: center;
+  margin-bottom: 1rem;
+
+  .cancel-image-btn {
+    background: #f44336;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-family: 'Itim', serif;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 2px 8px rgba(244, 67, 54, 0.3);
+
+    &:hover {
+      background: #d32f2f;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(244, 67, 54, 0.4);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+
+    &:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    i {
+      font-size: 0.8rem;
+    }
+
+    @media (max-width: 600px) {
+      padding: 0.4rem 0.8rem;
+      font-size: 0.8rem;
+    }
+  }
+}
+
 /* Form Styles */
 .register-form {
   .form-group {

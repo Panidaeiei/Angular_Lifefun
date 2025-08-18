@@ -26,7 +26,8 @@ export class RegisterComponent {
 
   confirmPassword: string = ''; // ตัวแปรสำหรับยืนยันรหัสผ่าน
   selectedFile: File | null = null; // ตัวแปรสำหรับไฟล์ที่เลือก
-  previewImage: string = 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'; // รูปเริ่มต้น
+  defaultImage: string = 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'; // รูปเริ่มต้น
+  previewImage: string = this.defaultImage; // รูปเริ่มต้น
 
   isPasswordVisible: boolean = false;
   isConfirmPasswordVisible: boolean = false;
@@ -103,6 +104,13 @@ export class RegisterComponent {
       };
       reader.readAsDataURL(this.selectedFile); // อ่านไฟล์และแปลงเป็น Base64
     }
+  }
+
+  // ฟังก์ชันยกเลิกรูปภาพ
+  cancelImage(): void {
+    this.previewImage = this.defaultImage;
+    this.selectedFile = null;
+    this.userData.image_url = '';
   }
 
   // ฟังก์ชันตรวจสอบว่าไฟล์เป็นรูปภาพหรือไม่

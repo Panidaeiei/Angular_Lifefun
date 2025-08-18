@@ -42,6 +42,13 @@
           </label>
           <input type="file" id="file-upload" accept="image/*" (change)="onFileSelected($event)" [disabled]="isLoading" hidden />
         </div>
+        
+        <!-- Cancel Image Button -->
+        <div class="cancel-image-container" *ngIf="previewImage && previewImage !== defaultImage">
+          <button type="button" class="cancel-image-btn" (click)="cancelImage()" [disabled]="isLoading">
+            <i class="fa fa-times"></i> ลบรูปภาพ
+          </button>
+        </div>
 
         <!-- Registration Form -->
         <form (ngSubmit)="register()" class="register-form" [class.loading]="isLoading">

@@ -72,21 +72,14 @@ export class LoginComponent {
       password: this.password,
     };
 
-    // เพิ่ม logging เพื่อ debug
-    console.log('🔐 Login attempt:', {
-      identifier: this.identifier,
-      isEmail: this.isEmail(this.identifier),
-      payload: payload,
-      baseUrl: this.baseUrl
-    });
+ 
 
     // ตรวจสอบว่า backend ทำงานอยู่หรือไม่
     console.log('🌐 Checking backend connection...');
 
     this.http.post(`${this.baseUrl}/login`, payload).subscribe(
       (response: any) => {
-        console.log('✅ Login successful:', response);
-        
+
         // ตรวจสอบว่ามีสถานะของบัญชีและถูกระงับหรือไม่
         if (response.status === 0) {
           Swal.fire({
