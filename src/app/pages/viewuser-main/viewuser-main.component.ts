@@ -82,28 +82,27 @@ export class ViewuserMainComponent {
   }
 
   loadUserProfile(): void {
-    // ตรวจสอบว่ามี token หรือไม่
     const token = localStorage.getItem('token') || sessionStorage.getItem('token');
-
+  
     if (token) {
-      // ถ้ามี token ให้ใช้ method ที่ต้อง authentication
       this.profileService.getUserProfileById(this.Profileuser).subscribe(
         (data) => {
           this.userProfile = data;
-          console.log('Owner Profile Data:', this.userProfile);
+          this.isLoading = false; // เพิ่มกลับมา
         },
         (error) => {
           console.error('Error fetching owner profile:', error);
           if (error.status === 404) {
             this.userProfile = null;
+            this.isLoading = false; // เพิ่มกลับมา
           } else if (error.status === 401) {
-            // ถ้า authentication ล้มเหลว ให้ลองใช้ public method
             this.loadUserProfilePublic();
+          } else {
+            this.isLoading = false; // เพิ่มกลับมา
           }
         }
       );
     } else {
-      // ถ้าไม่มี token ให้ใช้ public method
       this.loadUserProfilePublic();
     }
   }

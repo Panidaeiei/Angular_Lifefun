@@ -522,7 +522,6 @@ export class DetailPostComponent implements OnInit, OnDestroy {
 
     // เปลี่ยนสถานะ isLiked
     post.isLiked = !post.isLiked;
-
     // เรียกใช้ LikePostService เพื่ออัปเดตสถานะการไลค์ในฐานข้อมูล
     this.reactPostservice.likePost(post.post_id, Number(userId)).subscribe(
       (response) => {
