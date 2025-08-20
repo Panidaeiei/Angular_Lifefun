@@ -668,6 +668,12 @@ export class CreatePostComponent implements OnInit, OnDestroy {
   }
 
   submitPost(): void {
+    // ตรวจสอบว่ามีข้อความหรือไม่
+    if (!this.postData.title || this.postData.title.trim() === '') {
+      alert('กรุณากรอกข้อความใต้โพสต์ก่อนโพสต์');
+      return;
+    }
+
     if (
       (!this.postData.cat_id || this.postData.cat_id === 0) &&
       this.files.length === 0

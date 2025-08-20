@@ -4,10 +4,11 @@
         <a [routerLink]="['/HomepageUser']" [queryParams]="{ id: this.currentUserId }">
             <img src="../../../assets/images/Logoweb.png" alt="Home Icon">
         </a>
-        
+
         <!-- เมนูตรงกลาง -->
         <div class="center-menu" *ngIf="!isMobile">
-            <a class="menu-item" routerLinkActive="active" [routerLink]="['/HomepageUser']" [queryParams]="{ id: this.currentUserId}">
+            <a class="menu-item" routerLinkActive="active" [routerLink]="['/HomepageUser']"
+                [queryParams]="{ id: this.currentUserId}">
                 <i class="fa-solid fa-house"></i>
                 <span class="itim-regular">หน้าหลัก</span>
             </a>
@@ -15,12 +16,14 @@
                 <i class="fa-solid fa-users"></i>
                 <span class="itim-regular">ติดตาม</span>
             </a>
-            <a class="add-post-btn" [routerLink]="['/CreatePost']" [queryParams]="{ id: this.currentUserId}" matTooltip="เพิ่มโพสต์">
+            <a class="add-post-btn" [routerLink]="['/CreatePost']" [queryParams]="{ id: this.currentUserId}"
+                matTooltip="เพิ่มโพสต์">
                 <i class="fa-solid fa-plus"></i>
             </a>
-            <a class="menu-item active" routerLinkActive="active" [routerLink]="['/Notification_user']" [queryParams]="{ id: this.currentUserId }">
+            <a class="menu-item active" routerLinkActive="active" [routerLink]="['/Notification_user']"
+                [queryParams]="{ id: this.currentUserId }">
                 <div class="bell-icon-container">
-                <i class="fa-solid fa-bell"></i>
+                    <i class="fa-solid fa-bell"></i>
                     <!-- <div class="notification-dot" *ngIf="notificationCounts.total > 0"></div> -->
                 </div>
                 <span class="itim-regular">การแจ้งเตือน</span>
@@ -30,7 +33,7 @@
                 <span class="itim-regular">โปรไฟล์</span>
             </a>
         </div>
-        
+
         <!-- เมนูขวาสุด -->
         <div class="toolbar-actions">
             <a [routerLink]="['/search_users']" [queryParams]="{ id: this.currentUserId }">
@@ -43,7 +46,7 @@
     </mat-toolbar>
 
     <!-- Drawer Overlay - พื้นหลังสีเทา -->
-<div class="drawer-overlay" [class.open]="isDrawerOpen" (click)="toggleDrawer()"></div>
+    <div class="drawer-overlay" [class.open]="isDrawerOpen" (click)="toggleDrawer()"></div>
 
     <!-- Drawer -->
     <div class="drawer" [class.open]="isDrawerOpen">
@@ -69,9 +72,10 @@
                     </a>
                 </li>
                 <li>
-                    <a class="active" routerLinkActive="active" [routerLink]="['/Notification_user']" [queryParams]="{ id: this.currentUserId }">
+                    <a class="active" routerLinkActive="active" [routerLink]="['/Notification_user']"
+                        [queryParams]="{ id: this.currentUserId }">
                         <div class="bell-icon-container">
-                        <i class="fa-solid fa-bell"></i>
+                            <i class="fa-solid fa-bell"></i>
                             <!-- <div class="notification-dot" *ngIf="notificationCounts.total > 0"></div> -->
                         </div>
                         <span class="itim-regular">การแจ้งเตือน</span>
@@ -130,7 +134,7 @@
                         <div class="text-content">
                             <div class="title itim-regular">การแจ้งเตือนของระบบ</div>
                         </div>
-                        <span *ngIf="unreadUnbanCount > 0"  class="badge">
+                        <span *ngIf="unreadUnbanCount > 0" class="badge">
                             {{ unreadUnbanCount }}
                         </span>
 
@@ -139,7 +143,7 @@
 
                 <hr class="divider" />
 
-                <mat-card  class="noti-card" (click)="selectCard('follow')">
+                <mat-card class="noti-card" (click)="selectCard('follow')">
                     <div class="card-content">
                         <div class="avatar">
                             <i class="fa-solid fa-user-check" style="font-size: 22px; color: black;"></i>
@@ -151,7 +155,7 @@
                                 latestFollowerName + ' ติดตามคุณ และอีก ' + (unreadFollowCount - 1) + ' คน' }}
                             </div>
                         </div>
-                        <span *ngIf="unreadFollowCount > 0"  class="badge">
+                        <span *ngIf="unreadFollowCount > 0" class="badge">
                             {{ unreadFollowCount }}
                         </span>
                     </div>
@@ -187,7 +191,7 @@
                             </div>
                         </div>
 
-                        <span *ngIf="unreadShareCount > 0"  class="badge">
+                        <span *ngIf="unreadShareCount > 0" class="badge">
                             {{ unreadShareCount }}
                         </span>
                     </div>
@@ -262,7 +266,7 @@
 
     </div>
 
-    <div  *ngIf="selectedCard === 'follow'"
+    <div *ngIf="selectedCard === 'follow'"
         style="display: flex; flex-direction: column; align-items: center; padding: 20px; width: 100%; margin-top: 70px;">
         <ng-container *ngIf="notificationsFollow.length > 0; else noFollowNotifications">
             <div *ngFor="let noti of notificationsFollow; trackBy: trackByFollowId" class="noti-card2"

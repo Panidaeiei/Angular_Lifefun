@@ -253,6 +253,14 @@ export class ReportPostdetailComponent {
     }
   }
 
+  // ฟังก์ชันสำหรับไปที่ media ที่ระบุ
+  goToMedia(index: number): void {
+    if (this.post && index >= 0 && index < (this.post.images.length + this.post.videos.length)) {
+      this.currentMediaIndex = index;
+      this.updateCurrentMedia();
+    }
+  }
+
   deletePost(postId: number): void {
     // ตรวจสอบการเข้าสู่ระบบก่อนดำเนินการ
     const adminId = localStorage.getItem('adminId') || sessionStorage.getItem('adminId');

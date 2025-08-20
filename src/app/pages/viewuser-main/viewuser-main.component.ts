@@ -180,40 +180,103 @@ export class ViewuserMainComponent {
   loadFollowCount(): void {
     if (!this.followedId) return;
 
+    // ลองโหลดข้อมูลจาก localStorage ก่อน
+    const storedFollowCount = localStorage.getItem(`followCount_${this.followedId}`);
+    if (storedFollowCount) {
+      try {
+        const parsed = JSON.parse(storedFollowCount);
+        this.followersCount = parsed.followers || 0;
+        this.followingCount = parsed.following || 0;
+        console.log('Loaded follow count from storage:', { followers: this.followersCount, following: this.followingCount });
+      } catch (error) {
+        console.error('Error parsing stored follow count:', error);
+      }
+    }
+
     // ตรวจสอบว่ามี token หรือไม่
     const token = localStorage.getItem('token') || sessionStorage.getItem('token');
 
     if (token) {
-      // ถ้ามี token ให้ใช้ method ที่ต้อง authentication
+      // ถ้ามี token ให้ใช้ ReactPostservice.getFollowCount() ที่มีอยู่จริง
       this.reactPostservice.getFollowCount(this.followedId).subscribe(
         (response) => {
-          this.followersCount = response.followers;
-          this.followingCount = response.following;
+          console.log('Follow count response:', response);
+          if (response && response.followers !== undefined && response.following !== undefined) {
+            this.followersCount = response.followers;
+            this.followingCount = response.following;
+            
+            // บันทึกลง localStorage
+            const followData = { followers: this.followersCount, following: this.followingCount };
+            localStorage.setItem(`followCount_${this.followedId}`, JSON.stringify(followData));
+            console.log('Saved follow count to storage:', followData);
+          } else {
+            console.warn('Invalid follow count response format:', response);
+            // ใช้ค่าจาก localStorage ถ้ามี
+            if (storedFollowCount) {
+              try {
+                const parsed = JSON.parse(storedFollowCount);
+                this.followersCount = parsed.followers || 0;
+                this.followingCount = parsed.following || 0;
+              } catch (error) {
+                this.followersCount = 0;
+                this.followingCount = 0;
+              }
+            }
+          }
         },
         (error) => {
-          console.error('Error fetching follow count:', error);
-          if (error.status === 401) {
-            // ถ้า authentication ล้มเหลว ให้ลองใช้ public method
-            this.loadFollowCountPublic();
+          console.error('Error fetching follow count from API:', error);
+          
+          // ถ้าไม่มีข้อมูลใน localStorage ให้ใช้ค่าเริ่มต้น
+          if (!storedFollowCount) {
+            this.followersCount = 0;
+            this.followingCount = 0;
           }
+          
+          console.warn('ไม่สามารถโหลดข้อมูลผู้ติดตามได้ ใช้ข้อมูลจาก cache หรือค่าเริ่มต้น');
         }
       );
     } else {
-      // ถ้าไม่มี token ให้ใช้ public method
-      this.loadFollowCountPublic();
+      // ถ้าไม่มี token ให้ใช้ ReactPostservice.getFollowCountPublic() แต่จัดการ error
+      this.reactPostservice.getFollowCountPublic(this.followedId).subscribe(
+        (response) => {
+          console.log('Public follow count response:', response);
+          if (response && response.followers !== undefined && response.following !== undefined) {
+            this.followersCount = response.followers;
+            this.followingCount = response.following;
+            
+            // บันทึกลง localStorage
+            const followData = { followers: this.followersCount, following: this.followingCount };
+            localStorage.setItem(`followCount_${this.followedId}`, JSON.stringify(followData));
+            console.log('Saved public follow count to storage:', followData);
+          } else {
+            console.warn('Invalid public follow count response format:', response);
+            // ใช้ค่าจาก localStorage ถ้ามี
+            if (storedFollowCount) {
+              try {
+                const parsed = JSON.parse(storedFollowCount);
+                this.followersCount = parsed.followers || 0;
+                this.followingCount = parsed.following || 0;
+              } catch (error) {
+                this.followersCount = 0;
+                this.followingCount = 0;
+              }
+            }
+          }
+        },
+        (error) => {
+          console.error('Error fetching public follow count:', error);
+          
+          // ถ้าไม่มีข้อมูลใน localStorage ให้ใช้ค่าเริ่มต้น
+          if (!storedFollowCount) {
+            this.followersCount = 0;
+            this.followingCount = 0;
+          }
+          
+          console.warn('ไม่สามารถโหลดข้อมูลผู้ติดตามได้ ใช้ข้อมูลจาก cache หรือค่าเริ่มต้น');
+        }
+      );
     }
-  }
-
-  private loadFollowCountPublic(): void {
-    this.reactPostservice.getFollowCountPublic(this.followedId).subscribe(
-      (response) => {
-        this.followersCount = response.followers;
-        this.followingCount = response.following;
-      },
-      (error) => {
-        console.error('Error fetching follow count (public):', error);
-      }
-    );
   }
 
   onloginClick(): void {
