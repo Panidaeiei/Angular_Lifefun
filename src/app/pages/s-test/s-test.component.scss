@@ -1087,6 +1087,23 @@ body {
   .center-menu {
     gap: 20px !important;
   }
+  
+  .menu-item i { 
+    font-size: 24px; 
+  }
+  
+  .menu-item span { 
+    font-size: 13px; 
+  }
+  
+  .toolbar-actions a i {
+    font-size: 22px;
+  }
+
+  .toolbar-hamburger {
+    font-size: 26px;
+    padding: 7px 11px;
+  }
 }
 
 // Mobile
@@ -1191,6 +1208,8 @@ body {
     padding: 6px 10px;
   }
 }
+
+
 
 @media screen and (min-width: 768px) and (max-width: 1024px) and (orientation: portrait) {
   .fixed-toolbar {
@@ -1312,16 +1331,6 @@ body {
 @media (max-width: 767px) {
   .center-menu {
     display: none;
-  }
-}
-
-@media (min-width: 768px) {
-  .center-menu {
-    display: flex;
-    gap: 50px;
-    align-items: center;
-    justify-content: center;
-    flex-grow: 1;
   }
 }
 
@@ -1478,5 +1487,165 @@ body {
   .dot {
     width: 6px;
     height: 6px;
+  }
+}
+
+// iPad Air specific responsive (820px x 1180px)
+@media screen and (width: 820px) and (height: 1180px) {
+  .welcome-message {
+    max-width: 650px;
+    padding: 55px 35px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  
+  .welcome-icon i {
+    font-size: 54px;
+  }
+  
+  .welcome-title {
+    font-size: 27px;
+  }
+  
+  .welcome-description {
+    font-size: 17.5px;
+  }
+  
+  /* ปรับขนาดไอคอนสำหรับ iPad Air */
+  .fixed-toolbar {
+    height: 65px;
+    padding: 0 16px;
+  }
+  
+  .center-menu {
+    gap: 28px;
+  }
+  
+  .menu-item i { 
+    font-size: 26px; 
+  }
+  
+  .menu-item span { 
+    font-size: 14px; 
+  }
+  
+  .toolbar-actions a i {
+    font-size: 22px;
+  }
+
+  .toolbar-hamburger {
+    font-size: 26px;
+    padding: 7px 11px;
+  }
+  
+  .add-post-btn {
+    width: 50px;
+    height: 50px;
+    font-size: 28px;
+  }
+}
+
+@media screen and (width: 1180px) and (height: 820px) {
+  .welcome-message {
+    max-width: 650px;
+    padding: 55px 35px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  
+  .welcome-icon i {
+    font-size: 54px;
+  }
+  
+  .welcome-title {
+    font-size: 27px;
+  }
+  
+  .welcome-description {
+    font-size: 17.5px;
+  }
+  
+  /* ปรับขนาดไอคอนสำหรับ iPad Air แนวนอน */
+  .fixed-toolbar {
+    height: 65px;
+    padding: 0 16px;
+  }
+  
+  .center-menu {
+    gap: 28px;
+  }
+  
+  .menu-item i { 
+    font-size: 26px; 
+  }
+  
+  .menu-item span { 
+    font-size: 14px; 
+  }
+  
+  .toolbar-actions a i {
+    font-size: 22px;
+  }
+
+  .toolbar-hamburger {
+    font-size: 26px;
+    padding: 7px 11px;
+  }
+  
+  .add-post-btn {
+    width: 50px;
+    height: 50px;
+    font-size: 28px;
+  }
+}
+
+/* iPad Air alternative responsive */
+@media screen and (min-width: 800px) and (max-width: 900px) {
+  .welcome-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;  
+  }
+  
+  /* ปรับขนาดไอคอนสำหรับ iPad ขนาดกลาง */
+  .fixed-toolbar {
+    height: 65px;
+    padding: 0 14px;
+  }
+  
+  .center-menu {
+    gap: 26px;
+  }
+  
+  .menu-item i { 
+    font-size: 25px; 
+  }
+  
+  .menu-item span { 
+    font-size: 13.5px; 
+  }
+  
+  .toolbar-actions a i {
+    font-size: 21px;
+  }
+
+  .toolbar-hamburger {
+    font-size: 25px;
+    padding: 7px 11px;
+  }
+  
+  .add-post-btn {
+    width: 52px;
+    height: 52px;
+    font-size: 30px;
   }
 }
