@@ -399,7 +399,7 @@ body {
   }
   
   .center-menu { 
-    gap: 24px; 
+    gap: 20px; 
     margin-top: 8px;
   }
   
@@ -481,15 +481,6 @@ body {
   }
 }
 
-@media (min-width: 768px) {
-  .center-menu {
-    display: flex;
-    gap: 50px;
-    align-items: center;
-    justify-content: center;
-    flex-grow: 1;
-  }
-}
 
 //font
 .itim-regular {
