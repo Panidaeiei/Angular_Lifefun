@@ -11,6 +11,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { FormsModule } from '@angular/forms';
 import { Subscription } from 'rxjs';
+import { filter, take, forkJoin, of } from 'rxjs';
+import { catchError, finalize, timeout } from 'rxjs/operators';
 
 import { User } from '../../models/register_model';
 import { ProfileService } from '../../services/Profileservice';
@@ -87,96 +89,188 @@ export class ViewUserComponent implements OnInit, OnDestroy {
   };
   private notificationSubscription?: Subscription;
 
+  // เพิ่มตัวแปรเพื่อป้องกันการโหลดซ้ำ
+  private isDataLoaded = false;
+  private isLoading = false;
+  private subscriptions = new Subscription();
+
   ngOnInit(): void {
+    // ตรวจสอบ authentication ก่อน
     const loggedInUserId = localStorage.getItem('userId') || sessionStorage.getItem('userId');
     const token = localStorage.getItem('token') || sessionStorage.getItem('token');
     if (!loggedInUserId || !token) {
       this.router.navigate(['/login'], { queryParams: { error: 'unauthorized' } });
       return;
     }
-    this.userService.loadCurrentUserId(); // โหลด userId จาก localStorage เข้า BehaviorSubject
-    this.userService.getCurrentUserId().subscribe((userId) => {
-      this.currentUserId = userId;
-      if (userId) {
-        this.userService.getUserById(userId).subscribe(user => {
-          this.currentUserProfile = user;
-        });
-      }
-    });
 
-    const storedUserId = sessionStorage.getItem('userId');
-    if (storedUserId) {
-      this.userId = storedUserId;  // ดึงค่า userId จาก sessionStorage
-    } else {
-      console.warn('No user ID found in sessionStorage');
+    // ตั้งค่า userId ของเจ้าของที่ login อยู่
+    this.userId = loggedInUserId;
+
+    // รีเซ็ตสถานะทุกครั้งที่เข้ามา
+    this.isDataLoaded = false;
+    this.isLoading = false;
+    
+    // โหลด currentUserId จาก localStorage
+    this.userService.loadCurrentUserId();
+    
+    // ตรวจสอบ snapshot ครั้งแรก
+    const snapshotParams = this.route.snapshot.queryParams;
+    if (snapshotParams['Profileuser']) {
+      this.Profileuser = snapshotParams['Profileuser'];
+      this.followedId = this.Profileuser;
     }
+    
+    // Subscribe เฉพาะ params ที่มี Profileuser เท่านั้น และป้องกันการโหลดซ้ำ
+    const routeSub = this.route.queryParams
+      .pipe(
+        filter((params: any) => !!params['Profileuser']),
+        take(1) // รับค่าแค่ครั้งแรก
+      )
+      .subscribe((params: any) => {
+        if (!this.isDataLoaded) {
+          this.Profileuser = params['Profileuser'];
+          this.followedId = this.Profileuser;
+          
+          // อัปเดต userId ของเจ้าของที่ login อยู่
+          const currentLoggedInUserId = localStorage.getItem('userId') || sessionStorage.getItem('userId');
+          if (currentLoggedInUserId) {
+            this.userId = currentLoggedInUserId;
+          }
+        }
+      });
+    
+    this.subscriptions.add(routeSub);
 
-    // ดึงค่า userId จาก path parameters (URL)
-    this.route.paramMap.subscribe((params) => {
-      this.userId = params.get('userId') || '';  // รับค่า userId จาก path parameter
-      this.cid = params.get('cid') || '';  // ถ้ามี cid ก็จะดึงมา
-
-      if (this.userId) {
-        this.loadUserProfile();
-        this.loadUserPosts();
-        
-        // เริ่มการติดตามการแจ้งเตือน
-        this.notificationService.loadNotificationCounts(Number(this.userId));
-        
-        // ลบการอัปเดตอัตโนมัติออก (ไม่ให้เรียก API ซ้ำ)
-        // this.notificationService.startAutoUpdate(Number(this.userId));
-      } else {
-        console.warn('User ID not found in path parameters.');
-      }
-    });
-
-    // ดึงค่า viewerId จาก query parameters (ค่าที่ส่งมาพร้อม URL เช่น ?viewerId=34)
-    this.route.queryParams.subscribe((params) => {
-      this.Profileuser = params['Profileuser'] || '';  // รับค่า viewerId จาก query parameter
-      if (this.Profileuser) {
-        // เซ็ต followedId เป็น Profileuser เพื่อใช้ในการติดตาม
-        this.followedId = this.Profileuser;
-        
-        // ดึงข้อมูลของเจ้าของโปรไฟล์
-        this.checkFollowStatus();
-        this.loadFollowCount();
-        this.loadUserProfile();
-        this.loadUserPosts();
-      }
-    });
+    // ตรวจสอบ userId ใน url กับ userId ที่ล็อกอิน
+    const userSub = this.userService.getCurrentUserId()
+      .pipe(take(1)) // รับค่าแค่ครั้งเดียว
+      .subscribe((currentUserId: string | null) => {
+        if (currentUserId && !this.isDataLoaded) {
+          this.currentUserId = currentUserId;
+          // โหลดข้อมูลเฉพาะครั้งแรก
+          this.loadUserDataFast();
+        }
+      });
+    
+    this.subscriptions.add(userSub);
 
     this.checkScreen();
     window.addEventListener('resize', this.checkScreen.bind(this));
   }
 
-  // เริ่มการติดตามการแจ้งเตือน
-  private startNotificationTracking(): void {
-    if (this.userId) {
-      // โหลดการแจ้งเตือนครั้งแรก
-      this.notificationService.loadNotificationCounts(Number(this.userId));
-      
-      // เริ่มการอัปเดตอัตโนมัติ
-      this.notificationService.startAutoUpdate(Number(this.userId));
-      
-      // ติดตามการเปลี่ยนแปลงจำนวนการแจ้งเตือน
-      this.notificationSubscription = this.notificationService.notificationCounts$.subscribe(
-        (counts) => {
-          this.notificationCounts = counts;
-        }
-      );
-    }
-  }
+  // หยุดการเช็ค notification (ไม่ต้องยิง API notification)
+  // private startNotificationTracking(): void {
+  //   if (this.userId) {
+  //     // โหลดการแจ้งเตือนครั้งแรก
+  //     this.notificationService.loadNotificationCounts(Number(this.userId));
+  //     
+  //     // เริ่มการอัปเดตอัตโนมัติ
+  //     this.notificationService.startAutoUpdate(Number(this.userId));
+  //     
+  //     // ติดตามการเปลี่ยนแปลงจำนวนการแจ้งเตือน
+  //     this.notificationSubscription = this.notificationService.notificationCounts$.subscribe(
+  //       counts => {
+  //         this.notificationCounts = counts;
+  //       }
+  //     );
+  //   }
+  // }
 
   ngOnDestroy(): void {
-    // หยุดการติดตามการแจ้งเตือน
-    this.notificationService.stopAutoUpdate();
+    // หยุดการติดตามการแจ้งเตือน (ไม่ต้องยิง API notification)
+    // this.notificationService.stopAutoUpdate(); // ❌ Comment ออก
     
     // ยกเลิก subscription
     if (this.notificationSubscription) {
       this.notificationSubscription.unsubscribe();
     }
     
+    // ยกเลิก subscriptions ทั้งหมด
+    this.subscriptions.unsubscribe();
+    
+    // รีเซ็ตสถานะ
+    this.isDataLoaded = false;
+    this.isLoading = false;
+    
+    // ล้างข้อมูล
+    this.userProfile = null;
+    this.userPosts = [];
+    this.sharedPosts = [];
+    this.savedPosts = [];
+    this.followersCount = 0;
+    this.followingCount = 0;
+    
     window.removeEventListener('resize', this.checkScreen.bind(this));
+  }
+
+  // ฟังก์ชันใหม่สำหรับโหลดข้อมูลแบบเร็ว
+  private loadUserDataFast(): void {
+    if (this.Profileuser && !this.isDataLoaded) {
+      this.isLoading = true;
+      this.isDataLoaded = true; // ป้องกันการโหลดซ้ำ
+      
+      // โหลดข้อมูลทั้งหมดพร้อมกันแบบเร็ว
+      const userProfile$ = this.profileService.getUserProfileById(this.Profileuser).pipe(
+        timeout(10000),
+        catchError(error => {
+          console.error('Error loading profile:', error);
+          return of(null);
+        }),
+        take(1)
+      );
+
+      const userPosts$ = this.profileService.getUserPostsById(this.Profileuser).pipe(
+        timeout(10000),
+        catchError(error => {
+          console.error('Error loading posts:', error);
+          return of({ userPosts: [], sharedPosts: [], savedPosts: [] });
+        }),
+        take(1)
+      );
+
+      const followCount$ = this.reactPostservice.getFollowCount(this.Profileuser).pipe(
+        timeout(10000),
+        catchError(error => {
+          console.error('Error loading follow count:', error);
+          return of({ followers: 0, following: 0 });
+        }),
+        take(1)
+      );
+
+      // โหลดข้อมูลทั้งหมดพร้อมกัน
+      forkJoin({
+        profile: userProfile$,
+        posts: userPosts$,
+        followCount: followCount$
+      }).pipe(
+        finalize(() => {
+          this.isLoading = false;
+        })
+      ).subscribe({
+        next: (data) => {
+          // อัปเดตข้อมูลผู้ใช้
+          this.userProfile = data.profile;
+          
+          // อัปเดตข้อมูลโพสต์
+          this.userPosts = data.posts.userPosts || [];
+          this.sharedPosts = data.posts.sharedPosts || [];
+          this.savedPosts = data.posts.savedPosts || [];
+
+          // อัปเดตข้อมูลการติดตาม
+          this.followersCount = data.followCount.followers || 0;
+          this.followingCount = data.followCount.following || 0;
+          
+          // หยุดการเช็ค notification (ไม่ต้องยิง API notification)
+          // this.startNotificationTracking(); // ❌ Comment ออก
+        },
+        error: (error) => {
+          console.error('Error loading user data:', error);
+          this.isLoading = false;
+        }
+      });
+    } else {
+      this.isLoading = false;
+    }
   }
 
   checkScreen() {
@@ -220,6 +314,15 @@ export class ViewUserComponent implements OnInit, OnDestroy {
     if (!this.Profileuser) {
       console.error('Profileuser ไม่ถูกต้อง:', this.Profileuser);
       return;
+    }
+
+    // ตรวจสอบและอัปเดต userId ของเจ้าของที่ login อยู่
+    if (!this.userId) {
+      this.userId = localStorage.getItem('userId') || sessionStorage.getItem('userId') || '';
+      if (!this.userId) {
+        console.error('ไม่พบ userId ของเจ้าของที่ login อยู่');
+        return;
+      }
     }
   
     const confirmMessage = this.isFollowing
