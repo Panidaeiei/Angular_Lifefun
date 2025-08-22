@@ -149,6 +149,13 @@ export class ViewUserComponent implements OnInit, OnDestroy {
           this.currentUserId = currentUserId;
           // โหลดข้อมูลเฉพาะครั้งแรก
           this.loadUserDataFast();
+          
+          // เพิ่มการตรวจสอบสถานะการติดตามหลังจากโหลดข้อมูลเสร็จ
+          if (this.Profileuser && this.userId) {
+            setTimeout(() => {
+              this.checkFollowStatus();
+            }, 1000); // รอให้ข้อมูลโหลดเสร็จก่อน
+          }
         }
       });
     
@@ -237,11 +244,22 @@ export class ViewUserComponent implements OnInit, OnDestroy {
         take(1)
       );
 
+      // เพิ่มการตรวจสอบสถานะการติดตาม
+      const followStatus$ = this.reactPostservice.checkFollowStatus(this.userId, this.Profileuser).pipe(
+        timeout(10000),
+        catchError(error => {
+          console.error('Error checking follow status:', error);
+          return of({ isFollowing: false });
+        }),
+        take(1)
+      );
+
       // โหลดข้อมูลทั้งหมดพร้อมกัน
       forkJoin({
         profile: userProfile$,
         posts: userPosts$,
-        followCount: followCount$
+        followCount: followCount$,
+        followStatus: followStatus$
       }).pipe(
         finalize(() => {
           this.isLoading = false;
@@ -259,6 +277,9 @@ export class ViewUserComponent implements OnInit, OnDestroy {
           // อัปเดตข้อมูลการติดตาม
           this.followersCount = data.followCount.followers || 0;
           this.followingCount = data.followCount.following || 0;
+          
+          // อัปเดตสถานะการติดตาม
+          this.isFollowing = data.followStatus.isFollowing || false;
           
           // หยุดการเช็ค notification (ไม่ต้องยิง API notification)
           // this.startNotificationTracking(); // ❌ Comment ออก
@@ -337,11 +358,22 @@ export class ViewUserComponent implements OnInit, OnDestroy {
   
       this.reactPostservice.toggleFollow(followData).subscribe(
         (response) => {
+          // อัปเดตสถานะทันที
           this.isFollowing = response.isFollowing;
-          this.loadFollowCount(); //โหลดจำนวนติดตามใหม่
+          console.log('Follow status toggled to:', this.isFollowing);
+          
+          // อัปเดตจำนวนผู้ติดตามใหม่
+          this.loadFollowCount();
+          
+          // บังคับให้ UI อัปเดต
+          this.cdr.detectChanges();
         },
         (error) => {
           console.error('เกิดข้อผิดพลาดขณะติดตาม:', error);
+          // ถ้า error ให้ตรวจสอบสถานะใหม่
+          setTimeout(() => {
+            this.checkFollowStatus();
+          }, 1000);
         }
       );
     }
@@ -355,12 +387,23 @@ export class ViewUserComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.reactPostservice.checkFollowStatus(this.userId, this.Profileuser).subscribe(
+    // เพิ่ม timeout และ error handling
+    this.reactPostservice.checkFollowStatus(this.userId, this.Profileuser).pipe(
+      timeout(10000),
+      catchError(error => {
+        console.error('Error checking follow status:', error);
+        return of({ isFollowing: false });
+      }),
+      take(1)
+    ).subscribe(
       (response) => {
         this.isFollowing = response.isFollowing;
+        console.log('Follow status updated:', this.isFollowing);
+        this.cdr.detectChanges(); // บังคับให้ UI อัปเดต
       },
       (error) => {
         console.error('Error fetching follow status:', error);
+        // ไม่ต้องทำอะไร ถ้า error ให้ใช้ค่าเดิม
       }
     );
   }
