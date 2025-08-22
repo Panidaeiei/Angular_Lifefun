@@ -97,7 +97,7 @@ export class UserService {
     return this.http.put(`${this.baseUrl}/edit_user`, formData, { headers }).pipe(
       catchError((error: HttpErrorResponse) => {
         console.error('Error updating user:', error);
-        return throwError(() => new Error(error.error?.message || 'Failed to update user'));
+        return throwError(() => error);
       })
     );
   }

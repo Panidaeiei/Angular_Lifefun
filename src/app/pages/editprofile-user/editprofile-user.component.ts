@@ -72,7 +72,6 @@ export class EditprofileUserComponent implements OnInit {
     this.route.queryParams.subscribe((params) => {
       if (params['id']) {
         this.userId = params['id'];
-        console.log('User ID from query params:', this.userId);
       } else {
         // ลองดึง userId จาก LocalStorage หากไม่มีใน Query Parameters
         this.userId = localStorage.getItem('uid') || '';
@@ -164,7 +163,6 @@ export class EditprofileUserComponent implements OnInit {
       formData.append('image', this.selectedFile);
 
       // เรียก API สำหรับอัปโหลดรูปภาพ
-      console.log('Uploading image:', this.selectedFile.name);
       // เพิ่มโค้ดสำหรับเรียก API ที่นี่
     }
   }
@@ -298,10 +296,6 @@ export class EditprofileUserComponent implements OnInit {
 
     this.userService.updateUser(formData).subscribe({
       next: (response) => {
-        console.log('✅ Success response:', response);
-        console.log('✅ Response type:', typeof response);
-        console.log('✅ Response message:', response.message);
-
         // ตรวจสอบว่า response มี error หรือไม่
         if (response.error || response.errors) {
           console.error('❌ Backend returned error in success response:', response);
@@ -319,38 +313,49 @@ export class EditprofileUserComponent implements OnInit {
       },
       error: (error) => {
         console.error('❌ Error updating user:', error);
-        console.log('📌 Full error object:', error);
-        console.log('📌 Error status:', error.status);
-        console.log('📌 Error message:', error.message);
-        console.log('📌 Error error:', error.error);
-
-        let errorMessage = 'รหัสผ่านเดิมไม่ถูกต้อง!';
-
-        // ✅ กรณีที่ error เป็น `Error` object และอยู่ใน `error.message`
+        
+        // ตรวจสอบ error จาก backend
         let backendResponse;
-        try {
-          backendResponse = JSON.parse(error.message); // ลองแปลงเป็น JSON
-        } catch (e) {
-          backendResponse = error.error || {}; // ถ้าแปลงไม่ได้ ใช้ error.error แทน
+        
+        // ลองดึงข้อมูลจากหลายแหล่ง
+        if (error.error) {
+          backendResponse = error.error;
+        } else if (error.message) {
+          try {
+            backendResponse = JSON.parse(error.message);
+          } catch (e) {
+            backendResponse = { error: error.message };
+          }
+        } else {
+          backendResponse = {};
         }
 
-        // ✅ ถ้า backendResponse มี errors ให้ดึงมาแสดงผล
-        if (backendResponse.errors) {
+        // แสดง error แยกกรณี
+        if (backendResponse && backendResponse.errors) {
           const errors = backendResponse.errors;
-          errorMessage = '';
-
+          
           if (errors.username) {
-            errorMessage += errors.username + '\n';
+            alert('ชื่อผู้ใช้: ' + errors.username);
+            this.isLoading = false;
+            return;
           }
           if (errors.email) {
-            errorMessage += errors.email + '\n';
+            alert('อีเมล: ' + errors.email);
+            this.isLoading = false;
+            return;
           }
           if (errors.phone) {
-            errorMessage += errors.phone + '\n';
+            alert('เบอร์โทรศัพท์: ' + errors.phone);
+            this.isLoading = false;
+            return;
           }
+        } else if (backendResponse && backendResponse.error) {
+          alert('❌ ' + backendResponse.error);
+        } else {
+          // ถ้าไม่มี error message ที่ชัดเจน
+          alert('❌ เกิดข้อผิดพลาดในการอัปเดตข้อมูล\n\nกรุณาตรวจสอบข้อมูลที่กรอกอีกครั้ง');
         }
 
-        alert(errorMessage.trim()); // ✅ แจ้งเตือนข้อผิดพลาด และให้ผู้ใช้แก้ไขข้อมูล
         this.isLoading = false;
       }
     });
@@ -359,29 +364,25 @@ export class EditprofileUserComponent implements OnInit {
 
 
   onDeleteUser(): void {
-    const dialogRef = this.dialog.open(ConfirmDeuserDialogComponent);
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        this.isLoading = true; // เริ่มโหลด
-        this.userService.deleteUser(this.userId).subscribe({
-          next: (response) => {
-            alert('ลบบัญชีและข้อมูลสำเร็จ');
-            console.log('Delete response:', response);
-            this.isLoading = false; // หยุดโหลดเมื่อเสร็จ
-            this.router.navigate(['/login']); // ไปยังหน้าล็อกอิน
-          },
-          error: (err) => {
-            console.error('Error deleting user:', err);
-            alert('เกิดข้อผิดพลาดในการลบบัญชี');
-            this.isLoading = false; // หยุดโหลดเมื่อเกิดข้อผิดพลาด
-          }
-        });
-      }
-    });
+    // ใช้ alert แทน dialog
+    const confirmDelete = confirm('คุณแน่ใจหรือไม่ที่จะลบบัญชีและข้อมูลทั้งหมดของคุณจะหายไปอย่างถาวร?');
+    
+    if (confirmDelete) {
+      this.isLoading = true; // เริ่มโหลด
+      this.userService.deleteUser(this.userId).subscribe({
+        next: (response) => {
+          alert('ลบบัญชีและข้อมูลสำเร็จ');
+          this.isLoading = false; // หยุดโหลดเมื่อเสร็จ
+          this.router.navigate(['/login']); // ไปยังหน้าล็อกอิน
+        },
+        error: (err) => {
+          console.error('Error deleting user:', err);
+          alert('เกิดข้อผิดพลาดในการลบบัญชี');
+          this.isLoading = false; // หยุดโหลดเมื่อเกิดข้อผิดพลาด
+        }
+      });
+    }
   }
-
-
   // ยกเลิก
   onCancel(): void {
     window.history.back();
