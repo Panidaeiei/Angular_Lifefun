@@ -1,111 +1,79 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
-@Pipe({
-  name: 'timeAgo',
-  standalone: true,
-})
+/** helper: แปลงค่าเป็น Date แบบไม่เพี้ยนโซนเวลา */
+function parseToDate(value: string | Date): Date | null {
+  if (!value) return null;
+  if (value instanceof Date) return isNaN(value.getTime()) ? null : value;
+
+  // ถ้ามาเป็น ISO (มี T หรือ Z) ให้ปล่อยให้ JS จัดการเอง
+  if (value.includes('T') || value.includes('Z')) {
+    const d = new Date(value);
+    return isNaN(d.getTime()) ? null : d;
+  }
+
+  // เคส 'YYYY-MM-DD HH:mm:ss' (ไม่มีโซน) → สร้าง Date แบบ local เพื่อเลี่ยงปัญหา browser
+  const m = value.match(
+    /^(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2})(?::(\d{2}))?$/
+  );
+  if (m) {
+    const [_, y, mo, d, h, mi, s] = m;
+    const dd = new Date(
+      Number(y),
+      Number(mo) - 1,
+      Number(d),
+      Number(h),
+      Number(mi),
+      Number(s || '0')
+    );
+    return isNaN(dd.getTime()) ? null : dd;
+  }
+
+  // เผื่อกรณีอื่น ๆ
+  const d2 = new Date(value);
+  return isNaN(d2.getTime()) ? null : d2;
+}
+
+@Pipe({ name: 'timeAgo', standalone: true })
 export class TimeAgoPipe implements PipeTransform {
   transform(value: string | Date): string {
-    if (!value) return '';
-    
-    try {
+    const commentDate = parseToDate(value);
+    if (!commentDate) return '';
+
     const now = new Date();
-      let commentDate: Date;
-      
-      // แปลงเวลาจาก UTC กลับเป็นเวลาท้องถิ่น
-      if (typeof value === 'string') {
-        // ถ้าเป็น string ที่มี Z (UTC) ให้แปลงเป็นเวลาท้องถิ่น
-        if (value.includes('Z')) {
-          // สร้าง Date object จาก UTC string
-          const utcDate = new Date(value);
-          // แปลงเป็นเวลาท้องถิ่น
-          commentDate = new Date(utcDate.getTime() + (utcDate.getTimezoneOffset() * 60000));
-        } else {
-          // ถ้าไม่มี Z ให้ใช้เป็นเวลาท้องถิ่นเลย
-          commentDate = new Date(value);
-        }
-      } else {
-        commentDate = value;
-      }
-      
-      // ตรวจสอบว่าค่า valid หรือไม่
-      if (isNaN(commentDate.getTime())) {
-        console.warn('Invalid date value:', value);
-        return '';
-      }
-      
     const seconds = Math.floor((now.getTime() - commentDate.getTime()) / 1000);
 
-      // ถ้าเวลาเป็นลบ (โพสต์ในอนาคต) ให้แสดง "ตอนนี้"
-    if (seconds <= 0) {
-        return 'ตอนนี้';
-    } else if (seconds < 60) {
-        return `${seconds} วินาทีที่แล้ว`;
-    } else if (seconds < 3600) {
-      const minutes = Math.floor(seconds / 60);
-        return `${minutes} นาทีที่แล้ว`;
-    } else if (seconds < 86400) {
-      const hours = Math.floor(seconds / 3600);
-        return `${hours} ชั่วโมงที่แล้ว`;
-    } else if (seconds < 2592000) {
-      const days = Math.floor(seconds / 86400);
-      return `${days} วันที่แล้ว`;
-    } else if (seconds < 31536000) {
-      const months = Math.floor(seconds / 2592000);
-      return `${months} เดือนที่แล้ว`;
-    } else {
-      const years = Math.floor(seconds / 31536000);
-      return `${years} ปีที่แล้ว`;
-      }
-    } catch (error) {
-      console.error('Error in timeAgo pipe:', error);
-      return '';
-    }
+    if (seconds <= 0) return 'ตอนนี้';
+    if (seconds < 60) return `${seconds} วินาทีที่แล้ว`;
+    if (seconds < 3600) return `${Math.floor(seconds / 60)} นาทีที่แล้ว`;
+    if (seconds < 86400) return `${Math.floor(seconds / 3600)} ชั่วโมงที่แล้ว`;
+    if (seconds < 2592000) return `${Math.floor(seconds / 86400)} วันที่แล้ว`;
+    if (seconds < 31536000) return `${Math.floor(seconds / 2592000)} เดือนที่แล้ว`;
+    return `${Math.floor(seconds / 31536000)} ปีที่แล้ว`;
   }
 }
 
-@Pipe({
-  name: 'formatLocalTime',
-  standalone: true,
-})
+@Pipe({ name: 'formatLocalTime', standalone: true })
 export class FormatLocalTimePipe implements PipeTransform {
   transform(value: string | Date): string {
-    if (!value) return '';
-    
-    try {
-      let date: Date;
-      
-      // แปลงเวลาจาก UTC กลับเป็นเวลาท้องถิ่น
-      if (typeof value === 'string') {
-        if (value.includes('Z')) {
-          // ถ้าเป็น UTC string ให้แปลงเป็นเวลาท้องถิ่น
-          const utcDate = new Date(value);
-          date = new Date(utcDate.getTime() + (utcDate.getTimezoneOffset() * 60000));
-        } else {
-          // ถ้าไม่มี Z ให้ใช้เป็นเวลาท้องถิ่นเลย
-          date = new Date(value);
-        }
-      } else {
-        date = value;
-      }
-      
-      // ตรวจสอบว่าค่า valid หรือไม่
-      if (isNaN(date.getTime())) {
-        return '';
-      }
-      
-      // แสดงในรูปแบบ YYYY-MM-DD HH:MM:SS
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
-      const hours = String(date.getHours()).padStart(2, '0');
-      const minutes = String(date.getMinutes()).padStart(2, '0');
-      const seconds = String(date.getSeconds()).padStart(2, '0');
-      
-      return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-    } catch (error) {
-      console.error('Error in formatLocalTime pipe:', error);
-      return '';
-    }
+    const date = parseToDate(value);
+    if (!date) return '';
+
+    // ฟอร์แมตไทย: 20 สิงหาคม เวลา 01:20 น.
+    const parts = new Intl.DateTimeFormat('th-TH', {
+      day: 'numeric',
+      month: 'long',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+      timeZone: 'Asia/Bangkok', // บังคับเป็นเวลาไทย
+    }).formatToParts(date);
+
+    const get = (t: string) => parts.find(p => p.type === t)?.value || '';
+    const day = get('day');
+    const month = get('month');
+    const hour = get('hour').padStart(2, '0');
+    const minute = get('minute').padStart(2, '0');
+
+    return `${day} ${month} เวลา ${hour}:${minute} น.`;
   }
 }

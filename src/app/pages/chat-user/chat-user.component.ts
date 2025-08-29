@@ -10,8 +10,6 @@ import { MatBadgeModule } from '@angular/material/badge';
 import { FormsModule } from '@angular/forms';
 import { UserService } from '../../services/Userservice';
 import { ChatService } from '../../services/chat.service';
-import { NotificationService, NotificationCounts } from '../../services/notification.service';
-import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-chat-user',
@@ -31,6 +29,12 @@ export class ChatUserComponent implements OnInit, OnDestroy {
   openedMenuId: string | null = null;
   isNotiDrawerOpen = true;
 
+  // เพิ่มตัวแปรสำหรับเก็บ interval ID
+  private chatRefreshInterval: any;
+  
+  // เพิ่ม cache สำหรับข้อมูลผู้ใช้เพื่อป้องกันการเรียก API ซ้ำ
+  private userProfileCache: Map<string, any> = new Map();
+  private fetchingUsers: Set<string> = new Set(); // ป้องกันการเรียก API ซ้ำสำหรับผู้ใช้เดียวกัน
 
   isMobile = false;
   isIPad = false;
@@ -59,19 +63,9 @@ export class ChatUserComponent implements OnInit, OnDestroy {
   isUserScrolling: boolean = false;
   isNearBottom: boolean = true;
 
-  notificationCounts: NotificationCounts = {
-    like: 0,
-    follow: 0,
-    share: 0,
-    comment: 0,
-    unban: 0,
-    total: 0
-  };
-  private notificationSubscription?: Subscription;
-
   @Input() userData: any;
 
-  constructor(private route: ActivatedRoute, private userService: UserService, private chatService: ChatService, private router: Router, private notificationService: NotificationService) {}
+  constructor(private route: ActivatedRoute, private userService: UserService, private chatService: ChatService, private router: Router) {}
 
   ngOnInit() {
     const loggedInUserId = localStorage.getItem('userId') || sessionStorage.getItem('userId');
@@ -86,11 +80,14 @@ export class ChatUserComponent implements OnInit, OnDestroy {
       
       if (this.userId) {
         this.loadUserChats();
-        // เริ่มการติดตามการแจ้งเตือน
-        this.notificationService.loadNotificationCounts(Number(this.userId));
+        // หยุดการติดตามการแจ้งเตือนเพื่อลดการเรียก API
+        // this.notificationService.loadNotificationCounts(Number(this.userId));
         
         // ลบการอัปเดตอัตโนมัติออก (ไม่ให้เรียก API ซ้ำ)
         // this.notificationService.startAutoUpdate(Number(this.userId));
+        
+        // รีเฟรชข้อมูลแชทที่มีอยู่แล้วแก้ไข other_user ที่ขาดหายไป
+        this.chatService.refreshChatUserData(this.userId);
       }
     });
     
@@ -100,89 +97,183 @@ export class ChatUserComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       this.scrollToBottom();
     }, 100);
+
+    // เพิ่มการรีเฟรชแชทอัตโนมัติทุก 60 วินาที (เพิ่มจาก 30 วินาทีเพื่อลดการเรียก API)
+    this.chatRefreshInterval = setInterval(() => {
+      if (this.userId) {
+        console.log('Auto-refreshing chats every 60 seconds');
+        this.loadUserChats();
+      }
+    }, 60000);
   }
 
   ngOnDestroy() {
-    // หยุดการติดตามการแจ้งเตือน
-    this.notificationService.stopAutoUpdate();
+    // หยุดการรีเฟรชแชทอัตโนมัติ
+    if (this.chatRefreshInterval) {
+      clearInterval(this.chatRefreshInterval);
+    }
+  }
+
+  // เพิ่ม method สำหรับดึงข้อมูลผู้ใช้แบบมี cache
+  private async fetchUserProfileWithCache(userId: string): Promise<any> {
+    // ตรวจสอบ cache ก่อน
+    if (this.userProfileCache.has(userId)) {
+      return this.userProfileCache.get(userId);
+    }
     
-    // ยกเลิก subscription
-    if (this.notificationSubscription) {
-      this.notificationSubscription.unsubscribe();
+    // ตรวจสอบว่ากำลังดึงข้อมูลผู้ใช้นี้อยู่หรือไม่
+    if (this.fetchingUsers.has(userId)) {
+      // รอจนกว่าจะดึงเสร็จ
+      return new Promise((resolve) => {
+        const checkCache = () => {
+          if (this.userProfileCache.has(userId)) {
+            resolve(this.userProfileCache.get(userId));
+          } else {
+            setTimeout(checkCache, 100);
+          }
+        };
+        checkCache();
+      });
     }
-  }
-
-  // เริ่มการติดตามการแจ้งเตือน
-  private startNotificationTracking(): void {
-    if (this.userId) {
-      // โหลดการแจ้งเตือนครั้งแรก
-      this.notificationService.loadNotificationCounts(Number(this.userId));
-      
-      // เริ่มการอัปเดตอัตโนมัติ
-      this.notificationService.startAutoUpdate(Number(this.userId));
-      
-      // ติดตามการเปลี่ยนแปลงจำนวนการแจ้งเตือน
-      this.notificationSubscription = this.notificationService.notificationCounts$.subscribe(
-        (counts) => {
-          this.notificationCounts = counts;
-        }
-      );
-    }
-  }
-
-  loadUserChats() {
-    this.chatService.getUserChats(this.userId, (chats) => {
-         // ตรวจสอบสถานะผู้ใช้แต่ละคนก่อนแสดงในรายการแชท
-      const validChats = chats.filter(chat => {
-        const otherUserId = chat.other_user || chat.other_user_id || chat.uid || chat.other_id || chat.user_id || chat.id;
-        if (!otherUserId) return false;
-        
-        // ตรวจสอบว่าผู้ใช้นี้ยังมีอยู่ในระบบหรือไม่
-        this.userService.checkUserExists(otherUserId).subscribe({
-          next: (exists: boolean) => {
-            if (!exists) {
-              // ลบแชทออกจาก Firebase ถ้าผู้ใช้ถูกลบแล้ว
-              this.chatService.removeChatFromUser(this.userId, chat.chatId);
+    
+    // เพิ่ม userId เข้า fetchingUsers เพื่อป้องกันการเรียกซ้ำ
+    this.fetchingUsers.add(userId);
+    
+    try {
+      return new Promise((resolve, reject) => {
+        this.userService.getUserById(userId).subscribe({
+          next: (userProfile: any) => {
+            if (userProfile) {
+              // บันทึกลง cache
+              this.userProfileCache.set(userId, userProfile);
             }
+            this.fetchingUsers.delete(userId);
+            resolve(userProfile);
           },
           error: (error: any) => {
-            console.error(`Error checking user ${otherUserId}:`, error);
-            // ถ้าไม่สามารถตรวจสอบได้ ให้แสดงแชทไว้ก่อน
+            this.fetchingUsers.delete(userId);
+            reject(error);
+          }
+        });
+      });
+    } catch (error) {
+      this.fetchingUsers.delete(userId);
+      throw error;
+    }
+  }
+
+loadUserChats() {
+  console.log('Loading user chats for userId:', this.userId);
+  
+  // ใช้ real-time listener แทนการดึงข้อมูลครั้งเดียว
+  this.chatService.listenUserChats(this.userId, (chats) => {
+    console.log('Received chats:', chats);
+    
+    // แสดงแชททั้งหมดโดยไม่ต้องตรวจสอบผู้ใช้ (ลดการเรียก API)
+    const validChats = chats.filter(chat => {
+      // ตรวจสอบว่ามีข้อมูลแชทครบถ้วนหรือไม่
+      const hasChatId = !!chat.chatId;
+      const hasLastMessage = chat.last_message !== undefined;
+      const hasLastMessageTime = chat.last_message_time !== undefined;
+      
+      // แสดงแชทถ้ามี chatId (ข้อมูลพื้นฐานที่จำเป็น)
+      return hasChatId;
+    });
+
+    console.log('Valid chats after filter:', validChats.length, 'out of', chats.length);
+
+    this.chatList = validChats.map(chat => {
+      // หา otherUserId จากหลายแหล่ง
+      const otherUserId = chat.other_user || chat.other_user_id || chat.uid || chat.other_id || chat.user_id || chat.id;
+      
+      // หา username และ avatar จากหลายแหล่ง
+      let username = chat.other_username || chat.username;
+      let avatar = chat.other_image_url || chat.image_url;
+      
+      // ถ้าไม่มี username หรือ avatar และมี otherUserId ให้ดึงข้อมูลจาก backend API
+      if ((!username || !avatar) && otherUserId && otherUserId !== this.userId) {
+        console.log('Fetching user profile from backend for:', otherUserId, 'chatId:', chat.chatId);
+        
+        // ใช้ cache system แทนการเรียก API โดยตรง
+        this.fetchUserProfileWithCache(otherUserId).then((userProfile: any) => {
+          if (userProfile) {
+            // อัปเดตข้อมูลใน Firebase เพื่อใช้ครั้งต่อไป
+            this.chatService.updateChatUserInfo(chat.chatId, this.userId, {
+              username: userProfile.username,
+              image_url: userProfile.image_url
+            });
+            
+            // อัปเดตข้อมูลใน chat list
+            const chatIndex = this.chatList.findIndex(c => c.chatId === chat.chatId);
+            if (chatIndex !== -1) {
+              this.chatList[chatIndex].name = userProfile.username || `User_${otherUserId}`;
+              this.chatList[chatIndex].avatar = userProfile.image_url || 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg';
+              this.originalChatList = [...this.chatList];
+              
+              // บังคับให้ UI อัปเดต
+              this.chatList = [...this.chatList];
+            }
+          }
+        }).catch((error: any) => {
+          console.error('Error fetching user profile from backend for', otherUserId, ':', error);
+          // ใช้ค่า fallback เมื่อเกิด error
+          const chatIndex = this.chatList.findIndex(c => c.chatId === chat.chatId);
+          if (chatIndex !== -1) {
+            this.chatList[chatIndex].name = `User_${otherUserId}`;
+            this.chatList[chatIndex].avatar = 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg';
+            this.originalChatList = [...this.chatList];
+            this.chatList = [...this.chatList];
           }
         });
         
-        return true; // แสดงแชทไว้ก่อนจนกว่าจะตรวจสอบเสร็จ
-      });
-
-      this.chatList = validChats.map(chat => {
-        const mapped = {
-          avatar: chat.other_image_url,
-          name: chat.other_username,
-          lastMessage: chat.last_message || '',
-          chatId: chat.chatId,
-          lastMessageTime: chat.last_message_time,
-          lastMessageSenderId: String(chat.last_message_sender_id || ''),
-          lastMessageSenderName: chat.last_message_sender_name || chat.other_username,
-          uid: chat.other_user || chat.other_user_id || chat.uid || chat.other_id || chat.user_id || chat.id, // เพิ่ม uid
-          ...chat
-        };
-        return mapped;
-      });
-      this.originalChatList = [...this.chatList];
-      
-      // เลือกแชทแรกโดยอัตโนมัติ
-      if (this.chatList.length > 0 && !this.selectedChat) {
-        this.selectChat(this.chatList[0]);
+        // ใช้ค่า fallback ชั่วคราวระหว่างรอข้อมูลจาก backend
+        username = username || `User_${otherUserId}`;
+        avatar = avatar || 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg';
       }
+      
+      const mapped = {
+        avatar: avatar,
+        name: username,
+        lastMessage: chat.last_message || 'ยังไม่มีข้อความ',
+        chatId: chat.chatId,
+        lastMessageTime: chat.last_message_time || new Date().toISOString(),
+        lastMessageSenderId: String(chat.last_message_sender_id || ''),
+        lastMessageSenderName: chat.last_message_sender_name || username,
+        uid: otherUserId || chat.chatId, // ใช้ chatId เป็น fallback
+        ...chat
+      };
+      
+      // ตรวจสอบและแก้ไขชื่อผู้ใช้ในข้อความล่าสุด
+      if (mapped.lastMessageSenderId === this.userId) {
+        // ถ้าผู้ส่งข้อความล่าสุดเป็นผู้ใช้ปัจจุบัน ให้แสดง "คุณ"
+        mapped.lastMessageSenderName = 'คุณ';
+      } else if (mapped.lastMessageSenderId === otherUserId) {
+        // ถ้าผู้ส่งข้อความล่าสุดเป็นผู้ใช้อื่น ให้แสดงชื่อผู้ใช้นั้น
+        mapped.lastMessageSenderName = username;
+      } else if (mapped.lastMessageSenderId && mapped.lastMessageSenderId !== this.userId) {
+        // กรณีอื่นๆ ให้แสดงชื่อผู้ใช้จาก otherUserId
+        mapped.lastMessageSenderName = username;
+      }
+      
+      return mapped;
     });
-  }
+    this.originalChatList = [...this.chatList];
+    
+    console.log('Processed chat list:', this.chatList);
+    
+    // เลือกแชทแรกโดยอัตโนมัติ
+    if (this.chatList.length > 0 && !this.selectedChat) {
+      this.selectChat(this.chatList[0]);
+    }
+  });
+}
 
   async deleteChat(chatId: string) {
     if (!chatId) return;
     if (!confirm('คุณต้องการลบห้องแชทนี้ทั้งหมดใช่หรือไม่? ข้อความที่และรูปถาพที่ส่งจะถูกลบออกด้วย')) return;
     await this.chatService.removeChatFromUser(this.userId, chatId);
     await this.chatService.deleteEntireChat(chatId); // <-- ลบทั้งห้องแชท
-    this.loadUserChats();
+    
     if (this.selectedChat && this.selectedChat.chatId === chatId) {
       this.selectedChat = null;
       this.currentChatMessages = [];
@@ -301,8 +392,6 @@ export class ChatUserComponent implements OnInit, OnDestroy {
         videoUrl,
         this.userData?.username || ''
       );
-      // รีโหลด chat list หลังส่งข้อความใหม่
-      this.loadUserChats();
       
       // ลบ pending message ออก (เพราะ Firebase จะส่ง message จริงมาแล้ว)
       if (pendingMsg) {
@@ -436,6 +525,7 @@ checkScreenSize() {
     if (!this.searchQuery.trim()) {
       this.chatList = [...this.originalChatList];
     } else {
+      // ค้นหาโดยไม่ต้องรีเฟรชแชท
       this.chatList = this.originalChatList.filter(chat => 
         chat.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
         (chat.lastMessage && chat.lastMessage.toLowerCase().includes(this.searchQuery.toLowerCase()))
@@ -453,12 +543,6 @@ checkScreenSize() {
 
   closeMobileDrawer() {
     this.isDrawerOpenMobile = false;
-  }
-
-  goToProfile(uid: string) {
-    if (uid) {
-      this.router.navigate(['/view_user', this.userId], { queryParams: { Profileuser: uid } });
-    }
   }
 
   scrollToBottom() {
@@ -518,6 +602,9 @@ checkScreenSize() {
     sessionStorage.removeItem('userRole');
     sessionStorage.removeItem('currentUserId');
     this.router.navigate(['/login']);
+    // ลบ cache ทั้งหมดที่เกี่ยวข้องกับผู้ใช้ที่ออกจากระบบ
+    this.userProfileCache.clear();
+    this.fetchingUsers.clear();
   }
 
 

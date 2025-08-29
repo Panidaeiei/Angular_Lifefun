@@ -30,7 +30,7 @@ export class ChatService {
   async sendMessage(chatId: string, userId: string, text: string = '', imageUrl: string = '', videoUrl: string = '', userName: string = ''): Promise<void> {
     const userIdStr = String(userId);
     const messageRef = push(ref(this.db, `chats/${chatId}/messages`));
-    
+
     let type = 1; // default เป็น text
     if (videoUrl) {
       type = 3; // video
@@ -69,17 +69,10 @@ export class ChatService {
         last_message_sender_id: userIdStr,
         last_message_sender_name: userName || users?.[userIdStr]?.username || 'คุณ'
       });
-      // DEBUG LOG
-      console.log('[DEBUG update user_chats]', {
-        chatId,
-        uid,
-        userChatRefPath: `user_chats/${uid}/${chatId}`,
-        last_message: lastMessage,
-        last_message_sender_id: userIdStr,
-        last_message_sender_name: userName || users?.[userIdStr]?.username || 'คุณ',
-        usersObj: users
-      });
     }
+
+    // รอสักครู่เพื่อให้ Firebase อัปเดตข้อมูล
+    await new Promise(resolve => setTimeout(resolve, 300));
   }
 
   // subscribe ดึงข้อความแชทแบบ real-time
@@ -119,10 +112,33 @@ export class ChatService {
       other_username: user.username,
       other_image_url: user.image_url
     });
+
+    // รอสักครู่เพื่อให้ Firebase อัปเดตข้อมูล
+    await new Promise(resolve => setTimeout(resolve, 500));
   }
 
-  // ดึงรายชื่อห้องแชทของ user
+  // ดึงรายชื่อห้องแชทของ user (แบบ one-time)
   getUserChats(userId: string, callback: (chats: any[]) => void): void {
+    const userChatsRef = ref(this.db, `user_chats/${userId}`);
+    
+    // ใช้ get() แทน onValue() เพื่อดึงข้อมูลครั้งเดียว
+    get(userChatsRef).then((snapshot: DataSnapshot) => {
+      const data = snapshot.val();
+      const chats = data 
+        ? Object.entries(data).map(([chatId, chatData]: [string, any]) => ({
+            chatId,
+            ...chatData
+          })).sort((a, b) => new Date(b.last_message_time).getTime() - new Date(a.last_message_time).getTime())
+        : [];
+      callback(chats);
+    }).catch(error => {
+      console.error('Error fetching user chats:', error);
+      callback([]);
+    });
+  }
+
+  // เพิ่ม method ใหม่สำหรับดึงข้อมูลแบบ real-time (ถ้าต้องการ)
+  listenUserChats(userId: string, callback: (chats: any[]) => void): void {
     const userChatsRef = ref(this.db, `user_chats/${userId}`);
     onValue(userChatsRef, (snapshot: DataSnapshot) => {
       const data = snapshot.val();
@@ -151,10 +167,13 @@ export class ChatService {
     // เพิ่ม users เข้า chat
     await this.addUserToChat(chatId, user1, user2);
     
+    // รอสักครู่แล้วรีเฟรช user_chats เพื่อให้แน่ใจว่าข้อมูลถูกอัปเดต
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
     return chatId;
   }
 
-   // ลบแชทออกจากรายการของผู้ใช้ (เมื่อผู้ใช้ถูกลบออกจากระบบ)
+  // ลบแชทออกจากรายการของผู้ใช้ (เมื่อผู้ใช้ถูกลบออกจากระบบ)
   async removeChatFromUser(userId: string, chatId: string): Promise<void> {
     const userChatRef = ref(this.db, `user_chats/${userId}/${chatId}`);
     await set(userChatRef, null); // ลบแชทออกจาก user_chats
@@ -197,5 +216,55 @@ export class ChatService {
     // ลบข้อมูลห้องแชทหลัก (chats/{chatId})
     const chatRef = ref(this.db, `chats/${chatId}`);
     await remove(chatRef);
+  }
+
+  // อัปเดตข้อมูลแชทที่มีอยู่แล้วให้ครบถ้วน
+  async updateChatUserInfo(chatId: string, userId: string, userData: { username: string, image_url: string }): Promise<void> {
+    try {
+      // อัปเดตข้อมูลใน user_chats
+      const userChatRef = ref(this.db, `user_chats/${userId}/${chatId}`);
+      await update(userChatRef, {
+        other_username: userData.username,
+        other_image_url: userData.image_url
+      });
+    } catch (error) {
+      console.error('Error updating chat user info:', error);
+    }
+  }
+
+  // ดึงข้อมูลแชทที่มีอยู่แล้วและอัปเดตข้อมูลผู้ใช้ที่ขาดหายไป
+  async refreshChatUserData(userId: string): Promise<void> {
+    try {
+      const userChatsRef = ref(this.db, `user_chats/${userId}`);
+      const snapshot = await get(userChatsRef);
+      const chats = snapshot.val();
+      
+      if (chats) {
+        for (const [chatId, chatData] of Object.entries(chats)) {
+          const chat = chatData as any;
+          
+          // ตรวจสอบว่าแชทนี้มี other_user หรือไม่
+          if (!chat.other_user && chatId.includes('_')) {
+            // แยก chatId เพื่อหา otherUserId
+            const chatUserIds = chatId.split('_');
+            const otherUserId = chatUserIds.find(id => id !== userId);
+            
+            if (otherUserId) {
+              // อัปเดต other_user ใน Firebase
+              const userChatRef = ref(this.db, `user_chats/${userId}/${chatId}`);
+              await update(userChatRef, {
+                other_user: otherUserId
+              });
+            }
+          }
+          
+          if (chat.other_user && (!chat.other_username || !chat.other_image_url)) {
+            // ข้อมูลผู้ใช้จะถูกอัปเดตใน component เมื่อโหลดแชท
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error refreshing chat user data:', error);
+    }
   }
 }

@@ -21,7 +21,6 @@
             <a [routerLink]="['/Notification_user']" [queryParams]="{ id: userId }" class="menu-item">
                 <div class="bell-icon-container">
                     <i class="fa-solid fa-bell"></i>
-                    <div class="notification-dot" *ngIf="notificationCounts.total > 0"></div>
                 </div>
                 <span class="itim-regular">การแจ้งเตือน</span>
             </a>
@@ -69,7 +68,7 @@
                     <a [routerLink]="['/Notification_user']" [queryParams]="{ id: userId }">
                         <div class="bell-icon-container">
                             <i class="fa-solid fa-bell"></i>
-                            <div class="notification-dot" *ngIf="notificationCounts.total > 0"></div>
+                           
                         </div>
                         <span class="itim-regular">การแจ้งเตือน</span>
                     </a>
@@ -153,7 +152,7 @@
                 <button *ngIf="isMobile || isIPad" class="drawer-btn" (click)="openMobileDrawer()"><i
                         class="fa fa-bars"></i></button>
                 <img [src]="selectedChat?.avatar || 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'"
-                    alt="avatar" (click)="goToProfile(selectedChat?.uid)" class="clickable-avatar" />
+                    alt="avatar" class="clickable-avatar" />
                 <strong>{{ selectedChat?.name }}</strong>
                 <div class="chat-menu-wrapper chat-menu-header" *ngIf="selectedChat">
                     <button class="chat-menu-btn" (click)="toggleChatMenu(selectedChat.chatId)">
@@ -260,8 +259,7 @@
                     <div class="chat-list-item" *ngFor="let chat of chatList"
                         (click)="selectChat(chat); closeMobileDrawer()">
                         <img [src]="chat.avatar || 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg'"
-                            alt="avatar" (click)="goToProfile(chat.uid); $event.stopPropagation()"
-                            class="clickable-avatar" />
+                            alt="avatar" class="clickable-avatar" />
                         <div class="chat-list-info">
                             <span class="chat-list-name">{{ chat.name }}</span>
                             <span class="chat-list-last">

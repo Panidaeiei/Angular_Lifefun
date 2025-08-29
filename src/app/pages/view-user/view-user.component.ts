@@ -360,7 +360,7 @@ export class ViewUserComponent implements OnInit, OnDestroy {
         (response) => {
           // อัปเดตสถานะทันที
           this.isFollowing = response.isFollowing;
-          console.log('Follow status toggled to:', this.isFollowing);
+          // console.log('Follow status toggled to:', this.isFollowing);
           
           // อัปเดตจำนวนผู้ติดตามใหม่
           this.loadFollowCount();
@@ -398,7 +398,7 @@ export class ViewUserComponent implements OnInit, OnDestroy {
     ).subscribe(
       (response) => {
         this.isFollowing = response.isFollowing;
-        console.log('Follow status updated:', this.isFollowing);
+        // console.log('Follow status updated:', this.isFollowing);
         this.cdr.detectChanges(); // บังคับให้ UI อัปเดต
       },
       (error) => {
