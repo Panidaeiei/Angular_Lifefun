@@ -11,7 +11,6 @@ import { User } from '../../models/register_model';
 import { AdminService } from '../../services/Admin';
 import { UserBan } from '../../models/ban.model';
 import { FormsModule } from '@angular/forms';
-import { AdminNotificationService, AdminNotificationCounts } from '../../services/admin-notification.service';
 import { Subscription } from 'rxjs';
 import { ReactPostservice } from '../../services/ReactPostservice';
 import { HttpClient } from '@angular/common/http';
@@ -34,18 +33,12 @@ export class UserListAdminComponent implements OnDestroy {
   filteredUsers: any[] = [];
   usersPerPage = 12;
   currentPage = 1;
-  notificationCounts: AdminNotificationCounts = {
-    report: 0,
-    total: 0
-  };
-  private notificationSubscription?: Subscription;
 
   constructor(
     private route: ActivatedRoute,
     private userService: UserService,
     private adminservice: AdminService,
     private router: Router,
-    private adminNotificationService: AdminNotificationService,
     private http: HttpClient
   ) {
     // ตรวจสอบ adminId ใน constructor
@@ -100,48 +93,8 @@ export class UserListAdminComponent implements OnDestroy {
       }
     });
 
-    // เริ่มการติดตามการแจ้งเตือน
-    this.startNotificationTracking();
   }
 
-  // เริ่มการติดตามการแจ้งเตือน
-  private startNotificationTracking(): void {
-    if (this.adminId) {
-      // โหลดการแจ้งเตือนครั้งแรก
-      this.adminNotificationService.loadNotificationCounts(this.adminId);
-
-      // เริ่มการอัปเดตอัตโนมัติ
-      this.adminNotificationService.startAutoUpdate(this.adminId);
-
-      // ติดตามการเปลี่ยนแปลงจำนวนการแจ้งเตือน
-      this.notificationSubscription = this.adminNotificationService.notificationCounts.subscribe(
-        (counts) => {
-          this.notificationCounts = counts;
-        }
-      );
-
-      // โหลดข้อมูลการแจ้งเตือนจาก API ที่มีอยู่
-      this.loadReportNotifications();
-    }
-  }
-
-  // โหลดข้อมูลการแจ้งเตือน
-  private loadReportNotifications(): void {
-    // ใช้ ReactPostservice ที่มีอยู่แล้ว
-    const notificationService = new ReactPostservice(this.http);
-    notificationService.Noti_Reportaddmin().subscribe({
-      next: (data) => {
-        const reportCount = data.reports?.length || 0;
-        this.notificationCounts = {
-          report: reportCount,
-          total: reportCount
-        };
-      },
-      error: (err) => {
-        console.error('Error loading report notifications:', err);
-      }
-    });
-  }
 
   onSearch(): void {
     if (this.searchQuery.trim() === '') {
@@ -234,13 +187,7 @@ export class UserListAdminComponent implements OnDestroy {
   }
 
   ngOnDestroy(): void {
-    // หยุดการติดตามการแจ้งเตือน
-    this.adminNotificationService.stopAutoUpdate();
 
-    // ยกเลิก subscription
-    if (this.notificationSubscription) {
-      this.notificationSubscription.unsubscribe();
-    }
   }
 
   // ลิสต์ที่ใช้งานจริง (ทั้งหมดหรือผลค้นหา)

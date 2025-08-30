@@ -11,7 +11,6 @@ import { User } from '../../models/register_model';
 import { AdminService } from '../../services/Admin';
 import { UserBan } from '../../models/ban.model';
 import { FormsModule } from '@angular/forms';
-import { AdminNotificationService, AdminNotificationCounts } from '../../services/admin-notification.service';
 import { Subscription } from 'rxjs';
 import { ReactPostservice } from '../../services/ReactPostservice';
 import { HttpClient } from '@angular/common/http';
@@ -31,11 +30,6 @@ export class UserBanComponent implements OnDestroy {
   filteredUsers: any[] = [];
   searchQuery: string = '';
   isSearchPerformed: boolean = false;
-  notificationCounts: AdminNotificationCounts = {
-    report: 0,
-    total: 0
-  };
-  private notificationSubscription?: Subscription;
 
 
   constructor(
@@ -43,7 +37,6 @@ export class UserBanComponent implements OnDestroy {
     private userService: UserService, 
     private adminservice: AdminService, 
     private router: Router,
-    private adminNotificationService: AdminNotificationService,
     private http: HttpClient
   ) { }
 
@@ -74,50 +67,9 @@ export class UserBanComponent implements OnDestroy {
       }
     });
 
-    // ปิดการติดตามการแจ้งเตือนเพื่อลด database connections
-    // if (this.userId) {
-    //   this.startNotificationTracking();
-    // }
   }
 
-  // เริ่มการติดตามการแจ้งเตือน
-  private startNotificationTracking(): void {
-    if (this.userId) {
-      // โหลดการแจ้งเตือนครั้งแรก
-      this.adminNotificationService.loadNotificationCounts(this.userId);
-      
-      // เริ่มการอัปเดตอัตโนมัติ (ลดความถี่ลง)
-      this.adminNotificationService.startAutoUpdate(this.userId);
-      
-      // ติดตามการเปลี่ยนแปลงจำนวนการแจ้งเตือน
-      this.notificationSubscription = this.adminNotificationService.notificationCounts.subscribe(
-        (counts) => {
-          this.notificationCounts = counts;
-        }
-      );
 
-      // โหลดข้อมูลการแจ้งเตือนจาก API ครั้งเดียวตอนเริ่มต้น
-      // ไม่ต้องโหลดซ้ำเพราะ adminNotificationService จัดการแล้ว
-      // this.loadReportNotifications(); // ลบออก
-    }
-  }
-
-  // โหลดข้อมูลการแจ้งเตือน
-  private loadReportNotifications(): void {
-    const notificationService = new ReactPostservice(this.http);
-    notificationService.Noti_Reportaddmin().subscribe({
-      next: (data: any) => {
-        const reportCount = data.reports?.length || 0;
-        this.notificationCounts = {
-          report: reportCount,
-          total: reportCount
-        };
-      },
-      error: (err: any) => {
-        console.error('Error loading report notifications:', err);
-      }
-    });
-  }
 
   filterUsers(): void {
     // กรองเฉพาะ user ที่ถูกแบน
@@ -207,11 +159,6 @@ export class UserBanComponent implements OnDestroy {
 
   ngOnDestroy(): void {
     // ปิดการติดตามการแจ้งเตือนเพื่อลด database connections
-    // this.adminNotificationService.stopAutoUpdate();
-    
-    // ยกเลิก subscription
-    if (this.notificationSubscription) {
-      this.notificationSubscription.unsubscribe();
-    }
+
   }
 }

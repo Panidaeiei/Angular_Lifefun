@@ -12,7 +12,6 @@ import { Postme } from '../../models/postme_model';
 import { ReactPostservice } from '../../services/ReactPostservice';
 import { MatButtonModule } from '@angular/material/button';
 import { UserBan } from '../../models/ban.model';
-import { AdminNotificationService, AdminNotificationCounts } from '../../services/admin-notification.service';
 import { Subscription } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
@@ -40,9 +39,6 @@ export class ProfileuserAdminComponent implements OnDestroy {
   followingCount: number = 0;
   followedId: string = '';
   isDrawerOpen: boolean = false;
-  notificationCounts: AdminNotificationCounts = { report: 0, total: 0 };
-  private notificationSubscription?: Subscription;
-
   constructor(
     private route: ActivatedRoute, 
     private userService: UserService, 
@@ -50,7 +46,6 @@ export class ProfileuserAdminComponent implements OnDestroy {
     private profileService: ProfileService, 
     private reactPostservice: ReactPostservice,
     private router: Router,
-    private adminNotificationService: AdminNotificationService,
     private http: HttpClient
   ) { }
 
@@ -85,7 +80,6 @@ export class ProfileuserAdminComponent implements OnDestroy {
         this.loadUserProfile();
         this.loadUserPosts();
         this.loadFollowCount();
-        this.startNotificationTracking();
       } else {
         this.errorMessage = 'ไม่พบ User ID';
       }
@@ -98,45 +92,6 @@ export class ProfileuserAdminComponent implements OnDestroy {
       error: (error) => this.errorMessage = error.message
     });
 
-    this.startNotificationTracking();
-  }
- // เริ่มการติดตามการแจ้งเตือน
-  private startNotificationTracking(): void {
-    if (this.adminId) {
-      // โหลดการแจ้งเตือนครั้งแรก
-      this.adminNotificationService.loadNotificationCounts(this.adminId);
-      
-      // เริ่มการอัปเดตอัตโนมัติ
-      this.adminNotificationService.startAutoUpdate(this.adminId);
-      
-      // ติดตามการเปลี่ยนแปลงจำนวนการแจ้งเตือน
-      this.notificationSubscription = this.adminNotificationService.notificationCounts.subscribe(
-        (counts) => {
-          this.notificationCounts = counts;
-        }
-      );
-
-      // โหลดข้อมูลการแจ้งเตือนจาก API ที่มีอยู่
-      this.loadReportNotifications();
-    }
-  }
-
-  // โหลดข้อมูลการแจ้งเตือน
-  private loadReportNotifications(): void {
-    // ใช้ ReactPostservice ที่มีอยู่แล้ว
-    const notificationService = new ReactPostservice(this.http);
-    notificationService.Noti_Reportaddmin().subscribe({
-      next: (data) => {
-        const reportCount = data.reports?.length || 0;
-        this.notificationCounts = {
-          report: reportCount,
-          total: reportCount
-        };
-      },
-      error: (err) => {
-        console.error('Error loading report notifications:', err);
-      }
-    });
   }
 
   // ตรวจสอบการยืนยันตัวตน
@@ -287,12 +242,6 @@ export class ProfileuserAdminComponent implements OnDestroy {
   }
 
   ngOnDestroy(): void {
-    // หยุดการติดตามการแจ้งเตือน
-    this.adminNotificationService.stopAutoUpdate();
-    
-    // ยกเลิก subscription
-    if (this.notificationSubscription) {
-      this.notificationSubscription.unsubscribe();
-    }
+  
   }
 }

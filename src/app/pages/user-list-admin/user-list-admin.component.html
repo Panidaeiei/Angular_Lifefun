@@ -16,7 +16,6 @@
             <a class="menu-item" [routerLink]="['/noti_addmin']" [queryParams]="{ id: adminId }">
                 <div class="bell-icon-container">
                     <i class="fa-solid fa-bell"></i>
-                    <div class="notification-dot" *ngIf="notificationCounts.total > 0"></div>
                     <!-- Debug: {{ notificationCounts.total }} -->
                 </div>
                 <span class="itim-regular">การแจ้งเตือน</span>

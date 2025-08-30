@@ -229,7 +229,7 @@ export class STestComponent {
   }
 
   onSearch() {
-    // ใช้ debounced search แทนการเรียก API ทันที
+    // ค้นหาทันทีเมื่อกดปุ่มค้นหาหรือกด Enter
     this.searchSubject.next(this.searchQuery);
   }
 

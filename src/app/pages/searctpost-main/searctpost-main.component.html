@@ -70,7 +70,7 @@
         <div style="display: flex; justify-content: center; margin-bottom: 30px; margin-top: 100px;">
             <div class="search-wrapper">
                 <div class="search-container">
-                    <input type="text" class="search-input" [(ngModel)]="searchQuery" (input)="onSearch()"
+                    <input type="text" class="search-input" [(ngModel)]="searchQuery"
                         (keyup.enter)="onSearch()" placeholder="ค้นหาโพสต์...">
                     <button class="search-btn" (click)="onSearch()" aria-label="ค้นหา">
                         <i class="fa-solid fa-search"></i>
@@ -98,6 +98,17 @@
                     </div>
                     <h3 class="welcome-title">ยินดีต้อนรับสู่การค้นหาโพสต์</h3>
                     <p class="welcome-description">พิมพ์คำค้นหาในช่องด้านบนเพื่อค้นหาโพสต์ที่คุณสนใจ</p>
+                </div>
+            </div>
+
+            <!-- แสดงข้อความแนะนำระหว่างพิมพ์ (ยังไม่กด Enter) -->
+            <div *ngIf="posts.length === 0 && searchQuery.trim() !== '' && !loading && !postsLoaded" class="welcome-message">
+                <div class="welcome-content">
+                    <div class="welcome-icon">
+                        <i class="fa fa-keyboard"></i>
+                    </div>
+                    <h3 class="welcome-title">พร้อมค้นหา</h3>
+                    <p class="welcome-description">กด Enter หรือคลิกปุ่มค้นหาเพื่อค้นหาโพสต์</p>
                 </div>
             </div>
 
@@ -139,8 +150,8 @@
             </div>
 
             <!-- No Results -->
-            <div *ngIf="posts.length === 0 && searchQuery.trim() !== ''" class="no-results">
-                <p>ไม่พบโพสต์ที่เกี่ยวข้อง</p>
+            <div *ngIf="posts.length === 0 && searchQuery.trim() !== '' && !loading && postsLoaded" class="no-results">
+                <p>ไม่พบโพสต์ที่เกี่ยวข้องกับ "{{ searchQuery }}"</p>
             </div>
         </div>
     </div>
