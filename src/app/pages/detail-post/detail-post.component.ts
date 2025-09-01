@@ -160,8 +160,8 @@ export class DetailPostComponent implements OnInit, OnDestroy {
   private initializePostData(): void {
     this.fetchPost(this.postId);
     this.loadComments(Number(this.postId));
-    this.loadShareStatus();
-    this.loadSaveStatus();
+    // this.loadShareStatus(); // removed: unified by getPostStats
+    // this.loadSaveStatus(); // removed: unified by getPostStats
     this.startNotificationTracking();
   }
 
@@ -306,6 +306,34 @@ export class DetailPostComponent implements OnInit, OnDestroy {
         const totalMedia = (this.post.images?.length || 0) + (this.post.videos?.length || 0);
         
         this.updateCurrentMedia(); // เรียกอัปเดต media หลังจากโหลดโพสต์
+
+        // เรียกสถิติรวมแบบเส้นเดียว
+        this.postService.getPostStats(postIdNumber).subscribe({
+          next: (stats) => {
+            // อัปเดตค่าต่าง ๆ จากสถิติ
+            // likes_count ในหน้ารายละเอียดเก็บที่ post?.likes_count ถ้ามี หรือใช้ตัวแปรแยกตามที่มีอยู่
+            if (this.post) {
+              (this.post as any).likes_count = stats.likes_count ?? (this.post as any).likes_count ?? 0;
+            }
+            this.shareCount = stats.share_count ?? this.shareCount;
+            this.saveCount = stats.save_count ?? this.saveCount;
+            // ถ้ามีการเก็บ comment_count ในส่วนแสดงผล ให้คุณใช้ตัวแปรแยกหรือเพิ่มได้ตามต้องการ
+            // เช่น this.commentCount = stats.comment_count;
+
+            this.isLiked = !!stats.isLiked;
+            this.isShared = !!stats.isShared;
+            this.isSave = !!stats.isSaved;
+
+            if (this.post) {
+              (this.post as any).isLiked = this.isLiked;
+              (this.post as any).isShared = this.isShared;
+              (this.post as any).isSave = this.isSave;
+            }
+          },
+          error: (err) => {
+            console.error('Error fetching post stats:', err);
+          }
+        });
       },
       (error) => {
         console.error('Error fetching post details:', error);

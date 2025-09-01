@@ -293,6 +293,21 @@ export class PostService {
     );
   }
 
+  getPostStats(postId: number): Observable<{ post_id: number; likes_count: number; share_count: number; save_count: number; comment_count: number; isLiked: boolean; isShared: boolean; isSaved: boolean; user_id?: string | null; }> {
+    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+    const headers = token ? new HttpHeaders().set('Authorization', `Bearer ${token}`) : new HttpHeaders();
+    return this.http.post<{ post_id: number; likes_count: number; share_count: number; save_count: number; comment_count: number; isLiked: boolean; isShared: boolean; isSaved: boolean; user_id?: string | null; }>(
+      `${this.baseUrl}/posts/get-post-stats`,
+      { post_id: postId },
+      { headers }
+    ).pipe(
+      catchError((error) => {
+        console.error('Error fetching post stats:', error);
+        return throwError(() => new Error(error.message || 'Failed to fetch post stats'));
+      })
+    );
+  }
+
   getPostsByCategory(cat_id: number): Observable<any> {
     return this.http.get(`${this.baseUrl}/categories/getPosts/${cat_id}`);
   }
