@@ -790,8 +790,8 @@ export class DetailPostComponent implements OnInit, OnDestroy {
   sharePost(): void {
     // กำหนดข้อความยืนยันตามสถานะการแชร์
     const confirmMessage = this.isShared
-      ? 'คุณต้องการยกเลิกการแชร์โพสต์นี้หรือไม่?'
-      : 'คุณต้องการแชร์โพสต์นี้หรือไม่?';
+      ? 'คุณต้องการยกเลิกการรีโพสต์นี้หรือไม่?'
+      : 'คุณต้องการรีโพสต์นี้หรือไม่?';
 
     // แสดงกล่องยืนยัน
     const userConfirmed = window.confirm(confirmMessage);

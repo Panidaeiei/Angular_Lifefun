@@ -180,14 +180,14 @@
 
                 <mat-card class="noti-card" (click)="selectCard('share')">
                     <div class="card-content">
-                        <i class="fa-solid fa-share avatar" style="font-size: 32px; color: black;"></i>
+                        <i class="fa-solid fa-repeat avatar" style="font-size: 32px; color: black;"></i>
 
                         <div class="text-content">
-                            <div class="title itim-regular">แชร์</div>
+                            <div class="title itim-regular">รีโพสต์</div>
 
                             <div class="subtitle itim-regular">
                                 {{unreadShareCount === 0? '' : unreadShareCount === 1 ? latestSharedName + '
-                                แชร์โพสต์ของคุณ' : latestSharedName + ' แชร์ และอีก ' + (unreadShareCount - 1) + ' คน'}}
+                                รีโพสต์ของคุณ' : latestSharedName + ' รีโพสต์ และอีก ' + (unreadShareCount - 1) + ' คน'}}
                             </div>
                         </div>
 
@@ -305,7 +305,7 @@
 
                     <div>
                         <div class="noti-text">
-                            <strong>{{ noti.username }}</strong> แชร์โพสต์ของคุณ
+                            <strong>{{ noti.username }}</strong> รีโพสต์ของคุณ
                             <span>"{{ noti.post_caption }}"</span>
                         </div>
                         <div class="noti-date">{{ noti.date_time | formatLocalTime }}</div>
@@ -321,7 +321,7 @@
         </ng-container>
 
         <ng-template #noShareNotifications>
-            <p>ไม่มีการแจ้งเตือนการแชร์โพสต์</p>
+            <p>ไม่มีการแจ้งเตือนการรีโพสต์</p>
         </ng-template>
     </div>
 

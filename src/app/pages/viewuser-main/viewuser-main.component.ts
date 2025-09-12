@@ -112,6 +112,11 @@ export class ViewuserMainComponent {
     this.profileService.getUserProfileByIdPublic(this.Profileuser).subscribe(
       (data) => {
         this.userProfile = data;
+        
+        // อัปเดตข้อมูลการติดตามจาก profile data
+        this.followersCount = data?.followers || 0;
+        this.followingCount = data?.following || 0;
+        
         this.isLoading = false;
         // ตรวจสอบว่าเป็น mock data หรือไม่
         if (data.description && data.description.includes('public profile view')) {
@@ -177,6 +182,7 @@ export class ViewuserMainComponent {
     );
   }
 
+  // ไม่ต้องมี loadFollowCount() แล้ว เพราะข้อมูล followers และ following มาพร้อมกับ getUserProfileById
   loadFollowCount(): void {
     if (!this.followedId) return;
 

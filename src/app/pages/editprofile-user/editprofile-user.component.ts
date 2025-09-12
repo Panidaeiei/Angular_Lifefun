@@ -11,6 +11,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ChangePasswordDialogComponent } from './change-password-dialog/change-password-dialog.component';
 import { Router } from '@angular/router';
+import { ChatService } from '../../services/chat.service';
 
 
 import { EditUser } from '../../models/edit-user.model';
@@ -31,7 +32,7 @@ import Swal from 'sweetalert2';
     MatIconModule,
     FormsModule,
     ReactiveFormsModule,
-    MatDialogModule
+    MatDialogModule,
   ],
   templateUrl: './editprofile-user.component.html',
   styleUrls: ['./editprofile-user.component.scss'],
@@ -56,7 +57,7 @@ export class EditprofileUserComponent implements OnInit {
   isNewPasswordVisible: boolean = false;
   isConfirmPasswordVisible: boolean = false;
 
-  constructor(private userService: UserService, private route: ActivatedRoute, private router: Router, private dialog: MatDialog) { }
+  constructor(private userService: UserService, private route: ActivatedRoute, private router: Router, private dialog: MatDialog, private chatService: ChatService) { }
 
   @ViewChild('fileInput', { static: false }) fileInput!: ElementRef<HTMLInputElement>;
 
@@ -313,10 +314,10 @@ export class EditprofileUserComponent implements OnInit {
       },
       error: (error) => {
         console.error('❌ Error updating user:', error);
-        
+
         // ตรวจสอบ error จาก backend
         let backendResponse;
-        
+
         // ลองดึงข้อมูลจากหลายแหล่ง
         if (error.error) {
           backendResponse = error.error;
@@ -333,7 +334,7 @@ export class EditprofileUserComponent implements OnInit {
         // แสดง error แยกกรณี
         if (backendResponse && backendResponse.errors) {
           const errors = backendResponse.errors;
-          
+
           if (errors.username) {
             alert('ชื่อผู้ใช้: ' + errors.username);
             this.isLoading = false;
@@ -359,14 +360,13 @@ export class EditprofileUserComponent implements OnInit {
         this.isLoading = false;
       }
     });
-
   }
 
 
   onDeleteUser(): void {
     // ใช้ alert แทน dialog
     const confirmDelete = confirm('คุณแน่ใจหรือไม่ที่จะลบบัญชีและข้อมูลทั้งหมดของคุณจะหายไปอย่างถาวร?');
-    
+
     if (confirmDelete) {
       this.isLoading = true; // เริ่มโหลด
       this.userService.deleteUser(this.userId).subscribe({

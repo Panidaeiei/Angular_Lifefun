@@ -7,6 +7,8 @@ export interface User {
     description?: string; 
     image_url?: string; 
     status?: number;
+    followers?: number; // เพิ่มฟิลด์ followers
+    following?: number; // เพิ่มฟิลด์ following
   }
   
 

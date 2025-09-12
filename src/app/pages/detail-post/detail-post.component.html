@@ -273,8 +273,8 @@
                         }}</span>
                 </div>
                 <div style="display: flex; align-items: center; gap: 5px;">
-                    <i style="font-size: 40px; cursor: pointer;" class="fa-solid fa-share" (click)="sharePost()"
-                        [ngClass]="{ 'shared': isShared, 'not-shared': !isShared }" matTooltip="แชร์โพสต์">
+                    <i style="font-size: 40px; cursor: pointer;" class="fa-solid fa-repeat" (click)="sharePost()"
+                        [ngClass]="{ 'shared': isShared, 'not-shared': !isShared }" matTooltip="รีโพสต์">
                     </i>
                     <span *ngIf="shareCount > 0" style="font-weight: 500; font-size: 20px;">
                         {{ shareCount }}

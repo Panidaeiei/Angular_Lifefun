@@ -31,7 +31,6 @@ export class HomeFollowComponent implements OnDestroy {
   posts: ShowPost[] = []; 
   message: string = '';
   postId: string = '';
-  viewPosts: any[] = [];
   isMobile: boolean = false; // เพิ่มตัวแปรนี้
   notificationCounts: any = {
     like: 0,
@@ -128,21 +127,7 @@ export class HomeFollowComponent implements OnDestroy {
 
     this.userService.loadCurrentUserId();
 
-    // โหลด view counts ครั้งเดียว
-    this.postService.getViewCounts().subscribe({
-      next: (data) => {
-        this.viewPosts = data;
-        // บันทึกลง localStorage เพื่อใช้ครั้งต่อไป
-        if (this.userId) {
-          localStorage.setItem(`viewCounts_${this.userId}`, JSON.stringify(data));
-        }
-      },
-      error: (err) => {
-        console.error('Error loading view counts:', err);
-        // ถ้า API ล้มเหลว ให้โหลดจาก localStorage
-        this.loadViewCountsFromStorage();
-      }
-    });
+    // ไม่ต้องเรียก getViewCounts() อีกแล้ว เพราะข้อมูล total_views มาพร้อมกับ getPostsFollowing
 
     // เริ่มการติดตามการแจ้งเตือน
     this.startNotificationTracking();
@@ -251,13 +236,9 @@ export class HomeFollowComponent implements OnDestroy {
     );
   }
 
-  getViewsForPost(postId: string): number {
-    const postIdString = postId.toString();
-  
-    // ค้นหาข้อมูลใน viewPosts โดยเปรียบเทียบ post_id
-    const view = this.viewPosts.find(v => v.post_id.toString() === postIdString);
-  
-    return view?.total_views ? parseInt(view.total_views) : 0; 
+  getViewsForPost(post: ShowPost): number {
+    // ใช้ข้อมูล total_views ที่มาพร้อมกับโพสต์จาก getPostsFollowing
+    return post.total_views || 0;
   }
   
   viewPost(postId: string): void {
@@ -506,19 +487,4 @@ export class HomeFollowComponent implements OnDestroy {
     }
   }
 
-  // ฟังก์ชันโหลด view counts จาก localStorage
-  private loadViewCountsFromStorage(): void {
-    const storedViewCounts = localStorage.getItem(`viewCounts_${this.userId}`);
-    if (storedViewCounts) {
-      try {
-        this.viewPosts = JSON.parse(storedViewCounts);
-        console.log('Loaded view counts from storage:', this.viewPosts.length);
-      } catch (error) {
-        console.error('Error parsing stored view counts:', error);
-        this.viewPosts = [];
-      }
-    } else {
-      this.viewPosts = [];
-    }
-  }
 }

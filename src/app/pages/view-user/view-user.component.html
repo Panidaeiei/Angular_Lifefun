@@ -213,7 +213,7 @@
                 </mat-tab>
                 <mat-tab>
                     <ng-template mat-tab-label>
-                        <mat-icon matTooltip="แชร์โพสต์">share</mat-icon>
+                        <mat-icon matTooltip="รีโพสต์">repeat</mat-icon>
                     </ng-template>
                     <div class="post-grid">
                         <div *ngFor="let post of sharedPosts" class="post-item">
@@ -234,7 +234,8 @@
                         </div>
                     </div>
                 </mat-tab>
-                <mat-tab>
+                <!-- ซ่อนแท็บ "บันทึกโพสต์" เมื่อดูโปรไฟล์ผู้อื่น -->
+                <mat-tab *ngIf="isOwnProfile()">
                     <ng-template mat-tab-label>
                         <mat-icon matTooltip="บันทึกโพสต์">bookmark</mat-icon>
                     </ng-template>

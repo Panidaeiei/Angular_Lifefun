@@ -15,5 +15,6 @@ export interface ShowPost {
   currentImageIndex?: number;
   allMedia?: { type: string; url: string }[];
   media_count?: number;
+  total_views?: number; // เพิ่มฟิลด์ total_views
 }
 

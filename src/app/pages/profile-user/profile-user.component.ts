@@ -241,27 +241,7 @@ export class ProfileUserComponent implements OnInit, OnDestroy {
     this.isDrawerOpen = !this.isDrawerOpen;
   }
 
-  loadFollowCount(): void {
-    if (this.isDataLoaded) return; // ป้องกันการโหลดซ้ำ
-    
-    const targetId = this.userId || this.followedId;
-    if (!targetId) return;
-
-    this.reactPostservice.getFollowCount(targetId)
-      .pipe(
-        timeout(10000),
-        take(1)
-      )
-      .subscribe({
-        next: (response) => {
-          this.followersCount = response.followers;
-          this.followingCount = response.following;
-        },
-        error: (error) => {
-          console.error('Error loading follow count:', error);
-        }
-      });
-  }
+  // ไม่ต้องมี loadFollowCount() แล้ว เพราะข้อมูล followers และ following มาพร้อมกับ getUserProfileById
 
   // ฟังก์ชันใหม่สำหรับโหลดข้อมูลแบบเร็ว
   private loadUserDataFast(): void {
@@ -288,20 +268,12 @@ export class ProfileUserComponent implements OnInit, OnDestroy {
         take(1)
       );
 
-      const followCount$ = this.reactPostservice.getFollowCount(this.userId).pipe(
-        timeout(10000),
-        catchError(error => {
-          console.error('Error loading follow count:', error);
-          return of({ followers: 0, following: 0 });
-        }),
-        take(1)
-      );
+      // ไม่ต้องเรียก getFollowCount() แยกแล้ว เพราะข้อมูล followers และ following มาพร้อมกับ getUserProfileById
 
       // โหลดข้อมูลทั้งหมดพร้อมกัน
       forkJoin({
         profile: userProfile$,
-        posts: userPosts$,
-        followCount: followCount$
+        posts: userPosts$
       }).pipe(
         finalize(() => {
           this.isLoading = false;
@@ -310,6 +282,10 @@ export class ProfileUserComponent implements OnInit, OnDestroy {
         next: (data) => {
           // อัปเดตข้อมูลผู้ใช้
           this.user = data.profile;
+          
+          // อัปเดตข้อมูลการติดตามจาก profile data
+          this.followersCount = data.profile?.followers || 0;
+          this.followingCount = data.profile?.following || 0;
           
           // อัปเดตข้อมูลโพสต์
           this.posts = data.posts.userPosts.map((post: any) => ({
@@ -326,10 +302,6 @@ export class ProfileUserComponent implements OnInit, OnDestroy {
             ...post,
             hasMultipleMedia: post.hasMultipleMedia || false
           }));
-
-          // อัปเดตข้อมูลการติดตาม
-          this.followersCount = data.followCount.followers;
-          this.followingCount = data.followCount.following;
           
           // เริ่มการติดตามการแจ้งเตือน
           this.startNotificationTracking();
@@ -357,9 +329,6 @@ export class ProfileUserComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    // หยุดการติดตามการแจ้งเตือน
-    this.notificationService.stopAutoUpdate();
-    
     // ยกเลิก subscriptions ทั้งหมด
     this.subscriptions.unsubscribe();
     

@@ -235,14 +235,7 @@ export class ViewUserComponent implements OnInit, OnDestroy {
         take(1)
       );
 
-      const followCount$ = this.reactPostservice.getFollowCount(this.Profileuser).pipe(
-        timeout(10000),
-        catchError(error => {
-          console.error('Error loading follow count:', error);
-          return of({ followers: 0, following: 0 });
-        }),
-        take(1)
-      );
+      // ไม่ต้องเรียก getFollowCount() แยกแล้ว เพราะข้อมูล followers และ following มาพร้อมกับ getUserProfileById
 
       // เพิ่มการตรวจสอบสถานะการติดตาม
       const followStatus$ = this.reactPostservice.checkFollowStatus(this.userId, this.Profileuser).pipe(
@@ -258,7 +251,6 @@ export class ViewUserComponent implements OnInit, OnDestroy {
       forkJoin({
         profile: userProfile$,
         posts: userPosts$,
-        followCount: followCount$,
         followStatus: followStatus$
       }).pipe(
         finalize(() => {
@@ -269,14 +261,14 @@ export class ViewUserComponent implements OnInit, OnDestroy {
           // อัปเดตข้อมูลผู้ใช้
           this.userProfile = data.profile;
           
+          // อัปเดตข้อมูลการติดตามจาก profile data
+          this.followersCount = data.profile?.followers || 0;
+          this.followingCount = data.profile?.following || 0;
+          
           // อัปเดตข้อมูลโพสต์
           this.userPosts = data.posts.userPosts || [];
           this.sharedPosts = data.posts.sharedPosts || [];
           this.savedPosts = data.posts.savedPosts || [];
-
-          // อัปเดตข้อมูลการติดตาม
-          this.followersCount = data.followCount.followers || 0;
-          this.followingCount = data.followCount.following || 0;
           
           // อัปเดตสถานะการติดตาม
           this.isFollowing = data.followStatus.isFollowing || false;
@@ -621,5 +613,10 @@ export class ViewUserComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed().subscribe(result => {
       // Dialog closed
     });
+  }
+
+  // ตรวจสอบว่าเป็นโปรไฟล์ของตัวเองหรือไม่
+  isOwnProfile(): boolean {
+    return this.userId === this.Profileuser;
   }
 }

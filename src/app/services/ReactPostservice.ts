@@ -189,7 +189,7 @@ export class ReactPostservice {
     );
   }
 
-  // ฟังก์ชันดึงจำนวนการแชร์โพสต์
+  // ฟังก์ชันดึงจำนวนการรีโพสต์
   getShareCount(post_id: number): Observable<{ post_id: number; share_count: number }> {
     const token = localStorage.getItem('token');
     if (!token) {

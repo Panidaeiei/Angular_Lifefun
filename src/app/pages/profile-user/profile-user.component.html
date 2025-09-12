@@ -79,7 +79,7 @@
                     <a [routerLink]="['/Notification_user']" [queryParams]="{ id: userId }">
                         <div class="bell-icon-container">
                         <i class="fa-solid fa-bell"></i>
-                            <div class="notification-dot" *ngIf="notificationCounts.total > 0"></div>
+                            <!-- <div class="notification-dot" *ngIf="notificationCounts.total > 0"></div> -->
                         </div>
                         <span class="itim-regular">การแจ้งเตือน</span>
                     </a>
@@ -216,7 +216,7 @@
                 </mat-tab>
                 <mat-tab *ngIf="sharedPosts.length > 0">
                   <ng-template mat-tab-label>
-                    <mat-icon matTooltip="แชร์โพสต์">share</mat-icon>
+                    <mat-icon matTooltip="รีโพสต์">repeat</mat-icon>
                   </ng-template>
                   <div class="post-grid">
                     <div *ngFor="let post of sharedPosts" class="post-item">

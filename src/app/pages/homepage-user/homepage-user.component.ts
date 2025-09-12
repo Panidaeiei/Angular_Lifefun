@@ -33,7 +33,6 @@ export class HomepageUserComponent implements OnDestroy {
   posts: ShowPost[] = []; // เก็บโพสต์ทั้งหมด
   message: string = '';
   postId: string = '';
-  viewPosts: any[] = [];
   isMobile: boolean = false; // เพิ่มตัวแปรสำหรับตรวจสอบ mobile
   loading: boolean = false; // เพิ่ม loading state
   postsLoading: boolean = false; // เพิ่ม loading state สำหรับโพสต์
@@ -131,16 +130,7 @@ export class HomepageUserComponent implements OnDestroy {
       }
     });
 
-    // โหลด view counts พร้อมกัน (ไม่ต้องรอ currentUserId)
-    this.postService.getViewCounts().subscribe({
-      next: (data) => {
-        this.viewPosts = data;
-      },
-      error: (err) => {
-        // ใช้ error handling ที่เหมาะสมแทน console.error
-        this.handleApiError(err, 'non-critical');
-      }
-    });
+    // ไม่ต้องเรียก getViewCounts() อีกแล้ว เพราะข้อมูล total_views มาพร้อมกับ getPosts_interests
 
     // โหลดโพสต์ทันที (ไม่ต้องรอ currentUserId)
     this.fetchPostsOptimized();
@@ -288,14 +278,9 @@ export class HomepageUserComponent implements OnDestroy {
     this.isMobile = window.innerWidth <= 600;
   }
 
-  getViewsForPost(postId: string): number {
-    const postIdString = postId.toString();
-
-    // ค้นหาข้อมูลใน viewPosts โดยเปรียบเทียบ post_id
-    const view = this.viewPosts.find(v => v.post_id.toString() === postIdString);
-
-    // ถ้าไม่พบให้แสดงเป็น 0
-    return view?.total_views ? parseInt(view.total_views) : 0;
+  getViewsForPost(post: ShowPost): number {
+    // ใช้ข้อมูล total_views ที่มาพร้อมกับโพสต์จาก getPosts_interests
+    return post.total_views || 0;
   }
 
   viewPost(postId: string): void {
