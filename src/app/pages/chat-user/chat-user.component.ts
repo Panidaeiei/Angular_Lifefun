@@ -80,12 +80,6 @@ export class ChatUserComponent implements OnInit, OnDestroy {
       
       if (this.userId) {
         this.loadUserChats();
-        // หยุดการติดตามการแจ้งเตือนเพื่อลดการเรียก API
-        // this.notificationService.loadNotificationCounts(Number(this.userId));
-        
-        // ลบการอัปเดตอัตโนมัติออก (ไม่ให้เรียก API ซ้ำ)
-        // this.notificationService.startAutoUpdate(Number(this.userId));
-        
         // รีเฟรชข้อมูลแชทที่มีอยู่แล้วแก้ไข other_user ที่ขาดหายไป
         this.chatService.refreshChatUserData(this.userId);
       }
@@ -101,7 +95,6 @@ export class ChatUserComponent implements OnInit, OnDestroy {
     // เพิ่มการรีเฟรชแชทอัตโนมัติทุก 60 วินาที (เพิ่มจาก 30 วินาทีเพื่อลดการเรียก API)
     this.chatRefreshInterval = setInterval(() => {
       if (this.userId) {
-        console.log('Auto-refreshing chats every 60 seconds');
         this.loadUserChats();
       }
     }, 60000);
@@ -112,6 +105,129 @@ export class ChatUserComponent implements OnInit, OnDestroy {
     if (this.chatRefreshInterval) {
       clearInterval(this.chatRefreshInterval);
     }
+  }
+
+  // ฟังก์ชันประมวลผลแชทพร้อมข้อมูลผู้ใช้
+  private async processChatsWithUserProfiles(validChats: any[]): Promise<any[]> {
+    // รวบรวม user IDs ที่ต้องดึงข้อมูล
+    const userIdsToFetch = new Set<string>();
+    
+    validChats.forEach(chat => {
+      const otherUserId = chat.other_user || chat.other_user_id || chat.uid || chat.other_id || chat.user_id || chat.id;
+      let targetUserId = otherUserId;
+      
+      if (!targetUserId && chat.chatId) {
+        const chatIdParts = chat.chatId.split('_');
+        if (chatIdParts.length === 2) {
+          targetUserId = chatIdParts[1] === this.userId ? chatIdParts[0] : chatIdParts[1];
+        }
+      }
+      
+      if (targetUserId && targetUserId !== this.userId && !this.userProfileCache.has(targetUserId)) {
+        userIdsToFetch.add(targetUserId);
+      }
+    });
+    
+    // ดึงข้อมูลผู้ใช้ทั้งหมดที่จำเป็นในครั้งเดียว
+    if (userIdsToFetch.size > 0) {
+      const userIdsArray = Array.from(userIdsToFetch);
+      try {
+        // ใช้ batch API แทนการเรียกทีละคน
+        const userProfiles = await this.userService.getUsersBatch(userIdsArray).toPromise();
+        
+        if (userProfiles) {
+          // บันทึกลง cache
+          userProfiles.forEach(userProfile => {
+            if (userProfile && (userProfile as any).uid) {
+              this.userProfileCache.set((userProfile as any).uid.toString(), userProfile);
+            }
+          });
+          
+          // อัปเดต Firebase สำหรับผู้ใช้ที่ดึงมา
+          userProfiles.forEach((userProfile) => {
+            if (userProfile && (userProfile as any).uid) {
+              const userId = (userProfile as any).uid.toString();
+              const chat = validChats.find(c => {
+                const otherUserId = c.other_user || c.other_user_id || c.uid || c.other_id || c.user_id || c.id;
+                let targetUserId = otherUserId;
+                if (!targetUserId && c.chatId) {
+                  const chatIdParts = c.chatId.split('_');
+                  if (chatIdParts.length === 2) {
+                    targetUserId = chatIdParts[1] === this.userId ? chatIdParts[0] : chatIdParts[1];
+                  }
+                }
+                return targetUserId === userId;
+              });
+              
+              if (chat) {
+                this.chatService.updateChatUserInfo(chat.chatId, this.userId, {
+                  username: userProfile.username || '',
+                  image_url: userProfile.image_url || ''
+                });
+              }
+            }
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching user profiles:', error);
+      }
+    }
+    
+    // ประมวลผลแชทด้วยข้อมูลที่ดึงมาแล้ว
+    const processedChats = validChats.map((chat) => {
+      const otherUserId = chat.other_user || chat.other_user_id || chat.uid || chat.other_id || chat.user_id || chat.id;
+      
+      let username = chat.other_username || chat.username;
+      let avatar = chat.other_image_url || chat.image_url;
+      
+      if (!username || !avatar) {
+        let targetUserId = otherUserId;
+        if (!targetUserId && chat.chatId) {
+          const chatIdParts = chat.chatId.split('_');
+          if (chatIdParts.length === 2) {
+            targetUserId = chatIdParts[1] === this.userId ? chatIdParts[0] : chatIdParts[1];
+          }
+        }
+        
+        if (targetUserId && targetUserId !== this.userId) {
+          const userProfile = this.userProfileCache.get(targetUserId);
+          if (userProfile) {
+            username = userProfile.username || `User_${targetUserId}`;
+            avatar = userProfile.image_url || 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg';
+          } else {
+            username = username || `User_${targetUserId}`;
+            avatar = avatar || 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg';
+          }
+        } else {
+          username = username || `User_${chat.chatId}`;
+          avatar = avatar || 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg';
+        }
+      }
+      
+      const mapped = {
+        avatar: avatar,
+        name: username,
+        lastMessage: chat.last_message || 'ยังไม่มีข้อความ',
+        chatId: chat.chatId,
+        lastMessageTime: chat.last_message_time || new Date().toISOString(),
+        lastMessageSenderId: String(chat.last_message_sender_id || ''),
+        lastMessageSenderName: chat.last_message_sender_name || username,
+        uid: otherUserId || chat.chatId,
+        ...chat
+      };
+      
+      if (mapped.lastMessageSenderId === this.userId) {
+        mapped.lastMessageSenderName = 'คุณ';
+      } else if (mapped.lastMessageSenderId === otherUserId) {
+        mapped.lastMessageSenderName = username;
+      } else if (mapped.lastMessageSenderId && mapped.lastMessageSenderId !== this.userId) {
+        mapped.lastMessageSenderName = username;
+      }
+      
+      return mapped;
+    });
+    
+    return processedChats;
   }
 
   // เพิ่ม method สำหรับดึงข้อมูลผู้ใช้แบบมี cache
@@ -163,12 +279,8 @@ export class ChatUserComponent implements OnInit, OnDestroy {
   }
 
 loadUserChats() {
-  console.log('Loading user chats for userId:', this.userId);
-  
   // ใช้ real-time listener แทนการดึงข้อมูลครั้งเดียว
   this.chatService.listenUserChats(this.userId, (chats) => {
-    console.log('Received chats:', chats);
-    
     // แสดงแชททั้งหมดโดยไม่ต้องตรวจสอบผู้ใช้ (ลดการเรียก API)
     const validChats = chats.filter(chat => {
       // ตรวจสอบว่ามีข้อมูลแชทครบถ้วนหรือไม่
@@ -179,92 +291,32 @@ loadUserChats() {
       // แสดงแชทถ้ามี chatId (ข้อมูลพื้นฐานที่จำเป็น)
       return hasChatId;
     });
+    
+    // เก็บ chatId เดิมเพื่อตรวจสอบแชทใหม่
+    const previousChatIds = this.chatList.map(chat => chat.chatId);
 
-    console.log('Valid chats after filter:', validChats.length, 'out of', chats.length);
-
-    this.chatList = validChats.map(chat => {
-      // หา otherUserId จากหลายแหล่ง
-      const otherUserId = chat.other_user || chat.other_user_id || chat.uid || chat.other_id || chat.user_id || chat.id;
+    // ใช้ async/await เพื่อรอให้ข้อมูลผู้ใช้โหลดเสร็จก่อน
+    this.processChatsWithUserProfiles(validChats).then(processedChats => {
+      this.chatList = processedChats;
+      this.originalChatList = [...this.chatList];
       
-      // หา username และ avatar จากหลายแหล่ง
-      let username = chat.other_username || chat.username;
-      let avatar = chat.other_image_url || chat.image_url;
+      // ตรวจสอบแชทใหม่
+      const newChatIds = this.chatList.map(chat => chat.chatId);
+      const hasNewChats = newChatIds.some(chatId => !previousChatIds.includes(chatId));
       
-      // ถ้าไม่มี username หรือ avatar และมี otherUserId ให้ดึงข้อมูลจาก backend API
-      if ((!username || !avatar) && otherUserId && otherUserId !== this.userId) {
-        console.log('Fetching user profile from backend for:', otherUserId, 'chatId:', chat.chatId);
-        
-        // ใช้ cache system แทนการเรียก API โดยตรง
-        this.fetchUserProfileWithCache(otherUserId).then((userProfile: any) => {
-          if (userProfile) {
-            // อัปเดตข้อมูลใน Firebase เพื่อใช้ครั้งต่อไป
-            this.chatService.updateChatUserInfo(chat.chatId, this.userId, {
-              username: userProfile.username,
-              image_url: userProfile.image_url
-            });
-            
-            // อัปเดตข้อมูลใน chat list
-            const chatIndex = this.chatList.findIndex(c => c.chatId === chat.chatId);
-            if (chatIndex !== -1) {
-              this.chatList[chatIndex].name = userProfile.username || `User_${otherUserId}`;
-              this.chatList[chatIndex].avatar = userProfile.image_url || 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg';
-              this.originalChatList = [...this.chatList];
-              
-              // บังคับให้ UI อัปเดต
-              this.chatList = [...this.chatList];
-            }
-          }
-        }).catch((error: any) => {
-          console.error('Error fetching user profile from backend for', otherUserId, ':', error);
-          // ใช้ค่า fallback เมื่อเกิด error
-          const chatIndex = this.chatList.findIndex(c => c.chatId === chat.chatId);
-          if (chatIndex !== -1) {
-            this.chatList[chatIndex].name = `User_${otherUserId}`;
-            this.chatList[chatIndex].avatar = 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg';
-            this.originalChatList = [...this.chatList];
-            this.chatList = [...this.chatList];
-          }
-        });
-        
-        // ใช้ค่า fallback ชั่วคราวระหว่างรอข้อมูลจาก backend
-        username = username || `User_${otherUserId}`;
-        avatar = avatar || 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg';
+      if (hasNewChats) {
+        // บังคับให้ Angular ตรวจสอบการเปลี่ยนแปลง
+        setTimeout(() => {
+          this.chatList = [...this.chatList];
+          this.originalChatList = [...this.chatList];
+        }, 0);
       }
       
-      const mapped = {
-        avatar: avatar,
-        name: username,
-        lastMessage: chat.last_message || 'ยังไม่มีข้อความ',
-        chatId: chat.chatId,
-        lastMessageTime: chat.last_message_time || new Date().toISOString(),
-        lastMessageSenderId: String(chat.last_message_sender_id || ''),
-        lastMessageSenderName: chat.last_message_sender_name || username,
-        uid: otherUserId || chat.chatId, // ใช้ chatId เป็น fallback
-        ...chat
-      };
-      
-      // ตรวจสอบและแก้ไขชื่อผู้ใช้ในข้อความล่าสุด
-      if (mapped.lastMessageSenderId === this.userId) {
-        // ถ้าผู้ส่งข้อความล่าสุดเป็นผู้ใช้ปัจจุบัน ให้แสดง "คุณ"
-        mapped.lastMessageSenderName = 'คุณ';
-      } else if (mapped.lastMessageSenderId === otherUserId) {
-        // ถ้าผู้ส่งข้อความล่าสุดเป็นผู้ใช้อื่น ให้แสดงชื่อผู้ใช้นั้น
-        mapped.lastMessageSenderName = username;
-      } else if (mapped.lastMessageSenderId && mapped.lastMessageSenderId !== this.userId) {
-        // กรณีอื่นๆ ให้แสดงชื่อผู้ใช้จาก otherUserId
-        mapped.lastMessageSenderName = username;
+      // เลือกแชทแรกโดยอัตโนมัติ
+      if (this.chatList.length > 0 && !this.selectedChat) {
+        this.selectChat(this.chatList[0]);
       }
-      
-      return mapped;
     });
-    this.originalChatList = [...this.chatList];
-    
-    console.log('Processed chat list:', this.chatList);
-    
-    // เลือกแชทแรกโดยอัตโนมัติ
-    if (this.chatList.length > 0 && !this.selectedChat) {
-      this.selectChat(this.chatList[0]);
-    }
   });
 }
 

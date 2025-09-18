@@ -56,13 +56,7 @@ export class RegisterComponent {
       
       // ตรวจสอบว่าเป็นไฟล์รูปภาพหรือไม่
       if (!this.isImageFile(file)) {
-        Swal.fire({
-          icon: 'error',
-          title: 'ไฟล์ไม่ถูกต้อง',
-          text: 'กรุณาเลือกไฟล์รูปภาพเท่านั้น (JPG, PNG, GIF, WebP)',
-          confirmButtonText: 'ตกลง',
-          confirmButtonColor: '#f44336'
-        });
+        alert('ไฟล์ไม่ถูกต้อง\nกรุณาเลือกไฟล์รูปภาพเท่านั้น (JPG, PNG, GIF, WebP)');
         return;
       }
 
@@ -151,74 +145,46 @@ export class RegisterComponent {
   register() {
     // ตรวจสอบว่าผู้ใช้กรอกข้อมูลทุกฟิลด์หรือไม่
     if (!this.userData.email || !this.userData.password || !this.confirmPassword || !this.userData.username || !this.userData.phone) {
-      Swal.fire({
-        icon: 'warning',
-        text: 'กรุณากรอกข้อมูลให้ครบ',
-        confirmButtonText: 'ตกลง'
-      });
+      alert('กรุณากรอกข้อมูลให้ครบ');
       return;
     }
   
     // ตรวจสอบรูปแบบอีเมล
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     if (!emailRegex.test(this.userData.email)) {
-      Swal.fire({
-        icon: 'warning',
-        text: 'กรุณากรอกอีเมลในรูปแบบที่ถูกต้อง เช่น example@domain.com',
-        confirmButtonText: 'ตกลง'
-      });
+      alert('กรุณากรอกอีเมลในรูปแบบที่ถูกต้อง เช่น example@domain.com');
       return;
     }
 
     // ตรวจสอบความยาวของอีเมล
     if (this.userData.email.length > 254) {
-      Swal.fire({
-        icon: 'warning',
-        text: 'อีเมลต้องมีความยาวไม่เกิน 254 ตัวอักษร',
-        confirmButtonText: 'ตกลง'
-      });
+      alert('อีเมลต้องมีความยาวไม่เกิน 254 ตัวอักษร');
       return;
     }
 
     // ตรวจสอบว่าอีเมลไม่ขึ้นต้นหรือลงท้ายด้วยจุด
     if (this.userData.email.startsWith('.') || this.userData.email.endsWith('.')) {
-      Swal.fire({
-        icon: 'warning',
-        text: 'อีเมลไม่สามารถขึ้นต้นหรือลงท้ายด้วยจุดได้',
-        confirmButtonText: 'ตกลง'
-      });
+      alert('อีเมลไม่สามารถขึ้นต้นหรือลงท้ายด้วยจุดได้');
       return;
     }
 
     // ตรวจสอบว่ามี @ เพียงตัวเดียว
     const atCount = (this.userData.email.match(/@/g) || []).length;
     if (atCount !== 1) {
-      Swal.fire({
-        icon: 'warning',
-        text: 'อีเมลต้องมีเครื่องหมาย @ เพียงตัวเดียว',
-        confirmButtonText: 'ตกลง'
-      });
+      alert('อีเมลต้องมีเครื่องหมาย @ เพียงตัวเดียว');
       return;
     }
   
     // ตรวจสอบว่ารหัสผ่านกับการยืนยันรหัสผ่านตรงกัน
     if (this.userData.password !== this.confirmPassword) {
-      Swal.fire({
-        icon: 'warning',
-        text: 'รหัสผ่านไม่ตรงกัน',
-        confirmButtonText: 'ตกลง'
-      });
+      alert('รหัสผ่านไม่ตรงกัน');
       return;
     }
   
     // กำหนดรูปแบบการตรวจสอบรหัสผ่าน
     const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/;
     if (!passwordRegex.test(this.userData.password)) {
-      Swal.fire({
-        icon: 'warning',
-        text: 'รหัสผ่านต้องประกอบด้วย: \n- ตัวอักษร (A-Z, a-z) \n- ตัวเลข (0-9) \n- หรือตัวอักษรพิเศษ เช่น @$!%*?& \n- ความยาวอย่างน้อย 8 ตัวอักษร',
-        confirmButtonText: 'ตกลง'
-      });
+      alert('รหัสผ่านต้องประกอบด้วย:\n- ตัวอักษร (A-Z, a-z)\n- ตัวเลข (0-9)\n- หรือตัวอักษรพิเศษ เช่น @$!%*?&\n- ความยาวอย่างน้อย 8 ตัวอักษร');
       return;
     }
     
@@ -228,16 +194,7 @@ export class RegisterComponent {
     // ตรวจสอบรูปแบบเบอร์มือถือ (06, 08, 09)
     const mobilePhoneRegex = /^(0[689][0-9]{8})$/;
     if (!mobilePhoneRegex.test(cleanPhone)) {
-      Swal.fire({
-        icon: 'warning',
-        title: 'กรุณากรอกเบอร์มือถือเท่านั้น',
-        html: `
-          <div style="text-align: left;">
-            <p>กรุณากรอกเบอร์มือถือในรูปแบบที่ถูกต้อง (10 หลัก)</p>
-          </div>
-        `,
-        confirmButtonText: 'ตกลง'
-      });
+      alert('กรุณากรอกเบอร์มือถือในรูปแบบที่ถูกต้อง (10 หลัก)');
       return;
     }
     
@@ -247,23 +204,13 @@ export class RegisterComponent {
     // ตรวจสอบว่า username เป็นไปตามเงื่อนไข
     const usernameRegex = /^[a-zA-Z0-9._]{1,30}$/; // เงื่อนไข username
     if (!usernameRegex.test(this.userData.username)) {
-      Swal.fire({
-        icon: 'warning',
-        text: 'ชื่อผู้ใช้ต้องมีความยาวไม่เกิน 30 ตัวอักษร และใช้ได้เฉพาะ a-z, A-Z, 0-9, จุด (.) และขีดล่าง (_)',
-        confirmButtonText: 'ตกลง'
-      });
+      alert('ชื่อผู้ใช้ต้องมีความยาวไม่เกิน 30 ตัวอักษร และใช้ได้เฉพาะ a-z, A-Z, 0-9, จุด (.) และขีดล่าง (_)');
       return;
     }
 
     // ตรวจสอบรูปโปรไฟล์ (ถ้ามี)
     if (this.selectedFile && !this.isImageFile(this.selectedFile)) {
-      Swal.fire({
-        icon: 'error',
-        title: 'ไฟล์ไม่ถูกต้อง',
-        text: 'กรุณาเลือกไฟล์รูปภาพเท่านั้น (JPG, PNG, GIF, WebP)',
-        confirmButtonText: 'ตกลง',
-        confirmButtonColor: '#f44336'
-      });
+      alert('ไฟล์ไม่ถูกต้อง\nกรุณาเลือกไฟล์รูปภาพเท่านั้น (JPG, PNG, GIF, WebP)');
       return;
     }
   
@@ -303,46 +250,16 @@ export class RegisterComponent {
         // ตรวจสอบข้อความข้อผิดพลาดจาก Backend
         if (error.error?.error) {
           if (error.error.error.includes('email')) {
-            Swal.fire({
-              icon: 'error',
-              title: 'เกิดข้อผิดพลาด',
-              text: 'อีเมลนี้มีผู้ใช้งานแล้ว!',
-              confirmButtonText: 'ตกลง',
-              confirmButtonColor: '#f44336'
-            });
+            alert('เกิดข้อผิดพลาด\nอีเมลนี้มีผู้ใช้งานแล้ว!');
           } else if (error.error.error.includes('username')) {
-            Swal.fire({
-              icon: 'error',
-              title: 'เกิดข้อผิดพลาด',
-              text: 'ชื่อผู้ใช้นี้มีผู้ใช้งานแล้ว!',
-              confirmButtonText: 'ตกลง',
-              confirmButtonColor: '#f44336'
-            });
+            alert('เกิดข้อผิดพลาด\nชื่อผู้ใช้นี้มีผู้ใช้งานแล้ว!');
           } else if (error.error.error.includes('phone')) {
-            Swal.fire({
-              icon: 'error',
-              title: 'เกิดข้อผิดพลาด',
-              text: 'หมายเลขโทรศัพท์นี้มีผู้ใช้งานแล้ว!',
-              confirmButtonText: 'ตกลง',
-              confirmButtonColor: '#f44336'
-            });
+            alert('เกิดข้อผิดพลาด\nหมายเลขโทรศัพท์นี้มีผู้ใช้งานแล้ว!');
           } else {
-            Swal.fire({
-              icon: 'error',
-              title: 'เกิดข้อผิดพลาด',
-              text: 'เกิดข้อผิดพลาด: ' + error.error.error,
-              confirmButtonText: 'ตกลง',
-              confirmButtonColor: '#f44336'
-            });
+            alert('เกิดข้อผิดพลาด: ' + error.error.error);
           }
         } else {
-          Swal.fire({
-            icon: 'error',
-            title: 'เกิดข้อผิดพลาด',
-            text: 'เกิดข้อผิดพลาดที่ไม่ทราบสาเหตุ!',
-            confirmButtonText: 'ตกลง',
-            confirmButtonColor: '#f44336'
-          });
+          alert('เกิดข้อผิดพลาดที่ไม่ทราบสาเหตุ!');
         }
       }
     );

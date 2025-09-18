@@ -215,7 +215,7 @@
                     <ng-template mat-tab-label>
                         <mat-icon matTooltip="รีโพสต์">repeat</mat-icon>
                     </ng-template>
-                    <div class="post-grid">
+                    <div class="post-grid" *ngIf="sharedPosts.length > 0">
                         <div *ngFor="let post of sharedPosts" class="post-item">
                             <div>
                                 <a [routerLink]="['/detail_post']"
@@ -231,6 +231,13 @@
                                         style="font-size: 30px; color: white; position: absolute; top: 10px; right: 10px; padding: 5px; border-radius: 50%;"></i>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                    <!-- แสดงข้อความเมื่อไม่มีรีโพสต์ -->
+                    <div *ngIf="sharedPosts.length === 0" class="no-posts-message">
+                        <div class="no-posts-content">
+                            <i class="fa-solid fa-repeat" style="font-size: 48px; color: #ccc; margin-bottom: 16px;"></i>
+                            <p style="color: #646262; margin: 0; font-size: 18px;">ผู้ใช้คนนี้ยังไม่มีการรีโพสต์โพสต์</p>
                         </div>
                     </div>
                 </mat-tab>

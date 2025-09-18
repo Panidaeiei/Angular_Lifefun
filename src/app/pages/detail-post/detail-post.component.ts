@@ -183,15 +183,6 @@ export class DetailPostComponent implements OnInit, OnDestroy {
       // โหลดข้อมูลจาก localStorage เท่านั้น (ไม่เรียก backend)
       this.loadNotificationCountsFromStorage();
       
-      // ไม่เรียก API อีกต่อไป - ใช้ข้อมูลจาก localStorage เท่านั้น
-      // this.notificationService.loadNotificationCounts(Number(this.userId));
-      
-      // ไม่ต้อง subscribe อีกต่อไป - ใช้ข้อมูลจาก localStorage เท่านั้น
-      // this.notificationSubscription = this.notificationService.notificationCounts$.subscribe(
-      //   (counts) => {
-      //     this.notificationCounts = counts;
-      //   }
-      // );
     }
   }
 
@@ -592,12 +583,12 @@ export class DetailPostComponent implements OnInit, OnDestroy {
     const hasImage = this.post.images && this.post.images.length > 0;
     
     if (hasVideo && hasImage) {
-      // ถ้ามีทั้งวิดีโอและรูปภาพ ให้วิดีโอขึ้นก่อน
-      // ใช้ logic: วิดีโอที่เลือกมาเป็นไฟล์แรก
-      allMedia.push(...this.post.videos.map((url) => ({ type: 'video', url })));
+      // ถ้ามีทั้งวิดีโอและรูปภาพ ให้เรียงตามลำดับที่เพิ่มเข้าไป
+      // ใช้ logic: รูปภาพขึ้นก่อน วิดีโอตามหลัง (ตามลำดับการเพิ่ม)
       allMedia.push(...this.post.images.map((url) => ({ type: 'image', url })));
+      allMedia.push(...this.post.videos.map((url) => ({ type: 'video', url })));
       
-      console.log('จัดลำดับอัตโนมัติ: วิดีโอขึ้นก่อน รูปภาพตามหลัง');
+      console.log('จัดลำดับอัตโนมัติ: รูปภาพขึ้นก่อน วิดีโอตามหลัง');
     } else if (hasVideo) {
       // มีแค่วิดีโอ
       allMedia.push(...this.post.videos.map((url) => ({ type: 'video', url })));
@@ -619,7 +610,7 @@ export class DetailPostComponent implements OnInit, OnDestroy {
     const imageCount = this.post.images?.length || 0;
     
     if (videoCount > 0 && imageCount > 0) {
-      return `วิดีโอ ${videoCount} ไฟล์ + รูปภาพ ${imageCount} ไฟล์ (วิดีโอขึ้นก่อน)`;
+      return `รูปภาพ ${imageCount} ไฟล์ + วิดีโอ ${videoCount} ไฟล์ (ตามลำดับการเพิ่ม)`;
     } else if (videoCount > 0) {
       return `วิดีโอ ${videoCount} ไฟล์`;
     } else if (imageCount > 0) {
@@ -692,7 +683,7 @@ export class DetailPostComponent implements OnInit, OnDestroy {
         this.isEditing = false;
       },
       (error) => {
-        alert('เกิดข้อผิดพลาดในการแก้ไขโพสต์');
+        alert('กรุณาเพิ่มคำอธิบายใต้รูปภาพหรือวิดีโอ');
         console.error('Error editing post:', error);
       }
     );

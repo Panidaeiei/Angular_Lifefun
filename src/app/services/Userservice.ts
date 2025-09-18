@@ -76,6 +76,23 @@ export class UserService {
     return this.http.get<User>(`${this.baseUrl}/view_users/${userId}`, { headers });
   }
 
+  // ดึงข้อมูลผู้ใช้หลายคนในครั้งเดียว (สำหรับ chat)
+  getUsersBatch(userIds: string[]): Observable<User[]> {
+    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+    if (!token) {
+      return throwError(() => new Error('Unauthorized'));
+    }
+
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+
+    return this.http.post<User[]>(`${this.baseUrl}/batch`, { userIds }, { headers }).pipe(
+      catchError(error => {
+        console.error('Error fetching batch users:', error);
+        return throwError(() => new Error(error.message || 'Failed to fetch batch users'));
+      })
+    );
+  }
+
   // ลงทะเบียนผู้ใช้
   registerUser(formData: FormData): Observable<any> {
     return this.http.post(`${this.baseUrl}/register`, formData);
