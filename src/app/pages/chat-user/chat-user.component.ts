@@ -35,6 +35,7 @@ export class ChatUserComponent implements OnInit, OnDestroy {
   // เพิ่ม cache สำหรับข้อมูลผู้ใช้เพื่อป้องกันการเรียก API ซ้ำ
   private userProfileCache: Map<string, any> = new Map();
   private fetchingUsers: Set<string> = new Set(); // ป้องกันการเรียก API ซ้ำสำหรับผู้ใช้เดียวกัน
+  private deletedUsers: Set<string> = new Set(); // เก็บ user IDs ที่ถูกลบบัญชีแล้ว
 
   isMobile = false;
   isIPad = false;
@@ -123,6 +124,8 @@ export class ChatUserComponent implements OnInit, OnDestroy {
         }
       }
       
+      console.log('🔍 Chat:', chat.chatId, 'Target User ID:', targetUserId, 'Username:', chat.other_username || chat.username);
+      
       if (targetUserId && targetUserId !== this.userId && !this.userProfileCache.has(targetUserId)) {
         userIdsToFetch.add(targetUserId);
       }
@@ -131,15 +134,42 @@ export class ChatUserComponent implements OnInit, OnDestroy {
     // ดึงข้อมูลผู้ใช้ทั้งหมดที่จำเป็นในครั้งเดียว
     if (userIdsToFetch.size > 0) {
       const userIdsArray = Array.from(userIdsToFetch);
+      console.log('📤 Sending user IDs to API:', userIdsArray);
       try {
         // ใช้ batch API แทนการเรียกทีละคน
         const userProfiles = await this.userService.getUsersBatch(userIdsArray).toPromise();
         
         if (userProfiles) {
-          // บันทึกลง cache
+          console.log('📋 All user profiles received:', userProfiles);
+          
+          // ตรวจสอบ User IDs ที่ส่งไปแต่ไม่ได้รับกลับมา (ถูกลบจากฐานข้อมูล)
+          const receivedUserIds = userProfiles.map(p => (p as any).uid?.toString()).filter(Boolean);
+          const missingUserIds = userIdsArray.filter(id => !receivedUserIds.includes(id));
+          
+          if (missingUserIds.length > 0) {
+            console.log('❌ Users not found in database (deleted):', missingUserIds);
+            missingUserIds.forEach(userId => {
+              this.deletedUsers.add(userId);
+            });
+          }
+          
+          // บันทึกลง cache และตรวจสอบสถานะบัญชี
           userProfiles.forEach(userProfile => {
             if (userProfile && (userProfile as any).uid) {
-              this.userProfileCache.set((userProfile as any).uid.toString(), userProfile);
+              const userId = (userProfile as any).uid.toString();
+              this.userProfileCache.set(userId, userProfile);
+              
+              // ตรวจสอบสถานะบัญชี
+              const accountStatus = (userProfile as any).account_status;
+              console.log('🔍 User ID:', userId, 'Account Status:', accountStatus);
+              
+              if (accountStatus === 'banned' || accountStatus === 'inactive') {
+                this.deletedUsers.add(userId);
+                console.log('❌ User added to deleted list:', userId);
+              } else {
+                this.deletedUsers.delete(userId);
+                console.log('✅ User is active:', userId);
+              }
             }
           });
           
@@ -179,9 +209,9 @@ export class ChatUserComponent implements OnInit, OnDestroy {
       
       let username = chat.other_username || chat.username;
       let avatar = chat.other_image_url || chat.image_url;
+      let targetUserId = otherUserId;
       
       if (!username || !avatar) {
-        let targetUserId = otherUserId;
         if (!targetUserId && chat.chatId) {
           const chatIdParts = chat.chatId.split('_');
           if (chatIdParts.length === 2) {
@@ -189,7 +219,13 @@ export class ChatUserComponent implements OnInit, OnDestroy {
           }
         }
         
-        if (targetUserId && targetUserId !== this.userId) {
+      if (targetUserId && targetUserId !== this.userId) {
+        // ตรวจสอบสถานะบัญชีก่อน (ถูกลบจากฐานข้อมูล)
+        if (this.deletedUsers.has(targetUserId)) {
+          username = 'บัญชีผู้ใช้งาน';
+          avatar = 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg';
+          console.log('❌ User marked as deleted:', targetUserId);
+        } else {
           const userProfile = this.userProfileCache.get(targetUserId);
           if (userProfile) {
             username = userProfile.username || `User_${targetUserId}`;
@@ -198,10 +234,11 @@ export class ChatUserComponent implements OnInit, OnDestroy {
             username = username || `User_${targetUserId}`;
             avatar = avatar || 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg';
           }
-        } else {
-          username = username || `User_${chat.chatId}`;
-          avatar = avatar || 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg';
         }
+      } else {
+        username = username || `User_${chat.chatId}`;
+        avatar = avatar || 'https://i.pinimg.com/736x/a8/0e/36/a80e3690318c08114011145fdcfa3ddb.jpg';
+      }
       }
       
       const mapped = {
@@ -213,6 +250,7 @@ export class ChatUserComponent implements OnInit, OnDestroy {
         lastMessageSenderId: String(chat.last_message_sender_id || ''),
         lastMessageSenderName: chat.last_message_sender_name || username,
         uid: otherUserId || chat.chatId,
+        isDeleted: this.deletedUsers.has(targetUserId || ''),
         ...chat
       };
       
@@ -281,16 +319,34 @@ export class ChatUserComponent implements OnInit, OnDestroy {
 loadUserChats() {
   // ใช้ real-time listener แทนการดึงข้อมูลครั้งเดียว
   this.chatService.listenUserChats(this.userId, (chats) => {
-    // แสดงแชททั้งหมดโดยไม่ต้องตรวจสอบผู้ใช้ (ลดการเรียก API)
+    // console.log('🔍 Current userId:', this.userId);
+    // console.log('📋 All chats received:', chats);
+    
+    // ตรวจสอบให้แน่ใจว่าแชทที่แสดงเป็นของ user นี้จริงๆ
     const validChats = chats.filter(chat => {
       // ตรวจสอบว่ามีข้อมูลแชทครบถ้วนหรือไม่
       const hasChatId = !!chat.chatId;
       const hasLastMessage = chat.last_message !== undefined;
       const hasLastMessageTime = chat.last_message_time !== undefined;
       
-      // แสดงแชทถ้ามี chatId (ข้อมูลพื้นฐานที่จำเป็น)
-      return hasChatId;
+      // ตรวจสอบว่า chatId มี userId นี้อยู่จริงหรือไม่
+      const chatIdContainsUserId = chat.chatId && chat.chatId.includes(this.userId);
+      
+      // ตรวจสอบว่า user นี้มีข้อความในแชทนี้หรือไม่ (ตรวจสอบจาก last_message_sender_id เท่านั้น)
+      const hasUserMessages = chat.last_message_sender_id === this.userId;
+      
+      // ตรวจสอบว่า user นี้เป็นผู้รับข้อความหรือไม่ (ข้อความล่าสุดส่งมาหา user นี้)
+      const isUserReceiver = chat.last_message_sender_id && chat.last_message_sender_id !== this.userId;
+      
+      // console.log('🔍 Chat ID:', chat.chatId, 'Contains userId?', chatIdContainsUserId);
+      // console.log('🔍 Has user messages?', hasUserMessages);
+      // console.log('🔍 Is user receiver?', isUserReceiver);
+      // console.log('🔍 Last message sender ID:', chat.last_message_sender_id);
+      
+      // แสดงแชทถ้ามี chatId และเป็นแชทของ user นี้จริงๆ และ (user นี้มีข้อความในแชท หรือ user นี้เป็นผู้รับข้อความ)
+      return hasChatId && chatIdContainsUserId && (hasUserMessages || isUserReceiver);
     });
+    
     
     // เก็บ chatId เดิมเพื่อตรวจสอบแชทใหม่
     const previousChatIds = this.chatList.map(chat => chat.chatId);
@@ -390,6 +446,12 @@ loadUserChats() {
   async sendMessage() {
     // ป้องกันการส่งซ้ำ
     if (this.isSending) {
+      return;
+    }
+    
+    // ตรวจสอบสถานะบัญชีผู้ใช้ที่แชทด้วย
+    if (this.selectedChat && this.selectedChat.isDeleted) {
+      alert('ไม่สามารถส่งข้อความได้ เนื่องจากบัญชีผู้ใช้ถูกระงับหรือไม่สามารถใช้งานได้');
       return;
     }
     
@@ -657,6 +719,7 @@ checkScreenSize() {
     // ลบ cache ทั้งหมดที่เกี่ยวข้องกับผู้ใช้ที่ออกจากระบบ
     this.userProfileCache.clear();
     this.fetchingUsers.clear();
+    this.deletedUsers.clear();
   }
 
 

@@ -40,14 +40,17 @@
               <i [class]="isPasswordVisible ? 'fa fa-eye' : 'fa fa-eye-slash'"></i>
             </button>
           </div>
-        </div>
+        </div>  
+        <button class="styled-button" type="submit">
+          <span class="itim-regular">เข้าสู่ระบบ</span>
+        </button>
         <div class="login-register-row">
           <span class="itim-regular">ยังไม่มีบัญชีผู้ใช้ใช่หรือไม่?</span>
           <a href="/register" class="itim-regular login-register-link">สมัครสมาชิก</a>
         </div>
-        <button class="styled-button" type="submit">
-          <span class="itim-regular">เข้าสู่ระบบ</span>
-        </button>
+        <div class="login-forgot-row">
+          <a href="javascript:void(0)" (click)="openForgotPasswordDialog()" class="itim-regular login-forgot-link">คุณลืมรหัสผ่านใช่หรือไม่?</a>
+        </div>
       </form>
     </div>
   </div>

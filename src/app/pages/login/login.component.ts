@@ -5,17 +5,20 @@ import { ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import Swal from 'sweetalert2';
 import { UserService } from '../../services/Userservice';
 import { CommonModule } from '@angular/common';
 import { environment } from '../../../environments/environment';
+import { ForgotPasswordDialogComponent } from './forgot-password-dialog/forgot-password-dialog.component';
+import { ResetPasswordDialogComponent } from './reset-password-dialog/reset-password-dialog.component';
 
 @Component({
   selector: 'app-login',
   standalone: true,
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
-  imports: [FormsModule, HttpClientModule, CommonModule, RouterModule]
+  imports: [FormsModule, HttpClientModule, CommonModule, RouterModule, MatDialogModule]
 })
 export class LoginComponent {
   identifier: string = ''; // ตัวแปรสำหรับเก็บ Email หรือ Username
@@ -26,7 +29,13 @@ export class LoginComponent {
   private baseUrl = environment.apiBaseUrl; // URL ของ Backend
 // เก็บพาธปลายทางที่มากับ ?redirect=... (ถูก encode มา)
   private redirectUrl: string | null = null;
-  constructor(private http: HttpClient, private router: Router, private userService: UserService, private route: ActivatedRoute) { }
+  constructor(
+    private http: HttpClient, 
+    private router: Router, 
+    private userService: UserService, 
+    private route: ActivatedRoute,
+    private dialog: MatDialog
+  ) { }
 
   @HostListener('window:resize')
   onResize() {
@@ -228,5 +237,43 @@ export class LoginComponent {
   private isEmail(value: string): boolean {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(value);
+  }
+
+  // เปิด dialog ลืมรหัสผ่าน
+  openForgotPasswordDialog() {
+    const dialogRef = this.dialog.open(ForgotPasswordDialogComponent, {
+      width: '500px',
+      maxWidth: '90vw',
+      disableClose: false,
+      data: {}
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result && result.action === 'reset-password') {
+        // เปิด dialog ตั้งรหัสผ่านใหม่
+        this.openResetPasswordDialog(result.userInfo);
+      }
+    });
+  }
+
+  // เปิด dialog ตั้งรหัสผ่านใหม่
+  openResetPasswordDialog(userInfo: any) {
+    const dialogRef = this.dialog.open(ResetPasswordDialogComponent, {
+      width: '500px',
+      maxWidth: '90vw',
+      disableClose: false,
+      data: { userInfo }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === 'success') {
+        Swal.fire({
+          icon: 'success',
+          title: 'เปลี่ยนรหัสผ่านสำเร็จ',
+          text: 'กรุณาเข้าสู่ระบบด้วยรหัสผ่านใหม่',
+          timer: 3000
+        });
+      }
+    });
   }
 }

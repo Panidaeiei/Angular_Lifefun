@@ -277,6 +277,25 @@ input[type="password"]::-webkit-credentials-auto-fill-button {
   text-decoration: underline;
 }
 
+.login-forgot-row {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.login-forgot-link {
+  color: #e27c96;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+  font-size: 0.95rem;
+}
+
+.login-forgot-link:hover {
+  color: #d65a7a;
+  text-decoration: underline;
+}
+
 .styled-button {
   width: 100%;
   padding: 12px 0;

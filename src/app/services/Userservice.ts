@@ -213,5 +213,24 @@ export class UserService {
     );
   }
 
+  // ลืมรหัสผ่าน - ตรวจสอบ email หรือเบอร์โทรศัพท์
+  forgotPassword(email?: string, phone?: string): Observable<any> {
+    return this.http.post(`${this.baseUrl}/forgot-password`, { email, phone }).pipe(
+      catchError(error => {
+        console.error('Error in forgot password:', error);
+        return throwError(() => new Error(error.error?.error || 'Failed to process forgot password'));
+      })
+    );
+  }
+
+  // รีเซ็ตรหัสผ่าน
+  resetPassword(uid: string, newPassword: string): Observable<any> {
+    return this.http.put(`${this.baseUrl}/reset-password`, { uid, newPassword }).pipe(
+      catchError(error => {
+        console.error('Error in reset password:', error);
+        return throwError(() => new Error(error.error?.error || 'Failed to reset password'));
+      })
+    );
+  }
 
 }
