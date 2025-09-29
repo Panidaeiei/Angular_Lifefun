@@ -175,12 +175,14 @@
                     [ngClass]="{'message': true, 'right': msg.uid === userId, 'left': msg.uid !== userId}"
                     (mouseenter)="hoveredMsgIndex = i" (mouseleave)="hoveredMsgIndex = null">
                     <div class="message-content">
-                        <span *ngIf="msg.text">{{ msg.text }}</span>
+                        <!-- แสดงรูปหรือวิดีโอก่อน -->
                         <div class="media-wrapper" *ngIf="msg.image_url || msg.video_url"
-                            style="position: relative; display: inline-block;">
+                            style="position: relative; display: block; margin-bottom: 8px;">
                             <img *ngIf="msg.image_url" [src]="msg.image_url" />
                             <video *ngIf="msg.video_url" [src]="msg.video_url" controls></video>
                         </div>
+                        <!-- แสดงข้อความข้างใต้ -->
+                        <span *ngIf="msg.text" class="message-text">{{ msg.text }}</span>
                     </div>
                     <div class="bubble-datetime-mobile">
                         {{ msg.create_at | date:'d MMM HH:mm':'':'th' }}
