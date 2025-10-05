@@ -84,7 +84,7 @@ export class PostService {
       .set('uid', uid || '');  // ส่ง uid ของผู้ใช้ใน header
 
     // ส่งคำขอ GET ไปที่ API พร้อม Token และ uid
-    return this.http.get<ShowPost[]>(`${this.baseUrl}/posts/getPosts_interests`, { headers }).pipe(
+    return this.http.get<ShowPost[]>(`${this.baseUrl}/postfeed/feed/personalized`, { headers }).pipe(
       tap((response) => {
         // ตรวจสอบข้อมูลที่ได้รับจาก API
       })
