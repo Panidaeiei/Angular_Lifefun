@@ -169,11 +169,25 @@ export class LoginComponent {
             const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
             const minutes = Math.floor((diff / (1000 * 60)) % 60);
 
+            const options: Intl.DateTimeFormatOptions = {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+            };
+            
+            const thaiDateTime = endDate.toLocaleString('th-TH', options);
+            
             Swal.fire({
               icon: 'warning',
-              title: 'บัญชีถูกระงับ',         
-              html: `เนื่องจากมีการโพสต์เนื้อหาที่ไม่เหมาะสม<br>บัญชีของคุณจึงถูกระงับถึงวันที่ <b>${endDate.toLocaleDateString()}</b><br>เหลือเวลาอีก <b>${days} วัน </b>`,
+              title: 'บัญชีถูกระงับ',
+              html: `
+                เนื่องจากมีการโพสต์เนื้อหาที่ไม่เหมาะสม<br>
+                บัญชีของคุณจึงถูกระงับถึงวันที่ 
+                <b>${endDate.toLocaleString('th-TH', options)}</b><br>
+                เหลือเวลาอีก <b>${days} วัน</b>
+              `,
             });
+            
           } else {
             Swal.fire({
               icon: 'warning',
