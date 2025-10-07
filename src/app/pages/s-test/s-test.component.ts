@@ -301,7 +301,9 @@ export class STestComponent {
   }
 
   // เพิ่มฟังก์ชันการกดใจ
-  toggleHeart(post: ShowPost): void {
+  toggleHeart(post: ShowPost, event?: MouseEvent): void {
+
+    event?.stopPropagation();
     // ตรวจสอบ UID ก่อนดำเนินการ
     if (!this.validateCurrentUser()) return;
 

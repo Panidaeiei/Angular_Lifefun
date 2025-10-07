@@ -181,11 +181,14 @@
                     </div>
                 </div>
 
-                <div class="like-row" style="cursor: pointer;">
-                    <i class="fa fa-heart heart-icon" style="font-size: 25px;" [class.liked]="post.isLiked" (click)="toggleHeart(post)"></i>
-                    <span style="font-size: 20px; margin-left: 5px;">{{ post.likes_count != null ? post.likes_count : 0 }}</span>
-                </div>
-
+                <div class="like-row">
+                    <i class="fa fa-heart heart-icon" style="font-size: 22px; color: #e0245e;"></i>
+                    <span  style="font-size: 18px; margin-left: 2px;">
+                      ถูกใจ {{ post.likes_count != null ? post.likes_count : 0 }} คน
+                    </span>
+                  </div>
+                  
+                
                 <div class="post-content">
                     <p class="post-title">
                         {{ showFull[post.post_id.toString()] ? post.title : (post.title | slice:0:90) +
