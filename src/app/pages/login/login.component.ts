@@ -173,8 +173,7 @@ export class LoginComponent {
               year: 'numeric',
               month: 'long',
               day: 'numeric',
-            };
-            
+            };           
             const thaiDateTime = endDate.toLocaleString('th-TH', options);
             
             Swal.fire({
